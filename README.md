@@ -1,4 +1,4 @@
-amathista
+Amathista
 =========
 
 Framework PHP para desarrollo web
