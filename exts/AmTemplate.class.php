@@ -260,7 +260,7 @@ final class AmTemplate{
     $result = $this->compile();
 
     // Guardar vista minificada
-    file_put_contents($compiledView, self::htmllMinify($result["content"]));
+    file_put_contents($compiledView, self::htmlMinify($result["content"]));
 
   }
 
