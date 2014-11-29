@@ -11,17 +11,17 @@ final class Am{
     // Define las callbacks del sistema
     $callbacks = array(
       
-      
-      // route.eval (request, routes)  : Evalucación del route
-      // response.file (file, env)     : Responder con archivo
-      // response.download (file, env) : Responder con descarga de archivo
-      // render.form (file, tpl)       : Renderizar formulario
-
-      // render.template:   Renderizar vista
-      // response.assets:   Responder con archivo
-      // response.control:  Responder con controlador
+      // route.eval (request, routes)                   : Evalucación del route
+      // response.file (file, env)                      : Responder con archivo
+      // response.download (file, env)                  : Responder con descarga de archivo
+      // response.assets (file, assets, env)            : Responder con archivo
+      // render.form (file, tpl)                        : Renderizar formulario
+      // response.control (control, action, params, env): Responder con controlador
+      // render.template (templete, paths, env)         :   Renderizar vista
 
     ),
+
+    $paths = array(),
 
     // URL base para el sitio
     $urlBase = "",
@@ -46,6 +46,16 @@ final class Am{
     // Si la instancia no existe se crea una instancia de la clase
     return self::$instances[$className] = new $className($params);
 
+  }
+
+  // Agrega una carpeta al final de la lista de paths
+  public static function addPath($path){
+    array_unshift(self::$paths, $path);
+  }
+
+  // Devuelve la ruta del archivo donde sea encontrado por primera vez 
+  public static function findFile($file){
+    return AmUtils::findFile($file, self::$paths);
   }
 
   // Agrega un callback a una accion
@@ -94,7 +104,8 @@ final class Am{
 
     // Incluir archivos
     foreach($init[$type] as $file){
-      require_once AM_FOLDER . "exts/{$file}.php";
+      ($realFile = self::findFile("$file.php")) or die("Am: Not fount Exts '{$file}'");
+      require_once $realFile;
     }
 
   }
@@ -153,7 +164,7 @@ final class Am{
     }
     
     // Incluir extensiones para peticiones
-    self::includeExts("request");
+    self::includeExts("require");
 
     // Llamado de accion para evaluar ruta
     self::call("route.eval", array(
@@ -165,7 +176,7 @@ final class Am{
 
   // Obtener la contenido de un archivo de configuración
   public static function getConfig($file, $type = "conf"){
-    return require "$file.$type.php";
+    return require self::findFile("$file.$type.php");
   }
 
   // Obtener el valor de una propiedad stática de Am.
@@ -173,12 +184,13 @@ final class Am{
 
     // Si la propiedad es igual a null
     if(self::$$property === null)
+
       // Entonces se carga desde la configuración
       self::$$property = self::getConfig("$folder/$property");
 
     // Devolver propiedad
     return self::$$property;
-
+    
   }
 
   // Responder con descarga de archivos
@@ -246,3 +258,5 @@ final class Am{
 // Callbacks por defecto
 Am::setCallback("response.file",   "Am::respondeFile");
 Am::setCallback("response.download",   "Am::downloadFile");
+
+Am::addPath(AM_FOLDER);

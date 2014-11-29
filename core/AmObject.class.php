@@ -3,6 +3,7 @@
 /**
  * Clase para objetos en Amathista
  */
+
 class AmObject implements Iterator, Countable, ArrayAccess{ //Reflector, 
   
   /**
