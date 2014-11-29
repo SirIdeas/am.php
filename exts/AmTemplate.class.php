@@ -148,6 +148,7 @@ final class AmTemplate{
     $view = $this->getSubView($view)->compile("", $this->sections);
     echo $view["content"];
     $this->sections = array_merge($view["sections"], $this->sections);
+    $this->params = array_merge($view["vars"], $this->params);
   }
 
   // Imprimir una seccion
