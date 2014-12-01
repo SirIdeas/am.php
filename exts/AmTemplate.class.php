@@ -69,7 +69,7 @@ final class AmTemplate{
   // Busca una vista en los paths definidos
   public function findFile($file){
     // Si no existe la vista mostrar error
-    ($file = AmUtils::findFile($file, $this->paths)) !== false or $this->ignore or die("Am: No existe view '{$file}'");
+    ($file = Am::findFile($file, $this->paths)) !== false or $this->ignore or die("Am: No existe view '{$file}'");
     return $file;
   }
 
