@@ -9,7 +9,21 @@ class AmControl extends AmObject{
   protected
     $path = null,   // Carpeta contenedora del controlador
     $views = null,  // Carpeta contenedora de las vistas para el controlador
-    $render = null; // 
+    $render = null, // Nombre de la vista a renderizar
+    $get = null,
+    $post = null,
+    $request = null,
+    $server = null;
+
+  public function __construct($data = null){
+    parent::__construct($data);
+
+    $this->get = new AmObject($_GET);
+    $this->post = new AmObject($_POST);
+    $this->request = new AmObject($_REQUEST);
+    $this->server = new AmObject($_SERVER);
+
+  }
 
   // Propiedad para get/set para render
   public function render($value = null){
@@ -50,14 +64,13 @@ class AmControl extends AmObject{
     // Obtener instancia del controlador
     $obj = Am::getInstance($control, $conf);
 
-    // Determinar nombre dle metodo a ejecutar
-    $actionMethod = "action_$action";
-
-    // Si el metodo no existe salir
-    if(!method_exists($obj, $actionMethod)) return false;
+    // Si el metodo existe llamar
+    if(method_exists($obj, "action"))
+      $obj->action($params);
     
-    // Llamar metodos
-    call_user_func_array(array($obj, $actionMethod), $params);
+    // Si el metodo existe llamar
+    if(method_exists($obj, $actionMethod = "action_$action"))
+      call_user_func_array(array($obj, $actionMethod), $params);
     
     // Renderizar vista mediante un callback
     Am::call("render.template", array(
@@ -69,7 +82,9 @@ class AmControl extends AmObject{
         $env,             // Entorno: prioridad 3
         $params,          // Paremetros de rutra: prioridad 2
         $obj->toArray()   // Atributos de contorlaodr: prioridad 1
-      )
+      ),
+      true
+
     ));
 
     return true;

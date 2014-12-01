@@ -12,7 +12,7 @@ final class AmTemplate{
   protected
     $file = null,             // Vista a buscar
     $realFile = null,         // Ruta real de la vista
-    $content = null,          // Contenido del archivo
+    $content = "",            // Contenido del archivo
     $env = array(),           // Entorno
     $params = array(),        // Variables definidas en la vista 
     $parent = null,           // Vista padre
@@ -20,9 +20,10 @@ final class AmTemplate{
     $sections = array(),      // Lista de secciones y su contenido
     $child = null,            // Contenido de la vista hija
     $dependences = array(),   // Lista de vistas de las que depende (padre, hijas y anidadas)
-    $paths = array();         // Lista de directorios donde se buscará la vista
+    $paths = array(),         // Lista de directorios donde se buscará la vista
+    $ignore = false;          // Bandera que indica si se ignoran las vistas inexistentes sin generar error
 
-  private function __construct($file, $paths, array $env){
+  private function __construct($file, $paths, array $env, $ignore = false){
     
     // setear paths
     if(is_array($paths)){
@@ -33,11 +34,13 @@ final class AmTemplate{
 
     // Asignar atributos
     $this->file = $file;
-    $this->realFile = $this->findFile($file);
     $this->env = $env;
+    $this->ignore = $ignore;
+    $this->realFile = $this->findFile($file);
 
     // Leer archivo
-    $this->content = file_get_contents($this->realFile);
+    if($this->realFile !== false)
+      $this->content = file_get_contents($this->realFile);
 
     // Obtener padre
     preg_match_all("/\(# parent:(.*) #\)/", $this->content, $parents);
@@ -66,7 +69,7 @@ final class AmTemplate{
   // Busca una vista en los paths definidos
   public function findFile($file){
     // Si no existe la vista mostrar error
-    ($file = AmUtils::findFile($file, $this->paths)) !== false or die("Am: No existe view '{$file}'");
+    ($file = AmUtils::findFile($file, $this->paths)) !== false or $this->ignore or die("Am: No existe view '{$file}'");
     return $file;
   }
 
@@ -137,7 +140,7 @@ final class AmTemplate{
     // Si la dependencia no es una instancia de AmView
     if(!$this->dependences[$name] instanceof self){
       // Se instancia la vista 
-      $this->dependences[$name] = new self($name, $this->paths, $this->getVars());
+      $this->dependences[$name] = new self($name, $this->paths, $this->getVars(), $this->ignore);
     }
     // Devolver instancia de la vista
     return $this->dependences[$name];
@@ -214,6 +217,7 @@ final class AmTemplate{
 
   // Devuelve la ruta donde se guardara la vista compilada
   public function getCompiledFile(){
+    if($this->realFile === false) return false;
     return self::BUILD_FOLDER . $this->realFile;
   }
 
@@ -246,7 +250,7 @@ final class AmTemplate{
   public function save(){
 
     // Obtener vista generada
-    $compiledView = $this->getCompiledFile();
+    if(false === $compiledView = $this->getCompiledFile()) return;
 
     // Si esta actualizada salir
     // if($this->isUpdate($compiledView)) return;
@@ -267,8 +271,10 @@ final class AmTemplate{
 
   // incluye la vista compilada
   public function includeView(){
-    extract($this->getVars());  // Crear variables
-    include $this->getCompiledFile();
+    if(file_exists($filename = $this->getCompiledFile())){
+      extract($this->getVars());  // Crear variables
+      include $filename;          // Inluir vista
+    }
   }
 
   // Minifca el HTML de la vista. basicamente consiste en colocar todo en una sola linea
@@ -283,8 +289,8 @@ final class AmTemplate{
   }
 
   // Funcion para atender el llamado de render.tempalte
-  public static function render($file, $paths, array $env){
-    $view = new self($file, $paths, $env);  // Instancia vista
+  public static function render($file, $paths, array $env, $ignore = false){
+    $view = new self($file, $paths, $env, $ignore); // Instancia vista
     $view->save();        // Compilar y guardar
     $view->includeView(); // Incluir vista
     return true;

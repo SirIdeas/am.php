@@ -9,7 +9,7 @@ class AmObject implements Iterator, Countable, ArrayAccess{ //Reflector,
   /**
    * Lista de propiedades creados dinamicamente
    **/
-  protected $_f = array();
+  private $_f = array();
 
   /**
    * Llamada del constructor. Inicializa los atributos indicados en el array data
