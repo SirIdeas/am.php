@@ -55,7 +55,7 @@ final class Am{
 
   // Devuelve la ruta del archivo donde sea encontrado por primera vez 
   public static function findFile($file){
-    return Am::findFile($file, self::$paths);
+    return Am::findFileIn($file, self::$paths);
   }
 
   // Agrega un callback a una accion
@@ -254,7 +254,7 @@ final class Am{
   }
 
   // Busca un archivo en los paths indicados
-  public static function findFile($file, array $paths){
+  public static function findFileIn($file, array $paths){
     
     // Si existe el archivo retornar el mismo
     if(file_exists($file)) return $file;
