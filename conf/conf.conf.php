@@ -5,7 +5,7 @@
  */
 
 return array(
-  "require" => array(
+  "requires" => array(
     "core/AmObject.class",
     "exts/AmDateTime.class",
     "exts/AmRoute.class",

@@ -21,7 +21,8 @@ final class AmTemplate{
     $child = null,            // Contenido de la vista hija
     $dependences = array(),   // Lista de vistas de las que depende (padre, hijas y anidadas)
     $paths = array(),         // Lista de directorios donde se buscará la vista
-    $ignore = false;          // Bandera que indica si se ignoran las vistas inexistentes sin generar error
+    $ignore = false,          // Bandera que indica si se ignoran las vistas inexistentes sin generar error
+    $errors = array();        // Indica si se generó o no un error durante el renderizado
 
   private function __construct($file, $paths, array $env, $ignore = false){
     
@@ -69,7 +70,10 @@ final class AmTemplate{
   // Busca una vista en los paths definidos
   public function findFile($file){
     // Si no existe la vista mostrar error
-    ($file = Am::findFileIn($file, $this->paths)) !== false or $this->ignore or die("Am: No existe view '{$file}'");
+    if(($file = Am::findFileIn($file, $this->paths)) !== false){
+      $this->errors[] = "Am: No existe view '{$file}.'";
+      $this->ignore or die(implode(" ", $this->errors));
+    }
     return $file;
   }
 
@@ -122,13 +126,15 @@ final class AmTemplate{
 
       // Mezclar generadas en el padre con las definidas en la vista acutal
       $this->params = $parentView["vars"] = array_merge($parentView["vars"], $this->params);
+      $this->errors  = array_merge($this->errors, $parentView["errors"]);
       return $parentView;
     }
 
     return array(
       "content" => ob_get_clean(),    // Todo lo impreso
       "sections" => $this->sections,  // Devolver secciones definidas
-      "vars" => $this->getVars()      // Variables definidas
+      "vars" => $this->getVars(),     // Variables definidas
+      "errors" => $this->errors        // Indica si se generó un error
     );
 
   }
@@ -152,6 +158,7 @@ final class AmTemplate{
     echo $view["content"];
     $this->sections = array_merge($view["sections"], $this->sections);
     $this->params = array_merge($view["vars"], $this->params);
+    $this->errors  = array_merge($this->errors, $view["errors"]);
   }
 
   // Imprimir una seccion
@@ -288,12 +295,17 @@ final class AmTemplate{
     return $html;
   }
 
+  // Método que indica si se generó algun error al renderizar la vista
+  public function hasError(){
+    return count($this->errors)>0;
+  }
+
   // Funcion para atender el llamado de render.tempalte
   public static function render($file, $paths, array $env, $ignore = false){
     $view = new self($file, $paths, $env, $ignore); // Instancia vista
     $view->save();        // Compilar y guardar
     $view->includeView(); // Incluir vista
-    return true;
+    return $view->hasError();
   }
 
 }

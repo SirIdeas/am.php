@@ -41,7 +41,7 @@ class AmControl extends AmObject{
   public static function response($control, $action, array $params, array $env){
 
     // Obtener configuraciones del controlador
-    $confs = Am::getAttribute("control");
+    $confs = Am::getControl();
 
     // Si no existe configuracion para el controlador
     $conf = isset($confs[$control])? $confs[$control] : array();

@@ -91,7 +91,7 @@ class AmRoute{
   private static function assets($file, $env){
 
     // Obtener los recursos configurados
-    $assets = Am::getAttribute("assets");
+    $assets = Am::getAssets();
 
     // Si no exite un recurso con el nombre del solicitado retornar falso
     if(!isset($assets[$file])) return false;
@@ -157,7 +157,7 @@ class AmRoute{
 
   // Metodo busca la ruta con la que conincide la peticion actual.
   public static final function evaluate($request, $routes, array $env = array()){
-
+    
     $env = array_merge(
       $env,
       isset($routes["env"])? $routes["env"] : array()

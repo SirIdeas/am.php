@@ -13,7 +13,7 @@ class AmCommand{
     echo "Amathista commands\n";
 
     // Obtener los targets del archivo de configuracion
-    $targets = Am::getConfig("conf/commands");
+    $targets = Am::getConf("commands");
 
     // 1er: origen de la peticion: HTTP/consola
     $file = array_shift($argv);

@@ -10,7 +10,6 @@ final class Am{
 
     // Define las callbacks del sistema
     $callbacks = array(
-      
       // route.eval (request, routes)                   : Evalucación del route
       // response.file (file, env)                      : Responder con archivo
       // response.download (file, env)                  : Responder con descarga de archivo
@@ -18,20 +17,53 @@ final class Am{
       // render.form (file, tpl)                        : Renderizar formulario
       // response.control (control, action, params, env): Responder con controlador
       // render.template (templete, paths, env, ignore) :   Renderizar vista
-
     ),
 
-    $paths = array(),
+    // Callbacks para mezclar atributos
+    $mergeCallbacks = array(
+      // Nombre del atributo => array(callback, valor_por_defecto)
+      "requires" => "array_merge",
+      "routes" => "array_merge_recursive",
+      "assets" => "array_merge",
+      "timezone" => null,
+      "commands" => null,
+      "control" => "array_merge_recursive",
+      "smtp" => "array_merge",
+      "mails" => "array_merge",
+    ),
 
-    // URL base para el sitio
-    $urlBase = "",
+    // Valores por defecto de las propiedades
+    $confsDef = array(
+      "conf" => array(),
+      "requires" => array(),
+      "routes" => array(),
+      "assets" => array(),
+      "timezone" => null,
+      "commands" => array(),
+      "control" => array(),
+      "smtp" => array(),
+      "mails" => array(),
+    ),
+
+    $instances = array(), // Instancias unicas de clases
+    $paths = array(),     // Herarquia de carpetas
+    $confs = array(),     // Configuraciones cargadas
+    $urlBase = "",        // URL base para el sitio
+
+    // Valores seteados por el usuario
+    $userConf = array(
+      "routes" => array(  // Rutas definidas
+        "env" => array(),
+        "routes" => array()
+      )
+    ),
 
     $init = null,         // Define las cargas iniciales. Archivo conf/routes.conf.php
-    $instances = array(), // Instancias unicas de clases
     $control = null,      // Definiciones de controladores
     $commands = null,     // Target para los comandos
-    $routes = null,       // Rutas definidas
-    $assets = null;       // Archivos de recursos
+    $assets = null,       // Archivos de recursos
+    $mails = null,        // Configuraciones de los mails
+    $smtp = null;         // Configuraciones SMTP
     
   // Devuelve la instancia de una clase existente. Sino existe la instancia se crea una nueva
   public final static function getInstance($className, array $params = array()){
@@ -46,16 +78,6 @@ final class Am{
     // Si la instancia no existe se crea una instancia de la clase
     return self::$instances[$className] = new $className($params);
 
-  }
-
-  // Agrega una carpeta al final de la lista de paths
-  public static function addPath($path){
-    array_unshift(self::$paths, $path);
-  }
-
-  // Devuelve la ruta del archivo donde sea encontrado por primera vez 
-  public static function findFile($file){
-    return Am::findFileIn($file, self::$paths);
   }
 
   // Agrega un callback a una accion
@@ -93,32 +115,140 @@ final class Am{
     return $return;
 
   }
+  
+  // Obtener la configuracion para un parametro
+  public static function loadConf($property){
 
-  // Incluir extensiones
-  protected static function includeExts($type){
+    // Obtener del callback el valor predeterminado
+    $def = self::$confsDef[$property];
 
-    // Obtener contenido de los archivos
-    $init = self::getAttribute("init");
+    // Recorrer cada uno de las carpetas en el path
+    foreach (self::$paths as $path) {
 
-    if(!isset($init[$type])) return;
+      // Si ya fue cargada la configuracion pasar a la siguiente
+      if(isset(self::$confs[$path][$property])) continue;
 
-    // Incluir archivos
-    foreach($init[$type] as $file){
-      ($realFile = self::findFile("$file.php")) or die("Am: Not fount Exts '{$file}'");
-      require_once $realFile;
+      // Si no existe la configuracion en el path actual crear un array vacío
+      if(!isset(self::$confs[$path])) self::$confs[$path] = array();
+
+      if(file_exists($filename = "{$path}/conf/{$property}.conf.php")){
+        // Si el archivo cargar la configuracion en la posicion path/property
+        self::$confs[$path][$property] = require($filename);
+      }else{
+        // Si el archivo no existe guardar true en la posicion indicando que ya intento cargar
+        self::$confs[$path][$property] = $def;
+      }
+
     }
 
   }
 
+  // Agrega una carpeta al final de la lista de paths
+  public static function addPath($path){
+    self::$paths[] = $path;
+  }
+
   // Agregar una ruta a la lista de rutas
   public static function setRoute($route, $to){
-    // Obtener las rutas
-    $routes = self::getAttribute("routes");
+    
     // Agregar nueva ruta
-    $routes["routes"][$route] = $to;
-    // Guardar ruta en el atributo static
-    self::$routes = $routes;
+    self::$userConf["routes"]["routes"][$route] = $to;
+    
   }
+
+  // Devuelve la ruta del archivo donde sea encontrado por primera vez 
+  public static function findFile($file){
+    return self::findFileIn($file, self::$paths);
+  }
+
+  // Obtener un atributo de la confiuguracion
+  protected static function getAttribute($property){
+    self::loadConf($property); // Cargar configuraciones de require
+
+    // Obtener funcion callback para mezclar la propiedad solicitada
+    $mergeCallback = self::$mergeCallbacks[$property];
+    $def           = self::$confsDef[$property];
+
+    // Para ir encolando el lista de valores segun su prevalencia
+    $ret = array();
+
+    foreach (self::$confs as $value) {
+
+      // Obtener valor dentro del conf (del archivo conf.conf.php)
+      $confValue = isset($value["conf"][$property])? $value["conf"][$property] : $def;
+
+      // Obtener el valor del archivo ($property.conf.phh)
+      $nameValue = isset($value[$property])? $value[$property] : $def;
+
+      // Agregarlos al array
+      $ret[] = $confValue;
+      $ret[] = $nameValue;
+
+    }
+
+    // Si existen los valores de usuario de la propiedad tambien se agregan
+    if(isset(self::$userConf[$property])){
+      $ret[] = self::$userConf[$property];
+    }
+
+    // Mezclar valores
+    return self::mergeValues($mergeCallback, $ret, $def);
+
+  }
+
+  // Incluir extensiones
+  protected static function requireExts(){
+
+    // Archivos requeridos
+    $requires = self::getAttribute("requires");
+
+    // Incluir archivo
+    foreach($requires as $file){
+      self::requireFile($file);
+    }
+
+  }
+
+  // Devuelve las rutas
+  public static function getRoutes(){
+    return self::getAttribute("routes");
+  }
+
+  // Devuelve los assets
+  public static function getAssets(){
+    return self::getAttribute("assets");
+  }
+
+  // Devuelve la configuracion de la zona horario
+  public static function getTimezone(){
+    return self::getAttribute("timezone");
+  }
+
+  // Devuelve las configuraciones para los controladores
+  public static function getControl(){
+    return self::getAttribute("control");
+  }
+
+  // Devuelve los parametros SMTP
+  public static function getSmtpConf(){
+    return self::getAttribute("smtp");
+  }
+
+  // Devuelve las configuraciones para los mails
+  public static function getMails(){
+    return self::getAttribute("mails");
+  }
+
+  // Responder con descarga de archivos
+  final public static function downloadFile($file, array $env){
+    self::respondeWithFile($file, null, null, true);
+  }
+
+  // Responder con archivo
+  final public static function respondeFile($file, array $env){
+    self::respondeWithFile($file);
+  }
+  
 
   // Devuelve la url base del sitio
   public static function urlBase(){
@@ -160,58 +290,86 @@ final class Am{
       
       // Obtener peticion
       $request = substr_replace($_SERVER["REDIRECT_URL"], "", 0, strlen(self::$urlBase));
-
+      
     }
-    
+
+    // Obtener las configuraciones
+    self::loadConf("conf");
+
     // Incluir extensiones para peticiones
-    self::includeExts("require");
+    self::requireExts();
 
     // Llamado de accion para evaluar ruta
     self::call("route.eval", array(
       $request,
-      self::getAttribute("routes")
+      self::getRoutes()
     ));
 
   }
 
   // Obtener la contenido de un archivo de configuración
-  public static function getConfig($file, $type = "conf"){
-    return require self::findFile("$file.$type.php");
+  public static function getConfig($file){
+    return require self::findFile("$file.conf.php");
   }
 
-  // Obtener el valor de una propiedad stática de Am.
-  public static function getAttribute($property, $folder = "./conf"){
+  // funcion para mezclar una lista de valores
+  public static function mergeValues($callback, array $values, $def){
 
-    // Si la propiedad es igual a null
-    if(self::$$property === null)
+    // Primer valor es el valor por defecto
+    $ret = $def;
 
-      // Entonces se carga desde la configuración
-      self::$$property = self::getConfig("$folder/$property");
+    // Si no existe el callback se devolvera el ultimo valor
+    if($callback === null){
+      while(!empty($values) && $def === ($ret = array_pop($values)));
+      return $ret;
+    }
 
-    // Devolver propiedad
-    return self::$$property;
+    // Mezclar todos los valores
+    foreach ($values as $value) {
+      // Mezclar con la configuracion en la propiedad conf/name
+      $ret = call_user_func_array($callback, array($ret, $value));
+
+    }
+
+    return $ret;
+
+  }
+
+  // Busca un archivo en los paths indicados
+  public static function findFileIn($file, array $paths){
     
+    // Si existe el archivo retornar el mismo
+    if(file_exists($file)) return $file;
+
+    // Buscar un archivo dentro de las carpetas
+    foreach($paths as $path){
+      if(file_exists($realPath = "{$path}{$file}")) return $realPath;
+    }
+
+    return false;
+
   }
 
-  // Responder con descarga de archivos
-  final public static function downloadFile($file, array $env){
-    self::respondeWithFile($file, null, null, true);
+  // Funcion para incluir un archivo
+  public static function requireFile($file){
+    ($realFile = self::findFile("$file.php")) or die("Am: Not fount Exts '{$file}'");
+    require_once $realFile;
   }
 
-  // Responder con archivo
-  final public static function respondeFile($file, array $env){
-    self::respondeWithFile($file);
-  }
-
-  // Renderizar formulario. $file: parametros del formulario, $tpl: plantilla del formulario
-  final public static function form($file, $tpl){
-
-    // Evaluar ruta
-    return self::call("render.form", array(
-      $file,
-      $tpl
-    ));
-
+  // Obtienen tipo mime de un determinado archivo.
+  public final static function mimeType($filename, $mimePath = null) {
+    $mimePath = isset($mimePath)? $mimePath : AM_FOLDER . "resources";
+    $fileext = substr(strrchr($filename, '.'), 1);
+    if (empty($fileext)) return (false);
+    $regex = "/^([\w\+\-\.\/]+)\s+(\w+\s)*($fileext\s)/i";
+    $lines = file("$mimePath/mime.types");
+    foreach($lines as $line) {
+      if (substr($line, 0, 1) == '#') continue; // skip comments
+      $line = rtrim($line) . " ";
+      if (!preg_match($regex, $line, $matches)) continue; // no match to the extension
+      return ($matches[1]);
+    }
+    return (false); // no match at all
   }
 
   // Responer con un archivo
@@ -236,37 +394,7 @@ final class Am{
     readfile($file);
 
   }
-
-  // Obtienen tipo mime de un determinado archivo.
-  public final static function mimeType($filename, $mimePath = null) {
-    $mimePath = isset($mimePath)? $mimePath : AM_FOLDER . "resources";
-    $fileext = substr(strrchr($filename, '.'), 1);
-    if (empty($fileext)) return (false);
-    $regex = "/^([\w\+\-\.\/]+)\s+(\w+\s)*($fileext\s)/i";
-    $lines = file("$mimePath/mime.types");
-    foreach($lines as $line) {
-      if (substr($line, 0, 1) == '#') continue; // skip comments
-      $line = rtrim($line) . " ";
-      if (!preg_match($regex, $line, $matches)) continue; // no match to the extension
-      return ($matches[1]);
-    }
-    return (false); // no match at all
-  }
-
-  // Busca un archivo en los paths indicados
-  public static function findFileIn($file, array $paths){
-    
-    // Si existe el archivo retornar el mismo
-    if(file_exists($file)) return $file;
-
-    // Buscar un archivo dentro de las carpetas
-    foreach($paths as $path){
-      if(file_exists($realPath = "{$path}{$file}")) return $realPath;
-    }
-    return false;
-
-  }
-
+  
 }
 
 // Callbacks por defecto
@@ -274,3 +402,4 @@ Am::setCallback("response.file",   "Am::respondeFile");
 Am::setCallback("response.download",   "Am::downloadFile");
 
 Am::addPath(AM_FOLDER);
+Am::addPath(getcwd()."/");
