@@ -41,7 +41,7 @@ class AmControl extends AmObject{
   public static function response($control, $action, array $params, array $env){
 
     // Obtener configuraciones del controlador
-    $confs = Am::getControl();
+    $confs = Am::getAttribute("control");
 
     // Si no existe configuracion para el controlador
     $conf = isset($confs[$control])? $confs[$control] : array();
@@ -56,7 +56,7 @@ class AmControl extends AmObject{
     ), $conf);
     
     // Obtener la ruta del controlador
-    $controlFile = "{$conf['path']}{$control}.control.php";
+    $controlFile = "{$conf["path"]}{$control}.control.php";
     
     // Incluir controlador si existe el archivo
     if(file_exists($controlFile)) require_once $controlFile;

@@ -21,6 +21,41 @@ class AmTable extends AmObject{
     $source = null,           // Fuente de datos
     $modelName = null;        // Nombre del model
 
+  // Constructor para la clase
+  public function __construct($params = null){
+
+    // Obtener los parametros parseados
+    $params = AmObject::parse($params);
+    
+    // Obtener la instancia del source
+    $source = is_string($params['source']) ? AmORM::getSource($params['source']) : $params['source'];
+    
+    if(get_class($this) != __CLASS__){
+      // $tableClassName = _tcc($params['tableName'], true);
+      // $params = readConf("{$source->folderConfFilesPath()}/{$source->prefix()}$tableClassName");
+      $params['source'] = $source;
+    }
+    
+    // Llamar al constructor heredado
+    parent::__construct($params);
+    
+    // Asignar el modelo
+    if(!isset($this->modelName))
+        $this->modelName = $this->getTableName();
+
+    // Describir tabla    
+    $this->describeTableInner(
+      isset($params["referencesTo"])? $params["referencesTo"] : array(),
+      isset($params["referencesBy"])? $params["referencesBy"] : array(),
+      isset($params["pks"])? $params["pks"] : array(),
+      isset($params["fields"])? $params["fields"] : array()
+    );
+
+    // Inicializar
+    $this->initialize();
+
+  }
+
   // Método para inicializar clases implementadas
   public function initialize(){}
 
@@ -28,7 +63,7 @@ class AmTable extends AmObject{
   public function getTableName(){ return $this->tableName; }
   public function getModelName(){ return $this->modelName; }
   public function getSource(){ return $this->source; }
-  public function gerReferencesTo(){ return $this->referencesTo; }
+  public function getReferencesTo(){ return $this->referencesTo; }
   public function getReferencesBy(){ return $this->referencesBy; }
   public function getPks(){ return $this->pks; }
   public function getEngine(){ return $this->engine;}
@@ -36,6 +71,125 @@ class AmTable extends AmObject{
   public function getCollate(){ return $this->collate;}
   public function getFields(){ return $this->fields; }
   public function getField($name){ return $this->fields->$name; }
+
+  // Nombre de las clases relacionadas a una tabla
+  public function getClassNameModel(){      return $this->getSource()->getClassNameModel($this->getModelName()); }
+  public function getClassNameModelBase(){  return $this->getSource()->getClassNameModelBase($this->getModelName()); }
+  public function getClassNameTable(){      return $this->getSource()->getClassNameTable($this->getModelName()); }
+  public function getClassNameTableBase(){  return $this->getSource()->getClassNameTableBase($this->getModelName()); }
+
+  // Metodos GET para obtener las carpetas pertinentes
+  public function getFolder(){              return $this->getSource()->getFolderModel($this->getModelName()); }
+  public function getFolderBase(){          return $this->getSource()->getFolderModelBase($this->getModelName()); }
+  public function getPathConf(){            return $this->getSource()->getPathConf($this->getModelName()); }
+  public function getPathClassTableBase(){  return $this->getSource()->getPathClassTableBase($this->getModelName()); }
+  public function getPathClassTable(){      return $this->getSource()->getPathClassTable($this->getModelName()); }
+  public function getPathClassModelBase(){  return $this->getSource()->getPathClassModelBase($this->getModelName()); }
+  public function getPathClassModel(){      return $this->getSource()->getPathClassModel($this->getModelName()); }
+
+  public function mkdirModel(){
+    return Am::mkdir($this->getFolderBase());
+  }
+
+  // Crea el archivo de configuracion para una tabla
+  public function createFileConf($rw = false){
+    // Obtener de el nombre del archivo destino
+    $path = $this->getPathConf() . ".php";
+    if(!file_exists($path) || $rw){
+      // writeConf(".php", $this->toArray());
+      return true;
+    }
+    return false;
+  }
+
+  // Crea el archivo que contiene clase para la tabla
+  public function createFileTableBase(){
+
+    // Incluir la clase para generar
+    AmORM::requireFile('AmGenerator.class');
+    
+    // Obtener el nombre del archivo destino
+    $path = $this->getPathClassTableBase() . ".php";
+
+    // Generar el archivo
+    file_put_contents($path, "<?php\n\n" . AmGenerator::classTableBase($this));
+    return true;
+
+  }
+
+  // Crea el archivo que contiene clase para la tabla
+  public function createFileTable(){
+    
+    // Obtener el nombre del archivo destino
+    $path = $this->getPathClassTable() . ".php";
+    
+    // Verificar que no exista
+    if(!file_exists($path)){
+      // Crear la Carpeta
+      file_put_contents($path, "<?php\n\nclass {$this->getClassNameTable()} extends {$this->getClassNameTableBase()}{\n\n}\n");
+      return true;
+    }
+
+    return false;
+
+  }
+    
+  // Crea el archivo que contiene clase para la tabla
+  public function createFileModelBase(){
+      
+    // Incluir la clase para generar
+    AmORM::requireFile('AmGenerator.class');
+    
+    // Obtener el nombre del archivo destino
+    $path = $this->getPathClassModelBase() . ".php";
+
+    // Generar el archivo
+    file_put_contents($path, "<?php\n\n" . AmGenerator::classModelBase($this));
+    return true;
+      
+  }
+
+  //Crea el archivo que contiene clase para la tabla
+  public function createFileModel(){
+
+    // Obtener el nombre del archivo destino
+    $path = $this->getPathClassModel() . ".php";
+    
+    // Verificar que no exista
+    if(!file_exists($path)){
+      // Crear la Carpeta
+      file_put_contents($path, "<?php\n\nclass {$this->getClassNameModel()} extends {$this->getClassNameModelBase()}{\n\n}\n");
+      return true;
+    }
+    
+    return false;
+
+  }
+
+  // Crear los archivos para las clases del modelo
+  public function createClassModels(){
+    return array(
+      "folders"   => $this->mkdirModel(),
+      "conf"      => $this->createFileConf(),
+      "table"     => $this->createFileTable(),
+      "tableBase" => $this->createFileTableBase(),
+      "model"     => $this->createFileModel(),
+      "modelBase" => $this->createFileModelBase()
+    );
+  }
+
+  // Devuelve todos lo validators de la tabla o los de un campo
+  public function getValidators($name = null){
+    if(isset($name))
+      return isset($this->validators[$name])? $this->validators[$name] : null;
+    return $this->validators;
+  }
+
+  // Devuelve un validator en especifico
+  public function getValidator($name, $validatorName){
+    return isset($this->validators[$name][$validatorName])?
+      $this->validators[$name][$validatorName] : null;
+  }
 
   // Indica su un campo forma o no parte del primary key de la tabla
   public function isPk($fieldName){
@@ -81,6 +235,44 @@ class AmTable extends AmObject{
     if($f->getPrimaryKey())
       $this->addPk($name);
       
+  }
+
+  // Agrega un validator a la tabla
+  public function setValidator($name, $validatorName, $validator = null, $options = array()){
+
+    // Si el segundo parámetro es una instancia de un validator
+    // se agrega
+    if($validatorName instanceof BaseValidator)
+      return $this->validators($name, null, $validatorName);
+
+    if(!$validator instanceof BaseValidator){
+        
+        $validator = AmORM::validator($validator);
+        $validator = new $validator($options);
+        
+    }
+    
+    // Asignar el nombre al validator
+    $validator->setFieldName($name);
+    
+    // Agregar el validator a la tabla
+    if(isset($validatorName))
+      return $this->validators[$name][$validatorName] = $validator;
+
+    // Agregar al final
+    return $this->validators[$name][] = $validator;
+
+  }
+  
+  // Metodo para eliminar validator
+  public function dropValidator($name, $validatorName = null){
+    if(isset($this->validators[$name][$validatorName])){
+      // Si esta definido el validator en la posicion especifica se eliminan
+      unset($this->validators[$name][$validatorName]);
+    }else if(isset($this->validators[$name])){
+      // Sino esta definido los validators para un atributo se eliminan
+      unset($this->validators[$name]);
+    }
   }
 
   // Obtener un listado de los campos primarios de una tabla
@@ -151,7 +343,7 @@ class AmTable extends AmObject{
     foreach($fields as $column){
       
       // Determinar si es o no parte del primary key
-      $column['primaryKey'] = in_array(isset($column["name"])? $column["name"] : null, $pks);
+      $column["primaryKey"] = in_array(isset($column["name"])? $column["name"] : null, $pks);
       
       // Obtener el tipo
       $type = $this->getSource()->getTypeOf(isset($column["type"])? $column["type"] : null);
@@ -159,7 +351,7 @@ class AmTable extends AmObject{
       // Sino es un tipo reconocido
       // volver al anterior
       if(false !== $type)
-        $column['type'] = $type;
+        $column["type"] = $type;
       
       // Agregar instancia del campo
       $this->addField(new AmField($column));
@@ -191,26 +383,26 @@ class AmTable extends AmObject{
     
     // Unir todas las partes
     return array(
-      'tableName' => $this->tableName(),
-      'modelName' => $this->modelName(),
-      'engine' => $this->engine(),
-      'charset' => $this->charset(),
-      'collate' => $this->collate(),
-      'fields' => $fields,
-      'pks' => $this->getPks(),
-      'referencesTo' => $referencesTo,
-      'referencesBy' => $referencesBy,
+      "tableName" => $this->tableName(),
+      "modelName" => $this->modelName(),
+      "engine" => $this->engine(),
+      "charset" => $this->charset(),
+      "collate" => $this->collate(),
+      "fields" => $fields,
+      "pks" => $this->getPks(),
+      "referencesTo" => $referencesTo,
+      "referencesBy" => $referencesBy,
     );
       
   }
 
   // Devuelve un Query que devuelve todos los registros de la Tabla
-  public function qAll($as = 'q', $withFields = false){
+  public function qAll($as = "q", $withFields = false){
       
     // por si se obvio el primer parametro
     if(is_bool($as)){
       $withFields = $as;
-      $as = 'q';
+      $as = "q";
     }
 
     // Crear consultar
@@ -289,11 +481,6 @@ class AmTable extends AmObject{
     
     return $r === false ? null : $r;
     
-  }
-
-  // Devuelve la carpeta de la tabla actual
-  public function getFolder(){
-    return $this->getSource()->getTableFolder($this);
   }
 
 }

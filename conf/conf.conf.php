@@ -13,5 +13,6 @@ return array(
     "exts/AmAsset.class",
     "exts/AmCommand.class",
     "exts/AmControl.class",
+    "exts/orm/AmORM.class",
   ),
 );

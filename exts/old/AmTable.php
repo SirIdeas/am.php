@@ -22,35 +22,35 @@ class AmTable extends AmHash{
     /***************************************************************************
      * El constructor
      */
-    public function __construct($params = null){
+    // public function __construct($params = null){
         
-        $params = AmHash::parse($params);
+    //     $params = AmHash::parse($params);
         
-        $source = is_string($params['source']) ? Am::source($params['source']) : $params['source'];
+    //     $source = is_string($params['source']) ? Am::source($params['source']) : $params['source'];
         
-        if(get_class($this) != __CLASS__){
+    //     if(get_class($this) != __CLASS__){
                     
-            $tableClassName = _tcc($params['tableName'], true);
-            $params = readConf("{$source->folderConfFilesPath()}/{$source->prefix()}$tableClassName");
-            $params['source'] = $source;
+    //         $tableClassName = _tcc($params['tableName'], true);
+    //         $params = readConf("{$source->folderConfFilesPath()}/{$source->prefix()}$tableClassName");
+    //         $params['source'] = $source;
         
-        }
+    //     }
         
-        parent::__construct($params);
+    //     parent::__construct($params);
         
-        if(!isset($this->modelName)){
-            $this->modelName = $this->tableName();
-        }
+    //     if(!isset($this->modelName)){
+    //         $this->modelName = $this->tableName();
+    //     }
         
-        $this->describeTableInner(
-                itemOr($params, 'referencesTo', array()),
-                itemOr($params, 'referencesBy', array()),
-                itemOr($params, 'pks', array()),
-                itemOr($params, 'fields', array()));
+    //     $this->describeTableInner(
+    //             itemOr($params, 'referencesTo', array()),
+    //             itemOr($params, 'referencesBy', array()),
+    //             itemOr($params, 'pks', array()),
+    //             itemOr($params, 'fields', array()));
         
-        $this->initialize();
+    //     $this->initialize();
         
-    }
+    // }
     
     public function fieldToString(){
         return 'concat({model}.' . implode(', "/", {model}.', $this->pks()) . ')';
@@ -376,52 +376,52 @@ class AmTable extends AmHash{
         
     //     $this->fields($fieldName)->primaryKey(true);
         
+    // // }
+    
+    // public function dropValidator($name, $validatorName = null){
+    //     if(isset($this->validators[$name][$validatorName])){
+    //         unset($this->validators[$name][$validatorName]);
+    //     }else if(isset($this->validators[$name])){
+    //         unset($this->validators[$name]);
+    //     }
     // }
     
-    public function dropValidator($name, $validatorName = null){
-        if(isset($this->validators[$name][$validatorName])){
-            unset($this->validators[$name][$validatorName]);
-        }else if(isset($this->validators[$name])){
-            unset($this->validators[$name]);
-        }
-    }
-    
-    public function validators($name = null, $validatorName = null, $validator = null, $options = array()){
+    // public function validators($name = null, $validatorName = null, $validator = null, $options = array()){
         
-        if($validatorName instanceof BaseValidator){
-            return $this->validators($name, null, $validatorName);
-        }
+    //     if($validatorName instanceof BaseValidator){
+    //         return $this->validators($name, null, $validatorName);
+    //     }
         
-        if (isset($name)){
+    //     if (isset($name)){
             
-            if(isset($validator)){
+    //         if(isset($validator)){
                 
-                if(!$validator instanceof BaseValidator){
+    //             if(!$validator instanceof BaseValidator){
                     
-                    Am::validator($validator);
-                    $validator = _tcc($validator, true) . "Validator";
-                    $validator = new $validator($options);
+    //                 Am::validator($validator);
+    //                 $validator = _tcc($validator, true) . "Validator";
+    //                 $validator = new $validator($options);
                     
-                }
+    //             }
                 
-                $validator->fieldName($name);
+    //             $validator->fieldName($name);
                 
-                if(isset($validatorName)){
-                    return $this->validators[$name][$validatorName] = $validator;
-                }
+    //             if(isset($validatorName)){
+    //                 return $this->validators[$name][$validatorName] = $validator;
+    //             }
                 
-                return $this->validators[$name][] = $validator;
-            }
+    //             return $this->validators[$name][] = $validator;
+    //         }
             
-            if(isset($validatorName)){
-                return itemOr(itemOr($this->validators, $name, array()), $validatorName, null);
-            }
+    //         if(isset($validatorName)){
+    //             return itemOr(itemOr($this->validators, $name, array()), $validatorName, null);
+    //         }
             
-            return itemOr($this->validators, $name, array());
-        }
+    //         return itemOr($this->validators, $name, array());
+    //     }
         
-        return $this->validators;
-    }
+    //     return $this->validators;
+    // }
     
     public function fieldsName(){
         
@@ -528,85 +528,85 @@ class AmTable extends AmHash{
     /***************************************************************************
      * Crea el archivo que contiene la estructura de la tabla
      */
-    public function createFileConf($rw = false){
+    // public function createFileConf($rw = false){
         
-        if(!$this->existsFileConf() || $rw){
+    //     if(!$this->existsFileConf() || $rw){
             
-            writeConf($this->confFilePath(), $this->toArray());
+    //         writeConf($this->confFilePath(), $this->toArray());
             
-            return true;
-        }
+    //         return true;
+    //     }
         
-        return false;
+    //     return false;
 
-    }
+    // }
 
-    /***************************************************************************
-     * Crea el archivo que contiene clase para la tabla
-     */
-    public function createFileTable(){
+    // /***************************************************************************
+    //  * Crea el archivo que contiene clase para la tabla
+    //  */
+    // public function createFileTable(){
         
-        // Verificar que no exista
-        if(!$this->existsFileTable()){
+    //     // Verificar que no exista
+    //     if(!$this->existsFileTable()){
 
-            // Crear la Carpeta
-            file_put_contents($this->classTablePath(), "<?php\n\nclass {$this->classTableName()} extends {$this->classTableBaseName()}{\n\n}\n");
-            return true;
+    //         // Crear la Carpeta
+    //         file_put_contents($this->classTablePath(), "<?php\n\nclass {$this->classTableName()} extends {$this->classTableBaseName()}{\n\n}\n");
+    //         return true;
 
-        }
-        return false;
+    //     }
+    //     return false;
 
-    }
+    // }
 
-    /***************************************************************************
-     * Crea el archivo que contiene clase para la tabla
-     */
-    public function createFileTableBase(){
+    // /***************************************************************************
+    //  * Crea el archivo que contiene clase para la tabla
+    //  */
+    // public function createFileTableBase(){
         
-        Am::core('AmGenerator');
+    //     Am::core('AmGenerator');
         
-        file_put_contents($this->classTableBasePath(), "<?php\n\n" . AmGenerator::classTableBase($this));
-        return true;
+    //     file_put_contents($this->classTableBasePath(), "<?php\n\n" . AmGenerator::classTableBase($this));
+    //     return true;
 
-    }
+    // }
 
-    /***************************************************************************
-     * Crea el archivo que contiene clase para la tabla
-     */
-    public function createFileModel(){
+    // /***************************************************************************
+    //  * Crea el archivo que contiene clase para la tabla
+    //  */
+    // public function createFileModel(){
         
-        // Verificar que no exista
-        if(!$this->existsFileModel()){
+    //     // Verificar que no exista
+    //     if(!$this->existsFileModel()){
 
-            // Crear la Carpeta
-            file_put_contents($this->classModelPath(), "<?php\n\nclass {$this->classModelName()} extends {$this->classModelBaseName()}{\n\n}\n");
-            return true;
+    //         // Crear la Carpeta
+    //         file_put_contents($this->classModelPath(), "<?php\n\nclass {$this->classModelName()} extends {$this->classModelBaseName()}{\n\n}\n");
+    //         return true;
 
-        }
-        return false;
+    //     }
+    //     return false;
 
-    }
+    // }
     
-    /***************************************************************************
-     * Crea el archivo que contiene clase para la tabla
-     */
-    public function createFileModelBase(){
+    // /***************************************************************************
+    //  * Crea el archivo que contiene clase para la tabla
+    //  */
+    // public function createFileModelBase(){
         
-        Am::core('AmGenerator');
+    //     Am::core('AmGenerator');
         
-        file_put_contents($this->classModelBasePath(), "<?php\n\n" . AmGenerator::classModelBase($this));
-        return true;
+    //     file_put_contents($this->classModelBasePath(), "<?php\n\n" . AmGenerator::classModelBase($this));
+    //     return true;
         
-    }
+    // }
     
-    public function createFiles(){
-        return array(
-            'fileConf' => $this->createFileConf(),
-            'fileTable' => $this->createFileTable(),
-            'fileTableBase' => $this->createFileTableBase(),
-            'fileModel' => $this->createFileModel(),
-            'fileModelBase' => $this->createFileModelBase()
-        );
-    }
+    // public function createFiles(){
+    //     return array(
+    //         'fileConf' => $this->createFileConf(),
+    //         'fileTable' => $this->createFileTable(),
+    //         'fileTableBase' => $this->createFileTableBase(),
+    //         'fileModel' => $this->createFileModel(),
+    //         'fileModelBase' => $this->createFileModelBase()
+    //     );
+    // }
 
 }

@@ -43,19 +43,16 @@ abstract class AmSource extends AmObject{
 
   // Obtener la instancia de una tabla
   public function getTable($offset){
-    return isset($this->tables[$offset])? $this->tables[$offset] : null;
+    if(isset($this->tables[$offset]))
+      return $this->tables[$offset];
+    return $this->tables[$offset] = AmORM::getTable($offset, $this->getName());
   }
 
   // Nombre de las clases relacionadas a una tabla
-  public function getClassNameModel($model){      return $this->getPrefix() . Am::camelCase($model, true); }
-  public function getClassNameModelBase($model){  return $this->getClassNameModel($model)."Base"; }
-  public function getClassNameTable($model){      return $this->getClassNameModel($model)."Table"; }  
   public function getClassNameTableBase($model){  return $this->getClassNameTable($model)."Base"; }
-
-  public function getClassPathModel($model){      return $this->getFolderModel($model) . "/" . $this->getClassNameModel($model); }
-  public function getClassPathModelBase($model){  return $this->getFolderModel($model) . "/" . $this->getClassNameModelBase($model); }
-  public function getClassPathTable($model){      return $this->getFolderModel($model) . "/" . $this->getClassNameTable($model); }
-  public function getClassPathTableBase($model){  return $this->getFolderModel($model) . "/" . $this->getClassNameTableBase($model); }
+  public function getClassNameTable($model){      return $this->getClassNameModel($model)."Table"; }  
+  public function getClassNameModelBase($model){  return $this->getClassNameModel($model)."Base"; }
+  public function getClassNameModel($model){      return $this->getPrefix() . Am::camelCase($model, true); }
 
   // Setear la instancia de una tabla
   public function setTable($offset, AmTable $t){
@@ -176,7 +173,7 @@ abstract class AmSource extends AmObject{
     foreach($fks as $fk){
       
       // Dividir el nombre del FK
-      $name = explode('.', $fk->name);
+      $name = explode(".", $fk->name);
 
       // Obtener el ultimo elemento
       $name = array_pop($name);
@@ -191,7 +188,7 @@ abstract class AmSource extends AmObject{
       }
       
       // Agregar la columna a la lista de columnas
-      $ret[$name]['columns'][$fk->columnName] = $fk->toColumn;
+      $ret[$name]["columns"][$fk->columnName] = $fk->toColumn;
 
     }
     
@@ -214,7 +211,7 @@ abstract class AmSource extends AmObject{
     foreach($fks as $fk){
       
       // Dividir el nombre del FK
-      $name = explode('.', $fk->name);
+      $name = explode(".", $fk->name);
 
       // Obtener el ultimo elemento
       $name = array_shift($name);
@@ -229,7 +226,7 @@ abstract class AmSource extends AmObject{
       }
       
       // Agregar la columna a la lista de columnas
-      $ret[$name]['columns'][$fk->toColumn] = $fk->columnName;
+      $ret[$name]["columns"][$fk->toColumn] = $fk->columnName;
 
     }
     
@@ -284,7 +281,7 @@ abstract class AmSource extends AmObject{
 
   // Obtener la carpeta para un tabla
   public function getFolderModel($model){
-    return $this->getFolder() . "/" . $model;
+    return $this->getFolder() . "/" . Am::underscor($model);
   }
 
   // Obtener la carpeta de archivos bases para un tabla
@@ -294,27 +291,27 @@ abstract class AmSource extends AmObject{
 
   // Devuelve la direccion del archivo de configuracion
   public function getPathConf($model){
-    return $this->getFolderModelBase($model) . "/". Am::underscor($model) .".conf.php";
-  }
-
-  // Devuelve la dirección de la clase del model Base
-  public function getPathClassModelBase($model){
-    return $this->getFolderModelBase($model) . "/". $this->getClassNameModelBase($model) .".class.php";
-  }
-
-  // Devuelve la dirección de la clase del model
-  public function getPathClassModel($model){
-    return $this->getFolderModel($model) . "/". $this->getClassNameModel($model) .".class.php";
+    return $this->getFolderModelBase($model) . "/". Am::underscor($model) .".conf";
   }
 
   // Devuelve la dirección de la clase de la tabla Base
   public function getPathClassTableBase($model){
-    return $this->getFolderModelBase($model) . "/". $this->getClassNameTableBase($model) .".class.php";
+    return $this->getFolderModelBase($model) . "/". $this->getClassNameTableBase($model) .".class";
   }
 
   // Devuelve la dirección de la clase de la tabla
   public function getPathClassTable($model){
-    return $this->getFolderModel($model) . "/". $this->getClassNameTable($model) .".class.php";
+    return $this->getFolderModel($model) . "/". $this->getClassNameTable($model) .".class";
+  }
+
+  // Devuelve la dirección de la clase del model Base
+  public function getPathClassModelBase($model){
+    return $this->getFolderModelBase($model) . "/". $this->getClassNameModelBase($model) .".class";
+  }
+
+  // Devuelve la dirección de la clase del model
+  public function getPathClassModel($model){
+    return $this->getFolderModel($model) . "/". $this->getClassNameModel($model) .".class";
   }
 
   // Crear carpetas de todas las tablas de la BD
@@ -325,8 +322,30 @@ abstract class AmSource extends AmObject{
     $tables = $this->newQuery($this->sqlGetTables())
                    ->getCol("tableName");
 
-    foreach ($tables as $t) {
-      $ret[$t] = Am::mkdir($this->getFolderModelBase($t));
+    foreach ($tables as $t){
+      // Obtener instancia de la tabla
+      $table = $this->describeTable($t);
+      // Crear modelo
+      $ret[$t] = $table->mkdirModel();
+    }
+
+    return $ret;
+
+  }
+
+  // Metodo para crear todos los modelos de la BD
+  public function createClassModels(){
+
+    $ret = array(); // Para retorno
+
+    $tables = $this->newQuery($this->sqlGetTables())
+                   ->getCol("tableName");
+
+    foreach ($tables as $t){
+      // Obtener instancia de la tabla
+      $table = $this->describeTable($t);
+      // Crear modelo
+      $ret[$t] = $table->createClassModels();
     }
 
     return $ret;

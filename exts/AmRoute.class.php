@@ -91,7 +91,7 @@ class AmRoute{
   private static function assets($file, $env){
 
     // Obtener los recursos configurados
-    $assets = Am::getAssets();
+    $assets = Am::getAttribute("assets");
 
     // Si no exite un recurso con el nombre del solicitado retornar falso
     if(!isset($assets[$file])) return false;

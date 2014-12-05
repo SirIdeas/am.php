@@ -70,7 +70,7 @@ class AmQuery extends AmObject{
   }
 
   // Devuelve una copia aislada de la consulta actual 
-  public function getAlone($as = 'q'){
+  public function getAlone($as = "q"){
     return $this->getSource()->newQuery($this, $as);
   }
 
@@ -349,14 +349,14 @@ class AmQuery extends AmObject{
 
   // Obtener una consulta para contar los registros de la consulta actual
   public function countQuery(){
-    return $this->getCopy()->setSelects(array('count' => 'count(*)'));
+    return $this->getCopy()->setSelects(array("count" => "count(*)"));
   }
 
   // Obtener la cantidad de registros que devolverá la consulta
   public function count(){
 
     // Crear la consulta para contar
-    $ret = $this->countQuery()->getRow('hash');
+    $ret = $this->countQuery()->getRow("hash");
 
     // Si se generó un error devolver cero, de lo contrari
     // devolver el valor obtenido

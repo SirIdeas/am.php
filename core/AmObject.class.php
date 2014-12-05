@@ -27,8 +27,8 @@ class AmObject implements Iterator, Countable, ArrayAccess{ //Reflector,
   }
   
   /**
-   * Funciones Get y Set. Si 'value!='null' de retorna la propiedad 'key',
-   * sino se asignara 'value' a la propiedad 'key'
+   * Funciones Get y Set. Si "value!=null" de retorna la propiedad "key",
+   * sino se asignara "value" a la propiedad "key"
    **/
   protected function attr($key, $value = null){
 

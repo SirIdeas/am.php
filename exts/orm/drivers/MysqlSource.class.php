@@ -4,7 +4,7 @@
  * Fuente de datos para MySQL
  */
 
-class mysqlAmSource extends AmSource{
+class MysqlSource extends AmSource{
   
   // Puerto por defecto para la conexion
   const DEFAULT_PORT = 3306;

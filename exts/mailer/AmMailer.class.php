@@ -144,25 +144,25 @@ class AmMailer extends PHPMailer{
   }
   
   // Metodo para agregar direccion destinataria
-  public function addAddress($address, $name = '') {
+  public function addAddress($address, $name = "") {
     parent::addAddress($address, $name);
     return $this;
   }
   
   // Metodo para agregar direccion de respuesta
-  public function addReplyTo($address, $name = '') {
+  public function addReplyTo($address, $name = "") {
     parent::addReplyTo($address, $name);
     return $this;
   }
   
   // Metodo para agregar direccion con copia
-  public function addCC($address, $name = '') {
+  public function addCC($address, $name = "") {
     parent::addCC($address, $name);
     return $this;
   }
   
   // Metodo para agregar direccion con copia oculta
-  public function addBCC($address, $name = '') {
+  public function addBCC($address, $name = "") {
     parent::addBCC($address, $name);
     return $this;
   }

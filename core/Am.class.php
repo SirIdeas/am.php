@@ -166,7 +166,7 @@ final class Am{
   }
 
   // Obtener un atributo de la confiuguracion
-  protected static function getAttribute($property){
+  public static function getAttribute($property){
     self::loadConf($property); // Cargar configuraciones de require
 
     // Obtener funcion callback para mezclar la propiedad solicitada
@@ -211,46 +211,6 @@ final class Am{
       self::requireFile($file);
     }
 
-  }
-
-  // Devuelve las rutas
-  public static function getRoutes(){
-    return self::getAttribute("routes");
-  }
-
-  // Devuelve los assets
-  public static function getAssets(){
-    return self::getAttribute("assets");
-  }
-
-  // Devuelve la configuracion de la zona horario
-  public static function getTimezone(){
-    return self::getAttribute("timezone");
-  }
-
-  // Devuelve las configuraciones para los controladores
-  public static function getControl(){
-    return self::getAttribute("control");
-  }
-
-  // Devuelve los parametros SMTP
-  public static function getSmtpConf(){
-    return self::getAttribute("smtp");
-  }
-
-  // Devuelve las configuraciones para los mails
-  public static function getMails(){
-    return self::getAttribute("mails");
-  }
-
-  // Devuelve las configuraciones para las fuentes de datos 
-  public static function getSources(){
-    return self::getAttribute("sources");
-  }
-
-  // Devuelve las configuraciones para los validator
-  public static function getValidators(){
-    return self::getAttribute("validators");
   }
 
   // Responder con descarga de archivos
@@ -316,7 +276,7 @@ final class Am{
     // Llamado de accion para evaluar ruta
     self::call("route.eval", array(
       $request,
-      self::getRoutes()
+      self::getAttribute("routes")
     ));
 
   }
@@ -340,7 +300,7 @@ final class Am{
     self::requireFile("exts/mailer/AmMailer.class");
 
     // Obtener configuraciones de mails
-    $mails = self::getMails();
+    $mails = self::getAttribute("mails");
 
     // Combinar opciones recibidas en el constructor con las
     // establecidas en el archivo de configuracion
@@ -354,7 +314,7 @@ final class Am{
     if(!is_array($options["smtp"])){
 
       // Obtener configuraciones STMP
-      $smtpConfs = self::getSmtpConf();
+      $smtpConfs = self::getAttribute("smtp");
 
       // Si se debe tomar la configuracion por defecto
       if($options["smtp"] === true) $options["smtp"] = "default";
@@ -366,44 +326,6 @@ final class Am{
 
     // Crear instancia del mailer
     return new AmMailer("test", $options);
-
-  }
-
-  // Devuelve una instancia de una fuente
-  public static function getSource($name = "default"){
-
-    // Obtener configuraciones para las fuentes
-    $sources = self::getSources();
-
-    // Si no existe una configuración para el nombre de fuente
-    // solicitado se retorna NULL
-    if(!isset($sources[$name]))
-      return null;
-
-    $sources[$name] = array_merge(array(
-        "name"      => $name,
-        "database"  => $name,
-        "driver"    => null,
-      ),
-      $sources[$name]
-    );
-
-    // Obtener el driver de la fuente 
-    $driverClassName = $sources[$name]["driver"]."AmSource";
-    
-    // Incluir Nucleo del ORM
-    self::requireFile("exts/orm/AmField.class");
-    self::requireFile("exts/orm/AmTable.class");
-    self::requireFile("exts/orm/AmRelation.class");
-    self::requireFile("exts/orm/AmQuery.class");
-    self::requireFile("exts/orm/AmSource.class");
-    self::requireFile("exts/orm/drivers/{$driverClassName}.class");
-
-    // Crear instancia de la fuente
-    $source = new $driverClassName($sources[$name]);
-    $source->connect(); // Conectar la fuente
-
-    return $source;
 
   }
 
@@ -430,7 +352,7 @@ final class Am{
     return false;
   }
 
-  // Devuelve la cadena 's' convertida en formato under_score
+  // Devuelve la cadena "s" convertida en formato under_score
   public static function underscor($s) {
 
     // Primer caracter en miniscula
@@ -442,11 +364,11 @@ final class Am{
     $func = create_function('$c', 'return "_" . strtolower($c[1]);');
 
     // Operar
-    return preg_replace_callback('/([A-Z])/', $func, str_replace(' ', '_', $s));
+    return preg_replace_callback("/([A-Z])/", $func, str_replace(" ", "_", $s));
     
   }
 
-  // Devuelve una cadena 's' en formato camelCase. Si 'cfc == true' entonces
+  // Devuelve una cadena "s" en formato camelCase. Si "cfc == true" entonces
   // el primer caracter tambien es convertido en mayusculas
   public static function camelCase($s, $cfc = false){
     
@@ -463,12 +385,12 @@ final class Am{
     $func = create_function('$c', 'return strtoupper($c[1]);');
 
     // Operar
-    return preg_replace_callback('/_([a-z])/', $func, $s);
+    return preg_replace_callback("/_([a-z])/", $func, $s);
 
   }
 
   public static function isNameValid($string){
-    return preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $string) != 0;
+    return preg_match("/^[a-zA-Z_][a-zA-Z0-9_]*$/", $string) != 0;
   }
 
   // funcion para mezclar una lista de valores
@@ -512,12 +434,12 @@ final class Am{
   // Obtienen tipo mime de un determinado archivo.
   public final static function mimeType($filename, $mimePath = null) {
     $mimePath = isset($mimePath)? $mimePath : AM_FOLDER . "resources";
-    $fileext = substr(strrchr($filename, '.'), 1);
+    $fileext = substr(strrchr($filename, "."), 1);
     if (empty($fileext)) return (false);
     $regex = "/^([\w\+\-\.\/]+)\s+(\w+\s)*($fileext\s)/i";
     $lines = file("$mimePath/mime.types");
     foreach($lines as $line) {
-      if (substr($line, 0, 1) == '#') continue; // skip comments
+      if (substr($line, 0, 1) == "#") continue; // skip comments
       $line = rtrim($line) . " ";
       if (!preg_match($regex, $line, $matches)) continue; // no match to the extension
       return ($matches[1]);
