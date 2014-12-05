@@ -51,7 +51,7 @@ class AmQuery extends AmObject{
 
   // Métodos SET para algunas propiedades
   public function setSource($value){ return $this->source = $value; }
-  public function setSelects($value){ return $this->selects = $value; }
+  public function setSelects(array $value){ return $this->selects = $value; }
 
   // Ejecuta la consulta SQL
   public function execute(){
@@ -426,7 +426,7 @@ class AmQuery extends AmObject{
   public function getCol($field){
     
     // Crear la consulta
-    $q = $this->source()->newQuery($this)->selectAs($field);
+    $q = $this->getSource()->newQuery($this)->selectAs($field);
     
     // Array para retorno
     $ret = array();

@@ -31,6 +31,7 @@ final class Am{
       "smtp" => "array_merge",
       "mails" => "array_merge",
       "sources" => "array_merge",
+      "validators" => "array_merge_recursive",
     ),
 
     // Valores por defecto de las propiedades
@@ -45,6 +46,7 @@ final class Am{
       "smtp" => array(),
       "mails" => array(),
       "sources" => array(),
+      "validators" => array(),
     ),
 
     $instances = array(), // Instancias unicas de clases
@@ -246,6 +248,11 @@ final class Am{
     return self::getAttribute("sources");
   }
 
+  // Devuelve las configuraciones para los validator
+  public static function getValidators(){
+    return self::getAttribute("validators");
+  }
+
   // Responder con descarga de archivos
   final public static function downloadFile($file, array $env){
     self::respondeWithFile($file, null, null, true);
@@ -330,10 +337,10 @@ final class Am{
   public static function getMail($name, array $options = array()){
     
     // Incluir clase para Mails
-    Am::requireFile("exts/mailer/AmMailer.class");
+    self::requireFile("exts/mailer/AmMailer.class");
 
     // Obtener configuraciones de mails
-    $mails = Am::getMails();
+    $mails = self::getMails();
 
     // Combinar opciones recibidas en el constructor con las
     // establecidas en el archivo de configuracion
@@ -347,7 +354,7 @@ final class Am{
     if(!is_array($options["smtp"])){
 
       // Obtener configuraciones STMP
-      $smtpConfs = Am::getSmtpConf();
+      $smtpConfs = self::getSmtpConf();
 
       // Si se debe tomar la configuracion por defecto
       if($options["smtp"] === true) $options["smtp"] = "default";
@@ -366,7 +373,7 @@ final class Am{
   public static function getSource($name = "default"){
 
     // Obtener configuraciones para las fuentes
-    $sources = Am::getSources();
+    $sources = self::getSources();
 
     // Si no existe una configuración para el nombre de fuente
     // solicitado se retorna NULL
@@ -385,11 +392,12 @@ final class Am{
     $driverClassName = $sources[$name]["driver"]."AmSource";
     
     // Incluir Nucleo del ORM
-    Am::requireFile("exts/orm/AmQuery.class");
-    Am::requireFile("exts/orm/AmField.class");
-    Am::requireFile("exts/orm/AmTable.class");
-    Am::requireFile("exts/orm/AmSource.class");
-    Am::requireFile("exts/orm/drivers/{$driverClassName}.class");
+    self::requireFile("exts/orm/AmField.class");
+    self::requireFile("exts/orm/AmTable.class");
+    self::requireFile("exts/orm/AmRelation.class");
+    self::requireFile("exts/orm/AmQuery.class");
+    self::requireFile("exts/orm/AmSource.class");
+    self::requireFile("exts/orm/drivers/{$driverClassName}.class");
 
     // Crear instancia de la fuente
     $source = new $driverClassName($sources[$name]);
@@ -403,7 +411,63 @@ final class Am{
   // UTILIDADES
   ///////////////////////////////////////////////////////////////////////////////////
 
-  public final static function isNameValid($string){
+  // Crea un directoro si no existe
+  public final static function mkdir($path, $permisions = 0755, $recursive = true){
+    // Si no existe el directori se cre
+    if(!is_dir($path))
+      return mkdir($path, $permisions, $recursive);
+    return true;
+  }
+
+  // Indica si es una array asociativo o no
+  public static function isAssocArray(array $array){
+    $j = 0;
+    foreach($array as $i => $_){
+      if($j !== $i)
+        return true;
+      $j++;
+    }
+    return false;
+  }
+
+  // Devuelve la cadena 's' convertida en formato under_score
+  public static function underscor($s) {
+
+    // Primer caracter en miniscula
+    if(!empty($s)){
+      $s[0] = strtolower($s[0]);
+    }
+    
+    // Crear funcion para convertir en minuscula
+    $func = create_function('$c', 'return "_" . strtolower($c[1]);');
+
+    // Operar
+    return preg_replace_callback('/([A-Z])/', $func, str_replace(' ', '_', $s));
+    
+  }
+
+  // Devuelve una cadena 's' en formato camelCase. Si 'cfc == true' entonces
+  // el primer caracter tambien es convertido en mayusculas
+  public static function camelCase($s, $cfc = false){
+    
+    // Primer caracter en mayuscula o en miniscula
+    if(!empty($s)){
+      if($cfc){
+        $s[0] = strtoupper($s[0]);
+      }else{
+        $s[0] = strtolower($s[0]);
+      }
+    }
+
+    // Funcion para convertir cada caracter en miniscula
+    $func = create_function('$c', 'return strtoupper($c[1]);');
+
+    // Operar
+    return preg_replace_callback('/_([a-z])/', $func, $s);
+
+  }
+
+  public static function isNameValid($string){
     return preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $string) != 0;
   }
 

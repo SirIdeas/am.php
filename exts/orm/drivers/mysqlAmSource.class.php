@@ -161,12 +161,12 @@ class mysqlAmSource extends AmSource{
   }
 
   // SQL par obtener los primary keys de una tabla
-  public function sqlGetTablesPrimaryKey(AmTable $t){
+  public function sqlGetTablePrimaryKeys(AmTable $t){
     
     $sql = $this
       ->newQuery("information_schema.KEY_COLUMN_USAGE")
       ->selectAs("COLUMN_NAME", "name")
-      ->where("TABLE_SCHEMA='{$this->database()}'", "and", "TABLE_NAME='{$t->tableName()}'", "and", "CONSTRAINT_NAME='PRIMARY'")
+      ->where("TABLE_SCHEMA='{$this->getDatabase()}'", "and", "TABLE_NAME='{$t->getTableName()}'", "and", "CONSTRAINT_NAME='PRIMARY'")
       ->orderBy("ORDINAL_POSITION")
       ->sql();
     
@@ -175,7 +175,7 @@ class mysqlAmSource extends AmSource{
   }
 
   // SQL para obtener el listado de columnas de una tabla
-  public function sqlGetTablesColumns(AmTable $t){
+  public function sqlGetTableColumns(AmTable $t){
     
     $sql = $this
       ->newQuery("information_schema.COLUMNS")
@@ -188,7 +188,7 @@ class mysqlAmSource extends AmSource{
       ->selectAs("COLLATION_NAME", "collate")
       ->selectAs("CHARACTER_SET_NAME", "charset")
       ->selectAs("EXTRA", "extra")
-      ->where("TABLE_SCHEMA='{$this->database()}'", "and", "TABLE_NAME='{$t->tableName()}'")
+      ->where("TABLE_SCHEMA='{$this->getDatabase()}'", "and", "TABLE_NAME='{$t->getTableName()}'")
       ->orderBy("ORDINAL_POSITION")
       ->sql();
     
@@ -197,16 +197,15 @@ class mysqlAmSource extends AmSource{
   }
   
   // SQL para obtener el listade de foreign keys de una tabla
-  public function sqlGetTablesForeignKeys(AmTable $t){
+  public function sqlGetTableForeignKeys(AmTable $t){
       
-    $s = $t->source();
     $sql = $this
       ->newQuery("information_schema.KEY_COLUMN_USAGE")
       ->selectAs("CONSTRAINT_NAME", "name")
       ->selectAs("COLUMN_NAME", "columnName")
       ->selectAs("REFERENCED_TABLE_NAME", "toTable")
       ->selectAs("REFERENCED_COLUMN_NAME", "toColumn")
-      ->where("TABLE_SCHEMA='{$this->database()}'", "and", "TABLE_NAME='{$t->tableName()}'", "and", "CONSTRAINT_NAME<>'PRIMARY'", "and", "REFERENCED_TABLE_SCHEMA=TABLE_SCHEMA")
+      ->where("TABLE_SCHEMA='{$this->getDatabase()}'", "and", "TABLE_NAME='{$t->getTableName()}'", "and", "CONSTRAINT_NAME<>'PRIMARY'", "and", "REFERENCED_TABLE_SCHEMA=TABLE_SCHEMA")
       ->orderBy("CONSTRAINT_NAME", "ORDINAL_POSITION")
       ->sql();
         
@@ -215,16 +214,15 @@ class mysqlAmSource extends AmSource{
   }
   
   // SQL para obtener el lista de de referencias a una tabla
-  public function sqlGetTablesReferences(AmTable $t){
+  public function sqlGetTableReferences(AmTable $t){
       
-    $s = $t->source();
     $sql = $this
       ->newQuery("information_schema.KEY_COLUMN_USAGE")
       ->selectAs("CONSTRAINT_NAME", "name")
       ->selectAs("COLUMN_NAME", "columnName")
       ->selectAs("TABLE_NAME", "fromTable")
       ->selectAs("REFERENCED_COLUMN_NAME", "toColumn")
-      ->where("TABLE_SCHEMA='{$this->database()}'", "and", "REFERENCED_TABLE_NAME='{$t->tableName()}'", "and", "CONSTRAINT_NAME<>'PRIMARY'", "and", "REFERENCED_TABLE_SCHEMA=TABLE_SCHEMA")
+      ->where("TABLE_SCHEMA='{$this->getDatabase()}'", "and", "REFERENCED_TABLE_NAME='{$t->getTableName()}'", "and", "CONSTRAINT_NAME<>'PRIMARY'", "and", "REFERENCED_TABLE_SCHEMA=TABLE_SCHEMA")
       ->orderBy("CONSTRAINT_NAME", "ORDINAL_POSITION")
       ->sql();
     
@@ -543,8 +541,6 @@ class mysqlAmSource extends AmSource{
     // Obtener el nombre de la tabla
     $table = $q->getTable();
     $table = $table instanceof AmTable? $table->getTableName() : $table;
-
-    // Obtener nombre de la tabla con la BD
     $tableName = $this->getParseName($this->getDatabase()).".".$this->getParseName($table);
     
     // Agregar DELETE FROM
@@ -675,7 +671,7 @@ class mysqlAmSource extends AmSource{
     // Preparar las propiedades  
     $name = $this->getParseName($field->name());
     $type = $field->type();
-    $type = itemOr(self::$TYPES, $type, $type);
+    $type = isset(self::$TYPES[$type])? self::$TYPES[$type] : $type;
     $lenght = $field->charLenght();
     $lenght = !empty($lenght) ? "({$lenght})" : "";
     $notNull = $field->notNull() ? " NOT NULL" : "";
@@ -692,7 +688,7 @@ class mysqlAmSource extends AmSource{
   }
 
   // Obtener el SQL para crear una tabla
-  public function createTableSql(AmTable $t){
+  public function sqlCreateTable(AmTable $t){
       
     // Obtener nombre de la tabla
     $tableName = $this->getParseName($this->getDatabase()).".".$this->getParseName($table->getTableName());
@@ -739,9 +735,10 @@ class mysqlAmSource extends AmSource{
   }
 
   // Obtener el SQL para eliminar una tabla
-  public function sqlDropTable(AmTable $table){
+  public function sqlDropTable($table){
     
     // Obtener nombre de la tabla
+    $table = $table instanceof AmTable? $table->getTableName() : $table;
     $tableName = $this->getParseName($this->getDatabase()).".".$this->getParseName($table->getTableName());
 
     return "TRUNCATE $tableName";

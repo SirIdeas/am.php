@@ -266,7 +266,7 @@ final class AmTemplate{
     $compileFolder = dirname($compiledView);
 
     // Si no existe el directorio se crea, y sino se puede crear se muestra un error
-    is_dir($compileFolder) or mkdir($compileFolder, 0755, true) or die("Am: can't to create folder \"{$compileFolder}\"");
+    Am::mkdirIfNot($compileFolder) or die("Am: can't to create folder \"{$compileFolder}\"");
     
     // Obtener contenido compilado de la vista
     $result = $this->compile();
