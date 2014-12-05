@@ -96,7 +96,7 @@ class AmTable extends AmObject{
     // Obtener de el nombre del archivo destino
     $path = $this->getPathConf() . ".php";
     if(!file_exists($path) || $rw){
-      // writeConf(".php", $this->toArray());
+      AmCoder::write($path, $this->toArray());
       return true;
     }
     return false;
@@ -365,29 +365,29 @@ class AmTable extends AmObject{
     
     // Convertir campos
     $fields = array();
-    foreach($this->fields() as $offset => $field){
+    foreach($this->getFields() as $offset => $field){
       $fields[$offset] = $field->toArray();
     }
     
     // Convertir refencias
     $referencesTo = array();
-    foreach($this->referencesTo() as $offset => $field){
+    foreach($this->getReferencesTo() as $offset => $field){
       $referencesTo[$offset] = $field->toArray();
     }
     
     // Convertir referencias a
     $referencesBy = array();
-    foreach($this->referencesBy() as $offset => $field){
+    foreach($this->getReferencesBy() as $offset => $field){
       $referencesBy[$offset] = $field->toArray();
     }
     
     // Unir todas las partes
     return array(
-      "tableName" => $this->tableName(),
-      "modelName" => $this->modelName(),
-      "engine" => $this->engine(),
-      "charset" => $this->charset(),
-      "collate" => $this->collate(),
+      "tableName" => $this->getTableName(),
+      "modelName" => $this->getModelName(),
+      "engine" => $this->getEngine(),
+      "charset" => $this->getCharset(),
+      "collate" => $this->getCollate(),
       "fields" => $fields,
       "pks" => $this->getPks(),
       "referencesTo" => $referencesTo,

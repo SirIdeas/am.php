@@ -16,7 +16,7 @@ class AmRelation extends AmObject{
   public function getQuery($model){
     
     // Una consulta para todos los registros de la tabla
-    $q = AmORM::getTable($this->table(), $this->source())->qAll();
+    $q = AmORM::getTable($this->table(), $this->getSource())->qAll();
     
     foreach($this->columns() as $from => $to){
       $q->where("$to='{$model->$from}'");
@@ -30,9 +30,9 @@ class AmRelation extends AmObject{
   public function toArray(){
     
     return array(
-      "source" => $this->source(),
-      "table" => $this->table(),
-      "columns" => $this->columns()
+      "source" => $this->getSource(),
+      "table" => $this->getTable(),
+      "columns" => $this->getColumns()
     );
     
   }

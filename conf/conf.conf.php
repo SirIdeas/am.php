@@ -14,5 +14,6 @@ return array(
     "exts/AmCommand.class",
     "exts/AmControl.class",
     "exts/orm/AmORM.class",
+    "exts/AmCoder.class",
   ),
 );

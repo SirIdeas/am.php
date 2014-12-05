@@ -7,7 +7,7 @@
 abstract class AmSource extends AmObject{
 
   protected static
-    $ORM_FOLDER = "/orm";
+    $ORM_FOLDER = "/model";
 
   // Propiedades
   protected
