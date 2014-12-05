@@ -16,7 +16,7 @@ final class Am{
       // response.assets (file, assets, env)            : Responder con archivo
       // render.form (file, tpl)                        : Renderizar formulario
       // response.control (control, action, params, env): Responder con controlador
-      // render.template (templete, paths, env, ignore) :   Renderizar vista
+      // render.template (templete, paths, env, ignore) : Renderizar vista
     ),
 
     // Callbacks para mezclar atributos
@@ -30,6 +30,7 @@ final class Am{
       "control" => "array_merge_recursive",
       "smtp" => "array_merge",
       "mails" => "array_merge",
+      "sources" => "array_merge",
     ),
 
     // Valores por defecto de las propiedades
@@ -43,6 +44,7 @@ final class Am{
       "control" => array(),
       "smtp" => array(),
       "mails" => array(),
+      "sources" => array(),
     ),
 
     $instances = array(), // Instancias unicas de clases
@@ -239,6 +241,11 @@ final class Am{
     return self::getAttribute("mails");
   }
 
+  // Devuelve las configuraciones para las fuentes de datos 
+  public static function getSources(){
+    return self::getAttribute("sources");
+  }
+
   // Responder con descarga de archivos
   final public static function downloadFile($file, array $env){
     self::respondeWithFile($file, null, null, true);
@@ -312,6 +319,94 @@ final class Am{
     return require self::findFile("$file.conf.php");
   }
 
+  // Funcion para incluir un archivo
+  public static function requireFile($file){
+    ($realFile = self::findFile("$file.php")) or die("Am: Not fount Exts '{$file}'");
+    require_once $realFile;
+  }
+
+  // Obtener una instancia de un Mail con su respectiva configuraion tomada de
+  // 
+  public static function getMail($name, array $options = array()){
+    
+    // Incluir clase para Mails
+    Am::requireFile("exts/mailer/AmMailer.class");
+
+    // Obtener configuraciones de mails
+    $mails = Am::getMails();
+
+    // Combinar opciones recibidas en el constructor con las
+    // establecidas en el archivo de configuracion
+    $options = array_merge(
+      isset($mails[$name])? $mails[$name] : array(),
+      $options
+    );
+
+    // Si no es un array se buscará la configuracion en
+    // el archivo de configuracion SMTP
+    if(!is_array($options["smtp"])){
+
+      // Obtener configuraciones STMP
+      $smtpConfs = Am::getSmtpConf();
+
+      // Si se debe tomar la configuracion por defecto
+      if($options["smtp"] === true) $options["smtp"] = "default";
+
+      // Asignar configuraio
+      $options["smtp"] = $smtpConfs[$options["smtp"]];
+            
+    }
+
+    // Crear instancia del mailer
+    return new AmMailer("test", $options);
+
+  }
+
+  // Devuelve una instancia de una fuente
+  public static function getSource($name = "default"){
+
+    // Obtener configuraciones para las fuentes
+    $sources = Am::getSources();
+
+    // Si no existe una configuración para el nombre de fuente
+    // solicitado se retorna NULL
+    if(!isset($sources[$name]))
+      return null;
+
+    $sources[$name] = array_merge(array(
+        "name"      => $name,
+        "database"  => $name,
+        "driver"    => null,
+      ),
+      $sources[$name]
+    );
+
+    // Obtener el driver de la fuente 
+    $driverClassName = $sources[$name]["driver"]."AmSource";
+    
+    // Incluir Nucleo del ORM
+    Am::requireFile("exts/orm/AmQuery.class");
+    Am::requireFile("exts/orm/AmField.class");
+    Am::requireFile("exts/orm/AmTable.class");
+    Am::requireFile("exts/orm/AmSource.class");
+    Am::requireFile("exts/orm/drivers/{$driverClassName}.class");
+
+    // Crear instancia de la fuente
+    $source = new $driverClassName($sources[$name]);
+    $source->connect(); // Conectar la fuente
+
+    return $source;
+
+  }
+
+  ///////////////////////////////////////////////////////////////////////////////////
+  // UTILIDADES
+  ///////////////////////////////////////////////////////////////////////////////////
+
+  public final static function isNameValid($string){
+    return preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $string) != 0;
+  }
+
   // funcion para mezclar una lista de valores
   public static function mergeValues($callback, array $values, $def){
 
@@ -348,12 +443,6 @@ final class Am{
 
     return false;
 
-  }
-
-  // Funcion para incluir un archivo
-  public static function requireFile($file){
-    ($realFile = self::findFile("$file.php")) or die("Am: Not fount Exts '{$file}'");
-    require_once $realFile;
   }
 
   // Obtienen tipo mime de un determinado archivo.
