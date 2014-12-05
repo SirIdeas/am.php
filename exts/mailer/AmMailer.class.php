@@ -5,9 +5,9 @@
  */
 
 // Incluir PHPMailer
-Am::requireFile("libs/PHPMailerAutoload");
+Am::requireFile(dirname(__FILE__)."/php_mailer/PHPMailerAutoload");
 
-class AmMail extends PHPMailer{
+class AmMailer extends PHPMailer{
 
   // Nombre del SMTP
   protected
@@ -19,17 +19,7 @@ class AmMail extends PHPMailer{
   public function __construct($name = null, $options = array()) {
     parent::__construct();
 
-    // Obtener configuraciones de mails
-    $mails = Am::getMails();
-
-    // Combinar opciones recibidas en el constructor con las
-    // establecidas en el archivo de configuracion
-    $options = array_merge(
-      isset($mails[$name])? $mails[$name] : array(),
-      $options
-    );
-
-    $this->template("$name.view.php");
+    if(isset($name)) $this->template("$name.view.php");
 
     // Asignar configuracion de cada parametros
     if(isset($options["smtp"]))       $this->smtpConf($options["smtp"]);
@@ -92,23 +82,7 @@ class AmMail extends PHPMailer{
   }
 
   // Asignacion de la configuracion SMTP
-  public function smtpConf($smtp){
-
-    // Si no es un array se buscará la configuracion en
-    // el archivo de configuracion SMTP
-    if(!is_array($smtp)){
-
-      // Obtener configuraciones STMP
-      $smtpConfs = Am::getSmtpConf();
-
-      // Si se debe tomar la configuracion por defecto
-      if($smtp === true) $smtp = "default";
-
-      // Asignar configuraio
-      $this->smtpName = $smtp;
-      $smtp = $smtpConfs[$smtp];
-            
-    }
+  public function smtpConf(array $smtp){
 
     // SMTP Configuration
     $this->isSMTP();
@@ -234,5 +208,6 @@ class AmMail extends PHPMailer{
     return parent::send();
       
   }
-  
+
 }
+

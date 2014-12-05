@@ -9,10 +9,10 @@ class AmRoute{
   // Diferentes tipos de datos aceptados
   protected static $TYPES = array(
     "id"            => "[a-zA-Z_][a-zA-Z0-9_-]*", // Identificador
-    "any"           => ".*",                     // Cualquier valor
-    "numeric"       => "[0-9]*",                 // Numeros
-    "alphabetic"    => "[a-zA-Z]*",              // Alfabetico
-    "alphanumeric"  => "[a-zA-Z0-9]*",           // Alfanumerico
+    "any"           => ".*",                      // Cualquier valor
+    "numeric"       => "[0-9]*",                  // Numeros
+    "alphabetic"    => "[a-zA-Z]*",               // Alfabetico
+    "alphanumeric"  => "[a-zA-Z0-9]*",            // Alfanumerico
   );
 
   // Ruta
