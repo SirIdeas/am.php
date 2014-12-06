@@ -12,27 +12,25 @@ final class AmORM{
   // Incluye un archivo dentro buscado dentro de la
   // carpeta de la libreria
   public static function requireFile($file){
-    return Am::requireFile(dirname(__FILE__). "/{$file}");
+    Am::requireFile(dirname(__FILE__). "/{$file}");
   }
 
   // Incluye un driver de BD
-  public static function requireDriver($driver){
+  public static function driver($driver){
 
     // Obtener el nombre de la clase
     $driverClassName = Am::camelCase($driver)."Source";
 
-    // Si se incluye satisfactoriamente el driver
-    if(self::requireFile("drivers/{$driverClassName}.class"))
-      // Se retorna en nombre de la clase
-      return $driverClassName;
+    // Se incluye satisfactoriamente el driver
+    self::requireFile("drivers/{$driverClassName}.class");
 
-    // De lo contrario se retorna null
-    return null;
+    // Se retorna en nombre de la clase
+    return $driverClassName;
 
   }
 
   // Incluye un validator y devuelve el nombre de la clases correspondiente
-  public static function requireValidator($validator){
+  public static function validator($validator){
 
     // Obtener el nombre de la clase
     $validatorClassName = Am::camelCase($validator)."Validator";
@@ -48,7 +46,7 @@ final class AmORM{
   }
 
   // Devuelve una instancia de una fuente
-  public static function getSource($name = "default"){
+  public static function source($name = "default"){
 
     // Obtener la instancia si ya existe
     if(isset(self::$instances[$name]))
@@ -73,8 +71,7 @@ final class AmORM{
     );
 
     // Obtener el driver de la fuente 
-    $driverClassName = $sources[$name]["driver"]."Source";
-    AmORM::requireDriver($sources[$name]["driver"]);
+    $driverClassName = AmORM::driver($sources[$name]["driver"]);
 
     // Crear instancia de la fuente
     $source = new $driverClassName($sources[$name]);
@@ -85,10 +82,10 @@ final class AmORM{
   }
 
   // Devuelve la instancia de de una tabla en una fuente determinada
-  public static function getTable($table, $source = "default"){
+  public static function table($table, $source = "default"){
     
     // Obtener la instancia de la fuente
-    $source = self::getSource($source);
+    $source = self::source($source);
 
     
 

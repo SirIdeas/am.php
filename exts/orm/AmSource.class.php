@@ -45,7 +45,7 @@ abstract class AmSource extends AmObject{
   public function getTable($offset){
     if(isset($this->tables[$offset]))
       return $this->tables[$offset];
-    return $this->tables[$offset] = AmORM::getTable($offset, $this->getName());
+    return $this->tables[$offset] = AmORM::table($offset, $this->getName());
   }
 
   // Nombre de las clases relacionadas a una tabla

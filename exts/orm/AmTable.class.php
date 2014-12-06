@@ -28,7 +28,7 @@ class AmTable extends AmObject{
     $params = AmObject::parse($params);
     
     // Obtener la instancia del source
-    $source = is_string($params['source']) ? AmORM::getSource($params['source']) : $params['source'];
+    $source = is_string($params['source']) ? AmORM::source($params['source']) : $params['source'];
     
     if(get_class($this) != __CLASS__){
       // $tableClassName = _tcc($params['tableName'], true);
