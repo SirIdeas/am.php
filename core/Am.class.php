@@ -25,6 +25,7 @@ final class Am{
       "requires" => "array_merge",
       "routes" => "array_merge_recursive",
       "assets" => "array_merge",
+      "errorReporting" => null,
       "timezone" => null,
       "commands" => null,
       "control" => "array_merge_recursive",
@@ -36,6 +37,7 @@ final class Am{
 
     // Valores por defecto de las propiedades
     $confsDef = array(
+      "errorReporting" => E_ALL,
       "conf" => array(),
       "requires" => array(),
       "routes" => array(),
@@ -200,18 +202,6 @@ final class Am{
 
   }
 
-  // Incluir extensiones
-  protected static function requireExts(){
-
-    // Archivos requeridos
-    $requires = self::getAttribute("requires");
-
-    // Incluir archivo
-    foreach($requires as $file){
-      self::requireFile($file);
-    }
-
-  }
 
   // Responder con descarga de archivos
   final public static function downloadFile($file, array $env){
@@ -241,6 +231,10 @@ final class Am{
 
   // Inicio del Amathista
   public static function task(){
+
+    // Obtener el valor 
+    $errorReporting = self::getAttribute("errorReporting");
+    error_reporting($errorReporting);
     
     // Variable global de argumentos
     global $argv;
@@ -271,7 +265,13 @@ final class Am{
     self::loadConf("conf");
 
     // Incluir extensiones para peticiones
-    self::requireExts();
+    // Archivos requeridos
+    $requires = self::getAttribute("requires");
+
+    // Incluir archivo
+    foreach($requires as $file){
+      self::requireFile($file);
+    }
 
     // Llamado de accion para evaluar ruta
     self::call("route.eval", array(
