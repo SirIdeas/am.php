@@ -36,14 +36,15 @@ class AmCoder{
       $data = self::prepare($data);
     
     // Crear directorio donde se ubicará el archivo
-    Am::mkdir(dirname($path));
-    
+    if(!is_dir($dir = dirname($path)))
+      mkdir($dir, 0775, true);
+
     // Si no se puede escribir el archivo generar erro
     // if(!is_writable($path))
     //   die("Am: No se puede escribir "{$path}"");
 
     // Si el archivo no existe se crea el archivo
-    if(!file_exists($path))
+    // if(!file_exists($path))
       file_put_contents($path, self::encode($data));
     
   }

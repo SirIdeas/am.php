@@ -36,12 +36,11 @@ final class AmGenerator{
         switch ($type){
 
           case "string": 
-          case "string": 
             $len = $f->getCharLenght();
             if(isset($len)){
               $strlenValidators[] = "\$this->setValidator(\"{$f->getName()}\", \"max_length\", \"max_length\", array(\"max\" => $len));";
             }
-            $emptyValidators[] = "\$this->setValidator(\"{$f->getName()}\", \"empty\", \"empty\");";
+            // $emptyValidators[] = "\$this->setValidator(\"{$f->getName()}\", \"empty\", \"empty\");";
             break;
 
           case "integer": 
@@ -179,7 +178,7 @@ final class AmGenerator{
 
       $prefix = in_array($methodName, $newMethods)? "//" : "";
       $newMethods[] = $methodName;
-      $setFieldMethods[] = "{$prefix}public function set_$attr(\$value){ \$this->$attr =  \$value; return \$this; }";
+      $setFieldMethods[] = "{$prefix}public function set_$attr(\$value){ \$this->$attr = \$value; return \$this; }";
 
     }
 
@@ -206,10 +205,10 @@ final class AmGenerator{
 
     echo "abstract class {$table->getClassNameModelBase()} extends AmModel{";
 
-    echo "\n\n    final public function __construct(\$params = null){\n";
+    echo "\n\n    final public function __construct(\$params = array()){\n";
     echo "\n        parent::__construct(array_merge(\$params, array(";
     echo "\n          \"source\" => \"{$table->getSource()->getName()}\",";
-    echo "\n          \"source\" => \"{$table->getTableName()}\",";
+    echo "\n          \"tableName\" => \"{$table->getTableName()}\",";
     echo "\n        )));";
     echo "\n\n    }";
 

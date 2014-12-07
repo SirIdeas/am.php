@@ -18,9 +18,9 @@ class MysqlSource extends AmSource{
       "float"       => "float",
       "text"        => "text",
       "string"      => "varchar",
-      "datetime"    => "datetime",
       "date"        => "date",
       "time"        => "time",
+      "timestamp"   => "datetime",
     );
 
   // Propiedades propias para el Driver
@@ -125,7 +125,7 @@ class MysqlSource extends AmSource{
 
   // SQL para crear la BD
   public function sqlCreate(){
-    $database = $this->getParseName($this->getDatabase());
+    $database = $this->getParseNameDatabase();
     $charset = $this->sqlCharset();
     $collate = $this->sqlCollage();
     return "CREATE DATABASE IF NOT EXISTS {$database}{$charset}{$collate}";
@@ -133,13 +133,13 @@ class MysqlSource extends AmSource{
 
   // SQL para eliminar la BD
   public function sqlDrop(){
-    $database = $this->getParseName($this->getDatabase());
+    $database = $this->getParseNameDatabase();
     return "DROP DATABASE {$database}";
   }
   
   // SQL para seleccionar la BD
   public function sqlSelectDatabase(){
-    $database = $this->getParseName($this->getDatabase());
+    $database = $this->getParseNameDatabase();
     return "USE {$database}";
   }
 
@@ -244,7 +244,7 @@ class MysqlSource extends AmSource{
         $field = "({$field->sql()})";
       
       // Agregar parametro AS
-      $selects[] = Am::isNameValid($as) ? "$field AS '$as'" : (string)$field;
+      $selects[] = AmORM::isNameValid($as) ? "$field AS '$as'" : (string)$field;
 
     }
 
@@ -273,10 +273,10 @@ class MysqlSource extends AmSource{
         $from = "({$from->sql()})";
       }elseif($from instanceof AmTable){
         // Si es una tabla se concatena el nombre de la BD y el de la tabla
-        $from = $this->getParseName($this->getDatabase()).".".$this->getParseName($from->getTableName());
-      }elseif(Am::isNameValid($from)){
+        $from = $this->getParseNameTable($from->getTableName());
+      }elseif(AmORM::isNameValid($from)){
         // Si es una tabla se concatena el nombre de la BD y el de la tabla como strin
-        $from = $this->getParseName($this->getDatabase()).".".$this->getParseName($from);
+        $from = $this->getParseNameTable($from);
       }elseif(false !== (preg_match("/^([a-zA-Z_][a-zA-Z0-9_]*)\.([a-zA-Z_][a-zA-Z0-9_]*)$/", $from, $matches)!= 0)){
         // Dividir por el punto
         $from = $this->getParseName($matches[1]).".".$this->getParseName($matches[2]);
@@ -285,7 +285,7 @@ class MysqlSource extends AmSource{
       }
             
       // Agregar parametro AS
-      $froms[] = Am::isNameValid($as) ? "$from AS $as" : $from;
+      $froms[] = AmORM::isNameValid($as) ? "$from AS $as" : $from;
             
     }
         
@@ -393,7 +393,7 @@ class MysqlSource extends AmSource{
   }
 
   // Obtener el SQL para la clausula JOIN de una consulta
-  public function sqlJoin(AmQuery $q){
+  public function sqlJoins(AmQuery $q){
 
     // Resultado
     $joinsOri = $q->getJoins();
@@ -491,7 +491,7 @@ class MysqlSource extends AmSource{
   }
 
   // Obtener el SQL para la clausula SET de una consulta UPDATE
-  public function setsSql(AmQuery $q, $with = true){
+  public function sqlSets(AmQuery $q, $with = true){
 
     // Obtener sets
     $setsOri = $q->getSets();
@@ -506,8 +506,7 @@ class MysqlSource extends AmSource{
       if($value === null){
         $sets[] = "{$set["field"]} = NULL";
       }elseif($set["const"] === true){
-        $value = mysql_real_escape_string($value);
-        $sets[] = "{$set["field"]} = '$value'";
+        $sets[] = "{$set["field"]} = " . $this->realScapeString($value);
       }elseif($set["const"] === false){
         $sets[] = "{$set["field"]} = $value";
       }
@@ -539,9 +538,7 @@ class MysqlSource extends AmSource{
   public function sqlDelete(AmQuery $q){
       
     // Obtener el nombre de la tabla
-    $table = $q->getTable();
-    $table = $table instanceof AmTable? $table->getTableName() : $table;
-    $tableName = $this->getParseName($this->getDatabase()).".".$this->getParseName($table);
+    $tableName = $this->getParseNameTable($q->getTable());
     
     // Agregar DELETE FROM
     return implode(" ", array(
@@ -558,94 +555,53 @@ class MysqlSource extends AmSource{
     // Si es una consulta
     if($values instanceof AmQuery){
 
-      // Si los campos recibidos estan vacíos se tomará
-      // como campos los de la consulta
-      if(count($fields) == 0){
-        $fields = array_keys($values->select());
-      }
-
       // Los valores a insertar son el SQL de la consulta
       $strValues = $values->sql();
 
     // Si los valores es un array con al menos un registro
     }elseif(is_array($values) && count($values)>0){
+
+      // Preparar registros para crear SQL
+      foreach($values as $i => $v)
+        // Unir todos los valores con una c
+        $values[$i] = "(" . implode(",", $values[$i]) . ")";
+
+      // Unir todos los registros
+      $values = implode(",", $values);
+
+      // Obtener Str para los valores
+      $strValues = "VALUES $values";
+
+    }
+      
+    // Si el Str de valores no está vacío
+    if(!empty($strValues)){
+
+      // Obtener nombre de la tabla
+      $tableName = $this->getParseNameTable($table);
+
+      // Obtener el listado de campos
+      foreach ($fields as $key => $field)
+        $fields[$key] = $this->getParseName($field);
+
+      // Unir campos
+      $fields = implode(",", $fields);
+      
+      // Generar SQL
+      return "INSERT INTO $tableName($fields) $strValues";
         
-        // Indica si
-        $mergeWithFields = count($fields) == 0;
-        
-        // Recorrer cada registro en $values par obtener los valores a insertar
-        foreach($values as $i => $v){
-
-          if($v instanceof AmModel){
-            // Si el registro es AmModel obtener sus valores como array
-            // asociativo o simple
-            $values[$i] = $v->dataToArray(!$mergeWithFields);
-          }elseif($v instanceof AmObject){
-            // Si es una instancia de AmObjet se obtiene como array asociativo
-            $values[$i] = $v->toArray();
-          }
-          
-          // Si no se recibieron campos, entonces se mezclaran con los
-          // indices obtenidos
-          if($mergeWithFields)
-            $fields = array_unique(array_merge($fields, array_keys($values[$i])));
-
-        }
-
-        // Preparar registros para crear SQL
-        $resultValues = array();
-        foreach($values as $i => $v){
-
-          // Asignar array vacío
-          $resultValues[$i] = array();
-
-          // Agregar un valor por cada campo de la consulta
-          foreach($fields as $f){
-            // Obtener el valor del registro actual en el campo actual
-            $f = isset($v[$f])? $v[$f] : null;
-            $f = mysql_real_escape_string($f);
-
-            // Si no tiene valor asignar NULL
-            $resultValues[$i][] = isset($f)? "'$f'" : "NULL";
-
-          }
-
-          // Unir todos los valores con una c
-          $resultValues[$i] = implode(",", $resultValues[$i]);
-
-        }
-
-        // Unir todos los registros
-        $resultValues = implode("),(", $resultValues);
-
-        // Obtener Str para los valores
-        $strValues = "VALUES ($resultValues)";
-
-      }
+    }
+    
+    // Consulta invalida
+    return "";
       
-      // Si el Str de valores no está vacío
-      if(!empty($strValues)){
+  }
 
-          // Obtener nombre de la tabla
-          $table = $table instanceof AmTable? $table->getTableName() : $table;
-          $tableName = $this->getParseName($this->getDatabase()).".".$this->getParseName($table);
-
-          // Obtener el listado de campos
-          foreach ($fields as $key => $field){
-            $fields[$key] = $this->getParseName($field);
-          }
-
-          // Unir campos
-          $fields = implode(",", $fields);
-          
-          // Generar SQL
-          return "INSERT INTO $tableName($fields) $strValues";
-          
-      }
-      
-      // Consulta invalida
-      return "";
-      
+  // Devuelve una cadena con un valor valido en el gesto de BD
+  public function realScapeString($value){
+    $value = mysql_real_escape_string($value);
+    // Si no tiene valor asignar NULL
+    return isset($value)? "'$value'" : "NULL";
   }
 
   // Obtener el SQL de la consulta
@@ -655,7 +611,7 @@ class MysqlSource extends AmSource{
       trim(implode(" ", array(
       trim($q->sqlSelect(true)),
       trim($q->sqlFrom(true)),
-      trim($q->sqlJoin()),
+      trim($q->sqlJoins()),
       trim($q->sqlWhere(true)),
       trim($q->sqlGroups(true)),
       trim($q->sqlOrders(true)),
@@ -691,7 +647,7 @@ class MysqlSource extends AmSource{
   public function sqlCreateTable(AmTable $t){
       
     // Obtener nombre de la tabla
-    $tableName = $this->getParseName($this->getDatabase()).".".$this->getParseName($table->getTableName());
+    $tableName = $this->getParseNameTable($t->getTableName());
 
     // Lista de campos
     $fields = array();
@@ -727,8 +683,7 @@ class MysqlSource extends AmSource{
   public function sqlTruncate($table = null){
     
     // Obtener nombre de la tabla
-    $table = $table instanceof AmTable? $table->getTableName() : $table;
-    $tableName = $this->getParseName($this->getDatabase()).".".$this->getParseName($table);
+    $tableName = $this->getParseNameTable($table);
 
     return "TRUNCATE $tableName";
     
@@ -738,8 +693,7 @@ class MysqlSource extends AmSource{
   public function sqlDropTable($table){
     
     // Obtener nombre de la tabla
-    $table = $table instanceof AmTable? $table->getTableName() : $table;
-    $tableName = $this->getParseName($this->getDatabase()).".".$this->getParseName($table->getTableName());
+    $tableName = $this->getParseNameTable($table);
 
     return "TRUNCATE $tableName";
     

@@ -42,22 +42,30 @@ abstract class AmSource extends AmObject{
   public function getTables(){ return $this->tables; }
 
   // Obtener la instancia de una tabla
-  public function getTable($offset){
-    if($this->hasTableInstance($offset))
-      return $this->tables[$offset];
-    return AmORM::table($offset, $this->name());
+  public function getTable($table){
+
+    // Si es una instancia de una tabla
+    if($table instanceof AmTable)
+      return $table;
+
+    // Si ya existe la instancia en de la tabla 
+    if($this->hasTableInstance($table))
+      return $this->tables[$table];
+
+    // Sino instanciar la tabla
+    return AmORM::table($table, $this->name());
   }
 
   // Indica si ya está cargada una instancia de las tablas
-  public function hasTableInstance($offset){
-    return isset($this->tables[$offset]);
+  public function hasTableInstance($table){
+    return isset($this->tables[$table]);
   }
 
   // Nombre de las clases relacionadas a una tabla
   public function getClassNameTableBase($model){  return $this->getClassNameTable($model)."Base"; }
   public function getClassNameTable($model){      return $this->getClassNameModel($model)."Table"; }  
   public function getClassNameModelBase($model){  return $this->getClassNameModel($model)."Base"; }
-  public function getClassNameModel($model){      return $this->getPrefix() . Am::camelCase($model, true); }
+  public function getClassNameModel($model){      return $this->getPrefix() . AmORM::camelCase($model, true); }
 
   // Obtener la ruta de la carpeta para las clases del ORM de la BD actual
   public function getFolder(){
@@ -66,7 +74,7 @@ abstract class AmSource extends AmObject{
 
   // Obtener la carpeta para un tabla
   public function getFolderModel($model){
-    return $this->getFolder() . "/" . Am::underscor($model);
+    return $this->getFolder() . "/" . AmORM::underscor($model);
   }
 
   // Obtener la carpeta de archivos bases para un tabla
@@ -76,7 +84,7 @@ abstract class AmSource extends AmObject{
 
   // Devuelve la direccion del archivo de configuracion
   public function getPathConf($model){
-    return $this->getFolderModelBase($model) . "/". Am::underscor($model) .".conf";
+    return $this->getFolderModelBase($model) . "/". AmORM::underscor($model) .".conf";
   }
 
   // Devuelve la dirección de la clase de la tabla Base
@@ -174,6 +182,27 @@ abstract class AmSource extends AmObject{
     return $this->select();
   }
 
+  // Devuelve el nombre de la BD para ser reconocida en el gestor de BD
+  public function getParseNameDatabase(){
+    return $this->getParseName($this->getDatabase());
+  }
+
+  // Devuelve el nombre de una tabla para ser reconocida en el gestor de BD
+  public function getParseNameTable($table, $only = false){
+    
+    // Obtenerl solo el nombre de la tabla
+    $table = $table instanceof AmTable? $table->getTableName() : $table;
+    $table = $this->getParseName($table);
+
+    // Si se desea obtener solo el nombre
+    if($only)
+      return $table;
+
+    // Retornar el nombre de la tabla con la BD
+    return $this->getParseNameDatabase().".".$table;
+
+  }
+
   // Ejecutar una consulta SQL desde el ámbito de la BD actual
   public function execute($sql){
     $this->select();
@@ -190,16 +219,16 @@ abstract class AmSource extends AmObject{
   }
 
   // Devuelve un array con el listado de tablas de la BD
-  public function getTablesSchema($type = null){
+  public function getTablesSchema(){
     return $this->newQuery($this->sqlGetTables())
-                ->getResult($type);
+                ->getResult("array");
   }
 
   // Devuelve un array con el listado de tablas
-  public function getTableDescription($table, $type = null){
+  public function getTableDescription($table){
     return $this->newQuery($this->sqlGetTables())
                 ->where("tableName = '$table'")
-                ->getRow($type);
+                ->getRow("array");
   }
 
   // Devuelve la descripcion completa de una tabla
@@ -214,7 +243,7 @@ abstract class AmSource extends AmObject{
       return false;
       
     // Asignar fuente
-    $table->source = $this;
+    $table["source"] = $this;
 
     // Crear instancia anonima de la tabla
     $table = new AmTable($table);
@@ -232,11 +261,11 @@ abstract class AmSource extends AmObject{
     $ret = array(); // Valor de retorno
 
     // Obtener los campos primarios de la tabla
-    $pks = $this->newQuery($this->sqlGetTablePrimaryKeys($t))->getResult();
+    $pks = $this->newQuery($this->sqlGetTablePrimaryKeys($t))->getResult("array");
     
     // Agregar campos al retorn
     foreach($pks as $pk)
-      $ret[] = $pk->name;
+      $ret[] = $pk["name"];
     
     return $ret;
       
@@ -256,12 +285,12 @@ abstract class AmSource extends AmObject{
     $sourceName = $this->getName();
 
     // Obtener los ForeignKeys
-    $fks = $this->newQuery($this->sqlGetTableForeignKeys($t))->getResult();
+    $fks = $this->newQuery($this->sqlGetTableForeignKeys($t))->getResult("array");
         
     foreach($fks as $fk){
       
       // Dividir el nombre del FK
-      $name = explode(".", $fk->name);
+      $name = explode(".", $fk["name"]);
 
       // Obtener el ultimo elemento
       $name = array_pop($name);
@@ -270,13 +299,13 @@ abstract class AmSource extends AmObject{
       if(!isset($ret[$name])){
         $ret[$name] = array(
           "source" => $sourceName,
-          "table" => $fk->toTable,
+          "table" => $fk["name"],
           "columns" => array()
         );
       }
       
       // Agregar la columna a la lista de columnas
-      $ret[$name]["columns"][$fk->columnName] = $fk->toColumn;
+      $ret[$name]["columns"][$fk["columnName"]] = $fk["toColumn"];
 
     }
     
@@ -293,13 +322,13 @@ abstract class AmSource extends AmObject{
     $sourceName = $this->getName();
 
     // Obtener las referencias a una tabla
-    $fks = $this->newQuery($this->sqlGetTableReferences($t))->getResult();
+    $fks = $this->newQuery($this->sqlGetTableReferences($t))->getResult("array");
     
     // Recorrer los FKs
     foreach($fks as $fk){
       
       // Dividir el nombre del FK
-      $name = explode(".", $fk->name);
+      $name = explode(".", $fk["name"]);
 
       // Obtener el ultimo elemento
       $name = array_shift($name);
@@ -308,13 +337,13 @@ abstract class AmSource extends AmObject{
       if(!isset($ret[$name])){
         $ret[$name] = array(
           "source" => $sourceName,
-          "table" => $fk->fromTable,
+          "table" => $fk["fromTable"],
           "columns" => array()
         );
       }
       
       // Agregar la columna a la lista de columnas
-      $ret[$name]["columns"][$fk->toColumn] = $fk->columnName;
+      $ret[$name]["columns"][$fk["toColumn"]] = $fk["columnName"];
 
     }
     
@@ -344,6 +373,63 @@ abstract class AmSource extends AmObject{
 
   // Ejecuta una consulta de insercion para los
   public function insertInto($table, $values, array $fields = array()){
+
+    // Obtener la instancia de la tabla
+    $table = $this->getTable($table);
+
+    // Agregar fechas de creacion y modificacion si existen en la tabla
+    $table->setAutoCreatedAt($values);
+    $table->setAutoUpdatedAt($values);
+
+    if($values instanceof AmQuery){
+
+      // Si los campos recibidos estan vacíos se tomará
+      // como campos los de la consulta
+      if(count($fields) == 0)
+        $fields = array_keys($values->select());
+    
+    // Si los valores es un array con al menos un registro
+    }elseif(is_array($values) && count($values)>0){
+
+      // Indica si
+      $mergeWithFields = count($fields) == 0;
+      
+      // Recorrer cada registro en $values par obtener los valores a insertar
+      foreach($values as $i => $v){
+
+        if($v instanceof AmModel)
+          // Si el registro es AmModel obtener sus valores como array
+          // asociativo o simple
+          $values[$i] = $v->dataToArray(!$mergeWithFields);
+        elseif($v instanceof AmObject)
+          // Si es una instancia de AmObjet se obtiene como array asociativo
+          $values[$i] = $v->toArray();
+        
+        // Si no se recibieron campos, entonces se mezclaran con los
+        // indices obtenidos
+        if($mergeWithFields)
+          $fields = array_unique(array_merge($fields, array_keys($values[$i])));
+
+      }
+
+      // Preparar registros para crear SQL
+      $resultValues = array();
+      foreach($values as $i => $v){
+
+        // Asignar array vacío
+        $resultValues[$i] = array();
+
+        // Agregar un valor por cada campo de la consulta
+        foreach($fields as $f)
+          // Obtener el valor del registro actual en el campo actual
+          $resultValues[$i][] = $this->realScapeString(isset($v[$f])? $v[$f] : null);
+
+      }
+
+      // Asignar nuevos valores
+      $values = $resultValues;
+
+    }
     
     // Obtener el SQL para saber si es valido
     $sql = $this->sqlInsertInto($table, $values, $fields);
@@ -392,6 +478,9 @@ abstract class AmSource extends AmObject{
 
   // Realizar una consulta SQL
   abstract protected function query($sql);
+
+  // Devuelve una cadena con un valor valido en el gesto de BD
+  abstract public function realScapeString($value);
 
   //---------------------------------------------------------------------------
   // Metodo para obtener los SQL a ejecutar

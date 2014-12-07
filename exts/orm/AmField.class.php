@@ -14,9 +14,9 @@ class AmField extends AmObject{
       "float"       => "floatval",
       "text"        => "strval",
       "string"      => "strval",
-      "datetime"    => "strval",
       "date"        => "strval",
       "time"        => "strval",
+      "timestamp"   => "strval",
     );
 
   // Propiedades del campo
@@ -44,7 +44,7 @@ class AmField extends AmObject{
       ), AmObject::parse($params));
 
       // Verdadera asignación para la propiedad notNull
-      $this->notNull = $params["notNull"] === true || $params["notNull"] == 1 || $params["notNull"] == "true";
+      $this->notNull = in_array($params["notNull"], array(true, 1, "true", "1"));
 
       // Verdadera asiignación para la propiedad autoIncrement
       $this->autoIncrement = $this->getAutoIncrement() || preg_match("/auto_increment/", $params["extra"]) != 0;

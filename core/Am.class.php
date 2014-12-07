@@ -21,7 +21,6 @@ final class Am{
 
     // Callbacks para mezclar atributos
     $mergeCallbacks = array(
-      // Nombre del atributo => array(callback, valor_por_defecto)
       "requires" => "array_merge",
       "routes" => "array_merge_recursive",
       "assets" => "array_merge",
@@ -37,16 +36,16 @@ final class Am{
 
     // Valores por defecto de las propiedades
     $confsDef = array(
-      "errorReporting" => E_ALL,
-      "conf" => array(),
-      "requires" => array(),
-      "routes" => array(),
-      "assets" => array(),
+      "errorReporting" => E_ALL,      // Indicar que errores se mostrarán
+      "conf" => array(),              // Define las cargas iniciales. Archivo conf/routes.conf.php
+      "requires" => array(),          // Archivos a incluir en el arranque
+      "routes" => array(),            // Rutas
+      "assets" => array(),            // Archivos de recursos
       "timezone" => null,
-      "commands" => array(),
-      "control" => array(),
-      "smtp" => array(),
-      "mails" => array(),
+      "commands" => array(),          // Target para los comandos
+      "control" => array(),           // Definiciones de controladores
+      "smtp" => array(),              // Configuraciones SMTP
+      "mails" => array(),             // Configuraciones de los mails
       "sources" => array(),
       "validators" => array(),
     ),
@@ -62,14 +61,7 @@ final class Am{
         "env" => array(),
         "routes" => array()
       )
-    ),
-
-    $init = null,         // Define las cargas iniciales. Archivo conf/routes.conf.php
-    $control = null,      // Definiciones de controladores
-    $commands = null,     // Target para los comandos
-    $assets = null,       // Archivos de recursos
-    $mails = null,        // Configuraciones de los mails
-    $smtp = null;         // Configuraciones SMTP
+    );         
     
   // Devuelve la instancia de una clase existente. Sino existe la instancia se crea una nueva
   public final static function getInstance($className, array $params = array()){
@@ -169,6 +161,7 @@ final class Am{
 
   // Obtener un atributo de la confiuguracion
   public static function getAttribute($property){
+
     self::loadConf($property); // Cargar configuraciones de require
 
     // Obtener funcion callback para mezclar la propiedad solicitada
@@ -232,6 +225,9 @@ final class Am{
   // Inicio del Amathista
   public static function task(){
 
+    // Obtener las configuraciones
+    self::loadConf("conf");
+
     // Obtener el valor 
     $errorReporting = self::getAttribute("errorReporting");
     error_reporting($errorReporting);
@@ -260,9 +256,6 @@ final class Am{
       $request = substr_replace($_SERVER["REDIRECT_URL"], "", 0, strlen(self::$urlBase));
       
     }
-
-    // Obtener las configuraciones
-    self::loadConf("conf");
 
     // Incluir extensiones para peticiones
     // Archivos requeridos
@@ -296,14 +289,6 @@ final class Am{
   // UTILIDADES
   ///////////////////////////////////////////////////////////////////////////////////
 
-  // Crea un directoro si no existe
-  public final static function mkdir($path, $permisions = 0755, $recursive = true){
-    // Si no existe el directori se cre
-    if(!is_dir($path))
-      return mkdir($path, $permisions, $recursive);
-    return true;
-  }
-
   // Indica si es una array asociativo o no
   public static function isAssocArray(array $array){
     $j = 0;
@@ -313,47 +298,6 @@ final class Am{
       $j++;
     }
     return false;
-  }
-
-  // Devuelve la cadena "s" convertida en formato under_score
-  public static function underscor($s) {
-
-    // Primer caracter en miniscula
-    if(!empty($s)){
-      $s[0] = strtolower($s[0]);
-    }
-    
-    // Crear funcion para convertir en minuscula
-    $func = create_function('$c', 'return "_" . strtolower($c[1]);');
-
-    // Operar
-    return preg_replace_callback("/([A-Z])/", $func, str_replace(" ", "_", $s));
-    
-  }
-
-  // Devuelve una cadena "s" en formato camelCase. Si "cfc == true" entonces
-  // el primer caracter tambien es convertido en mayusculas
-  public static function camelCase($s, $cfc = false){
-    
-    // Primer caracter en mayuscula o en miniscula
-    if(!empty($s)){
-      if($cfc){
-        $s[0] = strtoupper($s[0]);
-      }else{
-        $s[0] = strtolower($s[0]);
-      }
-    }
-
-    // Funcion para convertir cada caracter en miniscula
-    $func = create_function('$c', 'return strtoupper($c[1]);');
-
-    // Operar
-    return preg_replace_callback("/_([a-z])/", $func, $s);
-
-  }
-
-  public static function isNameValid($string){
-    return preg_match("/^[a-zA-Z_][a-zA-Z0-9_]*$/", $string) != 0;
   }
 
   // funcion para mezclar una lista de valores

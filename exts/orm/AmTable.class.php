@@ -6,8 +6,14 @@
 
 class AmTable extends AmObject{
 
+  protected static
+    $defCreatedAtFieldName = "created_at",
+    $defUpdatedAtFieldName = "updated_at";
+
   // Propiedades de la tabla
   protected
+    $createdAtField = null,   // Nombre del campo para guardar la fecha de creacion
+    $updatedAtField = null,   // Nombre del campo para guardar la fecha de actualizacion
     $modelName = null,        // Nombre del model
     $tableName = null,        // Nombre en la BD
     $fields = null,           // Lista de campos
@@ -30,10 +36,15 @@ class AmTable extends AmObject{
     $source = is_string($params["source"]) ? AmORM::source($params["source"]) : $params["source"];
     
     if(get_class($this) != __CLASS__){
-      $tableClassName = Am::camelCase($params["tableName"], true);
+      $tableClassName = AmORM::camelCase($params["tableName"], true);
       $params = $source->getTableConf($params["tableName"]);
       $params["source"] = $source;
     }
+
+    $params = array_merge(array(
+      "createdAtField" => self::$defCreatedAtFieldName,
+      "updatedAtField" => self::$defUpdatedAtFieldName,
+    ), $params);
     
     // Llamar al constructor heredado
     parent::__construct($params);
@@ -69,7 +80,9 @@ class AmTable extends AmObject{
   public function getCharset(){ return $this->charset;}
   public function getCollate(){ return $this->collate;}
   public function getFields(){ return $this->fields; }
-  public function getField($name){ return $this->fields->$name; }
+  public function getField($name){ return $this->hasField($name)? $this->fields->$name : null; }
+
+  public function hasField($name){ return isset($this->fields->$name); }
 
   // Nombre de las clases relacionadas a una tabla
   public function getClassNameModel(){      return $this->getSource()->getClassNameModel($this->getModelName()); }
@@ -91,12 +104,16 @@ class AmTable extends AmObject{
     return $this->getSource()->getTableConf($this->getModelName());
   }
 
+  // Crea las carpetas del modelo
   public function mkdirModel(){
-    return Am::mkdir($this->getFolderBase());
+    if(!is_dir($path = $this->getFolderBase()))
+      return mkdir($path, 0775, true);
+    return true;
   }
 
   // Crea el archivo de configuracion para una tabla
-  public function createFileConf($rw = false){
+  public function createFileConf($rw = true){
+
     // Obtener de el nombre del archivo destino
     $path = $this->getPathConf() . ".php";
     if(!file_exists($path) || $rw){
@@ -181,6 +198,59 @@ class AmTable extends AmObject{
       "modelBase" => $this->createFileModelBase()
     );
   }
+  
+  public function getCreatedAtField(){ return $this->createdAtField; }
+  public function getUpdatedAtField(){ return $this->updatedAtField; }
+  public function setCreatedAtField($value){ $this->createdAtField = $value; return $this; }
+  public function setUpdatedAtField($value){ $this->updatedAtField = $value; return $this; }
+
+  public function hasCreatedAtField(){ return $this->hasField($this->getCreatedAtField()); }
+  public function hasUpdatedAtField(){ return $this->hasField($this->getUpdatedAtField()); }
+
+  // Agregar fecha al campo de fecha de creacion
+  public function setAutoCreatedAt($values){
+
+    // Si la tabla tiene un campo llamado "created_at"
+    // Se asigna a todos los valores la fecha now
+    if($this->hasCreatedAtField())
+      self::setNowDateValueToAllRecordsInField($values, $this->getCreatedAtField());
+  }
+
+  // Agregar fecha al campo de fecha de mpdificacion
+  public function setAutoUpdatedAt($values){
+
+    // Si la tabla tiene un campo llamado "updated_at"
+    // Se asigna a todos los valores la fecha now
+    if($this->hasUpdatedAtField())
+      self::setNowDateValueToAllRecordsInField($values, $this->getUpdatedAtField());
+  }
+
+  private static function setNowDateValueToAllRecordsInField($values, $field){
+
+    $now = date("c");
+
+    if($values instanceof AmQuery){
+      // Agregar campo a la consulta
+      $values->selectAs("'{$now}'", $field);
+
+    }elseif(is_array($values)){
+      
+      // Nombre del metodo a buscar para los modelos
+      $set = "set_" . $field;
+      
+      // Agregar created_ad a cada registro
+      foreach (array_keys($values) as $i) {
+        // Si es un model se llama el metodo se asigancion del
+        // la fecha del campo indicado
+        if($values[$i] instanceof AmModel)
+          $values[$i]->$set($now);
+        elseif($v instanceof AmObject || is_array($v))
+          $values[$i][$field] = $now;
+      }
+
+    }
+
+  }
 
   // Devuelve todos lo validators de la tabla o los de un campo
   public function getValidators($name = null){
@@ -246,10 +316,10 @@ class AmTable extends AmObject{
 
     // Si el segundo parámetro es una instancia de un validator
     // se agrega
-    if($validatorName instanceof BaseValidator)
+    if($validatorName instanceof AmValidator)
       return $this->validators($name, null, $validatorName);
 
-    if(!$validator instanceof BaseValidator){
+    if(!$validator instanceof AmValidator){
         
         $validator = AmORM::validator($validator);
         $validator = new $validator($options);
@@ -410,7 +480,7 @@ class AmTable extends AmObject{
     }
 
     // Crear consultar
-    $q = $this->getCource()->newQuery($this, $as);
+    $q = $this->getSource()->newQuery($this, $as);
 
     // Asignar campos
     if($withFields){
@@ -443,7 +513,7 @@ class AmTable extends AmObject{
     
     $q = $this->qAll();   // Obtener consultar para obtener todos los registros  
     $pks = $this->getPks();  // Obtener el primary keys
-    
+
     // Si es un array no asociativo
     if(is_array($id) && !Am::isAssocArray($id)){
       // Si la cantidad de campos del PKs es igual
@@ -469,7 +539,8 @@ class AmTable extends AmObject{
         return null;
       
       // Agregar condicion
-      $q->where("{$this->fields($pk)->getName()}='{$id[$pk]}'");
+      $fieldName = $this->getField($pk)->getName();
+      $q->where("{$fieldName}='{$id[$pk]}'");
       
     }
     

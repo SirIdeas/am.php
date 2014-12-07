@@ -15,7 +15,7 @@ class AmModel extends AmObject{
     $errorsCount = 0;     // Cantidad de errores
 
   // El constructor se encarga de asignar la instancia de la tabla correspondiente al model
-  public function __construct($params = null) {
+  public function __construct($params = array()) {
     
     $params = AmObject::parse($params);
     
@@ -52,7 +52,7 @@ class AmModel extends AmObject{
       }else{
         // Si no existe en los parametros se toma el valor
         // por defecto del campo
-        $value = $field->defaultValue();
+        $value = $field->getDefaultValue();
       }
 
       // Asignar valor mediante el metodo set 
@@ -128,7 +128,7 @@ class AmModel extends AmObject{
       $fields = array_keys((array)$this->getTable()->getFields());
     
     // Recorrer cada columan de cada referencia
-    $references = $this->getTable()->referencesTo();
+    $references = $this->getTable()->getReferencesTo();
     foreach($references as $rel){
       $cols = array_keys($rel->columns());
       foreach($cols as $from){
@@ -143,11 +143,11 @@ class AmModel extends AmObject{
     // Obtener la tabla
     $table = $this->getTable();
     foreach($fields as $fieldName){
-      $field = $tabla->getField($fieldName);  // Obtener el campos
+      $field = $table->getField($fieldName);  // Obtener el campos
       // Si exist el campo y es no es un campo autoincrementable
-      if($field === false || !$field->autoIncrement())
+      if($field === false || !$field->getAutoIncrement())
         // Se asigna el valor
-        $this->$fieldName = itemOr($values, $fieldName);
+        $this->$fieldName = isset($values[$fieldName])? $values[$fieldName] : null;
     }
     
   }
@@ -166,7 +166,7 @@ class AmModel extends AmObject{
 
     // Agregar los IDs
     foreach($pks as $pk)
-      $ret[$pk] = $this->getRealValues($pk);
+      $ret[$pk] = $this->getRealValue($pk);
 
     return $ret;
 
@@ -204,7 +204,7 @@ class AmModel extends AmObject{
     foreach($fields as $fieldName => $field){
       // Si se pidió incorporar los valores autoincrementados
       // o si el campo no es autoincrementado
-      if($withAI || !$field->autoIncrement())
+      if($withAI || !$field->getAutoIncrement())
         // Se agrega el campo al array de retorno
         $ret[$fieldName] = $this->$fieldName;
     }
@@ -247,7 +247,7 @@ class AmModel extends AmObject{
     $this->clearErrors();
 
     // Obtener nombre de validator definidos
-    $validatorNames = array_keys((array)$this->getTable()->validators());
+    $validatorNames = array_keys((array)$this->getTable()->getValidators());
     
     // Validar todos los campos
     foreach($validatorNames as $field)
@@ -264,7 +264,7 @@ class AmModel extends AmObject{
       // Si el modelo no cumple con la validacion
       if(!$validator->isValid($this))
         // Se agrega el error
-        $this->addError($field, $nameValidator, $validator->message());
+        $this->addError($field, $nameValidator, $validator->getMessage());
 
   }
   
@@ -315,21 +315,22 @@ class AmModel extends AmObject{
         // del registro en el caso de tener como PK un campo
         // autoincrementable o false si se generá un error
         if(false !== ($ret = $this->insertInto())){
-          
           // Obtener todos los campos de la tabla del modelo
           $fields = $this->getTable()->getFields();
 
           // Recorrer campos
           foreach($fields as $f){
             
-            // Obtener el nombre del método SET
-            // para asigar el valor autoincrementado
-            $method = "set_" . $f->getName();
-            
             // Agregar el valor que retorno el insert
             // si se trata de un campo autoincrementable
-            if($f->getAutoIncrement())
+            if($f->getAutoIncrement()){
+            
+              // Obtener el nombre del método SET
+              // para asigar el valor autoincrementado
+              $method = "set_" . $f->getName();
               $this->$method($ret);
+
+            }
             
           }
 

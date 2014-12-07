@@ -11,15 +11,18 @@ final class AmORM{
 
   // Incluye un archivo dentro buscado dentro de la
   // carpeta de la libreria
-  public static function requireFile($file){
-    Am::requireFile(dirname(__FILE__). "/{$file}");
+  public static function requireFile($file, $onCurrentDir = true){
+    $path = ($onCurrentDir? dirname(__FILE__)."/" : "") . "{$file}.php";
+    if(!file_exists($path))
+      die("AmORM: file not found '{$path}'");
+    require_once $path;
   }
 
   // Incluye un driver de BD
   public static function driver($driver){
 
     // Obtener el nombre de la clase
-    $driverClassName = Am::camelCase($driver, true)."Source";
+    $driverClassName = AmORM::camelCase($driver, true)."Source";
 
     // Se incluye satisfactoriamente el driver
     self::requireFile("drivers/{$driverClassName}.class");
@@ -33,7 +36,7 @@ final class AmORM{
   public static function validator($validator){
 
     // Obtener el nombre de la clase
-    $validatorClassName = Am::camelCase($validator, true)."Validator";
+    $validatorClassName = AmORM::camelCase($validator, true)."Validator";
     
     // Si se incluye satisfactoriamente el validator
     self::requireFile("validators/{$validatorClassName}.class");
@@ -103,10 +106,8 @@ final class AmORM{
       return $source->getTable($table);
 
     // Incluir Modelo de la tabla
-    Am::requireFile($source->getPathClassTableBase($table));  // Clase Base para la tabla
-    Am::requireFile($source->getPathClassTable($table));      // Clase para la Tabla
-    Am::requireFile($source->getPathClassModelBase($table));  // Clase base para el modelo
-    Am::requireFile($source->getPathClassModel($table));      // Clase para el model
+    self::requireFile($source->getPathClassTableBase($table), false);  // Clase Base para la tabla
+    self::requireFile($source->getPathClassTable($table), false);      // Clase para la Tabla
 
     // Obtener el nombre de la tabla
     $tableClassName = $source->getClassNameTable($table);
@@ -114,9 +115,68 @@ final class AmORM{
     // Instancia la clase
     $instance = new $tableClassName();
 
+    // Asignar tabla
     $source->setTable($table, $instance);
 
     return $instance;
+
+  }
+
+  // Incluye las clases model de una tabla y devuelve el nombre de la clase
+  public static function model($table, $source = "default"){
+    
+    // Obtener la instancia de la tabla
+    $table = self::table($table, $source);
+
+    self::requireFile($table->getPathClassModelBase(), false);               // Clase base para el modelo
+    self::requireFile($table->getPathClassModel(), false); // Clase para el model
+
+    return $table->getClassNameModel();
+
+  }
+
+  ///////////////////////////////////////////////////////////////////////////////////
+  // UTILIDADES
+  ///////////////////////////////////////////////////////////////////////////////////
+
+  public static function isNameValid($string){
+    return preg_match("/^[a-zA-Z_][a-zA-Z0-9_]*$/", $string) != 0;
+  }
+
+  // Devuelve la cadena "s" convertida en formato under_score
+  public static function underscor($s) {
+
+    // Primer caracter en miniscula
+    if(!empty($s)){
+      $s[0] = strtolower($s[0]);
+    }
+    
+    // Crear funcion para convertir en minuscula
+    $func = create_function('$c', 'return "_" . strtolower($c[1]);');
+
+    // Operar
+    return preg_replace_callback("/([A-Z])/", $func, str_replace(" ", "_", $s));
+    
+  }
+
+  // Devuelve una cadena "s" en formato camelCase. Si "cfc == true" entonces
+  // el primer caracter tambien es convertido en mayusculas
+  public static function camelCase($s, $cfc = false){
+    
+    // Primer caracter en mayuscula o en miniscula
+    if(!empty($s)){
+      if($cfc){
+        $s[0] = strtoupper($s[0]);
+      }else{
+        $s[0] = strtolower($s[0]);
+      }
+    }
+
+    // Funcion para convertir cada caracter en miniscula
+    $func = create_function('$c', 'return strtoupper($c[1]);');
+
+    // Operar
+    return preg_replace_callback("/_([a-z])/", $func, $s);
 
   }
 

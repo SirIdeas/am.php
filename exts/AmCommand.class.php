@@ -145,7 +145,7 @@ function am_command_generateModels($target, $params, $config, $file, $argv){
 
   // Si no se indico el modelo entonces se genera
   // el ORM de toda la fuente
-  if(empty($model)){
+  if($model ===null ||  empty($model)){
 
     // Generar todos los modelos
     $ret = $sourceInstance->createClassModels();

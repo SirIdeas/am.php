@@ -105,14 +105,14 @@ class AmQuery extends AmObject{
     
     // Si no se indicó el argumetno $as
     if(empty($as)){
-      if (Am::isNameValid($field)){
+      if (AmORM::isNameValid($field)){
         // Agregar en una posicion espeficia
         $this->selects[$field] = $field;
       }else{
         // Agregar al final
         $this->selects[] = $field;
       }
-    }elseif(Am::isNameValid($as)){
+    }elseif(AmORM::isNameValid($as)){
       // Agregar en una posicion espeficia
       $this->selects[$as] = $field;
     }else{
@@ -154,7 +154,7 @@ class AmQuery extends AmObject{
         if(isset($table) && $table instanceof AmTable){
           $this->model = $table->getModelName();
         }
-      }elseif(is_string($from) && Am::isNameValid($from)){
+      }elseif(is_string($from) && AmORM::isNameValid($from)){
         // Asignar modelo
         $this->model = $from;
       }
@@ -170,7 +170,7 @@ class AmQuery extends AmObject{
       }elseif($from instanceof AmTable){
         // Si es nua tabla se asigna en una posicion especifica
         $this->froms[$from->getTableName()] = $from;
-      }elseif (Am::isNameValid($from)){
+      }elseif (AmORM::isNameValid($from)){
         // Se asigna en una posicion especifica 
         $this->froms[$from] = $from;
       }else{
@@ -178,7 +178,7 @@ class AmQuery extends AmObject{
         $this->froms[] = $from;
       }
 
-    }elseif(Am::isNameValid($as)){
+    }elseif(AmORM::isNameValid($as)){
       // Adicion en posicion determinada
       $this->froms[$as] = $from;
     }else{
@@ -356,7 +356,7 @@ class AmQuery extends AmObject{
   public function count(){
 
     // Crear la consulta para contar
-    $ret = $this->countQuery()->getRow("hash");
+    $ret = $this->countQuery()->getRow("object");
 
     // Si se generó un error devolver cero, de lo contrari
     // devolver el valor obtenido
@@ -389,7 +389,7 @@ class AmQuery extends AmObject{
     if(!isset($as)){
 
       // Obtener el nombre de la clase del model
-      $className = false;//Am::model($this->getModel(), $s->getName());
+      $className = AmORM::model($this->getModel(), $s->getName());
       
       // Se encontró el modelo
       if (false !== $className){
@@ -406,7 +406,7 @@ class AmQuery extends AmObject{
     }elseif($as == "object"){
       // Retornar como objeto
       $r = (object)$r;
-    }elseif($as == "hash"){
+    }elseif($as == "am"){
       // Retornar como objeto de Amathista
       $r = new AmObject($r);
     }else{
@@ -460,8 +460,23 @@ class AmQuery extends AmObject{
 
   // Actualizar los registro seleccionados
   public function update(){
-    if(count($this->sets)>0)
-      return false !== $this->getSource()->execute($this->sqlUpdate());
+
+    // Si hay al menos un cambio que realizar
+    if(count($this->sets)>0){
+
+      // Obtener instancia de la fuente
+      $source = $this->getSource();
+
+      // Obtener la instancia de la tabla
+      $table = $source->getTable($this->getTable());
+
+      // Agregar fechas de creacion y modificacion si existen en la tabla
+      if($table->hasUpdatedAtField())
+        $this->set($table->getUpdatedAtField(), date("c"), true);
+
+      return false !== $source->execute($this->sqlUpdate());
+    }
+
     return true;
   }
 
@@ -483,7 +498,7 @@ class AmQuery extends AmObject{
   public function sqlGroups($with = true){ return $this->getSource()->sqlGroups($this, $with); }
   public function sqlLimit($with = true){ return $this->getSource()->sqlLimit($this, $with); }
   public function sqlOffset($with = true){ return $this->getSource()->sqlOffset($this, $with); }
-  public function sqlJoin(){ return $this->getSource()->sqlJoin($this); }
+  public function sqlJoins(){ return $this->getSource()->sqlJoins($this); }
   public function sqlSets($with = true){ return $this->getSource()->sqlSets($this, $with); }
 
   // Metodos para obtener el SQL los diferentes tipos de consulta

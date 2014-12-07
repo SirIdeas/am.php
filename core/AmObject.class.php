@@ -222,6 +222,10 @@ class AmObject implements Iterator, Countable, ArrayAccess{ //Reflector,
     if(is_array($collection)){
       return $collection;
     }
+
+    if($collection instanceof stdClass){
+      return (array)$collection;
+    }
     
     if($collection instanceof AmObject){
       return $collection->toArray();
