@@ -27,7 +27,7 @@ final class AmGenerator{
 
         // Agregar validador de campo unico para los primary keys
         if(count($table->getPks()) == 1 && $f->getPrimaryKey()){
-          $uniqueValidators[] = "\$this->getValidators('{$f->getName()}', 'unique', 'unique');";
+          $uniqueValidators[] = "\$this->setValidator(\"{$f->getName()}\", \"unique\", \"unique\");";
         }
         
         $type = $f->getType();
@@ -39,35 +39,35 @@ final class AmGenerator{
           case "string": 
             $len = $f->getCharLenght();
             if(isset($len)){
-              $strlenValidators[] = "\$this->getValidators('{$f->getName()}', 'max_length', 'max_length', array('max' => $len));";
+              $strlenValidators[] = "\$this->setValidator(\"{$f->getName()}\", \"max_length\", \"max_length\", array(\"max\" => $len));";
             }
-            $emptyValidators[] = "\$this->getValidators('{$f->getName()}', 'empty', 'empty');";
+            $emptyValidators[] = "\$this->setValidator(\"{$f->getName()}\", \"empty\", \"empty\");";
             break;
 
           case "integer": 
           case "biginteger": 
-            $integerValidators[] = "\$this->getValidators('{$f->getName()}', 'integer', 'integer');";
+            $integerValidators[] = "\$this->setValidator(\"{$f->getName()}\", \"integer\", \"integer\");";
             break;
 
           case "float": 
-            $floatValidators[] = "\$this->getValidators('{$f->getName()}', 'float', 'float');";
+            $floatValidators[] = "\$this->setValidator(\"{$f->getName()}\", \"float\", \"float\");";
             break;
 
           case "date": 
-            $dateValidators[] = "\$this->getValidators('{$f->getName()}', 'date', 'date');";
+            $dateValidators[] = "\$this->setValidator(\"{$f->getName()}\", \"date\", \"date\");";
             break;
 
           case "time": 
-    //        $timeValidators[] = "\$this->getValidators('{$f->getName()}', 'time', 'time');";
+    //        $timeValidators[] = "\$this->setValidator(\"{$f->getName()}\", \"time\", \"time\");";
     //        break;
 
           case "datetime": 
-    //        $datetimeValidators[] = "\$this->getValidators('{$f->getName()}', 'datetime', 'datetime');";
+    //        $datetimeValidators[] = "\$this->setValidator(\"{$f->getName()}\", \"datetime\", \"datetime\");";
     //        break;
 
           default:
             if($f->getNotNull()){
-              $nullValidators[] = "\$this->getValidators('{$f->getName()}', 'null', 'null');";
+              $nullValidators[] = "\$this->setValidator(\"{$f->getName()}\", \"null\", \"null\");";
             }
 
         }
@@ -87,7 +87,7 @@ final class AmGenerator{
 
         if($f->getNotNull()){
 
-          $relationsValidators[] = "\$this->getValidators('{$f->getName()}', 'fk_{$r->getTable()}', 'in_query', array('query' => AmORM::table('{$r->getTable()}', '{$table->getSource()->getName()}')->qAll(), 'field' => '{$cols[$colName[0]]}'));";
+          $relationsValidators[] = "\$this->setValidator(\"{$f->getName()}\", \"fk_{$r->getTable()}\", \"in_query\", array(\"query\" => AmORM::table(\"{$r->getTable()}\", \"{$table->getSource()->getName()}\")->qAll(), \"field\" => \"{$cols[$colName[0]]}\"));";
 
         }
 
@@ -101,7 +101,7 @@ final class AmGenerator{
     echo "abstract class {$table->getClassNameTableBase()} extends AmTable{";
 
     echo "\n\n  final public function __construct(){";
-    echo "\n\n    parent::__construct(array('source' => '{$table->getSource()->getName()}', 'tableName' => '{$table->getTableName()}'));";
+    echo "\n\n    parent::__construct(array(\"source\" => \"{$table->getSource()->getName()}\", \"tableName\" => \"{$table->getTableName()}\"));";
     echo "\n\n  }";
 
     echo "\n\n  public function initialize(){";
@@ -139,7 +139,7 @@ final class AmGenerator{
     echo "\n\n  }";
 
     echo "\n\n  public static function all(){";
-    echo "\n\n    return AmORM::table('{$table->getTableName()}', '{$table->getSource()->getName()}')->qAll();";
+    echo "\n\n    return AmORM::table(\"{$table->getTableName()}\", \"{$table->getSource()->getName()}\")->qAll();";
     echo "\n\n  }";
 
     echo "\n\n}\n";
@@ -151,7 +151,7 @@ final class AmGenerator{
   // Generar clase base para un model
   public final static function classModelBase(AmTable $table){
 
-    $newMethods = get_class_methods('AmModel');
+    $newMethods = get_class_methods("AmModel");
 
     $fields = array_keys((array)$table->getFields());
 
@@ -166,7 +166,7 @@ final class AmGenerator{
 
       $methodName = "get_{$attr}";
 
-      $prefix = in_array($methodName, $newMethods)? '//' : '';
+      $prefix = in_array($methodName, $newMethods)? "//" : "";
       $newMethods[] = $methodName;
       $getFieldMethods[] = "{$prefix}public function get_$attr(){ return \$this->$attr; }";
 
@@ -177,7 +177,7 @@ final class AmGenerator{
 
       $methodName = "set_{$attr}";
 
-      $prefix = in_array($methodName, $newMethods)? '//' : '';
+      $prefix = in_array($methodName, $newMethods)? "//" : "";
       $newMethods[] = $methodName;
       $setFieldMethods[] = "{$prefix}public function set_$attr(\$value){ \$this->$attr =  \$value; return \$this; }";
 
@@ -186,7 +186,7 @@ final class AmGenerator{
     // Agregar metodos para referencias de este modelo
     foreach(array_keys((array)$table->getReferencesBy()) as $relation){
 
-      $prefix = in_array($relation, $newMethods)? '//' : '';
+      $prefix = in_array($relation, $newMethods)? "//" : "";
       $newMethods[] = $relation;
       $hasManyMethods[] = "{$prefix}public function $relation(){ return \$this->getTable()->getReferencesTo()->{$relation}->getQuery(\$this); }";
 
@@ -195,7 +195,7 @@ final class AmGenerator{
     // Agregar metodos para referencias a este modelo
     foreach(array_keys((array)$table->getReferencesTo()) as $relation){
 
-      $prefix = in_array($relation, $newMethods)? '//' : '';
+      $prefix = in_array($relation, $newMethods)? "//" : "";
       $newMethods[] = $relation;
       $hasOneMethods[] = "{$prefix}public function $relation(){ return \$this->getTable()->getReferencesTo()->{$relation}->getQuery(\$this)->getRow(); }";
 
@@ -207,10 +207,10 @@ final class AmGenerator{
     echo "abstract class {$table->getClassNameModelBase()} extends AmModel{";
 
     echo "\n\n    final public function __construct(\$params = null){\n";
-    echo "\n        parent::__construct(array_merge(";
-    echo "\n          'source' => '{$table->getSource()->getName()}',";
-    echo "\n          'tableName' => '{$table->getTableName()}',";
-    echo "\n        ));";
+    echo "\n        parent::__construct(array_merge(\$params, array(";
+    echo "\n          \"source\" => \"{$table->getSource()->getName()}\",";
+    echo "\n          \"source\" => \"{$table->getTableName()}\",";
+    echo "\n        )));";
     echo "\n\n    }";
 
     // Preparacion de los metodos

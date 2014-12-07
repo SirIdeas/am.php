@@ -209,5 +209,39 @@ class AmMailer extends PHPMailer{
       
   }
 
+  // Obtener una instancia de un Mail con su respectiva configuraion tomada de
+  // 
+  public static function get($name, array $options = array()){
+    
+    // Obtener configuraciones de mails
+    $mails = Am::getAttribute("mails");
+
+    // Combinar opciones recibidas en el constructor con las
+    // establecidas en el archivo de configuracion
+    $options = array_merge(
+      isset($mails[$name])? $mails[$name] : array(),
+      $options
+    );
+
+    // Si no es un array se buscará la configuracion en
+    // el archivo de configuracion SMTP
+    if(!is_array($options["smtp"])){
+
+      // Obtener configuraciones STMP
+      $smtpConfs = Am::getAttribute("smtp");
+
+      // Si se debe tomar la configuracion por defecto
+      if($options["smtp"] === true) $options["smtp"] = "default";
+
+      // Asignar configuraio
+      $options["smtp"] = $smtpConfs[$options["smtp"]];
+            
+    }
+
+    // Crear instancia del mailer
+    return new AmMailer("test", $options);
+
+  }
+
 }
 

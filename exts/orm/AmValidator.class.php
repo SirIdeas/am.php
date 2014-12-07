@@ -86,7 +86,7 @@ class AmValidator extends AmObject{
 
     // Sustituir valores de las propiedades en el mensaje
     foreach($substitutions as $substr => $for){
-      $value = $this->attr($for);
+      $value = $this->$for;
       if(is_array($value)){
         $value = implode(",", $value);
       }

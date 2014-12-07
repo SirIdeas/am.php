@@ -26,13 +26,12 @@ class AmControl extends AmObject{
   }
 
   // Propiedad para get/set para render
-  public function render($value = null){
-    return $this->attr("render", $value);
-  }
+  public function getRender(){ return $this->render; }
+  public function render($value){ $this->render = $value; return $this; }
 
   // Obtener la carpeta de de las vistas
   public function getViewsPath(){
-    return $this->attr("path") . $this->attr("views");
+    return $this->path . $this->views;
   }
 
   // Funcion para atender las respuestas por controlador.
@@ -74,7 +73,7 @@ class AmControl extends AmObject{
     
     // Renderizar vista mediante un callback
     Am::call("render.template", array(
-      "{$obj->render()}.view.php",  // Las vista de las acciones son de extencion .view.php
+      "{$obj->getRender()}.view.php",  // Las vista de las acciones son de extencion .view.php
       array($obj->getViewsPath()),  // Paths para las vistas
 
       // Variables en la vista

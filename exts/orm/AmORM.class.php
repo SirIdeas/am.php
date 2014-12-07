@@ -7,7 +7,7 @@
 final class AmORM{
 
   protected static
-    $instances = array();
+    $sources = array();
 
   // Incluye un archivo dentro buscado dentro de la
   // carpeta de la libreria
@@ -19,7 +19,7 @@ final class AmORM{
   public static function driver($driver){
 
     // Obtener el nombre de la clase
-    $driverClassName = Am::camelCase($driver)."Source";
+    $driverClassName = Am::camelCase($driver, true)."Source";
 
     // Se incluye satisfactoriamente el driver
     self::requireFile("drivers/{$driverClassName}.class");
@@ -33,15 +33,35 @@ final class AmORM{
   public static function validator($validator){
 
     // Obtener el nombre de la clase
-    $validatorClassName = Am::camelCase($validator)."Validator";
-
+    $validatorClassName = Am::camelCase($validator, true)."Validator";
+    
     // Si se incluye satisfactoriamente el validator
-    if(self::requireFile("validators/{$validatorClassName}.class"))
-      // Se retorna en nombre de la clase
-      return $validatorClassName;
+    self::requireFile("validators/{$validatorClassName}.class");
 
-    // De lo contrario se retorna null
-    return null;
+    // Se retorna en nombre de la clase
+    return $validatorClassName;
+
+  }
+
+  // Devuelve la configuracion de una determinada fuente de datos
+  public static function getSourceConf($sourceName = "default"){
+
+    // Obtener configuraciones para las fuentes
+    $sources = Am::getAttribute("sources");
+
+    // Si no existe una configuración para el nombre de fuente
+    if(!isset($sources[$sourceName]))
+      return null;
+
+    // Asignar valores por defecto
+    return array_merge(
+      array(
+        "name"      => $sourceName,
+        "database"  => $sourceName,
+        "driver"    => null,
+      ),
+      $sources[$sourceName]
+    );
 
   }
 
@@ -49,45 +69,54 @@ final class AmORM{
   public static function source($name = "default"){
 
     // Obtener la instancia si ya existe
-    if(isset(self::$instances[$name]))
-      return self::$instances[$name];
+    if(isset(self::$sources[$name]))
+      return self::$sources[$name];
 
-    // Obtener configuraciones para las fuentes
-    $sources = Am::getAttribute("sources");
+    // Obtener la configuración de la fuente
+    $sourceConf = self::getSourceConf($name);
 
     // Si no existe una configuración para el nombre de fuente
     // solicitado se retorna NULL
-    if(!isset($sources[$name]))
+    if($sourceConf === null)
       die("Am: No se encontró la configuración para la fuente '{$name}'");
 
-    // Asignar valores por defecto
-    $sources[$name] = array_merge(
-      array(
-        "name"      => $name,
-        "database"  => $name,
-        "driver"    => null,
-      ),
-      $sources[$name]
-    );
-
     // Obtener el driver de la fuente 
-    $driverClassName = AmORM::driver($sources[$name]["driver"]);
+    $driverClassName = AmORM::driver($sourceConf["driver"]);
 
     // Crear instancia de la fuente
-    $source = new $driverClassName($sources[$name]);
+    $source = new $driverClassName($sourceConf);
     $source->connect(); // Conectar la fuente
 
-    return self::$instances[$name] = $source;
+    return self::$sources[$name] = $source;
 
   }
 
-  // Devuelve la instancia de de una tabla en una fuente determinada
+  // Devuelve la instancia de una tabla en una fuente determinada
   public static function table($table, $source = "default"){
     
     // Obtener la instancia de la fuente
     $source = self::source($source);
 
-    
+    // Si ya ha sido instanciada la tabla
+    // entonces se devuelve la instancia
+    if($source->hasTableInstance($table))
+      return $source->getTable($table);
+
+    // Incluir Modelo de la tabla
+    Am::requireFile($source->getPathClassTableBase($table));  // Clase Base para la tabla
+    Am::requireFile($source->getPathClassTable($table));      // Clase para la Tabla
+    Am::requireFile($source->getPathClassModelBase($table));  // Clase base para el modelo
+    Am::requireFile($source->getPathClassModel($table));      // Clase para el model
+
+    // Obtener el nombre de la tabla
+    $tableClassName = $source->getClassNameTable($table);
+
+    // Instancia la clase
+    $instance = new $tableClassName();
+
+    $source->setTable($table, $instance);
+
+    return $instance;
 
   }
 

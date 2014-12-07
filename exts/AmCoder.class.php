@@ -40,7 +40,7 @@ class AmCoder{
     
     // Si no se puede escribir el archivo generar erro
     // if(!is_writable($path))
-    //   die("Am: No se puede escribir '{$path}'");
+    //   die("Am: No se puede escribir "{$path}"");
 
     // Si el archivo no existe se crea el archivo
     if(!file_exists($path))
@@ -60,7 +60,7 @@ class AmCoder{
     
     $ret = array();
     foreach($data as  $key => $value){
-      $key = explode('_', $key);
+      $key = explode("_", $key);
       self::prepareInner($ret, $key, $value);
     }
     
@@ -74,7 +74,7 @@ class AmCoder{
     if(empty($path)){
       if(count($data)>1)
         return 1;
-      if(isset($data['_']) || empty($data))
+      if(isset($data["_"]) || empty($data))
         return 2;
     }
     
@@ -85,14 +85,14 @@ class AmCoder{
     }else{
       if(!is_array($data[$key])){
         $data[$key] = array(
-          '_' => $data[$key]
+          "_" => $data[$key]
         );
       }
     }
     
     switch (self::prepareInner($data[$key], $path, $value)){
       case 1:
-        $data[$key]['_'] = $value;
+        $data[$key]["_"] = $value;
         break;
       case 2:
         $data[$key] = $value;
@@ -109,14 +109,14 @@ class AmCoder{
   }
   
   // Algoritmo para codificar la data.
-  private static function _encode($data, $prefix = "", $subfix = ',') {
+  private static function _encode($data, $prefix = "", $subfix = ",") {
     
     if (!isset($data)) {
       return "null$subfix";
     }elseif(is_numeric($data)){
       return "$data$subfix";
     }elseif(is_string($data)){
-      return "'$data'$subfix";
+      return "\"$data\"$subfix";
     }elseif($data === true){
       return "true$subfix";
     }elseif($data === false){
@@ -156,7 +156,7 @@ class AmCoder{
       foreach($data as $i => $v){
         $encode = self::_encode($v, $prefixI);
         if($isAssocArray){
-          $str .= "$prefixI'$i' => $encode\n";
+          $str .= "$prefixI\"$i\" => $encode\n";
         }else{
           $str .= "{$prefixI}{$encode}\n";
         }

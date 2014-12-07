@@ -8,7 +8,7 @@ class AmTable extends AmObject{
 
   // Propiedades de la tabla
   protected
-    $name = null,             // Alias
+    $modelName = null,        // Nombre del model
     $tableName = null,        // Nombre en la BD
     $fields = null,           // Lista de campos
     $engine = null,           // Motor
@@ -18,8 +18,7 @@ class AmTable extends AmObject{
     $referencesTo = array(),  // Tablas a las que hace referencia
     $referencesBy = array(),  // Tablas que le hacen referencia
     $validators = array(),    // Validadores
-    $source = null,           // Fuente de datos
-    $modelName = null;        // Nombre del model
+    $source = null;           // Fuente de datos
 
   // Constructor para la clase
   public function __construct($params = null){
@@ -28,12 +27,12 @@ class AmTable extends AmObject{
     $params = AmObject::parse($params);
     
     // Obtener la instancia del source
-    $source = is_string($params['source']) ? AmORM::source($params['source']) : $params['source'];
+    $source = is_string($params["source"]) ? AmORM::source($params["source"]) : $params["source"];
     
     if(get_class($this) != __CLASS__){
-      // $tableClassName = _tcc($params['tableName'], true);
-      // $params = readConf("{$source->folderConfFilesPath()}/{$source->prefix()}$tableClassName");
-      $params['source'] = $source;
+      $tableClassName = Am::camelCase($params["tableName"], true);
+      $params = $source->getTableConf($params["tableName"]);
+      $params["source"] = $source;
     }
     
     // Llamar al constructor heredado
@@ -87,6 +86,11 @@ class AmTable extends AmObject{
   public function getPathClassModelBase(){  return $this->getSource()->getPathClassModelBase($this->getModelName()); }
   public function getPathClassModel(){      return $this->getSource()->getPathClassModel($this->getModelName()); }
 
+  // Obtener la configuracion del archivo de configuracion propio del modelo
+  public function getTableConf(){
+    return $this->getSource()->getTableConf($this->getModelName());
+  }
+
   public function mkdirModel(){
     return Am::mkdir($this->getFolderBase());
   }
@@ -106,7 +110,7 @@ class AmTable extends AmObject{
   public function createFileTableBase(){
 
     // Incluir la clase para generar
-    AmORM::requireFile('AmGenerator.class');
+    AmORM::requireFile("AmGenerator.class");
     
     // Obtener el nombre del archivo destino
     $path = $this->getPathClassTableBase() . ".php";
@@ -138,7 +142,7 @@ class AmTable extends AmObject{
   public function createFileModelBase(){
       
     // Incluir la clase para generar
-    AmORM::requireFile('AmGenerator.class');
+    AmORM::requireFile("AmGenerator.class");
     
     // Obtener el nombre del archivo destino
     $path = $this->getPathClassModelBase() . ".php";

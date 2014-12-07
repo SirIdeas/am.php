@@ -43,9 +43,14 @@ abstract class AmSource extends AmObject{
 
   // Obtener la instancia de una tabla
   public function getTable($offset){
-    if(isset($this->tables[$offset]))
+    if($this->hasTableInstance($offset))
       return $this->tables[$offset];
-    return $this->tables[$offset] = AmORM::table($offset, $this->getName());
+    return AmORM::table($offset, $this->name());
+  }
+
+  // Indica si ya está cargada una instancia de las tablas
+  public function hasTableInstance($offset){
+    return isset($this->tables[$offset]);
   }
 
   // Nombre de las clases relacionadas a una tabla
@@ -53,6 +58,89 @@ abstract class AmSource extends AmObject{
   public function getClassNameTable($model){      return $this->getClassNameModel($model)."Table"; }  
   public function getClassNameModelBase($model){  return $this->getClassNameModel($model)."Base"; }
   public function getClassNameModel($model){      return $this->getPrefix() . Am::camelCase($model, true); }
+
+  // Obtener la ruta de la carpeta para las clases del ORM de la BD actual
+  public function getFolder(){
+    return self::getFolderOrm() . "/" . $this->getName();
+  }
+
+  // Obtener la carpeta para un tabla
+  public function getFolderModel($model){
+    return $this->getFolder() . "/" . Am::underscor($model);
+  }
+
+  // Obtener la carpeta de archivos bases para un tabla
+  public function getFolderModelBase($model){
+    return $this->getFolderModel($model) . "/base";
+  }
+
+  // Devuelve la direccion del archivo de configuracion
+  public function getPathConf($model){
+    return $this->getFolderModelBase($model) . "/". Am::underscor($model) .".conf";
+  }
+
+  // Devuelve la dirección de la clase de la tabla Base
+  public function getPathClassTableBase($model){
+    return $this->getFolderModelBase($model) . "/". $this->getClassNameTableBase($model) .".class";
+  }
+
+  // Devuelve la dirección de la clase de la tabla
+  public function getPathClassTable($model){
+    return $this->getFolderModel($model) . "/". $this->getClassNameTable($model) .".class";
+  }
+
+  // Devuelve la dirección de la clase del model Base
+  public function getPathClassModelBase($model){
+    return $this->getFolderModelBase($model) . "/". $this->getClassNameModelBase($model) .".class";
+  }
+
+  // Devuelve la dirección de la clase del model
+  public function getPathClassModel($model){
+    return $this->getFolderModel($model) . "/". $this->getClassNameModel($model) .".class";
+  }
+
+  // Obtener la configuracion del archivo de configuracion propio de un model
+  public function getTableConf($model){
+    return AmCoder::decode($this->getPathConf($model).".php");
+  }
+
+  // Crear carpetas de todas las tablas de la BD
+  public function mkdirModel(){
+    
+    $ret = array(); // Para retorno
+
+    $tables = $this->newQuery($this->sqlGetTables())
+                   ->getCol("tableName");
+
+    foreach ($tables as $t){
+      // Obtener instancia de la tabla
+      $table = $this->describeTable($t);
+      // Crear modelo
+      $ret[$t] = $table->mkdirModel();
+    }
+
+    return $ret;
+
+  }
+
+  // Metodo para crear todos los modelos de la BD
+  public function createClassModels(){
+
+    $ret = array(); // Para retorno
+
+    $tables = $this->newQuery($this->sqlGetTables())
+                   ->getCol("tableName");
+
+    foreach ($tables as $t){
+      // Obtener instancia de la tabla
+      $table = $this->describeTable($t);
+      // Crear modelo
+      $ret[$t] = $table->createClassModels();
+    }
+
+    return $ret;
+
+  }
 
   // Setear la instancia de una tabla
   public function setTable($offset, AmTable $t){
@@ -272,84 +360,6 @@ abstract class AmSource extends AmObject{
     // el caso de que se hayan insertado varios registros
     return $id === 0 ? true : $id;
     
-  }
-
-  // Obtener la ruta de la carpeta para las clases del ORM de la BD actual
-  public function getFolder(){
-    return self::getFolderOrm() . "/" . $this->getName();
-  }
-
-  // Obtener la carpeta para un tabla
-  public function getFolderModel($model){
-    return $this->getFolder() . "/" . Am::underscor($model);
-  }
-
-  // Obtener la carpeta de archivos bases para un tabla
-  public function getFolderModelBase($model){
-    return $this->getFolderModel($model) . "/base";
-  }
-
-  // Devuelve la direccion del archivo de configuracion
-  public function getPathConf($model){
-    return $this->getFolderModelBase($model) . "/". Am::underscor($model) .".conf";
-  }
-
-  // Devuelve la dirección de la clase de la tabla Base
-  public function getPathClassTableBase($model){
-    return $this->getFolderModelBase($model) . "/". $this->getClassNameTableBase($model) .".class";
-  }
-
-  // Devuelve la dirección de la clase de la tabla
-  public function getPathClassTable($model){
-    return $this->getFolderModel($model) . "/". $this->getClassNameTable($model) .".class";
-  }
-
-  // Devuelve la dirección de la clase del model Base
-  public function getPathClassModelBase($model){
-    return $this->getFolderModelBase($model) . "/". $this->getClassNameModelBase($model) .".class";
-  }
-
-  // Devuelve la dirección de la clase del model
-  public function getPathClassModel($model){
-    return $this->getFolderModel($model) . "/". $this->getClassNameModel($model) .".class";
-  }
-
-  // Crear carpetas de todas las tablas de la BD
-  public function mkdirModel(){
-    
-    $ret = array(); // Para retorno
-
-    $tables = $this->newQuery($this->sqlGetTables())
-                   ->getCol("tableName");
-
-    foreach ($tables as $t){
-      // Obtener instancia de la tabla
-      $table = $this->describeTable($t);
-      // Crear modelo
-      $ret[$t] = $table->mkdirModel();
-    }
-
-    return $ret;
-
-  }
-
-  // Metodo para crear todos los modelos de la BD
-  public function createClassModels(){
-
-    $ret = array(); // Para retorno
-
-    $tables = $this->newQuery($this->sqlGetTables())
-                   ->getCol("tableName");
-
-    foreach ($tables as $t){
-      // Obtener instancia de la tabla
-      $table = $this->describeTable($t);
-      // Crear modelo
-      $ret[$t] = $table->createClassModels();
-    }
-
-    return $ret;
-
   }
 
   /////////////////////////////////////////////////////////////////////////////
