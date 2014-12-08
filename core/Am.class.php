@@ -26,6 +26,7 @@ final class Am{
       "assets" => "array_merge",
       "errorReporting" => null,
       "timezone" => null,
+      "session" => null,
       "commands" => null,
       "control" => "array_merge_recursive",
       "smtp" => "array_merge",
@@ -41,13 +42,14 @@ final class Am{
       "requires" => array(),          // Archivos a incluir en el arranque
       "routes" => array(),            // Rutas
       "assets" => array(),            // Archivos de recursos
-      "timezone" => null,
+      "timezone" => null,             // Zona horario
+      "session" => null,              // ID para variables de sesion
       "commands" => array(),          // Target para los comandos
       "control" => array(),           // Definiciones de controladores
       "smtp" => array(),              // Configuraciones SMTP
       "mails" => array(),             // Configuraciones de los mails
-      "sources" => array(),
-      "validators" => array(),
+      "sources" => array(),           // Configuraciones de las fuentes de datos
+      "validators" => array(),        // Configuraciones de las validaciones
     ),
 
     $instances = array(), // Instancias unicas de clases
@@ -220,6 +222,14 @@ final class Am{
   // Imprime una URL
   public static function eUrl($path = ""){
     echo self::url($path);
+  }
+
+  // Redirigir a una URL
+  public static function redirect($url){
+    if(!empty($url)){
+      header("location: ". self::url($url));
+      exit();
+    }
   }
 
   // Inicio del Amathista
