@@ -20,8 +20,32 @@ abstract class AmSource extends AmObject{
     $user     = null,     // Usuario para la conexion
     $pass     = null,     // Password para la conexion
     $charset  = null,     // Codificacion de caracteres
-    $collate  = null,     // Colexion de caracteres
-    $tables   = array();  // Listado de instancias de tablas 
+    $collage  = null,     // Colexion de caracteres
+    $tables   = array(),  // Listado de instancias de tablas
+    $tableNames = null;   // Listade de los nombres de la tabla de la BD
+
+  // Reescribir constructor para leer la configuracion particular
+  // de la fuente
+  public function __construct($params = array()) {
+
+    // Parchar los parametros
+    $params = AmObject::parse($params);
+
+    // Asignar solo el nombre
+    parent::__construct(array(
+      "name" => $params["name"]
+    ));
+
+    // Mezclar con los valores particulares de la fuente
+    $params = array_merge($this->getConf(), $params);
+
+    // Eliminar el nombre porque ya se asignó
+    unset($params["name"]);
+    
+    // Llamar al constructor con los nuevos argumentos
+    parent::__construct($params);
+
+  }
 
   // El destructor del objeto deve cerrar la conexion
   public function __destruct() {
@@ -40,6 +64,7 @@ abstract class AmSource extends AmObject{
   public function getCharset(){ return $this->charset; }
   public function getCollage(){ return $this->collage; }
   public function getTables(){ return $this->tables; }
+  public function getTableNames(){ return $this->tableNames; }
 
   // Obtener la instancia de una tabla
   public function getTable($table){
@@ -75,6 +100,12 @@ abstract class AmSource extends AmObject{
   // Retorna donde se guarda la configuración de la fuente
   public function getPathConf(){
     return $this->getFolder() . "/" . AmORM::underscor($this->getName()) . ".conf";
+  }
+
+  // Devuelve la configuracion particular de la fuente
+  public function getConf(){
+    $path = $this->getPathConf() . ".php";
+    return AmCoder::read($path);
   }
 
   // Obtener la carpeta para un tabla
@@ -186,7 +217,7 @@ abstract class AmSource extends AmObject{
     $ret = array(); // Para el retorno
 
     // Obtener los nombres de la tabla en el archivo
-    $tablesNames = $this->getTablesFromConf();
+    $tablesNames = $this->getTableNames();
 
     // Recorrer cada tabla generar crear la tabla
     foreach ($tablesNames as $tableName)
@@ -269,14 +300,6 @@ abstract class AmSource extends AmObject{
   public function getTablesFromSchema(){
     return $this->newQuery($this->sqlGetTables())
                 ->getResult("array");
-  }
-
-  // Devuelve un array con los nombres de las tablas en el archivo
-  // de configuracion generado para la fuente
-  public function getTablesFromConf(){
-    $path = $this->getPathConf() . ".php";
-    $conf = AmCoder::read($path);
-    return isset($conf["tables"])? $conf["tables"] : array();
   }
 
   // Devuelve un array con el listado de tablas
@@ -416,6 +439,11 @@ abstract class AmSource extends AmObject{
     return false !== $this->execute($this->sqlCreate());
   }
 
+  // Obtener la información de la BD
+  public function getInfo(){
+    return $this->newQuery($this->sqlGetInfo())->getRow("array");
+  }
+
   // Crear tabla
   public function createTable(AmTable $t){
     return false !== $this->execute($this->sqlCreateTable($t));
@@ -548,6 +576,14 @@ abstract class AmSource extends AmObject{
     foreach ($tables as $table) {
       $tablesNames[] = $table["tableName"];
     }
+
+    // Obtener la informacion de la BD en los esquemas
+    $info = $this->getInfo();
+
+    // Mezclar el Charset y el Collage
+    $info["charset"] = ($charset = $this->getCharset())===null? $info["charset"] : $charset;
+    $info["collage"] = ($collage = $this->getCollage())===null? $info["collage"] : $collage;
+
     return array(
       "name" => $this->getName(),
       "prefix" => $this->getPrefix(),
@@ -557,9 +593,9 @@ abstract class AmSource extends AmObject{
       "port" => $this->getPort(),
       "user" => $this->getUser(),
       "pass" => $this->getPass(),
-      "charset" => $this->getCharset(),
-      "collage" => $this->getCollage(),
-      "tables" => $tablesNames,
+      "charset" => $info["charset"],
+      "collage" => $info["collage"],
+      "tableNames" => $tablesNames,
     );
   }
 
