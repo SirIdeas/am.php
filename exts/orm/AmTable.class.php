@@ -93,7 +93,7 @@ class AmTable extends AmObject{
   // Metodos GET para obtener las carpetas pertinentes
   public function getFolder(){              return $this->getSource()->getFolderModel($this->getModelName()); }
   public function getFolderBase(){          return $this->getSource()->getFolderModelBase($this->getModelName()); }
-  public function getPathConf(){            return $this->getSource()->getPathConf($this->getModelName()); }
+  public function getPathConf(){            return $this->getSource()->getPathConfToModel($this->getModelName()); }
   public function getPathClassTableBase(){  return $this->getSource()->getPathClassTableBase($this->getModelName()); }
   public function getPathClassTable(){      return $this->getSource()->getPathClassTable($this->getModelName()); }
   public function getPathClassModelBase(){  return $this->getSource()->getPathClassModelBase($this->getModelName()); }
@@ -382,7 +382,7 @@ class AmTable extends AmObject{
   public function insertInto($values, array $fields = array()){     return $this->getSource()->insertInto($this, $values, $fields); }
 
   // Devuelve si la tabla existe o no en la BD
-  public function exist(){      return $this->getSource()->existsTable($this); }
+  public function exists(){      return $this->getSource()->existsTable($this); }
 
   // Carga los columnas, referencias y PKs de la tabla desde la BD
   public function describeTable(){

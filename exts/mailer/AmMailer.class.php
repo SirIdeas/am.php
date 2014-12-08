@@ -24,7 +24,7 @@ class AmMailer extends PHPMailer{
 
     // Asignar configuracion de cada parametros
     if(isset($options["smtp"]))       $this->smtpConf($options["smtp"]);
-    if(isset($options["charSet"])){   $this->charSet($options["charSet"]); }
+    if(isset($options["charset"])){   $this->charset($options["charset"]); }
     if(isset($options["template"])){  $this->template($options["template"]); }
     if(isset($options["wordWrap"])){  $this->wordWrap($options["wordWrap"]); }
     if(isset($options["altBody"])){   $this->altBody($options["altBody"]); }
@@ -122,9 +122,9 @@ class AmMailer extends PHPMailer{
     return $this;
   }
 
-  // Método set para el charSet
-  public function charSet($charSet){
-    $this->CharSet = $charSet;
+  // Método set para el charset
+  public function charset($charset){
+    $this->CharSet = $charset;
     return $this;
   }
 
