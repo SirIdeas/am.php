@@ -69,8 +69,8 @@ final class AmFlash{
   // Funcion comun para obtener/agregar cada tipo de mensaje
   private final static function _getAdd($index, $msg = null){
     if(isset($msg))
-      return self::add("success", $msg);
-    return self::get("success");
+      return self::add($index, $msg);
+    return self::get($index);
   }
 
   // Funciones obtener/agregar para cada tipo de mensaje
