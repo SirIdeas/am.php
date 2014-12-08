@@ -14,7 +14,7 @@ class CustomValidator extends AmValidator{
     // Si no se asigna el nombre del validator
     // se tomara como metodo como prefijo "validator_$campoValidando"
     if(!$fnName)
-      $fnName = "validator_{$this->fieldName()}";
+      $fnName = "validator_{$this->getFieldName()}";
     return $model->$fnName($this);
   }
   

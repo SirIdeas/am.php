@@ -53,10 +53,10 @@ class AmValidator extends AmObject{
     // Obtener propiedades necesarias
     $fnIf = $this->getFnIf();
     $field = $model->getTable()->getField($this->getFieldName());
-    $notNull = $field!==false? $field->getNotNull() : false;
+    $notNull = $field? $field->getNotNull() : false;
     
     // Condiciones para no validar
-    if((!$notNull && null === $this->value($model) && false === $this->force()) ||
+    if((!$notNull && null === $this->value($model) && false === $this->getForce()) ||
         !($fnIf === null || call_user_func_array($fnIf, array($this, $model)))){
       return true;
     }

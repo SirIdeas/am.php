@@ -145,7 +145,7 @@ class AmModel extends AmObject{
     foreach($fields as $fieldName){
       $field = $table->getField($fieldName);  // Obtener el campos
       // Si exist el campo y es no es un campo autoincrementable
-      if($field === false || !$field->getAutoIncrement())
+      if(!$field || !$field->getAutoIncrement())
         // Se asigna el valor
         $this->$fieldName = isset($values[$fieldName])? $values[$fieldName] : null;
     }
@@ -372,8 +372,8 @@ class AmModel extends AmObject{
       // en la insercion o actualizacion, por lo que se agrega un
       // error global con el ultimo error generado en  el Gestor
       $this->addError("__global__",
-        $this->getTable()->getSource()->errNo(),
-        $this->getTable()->getSource()->error());
+        $this->getTable()->getSource()->getErrNo(),
+        $this->getTable()->getSource()->getError());
       
     }
     

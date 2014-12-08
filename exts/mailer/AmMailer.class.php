@@ -11,6 +11,7 @@ class AmMailer extends PHPMailer{
 
   // Nombre del SMTP
   protected
+    $dir = null,
     $smtpName = null,
     $template = null,
     $with = array();
@@ -19,7 +20,7 @@ class AmMailer extends PHPMailer{
   public function __construct($name = null, $options = array()) {
     parent::__construct();
 
-    if(isset($name)) $this->template("$name.view.php");
+    if(isset($name)) $this->template("$name.mail.php");
 
     // Asignar configuracion de cada parametros
     if(isset($options["smtp"]))       $this->smtpConf($options["smtp"]);
@@ -29,6 +30,8 @@ class AmMailer extends PHPMailer{
     if(isset($options["altBody"])){   $this->altBody($options["altBody"]); }
     if(isset($options["subject"])){   $this->subject($options["subject"]); }
     if(isset($options["isHtml"])){    $this->isHTML($options["isHtml"]); }
+    if(isset($options["with"])){      $this->with($options["with"]); }
+    if(isset($options["dir"])){       $this->dir($options["dir"]); }
 
     // Asignación de remitente del correo
     if(isset($options["from"])){
@@ -100,6 +103,12 @@ class AmMailer extends PHPMailer{
 
   }
 
+  // Asiigna el directorio donde se buscará la vista a renderizar
+  public function dir($dir){
+    $this->dir = $dir;
+    return $this;
+  }
+
   // Método para asignar remitente
   public function from($email, $as = null){
     $this->From = $email;
@@ -142,6 +151,12 @@ class AmMailer extends PHPMailer{
     $this->Body = $body;
     return $this;
   }
+
+  // Asigna las variables con las que se renderizará el mensaje
+  public function with(array $values){
+    $this->with = $values;
+    return $this;
+  }
   
   // Metodo para agregar direccion destinataria
   public function addAddress($address, $name = "") {
@@ -172,15 +187,19 @@ class AmMailer extends PHPMailer{
     return $this->ErrorInfo;
   }
   
-  public function getContent(array $with = array()){
+  public function getContent($with = null){
 
+    // Si se reciben variables se asignan al contexto
+    if(isset($with))
+      $this->with($with);
+    
     ob_start();
 
     // Renderizar vista mediante un callback
     $ret = Am::call("render.template", array(
       $this->template,
-      array(),
-      $with,
+      array($this->dir),
+      $this->with,
       true
     ));
 
@@ -194,10 +213,9 @@ class AmMailer extends PHPMailer{
   }
 
   // Método para enviar el mensaje
-  public function send(array $arr = array()){
-    
+  public function send($with = null){
     // Renderizar contenido
-    $content = $this->getContent($arr);
+    $content = $this->getContent($with);
 
     // Se se devolvió un contenido válido se asigna al body
     if(isset($content)){
@@ -219,7 +237,11 @@ class AmMailer extends PHPMailer{
     // Combinar opciones recibidas en el constructor con las
     // establecidas en el archivo de configuracion
     $options = array_merge(
+      // Configuración de valores po defecto
+      isset($mails["default"])? $mails["default"] : array(),
+      // Configuración de valores del mail
       isset($mails[$name])? $mails[$name] : array(),
+      // Parametros locales
       $options
     );
 
@@ -239,7 +261,7 @@ class AmMailer extends PHPMailer{
     }
 
     // Crear instancia del mailer
-    return new AmMailer("test", $options);
+    return new AmMailer($name, $options);
 
   }
 

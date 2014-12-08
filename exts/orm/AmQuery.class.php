@@ -50,8 +50,8 @@ class AmQuery extends AmObject{
   }
 
   // Métodos SET para algunas propiedades
-  public function setSource($value){ return $this->source = $value; }
-  public function setSelects(array $value){ return $this->selects = $value; }
+  public function setSource($value){ $this->source = $value; return $this; }
+  public function setSelects(array $value){ $this->selects = $value; return $this; }
 
   // Ejecuta la consulta SQL
   public function execute(){
@@ -259,7 +259,10 @@ class AmQuery extends AmObject{
   public function orWhere(){ return $this->where("or", func_get_args());}
 
   // Eliminar todas las condiciones
-  public function clearWhere(){ $this->conditions = array(); }
+  public function clearWhere(){
+    $this->conditions = array();
+    return $this;
+  }
 
   // Agregar un join
   public function joins($type, $table, $on, $as){

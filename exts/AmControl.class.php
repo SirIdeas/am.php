@@ -34,6 +34,11 @@ class AmControl extends AmObject{
     return $this->path . $this->views;
   }
 
+  // Devuelve el método de la peticion
+  public function getMethod(){
+    return strtolower($this->server->REQUEST_METHOD);
+  }
+
   // Funcion para atender las respuestas por controlador.
   // Recive el nombre del controlador, la accion a ejecutar,
   // Los parametros y el entorno
@@ -68,7 +73,11 @@ class AmControl extends AmObject{
       $obj->action($params);
     
     // Si el metodo existe llamar
-    if(method_exists($obj, $actionMethod = "action_$action"))
+    if(method_exists($obj, $actionMethod = "action_{$action}"))
+      call_user_func_array(array($obj, $actionMethod), $params);
+
+    // Si el metodo existe llamar correspondiente al metodo de la peticion
+    if(method_exists($obj, $actionMethod = "{$obj->getMethod()}_{$action}"))
       call_user_func_array(array($obj, $actionMethod), $params);
     
     // Renderizar vista mediante un callback
