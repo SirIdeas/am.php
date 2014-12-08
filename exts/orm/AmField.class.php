@@ -30,7 +30,7 @@ class AmField extends AmObject{
     $autoIncrement = false,   // Indica si es un campo autoincrementable
     $extra = null,            // Atributos extras
     $charset = null,          // Set de caracteres
-    $collate = null,          // Coleccion de caracteres
+    $collage = null,          // Coleccion de caracteres
     $primaryKey = false;      // Indica si es o no una clave primaria
 
     // Constructor de la calse
@@ -67,7 +67,7 @@ class AmField extends AmObject{
     public function getAutoIncrement(){ return $this->autoIncrement; }
     public function getExtra(){ return $this->extra; }
     public function getCharset(){ return $this->charset; }
-    public function getCollate(){ return $this->collate; }
+    public function getCollage(){ return $this->collage; }
     public function getPrimaryKey(){ return $this->primaryKey; }
     
     // Métodos set para algunas propiedades
@@ -86,7 +86,7 @@ class AmField extends AmObject{
         "autoIncrement" => $this->getAutoIncrement(),
         "extra" => $this->getExtra(),
         "charset" => $this->getCharset(),
-        "collate" => $this->getCollate(),
+        "collage" => $this->getCollage(),
         "primaryKey" => $this->getPrimaryKey(),
       );
         

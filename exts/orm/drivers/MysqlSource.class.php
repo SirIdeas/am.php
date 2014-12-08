@@ -107,6 +107,8 @@ class MysqlSource extends AmSource{
 
     $charset = empty($charset) ? "" : " CHARACTER SET {$charset}";
 
+    return $charset;
+
   }
 
   // Coleccion de caracteres
@@ -114,33 +116,53 @@ class MysqlSource extends AmSource{
 
     // Si no recibió argumentos obtener el college de la BD
     if(!count(func_get_args())>0)
-      $collate = $this->getCollage();
+      $collage = $this->getCollage();
     
     // El el argumento esta vacío retornar cadena vacia
-    if(empty($collate))
+    if(empty($collage))
       return "";
 
-    $collate = empty($collate) ? "" : " COLLATE {$collate}";
+    $collage = empty($collage) ? "" : " COLLATE {$collage}";
+
+    return $collage;
+
   }
 
   // SQL para crear la BD
   public function sqlCreate(){
     $database = $this->getParseNameDatabase();
     $charset = $this->sqlCharset();
-    $collate = $this->sqlCollage();
-    return "CREATE DATABASE IF NOT EXISTS {$database}{$charset}{$collate}";
+    $collage = $this->sqlCollage();
+    $sql = "CREATE DATABASE IF NOT EXISTS {$database}{$charset}{$collage}";
+    return $sql;
   }
 
   // SQL para eliminar la BD
   public function sqlDrop(){
     $database = $this->getParseNameDatabase();
-    return "DROP DATABASE {$database}";
+    $sql = "DROP DATABASE {$database}";
+    return $sql;
   }
   
   // SQL para seleccionar la BD
   public function sqlSelectDatabase(){
     $database = $this->getParseNameDatabase();
-    return "USE {$database}";
+    $sql = "USE {$database}";
+    return $sql;
+  }
+
+  //OSQL par aobtener la informacion de la BD
+  public function sqlGetInfo(){
+
+    $sql = $this
+      ->newQuery("information_schema.SCHEMATA", "s")
+      ->selectAs("s.DEFAULT_CHARACTER_SET_NAME", "charset")
+      ->selectAS("s.DEFAULT_COLLATION_NAME", "collage")
+      ->where("SCHEMA_NAME='{$this->getDatabase()}'")
+      ->sql();
+
+    return $sql;
+    
   }
 
   // SQL para obtener el listado de tablas
@@ -151,7 +173,7 @@ class MysqlSource extends AmSource{
       ->innerJoin("information_schema.COLLATION_CHARACTER_SET_APPLICABILITY", "t.TABLE_COLLATION = c.COLLATION_NAME", "c")
       ->selectAs("t.TABLE_NAME", "tableName")
       ->selectAS("t.ENGINE", "engine")
-      ->selectAS("t.TABLE_COLLATION", "collate")
+      ->selectAS("t.TABLE_COLLATION", "collage")
       ->selectAS("c.CHARACTER_SET_NAME ", "charset")
       ->where("TABLE_SCHEMA='{$this->getDatabase()}'", "and", "TABLE_TYPE='BASE TABLE'")
       ->sql();
@@ -185,7 +207,7 @@ class MysqlSource extends AmSource{
       ->selectAs("NUMERIC_PRECISION", "floatPrecision")
       ->selectAs("IS_NULLABLE = 'NO'", "notNull")
       ->selectAs("COLUMN_DEFAULT", "defaultValue")
-      ->selectAs("COLLATION_NAME", "collate")
+      ->selectAs("COLLATION_NAME", "collage")
       ->selectAs("CHARACTER_SET_NAME", "charset")
       ->selectAs("EXTRA", "extra")
       ->where("TABLE_SCHEMA='{$this->getDatabase()}'", "and", "TABLE_NAME='{$t->getTableName()}'")
@@ -632,14 +654,14 @@ class MysqlSource extends AmSource{
     $lenght = !empty($lenght) ? "({$lenght})" : "";
     $notNull = $field->getNotNull() ? " NOT NULL" : "";
     $charset = $this->sqlCharset($field->getCharset());
-    $collate = $this->sqlCollage($field->getCollate());
+    $collage = $this->sqlCollage($field->getCollage());
 
     $default = $field->getDefaultValue();
     $default = $default === null ? "" : " DEFAULT '{$default}'";
     
     $autoIncrement = $field->getAutoIncrement() ? " AUTO_INCREMENT" : "";
     
-    return "$name$type$lenght$autoIncrement$charset$collate$notNull$default";
+    return "$name$type$lenght$autoIncrement$charset$collage$notNull$default";
 
   }
 
@@ -665,7 +687,7 @@ class MysqlSource extends AmSource{
     // Preparar otras propiedades
     $engine = empty($t->engine) ? "" : "ENGINE={$t->engine} ";        
     $charset = $this->sqlCharset($t->getCharset());
-    $collate = $this->sqlCollage($t->getCollate());
+    $collage = $this->sqlCollage($t->getCollage());
 
     // Agregar los primaris key al final de los campos
     $fields[] = empty($pks) ? "" : "PRIMARY KEY (" . implode(", ", $pks). ")";
@@ -674,7 +696,7 @@ class MysqlSource extends AmSource{
     $fields = implode(", ", $fields);
 
     // Preparar el SQL final
-    return "CREATE TABLE IF NOT EXISTS $tableName($fields)$engine$charset$collate;";
+    return "CREATE TABLE IF NOT EXISTS $tableName($fields)$engine$charset$collage;";
 
   }
 

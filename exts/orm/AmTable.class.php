@@ -19,7 +19,7 @@ class AmTable extends AmObject{
     $fields = null,           // Lista de campos
     $engine = null,           // Motor
     $charset = null,          // Set de caracteres
-    $collate = null,          // Coleción de caracteres
+    $collage = null,          // Coleción de caracteres
     $pks = array(),           // Array de nombres de campos que forman el PK
     $referencesTo = array(),  // Tablas a las que hace referencia
     $referencesBy = array(),  // Tablas que le hacen referencia
@@ -78,7 +78,7 @@ class AmTable extends AmObject{
   public function getPks(){ return $this->pks; }
   public function getEngine(){ return $this->engine;}
   public function getCharset(){ return $this->charset;}
-  public function getCollate(){ return $this->collate;}
+  public function getCollage(){ return $this->collage;}
   public function getFields(){ return $this->fields; }
   public function getField($name){ return $this->hasField($name)? $this->fields->$name : null; }
 
@@ -461,7 +461,7 @@ class AmTable extends AmObject{
       "modelName" => $this->getModelName(),
       "engine" => $this->getEngine(),
       "charset" => $this->getCharset(),
-      "collate" => $this->getCollate(),
+      "collage" => $this->getCollage(),
       "fields" => $fields,
       "pks" => $this->getPks(),
       "referencesTo" => $referencesTo,
