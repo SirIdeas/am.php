@@ -53,7 +53,7 @@ abstract class AmSource extends AmObject{
       return $this->tables[$table];
 
     // Sino instanciar la tabla
-    return AmORM::table($table, $this->name());
+    return AmORM::table($table, $this->getName());
   }
 
   // Indica si ya está cargada una instancia de las tablas
@@ -72,6 +72,11 @@ abstract class AmSource extends AmObject{
     return self::getFolderOrm() . "/" . $this->getName();
   }
 
+  // Retorna donde se guarda la configuración de la fuente
+  public function getPathConf(){
+    return $this->getFolder() . "/" . AmORM::underscor($this->getName()) . ".conf";
+  }
+
   // Obtener la carpeta para un tabla
   public function getFolderModel($model){
     return $this->getFolder() . "/" . AmORM::underscor($model);
@@ -83,7 +88,7 @@ abstract class AmSource extends AmObject{
   }
 
   // Devuelve la direccion del archivo de configuracion
-  public function getPathConf($model){
+  public function getPathConfToModel($model){
     return $this->getFolderModelBase($model) . "/". AmORM::underscor($model) .".conf";
   }
 
@@ -107,9 +112,30 @@ abstract class AmSource extends AmObject{
     return $this->getFolderModel($model) . "/". $this->getClassNameModel($model) .".class";
   }
 
+  // Inidic si todas las clases y archivos de un model existes
+  public function existsModel($model){
+    return file_exists($this->getPathConfToModel($model) . ".php")
+        && file_exists($this->getPathClassTableBase($model) . ".php")
+        && file_exists($this->getPathClassTable($model) . ".php")
+        && file_exists($this->getPathClassModelBase($model) . ".php")
+        && file_exists($this->getPathClassModel($model) . ".php");
+  }
+
   // Obtener la configuracion del archivo de configuracion propio de un model
   public function getTableConf($model){
-    return AmCoder::decode($this->getPathConf($model).".php");
+    return AmCoder::decode($this->getPathConfToModel($model).".php");
+  }
+
+  // Crea el archivo de configuracion para una fuente
+  public function createFileConf($rw = false){
+
+    // Obtener de el nombre del archivo destino
+    $path = $this->getPathConf() . ".php";
+    if(!file_exists($path) || $rw){
+      AmCoder::write($path, $this->toArray());
+      return true;
+    }
+    return false;
   }
 
   // Crear carpetas de todas las tablas de la BD
@@ -134,7 +160,11 @@ abstract class AmSource extends AmObject{
   // Metodo para crear todos los modelos de la BD
   public function createClassModels(){
 
-    $ret = array(); // Para retorno
+     // Para retorno
+    $ret = array(
+      "source" => $this->createFileConf(),
+      "tables" => array(),
+    );
 
     $tables = $this->newQuery($this->sqlGetTables())
                    ->getCol("tableName");
@@ -143,8 +173,25 @@ abstract class AmSource extends AmObject{
       // Obtener instancia de la tabla
       $table = $this->describeTable($t);
       // Crear modelo
-      $ret[$t] = $table->createClassModels();
+      $ret["tables"][$t] = $table->createClassModels();
     }
+
+    return $ret;
+
+  }
+
+  // Creaa todas las tablas de la BD
+  public function createTables(){
+    
+    $ret = array(); // Para el retorno
+
+    // Obtener los nombres de la tabla en el archivo
+    $tablesNames = $this->getTablesFromConf();
+
+    // Recorrer cada tabla generar crear la tabla
+    foreach ($tablesNames as $tableName)
+      // Crear la tabla
+      $ret[$tableName] = $this->createTableIfNotExists($tableName);
 
     return $ret;
 
@@ -219,9 +266,17 @@ abstract class AmSource extends AmObject{
   }
 
   // Devuelve un array con el listado de tablas de la BD
-  public function getTablesSchema(){
+  public function getTablesFromSchema(){
     return $this->newQuery($this->sqlGetTables())
                 ->getResult("array");
+  }
+
+  // Devuelve un array con los nombres de las tablas en el archivo
+  // de configuracion generado para la fuente
+  public function getTablesFromConf(){
+    $path = $this->getPathConf() . ".php";
+    $conf = AmCoder::read($path);
+    return isset($conf["tables"])? $conf["tables"] : array();
   }
 
   // Devuelve un array con el listado de tablas
@@ -351,24 +406,60 @@ abstract class AmSource extends AmObject{
       
   }
 
+  // Crea la BD
+  public function create(){
+    return false !== $this->execute($this->sqlCreate());
+  }
+
+  // Elimina la BD
+  public function drop(){
+    return false !== $this->execute($this->sqlCreate());
+  }
+
   // Crear tabla
   public function createTable(AmTable $t){
-    return $this->getSource()->execute($this->sqlCreateTable($t)) !== false;
+    return false !== $this->execute($this->sqlCreateTable($t));
+  }
+
+  // Crea un tabla en la BD
+  public function createTableIfNotExists($model){
+    // Si el model existe
+    if($this->existsModel($model)){
+
+      // Obtener la instancia de la tabla
+      $table = $this->getTable($model);
+      // Obtener la instancia de la BD y
+      // retornar si se pudo crear o no la tabla en la BD
+      if(!$table->exists()){
+        // Intentar crear la tabla
+        if($table->create())
+          return true;
+
+        // Retornar error de MSYL
+        return $this->getErrNo() . ": " . $this->getError();
+
+      }
+
+      // La tabla ya existe en la BD
+      return 1;
+
+    }
+    return 0;
   }
 
   // Elimina la Base de datos
   public function dropTable(AmTable $t){
-    return $this->getSource()->execute($this->sqlDropTable($t)) !== false;
+    return false !== $this->execute($this->sqlDropTable($t));
   }
 
   // Vaciar tabla
   public function truncate(AmTable $t){
-    return $this->getSource()->execute($this->sqlTruncate($t)) !== false;
+    return false !== $this->execute($this->sqlTruncate($t));
   }
 
   // Indica si la tabla existe
   public function existsTable(AmTable $t){
-    return $this->getTableDescription($this->tableName()) !== false;
+    return false !== $this->getTableDescription($t->getTableName());
   }
 
   // Ejecuta una consulta de insercion para los
@@ -446,6 +537,30 @@ abstract class AmSource extends AmObject{
     // el caso de que se hayan insertado varios registros
     return $id === 0 ? true : $id;
     
+  }
+
+  // Converite el objeto en un array
+  public function toArray(){
+
+    // Obtener los nombres de las ta blas
+    $tablesNames = array();
+    $tables = $this->getTablesFromSchema();
+    foreach ($tables as $table) {
+      $tablesNames[] = $table["tableName"];
+    }
+    return array(
+      "name" => $this->getName(),
+      "prefix" => $this->getPrefix(),
+      "driver" => $this->getDriver(),
+      "database" => $this->getDatabase(),
+      "server" => $this->getServer(),
+      "port" => $this->getPort(),
+      "user" => $this->getUser(),
+      "pass" => $this->getPass(),
+      "charset" => $this->getCharset(),
+      "collage" => $this->getCollage(),
+      "tables" => $tablesNames,
+    );
   }
 
   /////////////////////////////////////////////////////////////////////////////

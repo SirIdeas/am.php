@@ -625,19 +625,19 @@ class MysqlSource extends AmSource{
   public function sqlField(AmField $field){
 
     // Preparar las propiedades  
-    $name = $this->getParseName($field->name());
-    $type = $field->type();
+    $name = $this->getParseName($field->getName());
+    $type = $field->getType();
     $type = isset(self::$TYPES[$type])? self::$TYPES[$type] : $type;
-    $lenght = $field->charLenght();
+    $lenght = $field->getCharLenght();
     $lenght = !empty($lenght) ? "({$lenght})" : "";
-    $notNull = $field->notNull() ? " NOT NULL" : "";
-    $charset = $this->sqlCharset($field->charset());
-    $collate = $this->sqlCollage($field->collate());
+    $notNull = $field->getNotNull() ? " NOT NULL" : "";
+    $charset = $this->sqlCharset($field->getCharset());
+    $collate = $this->sqlCollage($field->getCollate());
 
-    $default = $field->defaultValue();
+    $default = $field->getDefaultValue();
     $default = $default === null ? "" : " DEFAULT '{$default}'";
     
-    $autoIncrement = $field->autoIncrement() ? " AUTO_INCREMENT" : "";
+    $autoIncrement = $field->getAutoIncrement() ? " AUTO_INCREMENT" : "";
     
     return "$name$type$lenght$autoIncrement$charset$collate$notNull$default";
 
@@ -651,22 +651,21 @@ class MysqlSource extends AmSource{
 
     // Lista de campos
     $fields = array();
+    $realFields = $t->getFields();
 
     // Obtener el SQL para cada camppo
-    foreach($t->fields() as $field){
-      $fields[] = $this->fieldToSql($field);
-    }
+    foreach($realFields as $field)
+      $fields[] = $this->sqlField($field);
       
     // Obtener los nombres de los primary keys
-    $pks = $t->pks();
-    foreach($pks as $offset => $pk){
-      $pks[$offset] = $this->getParseName($t->fields($pk)->name());
-    }
+    $pks = $t->getPks();
+    foreach($pks as $offset => $pk)
+      $pks[$offset] = $this->getParseName($t->getField($pk)->getName());
 
     // Preparar otras propiedades
     $engine = empty($t->engine) ? "" : "ENGINE={$t->engine} ";        
-    $charset = $this->sqlCharset($t->charset());
-    $collate = $this->sqlCollage($t->collate());
+    $charset = $this->sqlCharset($t->getCharset());
+    $collate = $this->sqlCollage($t->getCollate());
 
     // Agregar los primaris key al final de los campos
     $fields[] = empty($pks) ? "" : "PRIMARY KEY (" . implode(", ", $pks). ")";
