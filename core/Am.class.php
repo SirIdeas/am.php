@@ -219,6 +219,16 @@ final class Am{
     return self::$urlBase.$path;
   }
 
+  // Devuelve una URL absoluta incluyendo el nombre del servidor
+  // y el tipo de conexion
+  public static function serverUrl($path = ""){
+    return $_SERVER["REQUEST_SCHEME"] . "://" . $_SERVER["SERVER_NAME"] . Am::url($path);
+  }
+
+  public static function eServerUrl($path)
+    echo self::serverUrl($path);
+  }
+
   // Imprime una URL
   public static function eUrl($path = ""){
     echo self::url($path);
