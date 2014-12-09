@@ -225,7 +225,7 @@ final class Am{
     return $_SERVER["REQUEST_SCHEME"] . "://" . $_SERVER["SERVER_NAME"] . Am::url($path);
   }
 
-  public static function eServerUrl($path)
+  public static function eServerUrl($path){
     echo self::serverUrl($path);
   }
 
