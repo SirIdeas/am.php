@@ -293,7 +293,6 @@ final class AmTemplate{
     foreach ($lines as $line) {
       $html .= trim($line);
     }
-    var_dump($line);
     return $html;
   }
 
