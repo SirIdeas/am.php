@@ -272,26 +272,28 @@ final class AmTemplate{
     $result = $this->compile();
 
     // Guardar vista minificada
-    file_put_contents($compiledView, self::htmlMinify($result["content"]));
+    file_put_contents($compiledView, $result["content"]);
 
   }
 
   // incluye la vista compilada
   public function includeView(){
-    if(file_exists($filename = $this->getCompiledFile())){
+    if(file_exists($this->getCompiledFile())){
       extract($this->getVars());  // Crear variables
-      include $filename;          // Inluir vista
+      ob_start();
+      include $this->getCompiledFile();          // Inluir vista
+      echo self::htmlMinify(ob_get_clean());
     }
   }
 
   // Minifca el HTML de la vista. basicamente consiste en colocar todo en una sola linea
   public static function htmlMinify($html){
     $lines = explode("\n", $html);
-    
     $html = "";
     foreach ($lines as $line) {
       $html .= trim($line);
     }
+    var_dump($line);
     return $html;
   }
 
