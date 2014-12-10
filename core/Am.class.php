@@ -16,7 +16,7 @@ final class Am{
       // response.assets (file, assets, env)            : Responder con archivo
       // render.form (file, tpl)                        : Renderizar formulario
       // response.control (control, action, params, env): Responder con controlador
-      // render.template (templete, paths, env, ignore) : Renderizar vista
+      // render.template (templete, paths, options)     : Renderizar vista
     ),
 
     // Callbacks para mezclar atributos

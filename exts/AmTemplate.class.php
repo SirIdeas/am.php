@@ -4,7 +4,7 @@
  * Clase renderizar vistas
  */
 
-final class AmTemplate{
+final class AmTemplate extends AmObject{
 
   // Carpeta donde se guardan los compilados de las vistas
   const BUILD_FOLDER = "gen/";
@@ -22,10 +22,13 @@ final class AmTemplate{
     $dependences = array(),   // Lista de vistas de las que depende (padre, hijas y anidadas)
     $paths = array(),         // Lista de directorios donde se buscará la vista
     $ignore = false,          // Bandera que indica si se ignoran las vistas inexistentes sin generar error
-    $errors = array();        // Indica si se generó o no un error durante el renderizado
+    $errors = array(),        // Indica si se generó o no un error durante el renderizado
+    $minify = true,           // Indica se se minificará el resultado
+    $options = array();       // Guarda los parameotrs con los que se inicializó la vista
 
-  private function __construct($file, $paths, array $env, $ignore = false){
-    
+  public function __construct($file, $paths, $options = array()){
+    parent::__construct($options);
+
     // setear paths
     if(is_array($paths)){
       $this->paths = $paths;
@@ -34,9 +37,8 @@ final class AmTemplate{
     }
 
     // Asignar atributos
+    $this->options = $options;
     $this->file = $file;
-    $this->env = $env;
-    $this->ignore = $ignore;
     $this->realFile = $this->findFile($file);
 
     // Leer archivo
@@ -146,7 +148,7 @@ final class AmTemplate{
     // Si la dependencia no es una instancia de AmView
     if(!$this->dependences[$name] instanceof self){
       // Se instancia la vista 
-      $this->dependences[$name] = new self($name, $this->paths, $this->getVars(), $this->ignore);
+      $this->dependences[$name] = new self($name, $this->paths, $this->options);
     }
     // Devolver instancia de la vista
     return $this->dependences[$name];
@@ -282,7 +284,13 @@ final class AmTemplate{
       extract($this->getVars());  // Crear variables
       ob_start();
       include $this->getCompiledFile();          // Inluir vista
-      echo self::htmlMinify(ob_get_clean());
+      $result = ob_get_clean();
+
+      if($this->minify)
+        echo self::htmlMinify($result);
+      else
+        echo $result;
+
     }
   }
 
@@ -302,8 +310,8 @@ final class AmTemplate{
   }
 
   // Funcion para atender el llamado de render.tempalte
-  public static function render($file, $paths, array $env, $ignore = false){
-    $view = new self($file, $paths, $env, $ignore); // Instancia vista
+  public static function render($file, $paths, $options = array()){
+    $view = new self($file, $paths, $options); // Instancia vista
     $view->save();        // Compilar y guardar
     $view->includeView(); // Incluir vista
     return $view->hasError();

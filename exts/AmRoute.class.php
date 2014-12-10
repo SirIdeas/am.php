@@ -55,7 +55,9 @@ class AmRoute{
     return Am::call("render.template", array(
       $file,
       array(),
-      $env
+      array(
+        "env" => $env
+      )
     ));
     
   }

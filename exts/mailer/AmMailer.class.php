@@ -11,10 +11,10 @@ class AmMailer extends PHPMailer{
 
   // Nombre del SMTP
   protected
-    $dir = null,
-    $smtpName = null,
-    $template = null,
-    $with = array();
+    $isHTML = false,  // Indica si el contenido es o no HTML
+    $dir = null,      // Directorio donde se buscara la vista a renderizar
+    $template = null, // Configuracion STMP. Si es null entonces no se enviará por smtp
+    $with = array();  // Variables a utilizar en las vistas
 
   // Constructor
   public function __construct($name = null, $options = array()) {
@@ -151,6 +151,16 @@ class AmMailer extends PHPMailer{
     $this->Body = $body;
     return $this;
   }
+  
+  // Funcion para asignar el cuerpo del mensaje
+  public function isHTML($value = null){
+    if(isset($value)){
+      $this->isHTML = $value;
+      parent::isHTML($value);
+      return $this;
+    }
+    return $this->isHTML;
+  }
 
   // Asigna las variables con las que se renderizará el mensaje
   public function with(array $values){
@@ -199,8 +209,11 @@ class AmMailer extends PHPMailer{
     $ret = Am::call("render.template", array(
       $this->template,
       array($this->dir),
-      $this->with,
-      true
+      array(
+        "minify" => $this->isHTML,
+        "env" => $this->with,
+        "ignore" => true
+      )
     ));
 
     // Obtener contenido renderizado
