@@ -30,6 +30,7 @@ class AmMailer extends PHPMailer{
     if(isset($options["altBody"])){   $this->altBody($options["altBody"]); }
     if(isset($options["subject"])){   $this->subject($options["subject"]); }
     if(isset($options["isHtml"])){    $this->isHTML($options["isHtml"]); }
+    if(isset($options["body"])){      $this->body($options["body"]); }
     if(isset($options["with"])){      $this->with($options["with"]); }
     if(isset($options["dir"])){       $this->dir($options["dir"]); }
 
@@ -202,7 +203,10 @@ class AmMailer extends PHPMailer{
     // Si se reciben variables se asignan al contexto
     if(isset($with))
       $this->with($with);
-    
+
+    // Agregar body alas variables de entorno para el renderizado
+    $env = array_merge(array("body" => $this->Body), $this->with);
+
     ob_start();
 
     // Renderizar vista mediante un callback
@@ -211,17 +215,17 @@ class AmMailer extends PHPMailer{
       array($this->dir),
       array(
         "minify" => $this->isHTML,
-        "env" => $this->with,
-        "ignore" => true
+        "ignore" => true,
+        "env" => $env
       )
     ));
-
+    
     // Obtener contenido renderizado
     $content = ob_get_clean();
 
     // Si se renderizo la vista con exito
     // se retorna el contenido del renderizado
-    return $ret? $content : null;
+    return $ret? $content : $this->Body;
 
   }
 
