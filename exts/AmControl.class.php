@@ -9,7 +9,7 @@ class AmControl extends AmObject{
   protected
     $path = null,   // Carpeta contenedora del controlador
     $views = null,  // Carpeta contenedora de las vistas para el controlador
-    $render = null, // Nombre de la vista a renderizar
+    $view = null,   // Nombre de la vista a renderizar
     $get = null,
     $post = null,
     $request = null,
@@ -26,8 +26,16 @@ class AmControl extends AmObject{
   }
 
   // Propiedad para get/set para render
-  public function getRender(){ return $this->render; }
-  public function render($value){ $this->render = $value; return $this; }
+  public function getView(){ return $this->view; }
+  public function setView($value){ $this->view = $value; return $this; }
+
+  // Asigna la vista que se renderizará.
+  // Es un Alias de la funcion setView que agrega .view.php al final
+  // del valore recibido.
+  public function render($value){
+    // Las vista de las acciones son de extencion .view.php
+    return $this->setView(self::getViewName($value));
+  }
 
   // Obtener la carpeta de de las vistas
   public function getViewsPath(){
@@ -37,6 +45,10 @@ class AmControl extends AmObject{
   // Devuelve el método de la peticion
   public function getMethod(){
     return strtolower($this->server->REQUEST_METHOD);
+  }
+
+  public static function getViewName($value){ 
+    return "{$value}.view.php";
   }
 
   // Funcion para atender las respuestas por controlador.
@@ -56,7 +68,7 @@ class AmControl extends AmObject{
     // Valores por defecto
     $conf = array_merge(array(
       "path" => "", 
-      "render" => $action // Asignar vista que se mostrará
+      "view" => self::getViewName($action) // Asignar vista que se mostrará
     ), $conf);
     
     // Obtener la ruta del controlador
@@ -82,7 +94,7 @@ class AmControl extends AmObject{
     
     // Renderizar vista mediante un callback
     Am::call("render.template", array(
-      "{$obj->getRender()}.view.php",  // Las vista de las acciones son de extencion .view.php
+      $obj->getView(),
       array($obj->getViewsPath()),  // Paths para las vistas
 
       array(
