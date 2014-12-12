@@ -309,6 +309,12 @@ final class Am{
   // UTILIDADES
   ///////////////////////////////////////////////////////////////////////////////////
 
+  // Devuel un valor de una posicion del array. Si el valor
+  // no existe devuelve el valor por $def
+  public static function itemOr($index, $arr, $def){
+    return isset($arr[$index])? $arr[$index] : $def;
+  }
+
   // Indica si es una array asociativo o no
   public static function isAssocArray(array $array){
     $j = 0;
