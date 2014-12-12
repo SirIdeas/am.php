@@ -11,16 +11,32 @@ class MysqlSource extends AmSource{
 
   // Equivalencias entre los tipos de datos del Gesto de BD y el Lenguaje de programacion
   protected static
+
     $TYPES = array(
-      "tinyinteger" => "tinyint",
-      "integer"     => "int",
-      "biginteger"  => "bigint",
-      "float"       => "float",
-      "text"        => "text",
-      "string"      => "varchar",
-      "date"        => "date",
-      "time"        => "time",
-      "timestamp"   => "datetime",
+      // Enteros
+      "tinyint"    => "tinyint",     //                -128, 127
+      "smallint"   => "smallint",    //              -32768, 32767
+      "mediumint"  => "mediumint",   //            -8388608, 8388607
+      "int"        => "int",         //         -2147483648, 2147483647
+      "bigint"     => "bigint",      //-9223372036854775808, 9223372036854775807
+      // Flotantes
+      "decimal"    => "decimal",
+      "float"      => "float",
+      "double"     => "double",
+      "real"       => "double",
+      // Cadenas de caracteres
+      "char"       => "char",       // Longuitud exacta
+      "varchar"    => "varchar",    // Longuitud maxima parametrizada
+      "tinytext"   => "tinytext",   // Longuitud maxima 255 
+      "text"       => "text",       // Longuitud maxima 65535
+      "mediumtext" => "mediumtext", // Longuitud maxima 16777215
+      "longtext"   => "longtext",   // Longuitud maxima 4294967295
+      // Fechas
+      "date"       => "date",
+      "datetime"   => "datetime",
+      "timestamp"  => "timestamp",
+      "time"       => "time",
+      "year"       => "year",
     );
 
   // Propiedades propias para el Driver
@@ -65,7 +81,8 @@ class MysqlSource extends AmSource{
 
   // Devuelve el tipo de datos del gestor para un tipo de datos en el lenguaje
   public function getTypeOf($type){
-    return array_search($type, self::$TYPES);
+    // Si no se encuentra el tipo se retorna el tipo recibido
+    return isset(self::$TYPES[$type])? self::$TYPES[$type] : $type;
   }
 
   // Obtener el siguiente registro de un resultado
@@ -648,8 +665,8 @@ class MysqlSource extends AmSource{
 
     // Preparar las propiedades  
     $name = $this->getParseName($field->getName());
-    $type = $field->getType();
-    $type = isset(self::$TYPES[$type])? self::$TYPES[$type] : $type;
+    $type = array_search(self::$TYPES, $field->getType());
+    if(!$type) $type = $field->getType();
     $lenght = $field->getCharLenght();
     $lenght = !empty($lenght) ? "({$lenght})" : "";
     $notNull = $field->getNotNull() ? " NOT NULL" : "";
