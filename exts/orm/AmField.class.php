@@ -8,15 +8,30 @@ class AmField extends AmObject{
 
   protected static
     $PARSE_FUNCS = array(
-      "tinyinteger" => "intval",
-      "integer"     => "intval",
-      "biginteger"  => "intval",
-      "float"       => "floatval",
-      "text"        => "strval",
-      "string"      => "strval",
-      "date"        => "strval",
-      "time"        => "strval",
-      "timestamp"   => "strval",
+      // Enteros
+      "tinyint"    => "intval",
+      "smallint"   => "intval",
+      "mediumint"  => "intval",
+      "int"        => "intval",
+      "bigint"     => "intval",
+      // Flotantes
+      "decimal"    => "floatval",
+      "float"      => "floatval",
+      "double"     => "floatval",
+      "real"       => "floatval",
+      // Cadenas de caracteres
+      "char"       => "strval",
+      "varchar"    => "strval",
+      "tinytext"   => "strval",
+      "text"       => "strval",
+      "mediumtext" => "strval",
+      "longtext"   => "strval",
+      // Fechas
+      "date"       => "strval",
+      "datetime"   => "strval",
+      "timestamp"  => "strval",
+      "time"       => "strval",
+      "year"       => "strval",
     );
 
   // Propiedades del campo

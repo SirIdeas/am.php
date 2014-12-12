@@ -175,7 +175,7 @@ class AmModel extends AmObject{
   // Método que indica si un campo ha cambiado o no de valor desde
   // su inicialización
   public function hasChanged($name){
-    return $this->getRealValues($name) != $this->$name;
+    return $this->getRealValue($name) != $this->$name;
   }
 
   // Obtener los campos los cambios de los campos que se ha realizado

@@ -422,11 +422,6 @@ class AmTable extends AmObject{
       // Obtener el tipo
       $type = $this->getSource()->getTypeOf(isset($column["type"])? $column["type"] : null);
       
-      // Sino es un tipo reconocido
-      // volver al anterior
-      if(false !== $type)
-        $column["type"] = $type;
-      
       // Agregar instancia del campo
       $this->addField(new AmField($column));
         

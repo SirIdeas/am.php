@@ -37,9 +37,28 @@ class AmControl extends AmObject{
     return $this->setView(self::getViewName($value));
   }
 
+  // Devuelve la carpeta de ambito del controlador
+  public function getPath(){
+    return $this->path;
+  }
+
   // Obtener la carpeta de de las vistas
   public function getViewsPath(){
-    return $this->path . $this->views;
+    // Si no tiene carpeta asignada se retorna null
+    if(!$this->views)
+      return null;
+    return $this->getPath() . $this->views;
+  }
+
+  public function getPaths(){
+    $ret = array();
+    // Agregar path principal si existe
+    if(null !== ($folder = $this->getPath()))
+      $ret[] = $folder;
+    // Agregar path de vistas principal si existe
+    if(null !== ($folder = $this->getViewsPath()))
+      $ret[] = $folder;
+    return $ret;
   }
 
   // Devuelve el método de la peticion
@@ -55,6 +74,9 @@ class AmControl extends AmObject{
   // Recive el nombre del controlador, la accion a ejecutar,
   // Los parametros y el entorno
   public static function response($control, $action, array $params, array $env){
+
+    // Obtener el nombre de la clases control a instanciar
+    $controlClassName = "{$control}Control";
 
     // Obtener configuraciones del controlador
     $confs = Am::getAttribute("control");
@@ -78,7 +100,7 @@ class AmControl extends AmObject{
     if(file_exists($controlFile)) require_once $controlFile;
     
     // Obtener instancia del controlador
-    $obj = Am::getInstance($control, $conf);
+    $obj = Am::getInstance($controlClassName, $conf);
 
     // Si el metodo existe llamar
     if(method_exists($obj, "action"))
@@ -94,9 +116,14 @@ class AmControl extends AmObject{
     
     // Renderizar vista mediante un callback
     Am::call("render.template", array(
+      
+      // Obtener vista a renderizar
       $obj->getView(),
-      array($obj->getViewsPath()),  // Paths para las vistas
 
+      // Obtener carpetas de ambito para el controlador
+      $obj->getPaths(),
+      
+      // Paths para las vistas
       array(
         // Variables en la vista
         "env" => array_merge(
