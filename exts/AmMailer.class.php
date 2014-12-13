@@ -5,7 +5,7 @@
  */
 
 // Incluir PHPMailer
-Am::requireFile(dirname(__FILE__)."/php_mailer/PHPMailerAutoload");
+Am::requireFile("exts/php_mailer/PHPMailerAutoload");
 
 class AmMailer extends PHPMailer{
 
@@ -98,8 +98,8 @@ class AmMailer extends PHPMailer{
 
     // Asignar puerto si esta definido
     if(isset($config["port"])) $this->Port = $config["port"];
-    
-    // Asignar remitente 
+
+    // Asignar remitente
     $this->from($this->Username, isset($config["ass"])? $config["ass"] : null);
 
   }
@@ -134,25 +134,25 @@ class AmMailer extends PHPMailer{
     $this->WordWrap = $num;
     return $this;
   }
-  
+
   // Método set para el subject
   public function subject($text){
     $this->Subject = $text;
     return $this;
   }
-  
+
   // Método set para el altBody
   public function altBody($text){
     $this->AltBody = $text;
     return $this;
   }
-  
+
   // Funcion para asignar el cuerpo del mensaje
   public function body($body){
     $this->Body = $body;
     return $this;
   }
-  
+
   // Funcion para asignar el cuerpo del mensaje
   public function isHTML($value = null){
     if(isset($value)){
@@ -168,25 +168,25 @@ class AmMailer extends PHPMailer{
     $this->with = $values;
     return $this;
   }
-  
+
   // Metodo para agregar direccion destinataria
   public function addAddress($address, $name = "") {
     parent::addAddress($address, $name);
     return $this;
   }
-  
+
   // Metodo para agregar direccion de respuesta
   public function addReplyTo($address, $name = "") {
     parent::addReplyTo($address, $name);
     return $this;
   }
-  
+
   // Metodo para agregar direccion con copia
   public function addCC($address, $name = "") {
     parent::addCC($address, $name);
     return $this;
   }
-  
+
   // Metodo para agregar direccion con copia oculta
   public function addBCC($address, $name = "") {
     parent::addBCC($address, $name);
@@ -197,7 +197,7 @@ class AmMailer extends PHPMailer{
   public function errorInfo(){
     return $this->ErrorInfo;
   }
-  
+
   public function getContent($with = null){
 
     // Si se reciben variables se asignan al contexto
@@ -219,7 +219,7 @@ class AmMailer extends PHPMailer{
         "env" => $env
       )
     ));
-    
+
     // Obtener contenido renderizado
     $content = ob_get_clean();
 
@@ -241,13 +241,13 @@ class AmMailer extends PHPMailer{
 
     // Enviar
     return parent::send();
-      
+
   }
 
   // Obtener una instancia de un Mail con su respectiva configuraion tomada de
-  // 
+  //
   public static function get($name, array $options = array()){
-    
+
     // Obtener configuraciones de mails
     $mails = Am::getAttribute("mails");
 
@@ -274,7 +274,7 @@ class AmMailer extends PHPMailer{
 
       // Asignar configuraio
       $options["smtp"] = $smtpConfs[$options["smtp"]];
-            
+
     }
 
     // Crear instancia del mailer
@@ -283,4 +283,3 @@ class AmMailer extends PHPMailer{
   }
 
 }
-
