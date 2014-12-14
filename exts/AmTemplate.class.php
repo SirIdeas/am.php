@@ -187,9 +187,26 @@ final class AmTemplate extends AmObject{
     $name = array_pop($this->openSections);
 
     // Agregar seccion si no existe
-    // if(!isset($this->sections[$name])){
+    // Obtener directivas del nombre de la seccion
+    preg_match("/^([+]?)(.*[^+])([+]?)$/", $name, $m);
+    array_shift($m);
+    list($start, $name, $end) = $m;
+
+    // Crear seccion si no existe
+    if(!isset($this->sections[$name]))
+      $this->sections[$name] = "";
+
+    // No se recibió comandos
+    if(empty($start) && empty($end))
       $this->sections[$name] = $content;
-    // }
+    
+    // Agregar al principio
+    if($start === "+")
+      $this->sections[$name] = $content . $this->sections[$name];
+
+    // Agregar al final
+    if($end === "+")
+      $this->sections[$name] = $this->sections[$name] . $content;
 
   }
 

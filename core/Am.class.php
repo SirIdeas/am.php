@@ -199,12 +199,12 @@ final class Am{
 
 
   // Responder con descarga de archivos
-  final public static function downloadFile($file, array $env){
+  final public static function downloadFile($file, array $env = array()){
     self::respondeWithFile($file, null, null, true);
   }
 
   // Responder con archivo
-  final public static function respondeFile($file, array $env){
+  final public static function respondeFile($file, array $env = array()){
     self::respondeWithFile($file);
   }
   
@@ -309,7 +309,19 @@ final class Am{
   // UTILIDADES
   ///////////////////////////////////////////////////////////////////////////////////
 
-  // Devuel un valor de una posicion del array. Si el valor
+  // Indica si un callback es válido o no.
+  public static function isValidCallback($callback){
+    // Si es un array evaluar como metodo
+    if(is_array($callback))
+      return call_user_func_array("method_exists", $callback);
+    // Si es string evaluar como function
+    if(is_string($callback))
+      return function_exists($callback);
+    // Es un callback invalido
+    return false;
+  } 
+
+  // Devuele un valor de una posicion del array. Si el valor
   // no existe devuelve el valor por $def
   public static function itemOr($index, $arr, $def){
     return isset($arr[$index])? $arr[$index] : $def;
@@ -391,7 +403,7 @@ final class Am{
 
     // Colocar cabeceras
     header("content-type: {$mimeType}");
-    header("Content-Disposition: $attachment filename=\"\"");
+    header("Content-Disposition: $attachment filename=\"$name\"");
     header("Content-Transfer-Encoding: binary");
     header("Expires: 0");
     header("Cache-Control: must-revalidate");

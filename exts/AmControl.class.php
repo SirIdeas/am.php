@@ -70,13 +70,9 @@ class AmControl extends AmObject{
     return "{$value}.view.php";
   }
 
-  // Funcion para atender las respuestas por controlador.
-  // Recive el nombre del controlador, la accion a ejecutar,
-  // Los parametros y el entorno
-  public static function response($control, $action, array $params, array $env){
-
-    // Obtener el nombre de la clases control a instanciar
-    $controlClassName = "{$control}Control";
+  // Devuelve la configuracion para un controlador
+  // Ademas incluye el archivo conrrespondiente
+  public static function includeControl($control){
 
     // Obtener configuraciones del controlador
     $confs = Am::getAttribute("control");
@@ -87,17 +83,51 @@ class AmControl extends AmObject{
     // Si no es un array, entonces el valor indica el path del controlador
     if(is_string($conf)) $conf = array("path" => $conf);
 
+    // Si tiene un padre se incluye
+    // y se mezcla con la configuracion actual
+    if(isset($conf["parent"]) && !empty($conf["parent"])){
+      $conf = array_merge(
+        self::includeControl($conf["parent"]),
+        $conf
+      );
+    }
+
     // Valores por defecto
     $conf = array_merge(array(
-      "path" => "", 
-      "view" => self::getViewName($action) // Asignar vista que se mostrará
+      "path" => "",
+      "parent" => null,
+      "require" => array()
     ), $conf);
-    
+
     // Obtener la ruta del controlador
     $controlFile = "{$conf["path"]}{$control}.control.php";
     
     // Incluir controlador si existe el archivo
-    if(file_exists($controlFile)) require_once $controlFile;
+    if(file_exists($controlFile))
+      require_once $controlFile;
+
+    // Retornar la configuracion obtenida
+    return $conf;
+
+  }
+
+  // Funcion para atender las respuestas por controlador.
+  // Recive el nombre del controlador, la accion a ejecutar,
+  // Los parametros y el entorno
+  public static function response($control, $action, array $params, array $env){
+
+    // Valores por defecto
+    $conf = array_merge(
+      // Incluye el controlador y devuelve la configuracion para el mismo
+      self::includeControl($control),
+      // Asignar vista que se mostrará
+      array(
+        "view" => self::getViewName($action),
+      )
+    );
+
+    // Obtener el nombre de la clases control a instanciar
+    $controlClassName = "{$control}Control";
     
     // Obtener instancia del controlador
     $obj = Am::getInstance($controlClassName, $conf);

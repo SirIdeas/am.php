@@ -49,7 +49,7 @@ class MysqlSource extends AmSource{
   }
 
   // Crear una conexión
-  public function connect(){
+  protected function initConnect(){
     return $this->handle = mysql_connect(
       $this->getServerString(),
       $this->getUser(),
@@ -143,6 +143,11 @@ class MysqlSource extends AmSource{
 
     return $collage;
 
+  }
+
+  // Setear un valor a una variable de servidor
+  public function sqlSetServerVar($varName, $value){
+    return "set {$varName}={$value}";
   }
 
   // SQL para crear la BD

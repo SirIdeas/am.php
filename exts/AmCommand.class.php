@@ -9,9 +9,6 @@ class AmCommand{
   // Ejecucion de un comando
   public static function exec($argv){
 
-    // Imprimir comando
-    echo "Amathista commands\n";
-
     // Obtener los targets del archivo de configuracion
     $targets = Am::getAttribute("commands");
 
@@ -34,8 +31,9 @@ class AmCommand{
     // Si la funcion no existe mostrar error
     function_exists($funtionName) or die("Am: command not found {$cmd}");
 
+    ob_start();
     // Imprimir el comando que se ejecutará
-    echo "\n-- $cmd:";
+    echo "Amathista commands\n\n-- $cmd:";
 
     // Si el target esta indicado
     if(isset($target)){
@@ -68,6 +66,7 @@ class AmCommand{
     }
 
     echo "\n";
+    return ob_get_clean();
 
   }
 
@@ -81,7 +80,7 @@ class AmCommand{
     $arguments = explode("/", $arguments);
 
     // Ejecutar comando
-    self::exec($arguments);
+    echo self::exec($arguments);
 
   }
 
@@ -181,7 +180,7 @@ function am_command_createTables($target, $params, $config, $file, $argv){
 }
 
 // General las clases para el modelo de la BD
-function am_command_generateModels($target, $params, $config, $file, $argv){
+function am_command_generateModels($target = null, $params = null, $config = null, $file = null, $argv = array()){
   
   echo "\n";
   

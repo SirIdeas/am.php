@@ -418,7 +418,7 @@ class AmQuery extends AmObject{
     }
 
     // Formatear el valor
-    if(isset($formater))
+    if(isset($formater) && Am::isValidCallback($formater))
       $r = call_user_func_array($formater, array($r));
 
     return $r;
@@ -445,6 +445,11 @@ class AmQuery extends AmObject{
 
   // Devuelve un array con los registros resultantes de la consulta
   public function getResult($as = null, $formater = null){
+
+    // Si no es callback válido asignar null para 
+    // ahorrar sentencias
+    if(!Am::isValidCallback($formater))
+      $formater = null;
 
     // Crear consulta
     $q = $this->getSource()->newQuery($this);

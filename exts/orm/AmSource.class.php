@@ -234,6 +234,20 @@ abstract class AmSource extends AmObject{
     return $this;
   }
 
+  // Realiza la conexión
+  public function connect(){
+    $ret = $this->initConnect();
+
+    // Cambiar la condificacion con la que se trabajará
+    if($ret){
+      $this->setServerVar("character_set_server", $this->realScapeString($this->getCharset()));
+      // REVISAR
+      $this->execute("set names 'utf8'");
+    }
+    
+    return $ret;
+  }
+
   // Función para reconectar
   public function reconnect(){
     $this->disconnect();      // Desconectar
@@ -429,6 +443,11 @@ abstract class AmSource extends AmObject{
       
   }
 
+  // Setea el valor de una variable en el gestor
+  public function setServerVar($varName, $value){
+    return false !== $this->execute($this->sqlSetServerVar($varName, $value));
+  }
+
   // Crea la BD
   public function create(){
     return false !== $this->execute($this->sqlCreate());
@@ -607,7 +626,7 @@ abstract class AmSource extends AmObject{
   abstract public function getDefaultPort();
 
   // Metodo para crear una conexion
-  abstract public function connect();
+  abstract protected function initConnect();
 
   // Metodo para cerrar una conexión
   abstract public function close();
@@ -645,6 +664,9 @@ abstract class AmSource extends AmObject{
 
   // Colecion de caracteres
   abstract public function sqlCollage();
+
+  // Setear un valor a una variable de servidor
+  abstract public function sqlSetServerVar($varName, $value);
 
   // Devuelve un String con el SQL para crear la base de datos
   abstract public function sqlCreate();
