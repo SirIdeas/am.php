@@ -52,14 +52,22 @@ final class AmTemplate extends AmObject{
     // Quitar sentencias de padres
     $this->content = implode("", preg_split("/\(# parent:(.*) #\)/", $this->content));
 
-    // Obtener lista de hijos
-    preg_match_all("/\(# place:(.*) #\)/", $this->content, $this->dependences);
-    $this->dependences = $this->dependences[1];
+    // Obtener lista de hijos en comandos place
+    preg_match_all("/\(# (place:(.*)|put:.* = (.*)) #\)/", $this->content, $dependences1);
+
+    // Obtener lista de hijos en comandos put    
+    $this->dependences = array_filter(
+      array_keys(
+        array_merge(
+          array_combine($dependences1[2], $dependences1[2]),
+          array_combine($dependences1[3], $dependences1[3])
+        )
+      )
+    );
 
     // Instanciar padre dentro de las dependencias
-    if(null !== $this->parent){
+    if(null !== $this->parent)
       array_unshift($this->dependences, $this->parent);
-    }
 
     // Convertir el array de dependencias a un array asociativo
     // donde todos los valores sean false
@@ -165,8 +173,17 @@ final class AmTemplate extends AmObject{
 
   // Imprimir una seccion
   public function put($name){
+
+    // Si tiene una vista por defecto se carga
+    if(preg_match("/(.*) = (.*)/", $name, $m)){
+      array_shift($m);
+      list($name, $path) = $m;
+      $this->place($path);
+    }
+
     $section = isset($this->sections[$name])? $this->sections[$name] : "";
     echo $section;
+
   }
 
   // Abrir una seccion
