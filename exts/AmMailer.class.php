@@ -7,6 +7,12 @@
 // Incluir PHPMailer
 Am::requireFile("exts/php_mailer/PHPMailerAutoload");
 
+// Interfaz para clases que puedan enviar y recibir correso
+interface AmAddress{
+  public function getMail();
+  public function getName();
+}
+
 class AmMailer extends PHPMailer{
 
   // Nombre del SMTP
@@ -36,11 +42,15 @@ class AmMailer extends PHPMailer{
 
     // Asignación de remitente del correo
     if(isset($options["from"])){
-      if(is_array($options["from"])){
-        $from = isset($options["from"]["user"])? $options["from"]["user"] : null;
-        $fromName = isset($options["from"]["as"])? $options["from"]["as"] : null;
+      $address = $options["from"];
+      if($address instanceof AmAddress){
+        $from = $address->getMail();
+        $fromName = $address->getName();
+      }elseif(is_array($address)){
+        $from = isset($address["user"])? $address["user"] : null;
+        $fromName = isset($address["as"])? $address["as"] : null;
       }else{
-        $from = $fromName = $options["from"];
+        $from = $fromName = $address;
       }
       $this->from($from, $fromName);
     }
@@ -70,13 +80,15 @@ class AmMailer extends PHPMailer{
   // Para agregar un destinatario con un determinado método
   public function parseAndAdd($addMethod, $addresses){
     // Si es un array y tiene un elemento "user"
-    if(isset($addresses["user"])){
+    if($addresses instanceof AmAddress){
+      $this->$addMethod($addresses->getMail(), $addresses->getName());
+    }elseif(isset($addresses["user"])){
       // El parametro es un array con la direccion a enviar y el nombre
       $to = $addresses["user"];
       $toName = isset($addresses["as"])? $addresses["as"] : $to;
       $this->$addMethod($to, $toName);
       return true;
-    }else if(is_string($addresses)){
+    }elseif(is_string($addresses)){
       // El parametro e la direccion de email destino
       $to = $toName = $addresses;
       $this->$addMethod($to, $toName);
