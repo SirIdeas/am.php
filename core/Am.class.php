@@ -272,9 +272,17 @@ final class Am{
       // Definicion de la URL Base
       self::$urlBase = dirname($_SERVER["PHP_SELF"]);
       
+      // Validacion para cuando este en el root
+      if(self::$urlBase === "/")
+        self::$urlBase = "";
+      
       // Obtener peticion
       $request = substr_replace($_SERVER["REDIRECT_URL"], "", 0, strlen(self::$urlBase));
-      
+
+      // Validacion para cuando este en la peticion no comienze con "/"
+      if($request[0] !== "/")
+        $request = "/" . $request;
+
     }
 
     // Incluir extensiones para peticiones
