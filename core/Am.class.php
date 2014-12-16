@@ -120,7 +120,7 @@ final class Am{
   public static function loadConf($property){
 
     // Obtener del callback el valor predeterminado
-    $def = self::$confsDef[$property];
+    $def = self::itemOr($property, self::$confsDef);
 
     // Recorrer cada uno de las carpetas en el path
     foreach (self::$paths as $path) {
@@ -167,8 +167,8 @@ final class Am{
     self::loadConf($property); // Cargar configuraciones de require
 
     // Obtener funcion callback para mezclar la propiedad solicitada
-    $mergeCallback = self::$mergeCallbacks[$property];
-    $def           = self::$confsDef[$property];
+    $mergeCallback = self::itemOr($property, self::$mergeCallbacks);
+    $def           = self::itemOr($property, self::$confsDef);
 
     // Para ir encolando el lista de valores segun su prevalencia
     $ret = array();
@@ -222,7 +222,7 @@ final class Am{
   // Devuelve una URL absoluta incluyendo el nombre del servidor
   // y el tipo de conexion
   public static function serverUrl($path = ""){
-    return "http://" . $_SERVER["SERVER_NAME"] . Am::url($path);
+    return "http://" . $_SERVER["SERVER_NAME"] . self::url($path);
   }
 
   public static function eServerUrl($path){
@@ -331,7 +331,7 @@ final class Am{
 
   // Devuele un valor de una posicion del array. Si el valor
   // no existe devuelve el valor por $def
-  public static function itemOr($index, $arr, $def){
+  public static function itemOr($index, $arr, $def = null){
     return isset($arr[$index])? $arr[$index] : $def;
   }
 
