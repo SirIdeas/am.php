@@ -84,5 +84,5 @@ class AmDateTime extends DateTime{
 }
 
 $timezone = Am::getAttribute("timezone");
-if(!empty($time))
+if(!empty($timezone))
   date_default_timezone_set($timezone);
