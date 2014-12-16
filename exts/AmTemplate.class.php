@@ -80,11 +80,11 @@ final class AmTemplate extends AmObject{
   // Busca una vista en los paths definidos
   public function findFile($file){
     // Si no existe la vista mostrar error
-    if(false === ($file = Am::findFileIn($file, $this->paths))){
+    if(false === ($fileRet = Am::findFileIn($file, $this->paths))){
       $this->errors[] = "Am: No existe view '{$file}.'";
       $this->ignore or die(implode(" ", $this->errors));
     }
-    return $file;
+    return $fileRet;
   }
 
   public function compile($child = null, array $sections = array()){
