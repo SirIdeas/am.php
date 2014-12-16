@@ -80,7 +80,7 @@ final class AmTemplate extends AmObject{
   // Busca una vista en los paths definidos
   public function findFile($file){
     // Si no existe la vista mostrar error
-    if(($file = Am::findFileIn($file, $this->paths)) !== false){
+    if(false === ($file = Am::findFileIn($file, $this->paths))){
       $this->errors[] = "Am: No existe view '{$file}.'";
       $this->ignore or die(implode(" ", $this->errors));
     }
@@ -340,6 +340,7 @@ final class AmTemplate extends AmObject{
 
   // Método que indica si se generó algun error al renderizar la vista
   public function hasError(){
+    var_dump($this->errors);
     return count($this->errors)>0;
   }
 
@@ -348,7 +349,7 @@ final class AmTemplate extends AmObject{
     $view = new self($file, $paths, $options); // Instancia vista
     $view->save();        // Compilar y guardar
     $view->includeView(); // Incluir vista
-    return $view->hasError();
+    return !$view->hasError();
   }
 
 }
