@@ -340,7 +340,6 @@ final class AmTemplate extends AmObject{
 
   // Método que indica si se generó algun error al renderizar la vista
   public function hasError(){
-    var_dump($this->errors);
     return count($this->errors)>0;
   }
 
