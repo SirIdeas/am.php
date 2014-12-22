@@ -74,11 +74,6 @@ class AmControl extends AmObject{
     return strtolower($this->server->REQUEST_METHOD);
   }
 
-  // Asigna la configuración por defecto para los controladores
-  public static function setDefault(array $values){
-    self::$defaults = array_merge(self::$defaults, $values);
-  }
-
   // Devuelve el nombre normal de una vista
   public static function getViewName($value){ 
     return "{$value}.view.php";
@@ -90,6 +85,9 @@ class AmControl extends AmObject{
 
     // Obtener configuraciones del controlador
     $confs = Am::getAttribute("control");
+
+    // Obtene valores por defecto
+    $defaults = isset($confs["defaults"])? $confs["defaults"] : array();
 
     // Si no existe configuracion para el controlador
     $conf = isset($confs[$control])? $confs[$control] : array();
@@ -107,11 +105,7 @@ class AmControl extends AmObject{
     }
 
     // Valores por defecto
-    $conf = array_merge(array(
-      "path" => "",
-      "parent" => null,
-      "require" => array()
-    ), $conf);
+    $conf = array_merge($defaults, $conf);
 
     // Obtener la ruta del controlador
     $controlFile = "{$conf["path"]}{$control}.control.php";
