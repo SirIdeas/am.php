@@ -5,6 +5,10 @@
  */
 
 return array(
+  "control" => array(
+    "path" => "control/",
+    "views" => "views/",
+  ),
   "requires" => array(
     "core/AmObject.class",
     "exts/AmDateTime.class",

@@ -7,7 +7,7 @@
 final class AmTemplate extends AmObject{
 
   // Carpeta donde se guardan los compilados de las vistas
-  const BUILD_FOLDER = "gen/";
+  const BUILD_FOLDER = "../gen/";
 
   protected
     $file = null,             // Vista a buscar

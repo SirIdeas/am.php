@@ -6,6 +6,14 @@
 
 class AmControl extends AmObject{
 
+  // Valores por defecto para el controladores
+  protected static
+    $defaults = array(
+      "path" => "",
+      "parent" => null,
+      "require" => array()
+    );
+
   protected
     $path = null,   // Carpeta contenedora del controlador
     $views = null,  // Carpeta contenedora de las vistas para el controlador
@@ -66,6 +74,12 @@ class AmControl extends AmObject{
     return strtolower($this->server->REQUEST_METHOD);
   }
 
+  // Asigna la configuración por defecto para los controladores
+  public static function setDefault(array $values){
+    self::$defaults = array_merge(self::$defaults, $values);
+  }
+
+  // Devuelve el nombre normal de una vista
   public static function getViewName($value){ 
     return "{$value}.view.php";
   }
