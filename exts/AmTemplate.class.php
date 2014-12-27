@@ -24,7 +24,7 @@ final class AmTemplate extends AmObject{
     $ignore = false,          // Bandera que indica si se ignoran las vistas inexistentes sin generar error
     $errors = array(),        // Indica si se generó o no un error durante el renderizado
     $minify = true,           // Indica se se minificará el resultado
-    $options = array();       // Guarda los parameotrs con los que se inicializó la vista
+    $options = array();       // Guarda los parametros con los que se inicializó la vista
 
   public function __construct($file, $paths, $options = array()){
     parent::__construct($options);
@@ -87,6 +87,7 @@ final class AmTemplate extends AmObject{
     return $fileRet;
   }
 
+  // Compilar la vista
   public function compile($child = null, array $sections = array()){
 
     // Asignar secciones recibidas
@@ -345,6 +346,19 @@ final class AmTemplate extends AmObject{
 
   // Funcion para atender el llamado de render.tempalte
   public static function render($file, $paths, $options = array()){
+
+    // Obtener configuraciones del controlador
+    $confs = Am::getAttribute("views");
+    
+    // Obtener valores por defecto
+    $defaults = isset($confs["defaults"])? $confs["defaults"] : array();
+
+    // Si no existe configuracion para la vista
+    $conf = isset($confs[$file])? $confs[$file] : array();
+
+    // Mezclar todas las opciones
+    $options = array_merge_recursive($defaults, $conf, $options);
+
     $view = new self($file, $paths, $options); // Instancia vista
     $view->save();        // Compilar y guardar
     $view->includeView(); // Incluir vista

@@ -6,14 +6,6 @@
 
 class AmControl extends AmObject{
 
-  // Valores por defecto para el controladores
-  protected static
-    $defaults = array(
-      "path" => "",
-      "parent" => null,
-      "require" => array()
-    );
-
   protected
     $path = null,   // Carpeta contenedora del controlador
     $views = null,  // Carpeta contenedora de las vistas para el controlador
@@ -86,7 +78,7 @@ class AmControl extends AmObject{
     // Obtener configuraciones del controlador
     $confs = Am::getAttribute("control");
 
-    // Obtene valores por defecto
+    // Obtener valores por defecto
     $defaults = isset($confs["defaults"])? $confs["defaults"] : array();
 
     // Si no existe configuracion para el controlador
