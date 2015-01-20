@@ -54,16 +54,13 @@ final class AmTemplate extends AmObject{
 
     // Obtener lista de hijos en comandos place
     preg_match_all("/\(# (place:(.*)|put:.* = (.*)) #\)/", $this->content, $dependences1);
-
-    // Obtener lista de hijos en comandos put    
-    $this->dependences = array_filter(
-      array_keys(
-        array_merge(
-          array_combine($dependences1[2], $dependences1[2]),
-          array_combine($dependences1[3], $dependences1[3])
-        )
-      )
-    );
+    
+    // Obtener lista de hijos en comandos put
+    $this->dependences = array_merge($dependences1[2], $dependences1[3]);
+    if(!empty($this->dependences))
+      $this->dependences = array_keys(array_filter(
+        array_combine($this->dependences, $this->dependences)
+      ));
 
     // Instanciar padre dentro de las dependencias
     if(null !== $this->parent)
