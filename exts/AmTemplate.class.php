@@ -7,7 +7,7 @@
 final class AmTemplate extends AmObject{
 
   // Carpeta donde se guardan los compilados de las vistas
-  const BUILD_FOLDER = "../gen/";
+  const BUILD_FOLDER = "gen/";
 
   protected
     $file = null,             // Vista a buscar
@@ -23,7 +23,6 @@ final class AmTemplate extends AmObject{
     $paths = array(),         // Lista de directorios donde se buscará la vista
     $ignore = false,          // Bandera que indica si se ignoran las vistas inexistentes sin generar error
     $errors = array(),        // Indica si se generó o no un error durante el renderizado
-    $minify = true,           // Indica se se minificará el resultado
     $options = array();       // Guarda los parametros con los que se inicializó la vista
 
   public function __construct($file, $paths, $options = array()){
@@ -314,26 +313,8 @@ final class AmTemplate extends AmObject{
   public function includeView(){
     if(file_exists($this->getCompiledFile())){
       extract($this->getVars());  // Crear variables
-      ob_start();
       include $this->getCompiledFile();          // Inluir vista
-      $result = ob_get_clean();
-
-      if($this->minify)
-        echo self::htmlMinify($result);
-      else
-        echo $result;
-
     }
-  }
-
-  // Minifca el HTML de la vista. basicamente consiste en colocar todo en una sola linea
-  public static function htmlMinify($html){
-    $lines = explode("\n", $html);
-    $html = "";
-    foreach ($lines as $line) {
-      $html .= trim($line);
-    }
-    return $html;
   }
 
   // Método que indica si se generó algun error al renderizar la vista

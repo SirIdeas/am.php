@@ -109,10 +109,10 @@ class AmMailer extends PHPMailer{
     $this->SMTPSecure = isset($smtp["secure"])? $smtp["secure"] : null;
 
     // Asignar puerto si esta definido
-    if(isset($config["port"])) $this->Port = $config["port"];
+    if(isset($smtp["port"])) $this->Port = $smtp["port"];
 
     // Asignar remitente
-    $this->from($this->Username, isset($config["ass"])? $config["ass"] : null);
+    $this->from($this->Username, isset($smtp["as"])? $smtp["as"] : null);
 
   }
 
@@ -226,7 +226,6 @@ class AmMailer extends PHPMailer{
       $this->template,
       array($this->dir),
       array(
-        "minify" => $this->isHTML,
         "ignore" => true,
         "env" => $env
       )

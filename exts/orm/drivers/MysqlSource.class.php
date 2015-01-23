@@ -278,6 +278,7 @@ class MysqlSource extends AmSource{
   public function sqlSelect(AmQuery $q, $with = true){
 
     $selectsOri = $q->getSelects();  // Obtener argmuentos en la clausula SELECT
+    $distinct = $q->getDistinct();
     $selects = array();  // Lista de retorno
 
     // Recorrer argumentos del SELECT
@@ -299,7 +300,7 @@ class MysqlSource extends AmSource{
     $selects = (empty($selects) ? "*" : $selects);
 
     // Agregar SELECT
-    return trim(($with ? "SELECT " : "").$selects);
+    return trim(($with ? "SELECT ".($distinct ? "DISTINCT " : "") : "").$selects);
 
   }
 

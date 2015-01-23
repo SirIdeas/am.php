@@ -12,6 +12,7 @@ class AmQuery extends AmObject{
     $table = null,      // Tabla en la que se basa la consulta
     $model = null,      // Nombre dle modelo para los registros de la consulta
     $selects = array(), // Lista de campos para la clausula SELECT
+    $distinct = false,  // Para solo obtener los registros diferentes 
     $froms = array(),   // Lista de tablas para la clausula FROM
     $wheres = array(),  // Lista de condiciones para la clausula WHERE
     $joins = array(),   // Lista de tablas para la clausula JOIN
@@ -36,6 +37,7 @@ class AmQuery extends AmObject{
   public function getLimit(){ return $this->limit; }
   public function getOffset(){ return $this->offset; }
   public function getSets(){ return $this->sets; }
+  public function getDistinct(){ return $this->distinct; }
 
   // GET para los joins
   public function getJoins($type = null){
@@ -52,6 +54,10 @@ class AmQuery extends AmObject{
   // Métodos SET para algunas propiedades
   public function setSource($value){ $this->source = $value; return $this; }
   public function setSelects(array $value){ $this->selects = $value; return $this; }
+
+  // Asignar signar la clausula distint
+  public function distinct(){ $this->distinct = true; return $this; }
+  public function noDistinct(){ $this->distinct = true; return $this; }
 
   // Ejecuta la consulta SQL
   public function execute(){
