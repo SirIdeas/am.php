@@ -158,19 +158,27 @@ class AmRoute{
   }
 
   // Metodo busca la ruta con la que conincide la peticion actual.
-  public static final function evaluate($request, $routes, array $env = array()){
+  public static final function evaluate($request, $routes, array $env = array(), $prevMatch = ""){
     
-    $env = array_merge(
-      $env,
-      isset($routes["env"])? $routes["env"] : array()
-    );
+    // Conviar entorno de la ruta con el heredado
+    if(isset($routes["env"]))
+      $env = array_merge($env, $routes["env"]);
 
     // Por cada ruta
     foreach($routes["routes"] as $from => $to){
+
+      // Agregar la cadena padre si la cadena hija comienza con "."
+      if(substr($from, 0, 1) === ".")
+        $from = $prevMatch . substr($from, 1, strlen($from)-1);
       
       // Si es un grupo de rutas
       if(is_array($to)){
-        if(self::evaluate($request, $to, $env)) return true;
+        if(self::evaluate(
+          $request,
+          isset($to["routes"])? $to : array("routes" => $to),
+          $env,
+          $from))
+            return true;
         continue;
       }
 
