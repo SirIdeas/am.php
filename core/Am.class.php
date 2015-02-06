@@ -6,7 +6,7 @@
 
 final class Am{
 
-  protected static
+  public static
 
     // Define las callbacks del sistema
     $callbacks = array(
@@ -35,35 +35,19 @@ final class Am{
       "validators" => "array_merge_recursive",
     ),
 
-    // Valores por defecto de las propiedades
-    $confsDef = array(
-      "errorReporting" => E_ALL,      // Indicar que errores se mostrarán
-      "conf" => array(),              // Define las cargas iniciales. Archivo conf/routes.conf.php
-      "requires" => array(),          // Archivos a incluir en el arranque
-      "routes" => array(),            // Rutas
-      "assets" => array(),            // Archivos de recursos
-      "timezone" => null,             // Zona horario
-      "session" => null,              // ID para variables de sesion
-      "commands" => array(),          // Target para los comandos
-      "control" => array(),           // Definiciones de controladores
-      "smtp" => array(),              // Configuraciones SMTP
-      "mails" => array(),             // Configuraciones de los mails
-      "sources" => array(),           // Configuraciones de las fuentes de datos
-      "validators" => array(),        // Configuraciones de las validaciones
-    ),
-
-    $instances = array(), // Instancias unicas de clases
-    $paths = array(),     // Herarquia de carpetas
-    $confs = array(),     // Configuraciones cargadas
-    $urlBase = "",        // URL base para el sitio
+    $instances = array(),   // Instancias unicas de clases
+    $paths = array(),       // Herarquia de carpetas
+    $confsLoaded = array(), // Archivos de configuración cargados.
+    $confs = array(),       // Configuraciones cargadas
+    $urlBase = "";          // URL base para el sitio
 
     // Valores seteados por el usuario
-    $userConf = array(
-      "routes" => array(  // Rutas definidas
-        "env" => array(),
-        "routes" => array()
-      )
-    );         
+    // $userConf = array(
+    //   "routes" => array(  // Rutas definidas
+    //     "env" => array(),
+    //     "routes" => array()
+    //   )
+    // );         
     
   // Devuelve la instancia de una clase existente. Sino existe la instancia se crea una nueva
   public final static function getInstance($className, array $params = array()){
@@ -111,33 +95,60 @@ final class Am{
     return $return;
 
   }
-  
-  // Obtener la configuracion para un parametro
-  public static function loadConf($property){
 
-    // Obtener del callback el valor predeterminado
-    $def = self::itemOr($property, self::$confsDef);
+  // Asignar/Mezcla valor con propiedad.
+  public static function mergeProperty($property, $value){
+
+    // Obtener funcion callback para mezclar la propiedad solicitada
+    $mergeCallback = self::itemOr($property, self::$mergeCallbacks);
+
+    // Si exite la funcion y existe un valor previo se mezcla a partir de la funcion designada
+    if($mergeCallback !== null && isset(self::$confs[$property]))
+      self::$confs[$property] = call_user_func_array($mergeCallback,
+        array(self::$confs[$property], $value));
+
+    // Si no existe el callback se devolvera el ultimo valor
+    else
+      self::$confs[$property] = $value;
+
+  }
+
+  // Carga un archivo de configuración
+  public static function mergePropertiesFromFile($filename, $property = null){
+    
+    // Obtener el nombre real del archivo
+    $filename = realpath($filename);
+
+    // Si el archivo no existe salir
+    if(!is_file($filename) || in_array($filename, self::$confsLoaded)) return;
+
+    // Agregar el archivo a la lita de archivos de configuracion cargados
+    self::$confsLoaded[] = $filename;
+
+    // Cargar archivo de configuracion
+    $conf = require $filename;
+
+    // Si la configuración esta destinada a una propiedad especifica
+    // mezclar con dicha configuracion
+    if(isset($property))
+      self::mergeProperty($property, $conf);
+
+    else
+      // Sino se debe agregar las configuraciones una por una.
+      // Recorrer elementos obtenidos para ir 
+      foreach ($conf as $property => $value)
+        self::mergeProperty($property, $value);
+
+  }
+
+  // Cargar propiedades de todos los archivos de coniguracion en las carpetas
+  // del ambito
+  public static function mergePropertiesFromAllFiles($filename, $property = null){
 
     // Recorrer cada uno de las carpetas en el path
-    foreach (self::$paths as $path) {
-
-      // Si ya fue cargada la configuracion pasar a la siguiente
-      if(isset(self::$confs[$path][$property]))
-        continue;
-
-      // Si no existe la configuracion en el path actual crear un array vacío
-      if(!isset(self::$confs[$path]))
-        self::$confs[$path] = array();
-
-      if(is_file($filename = "{$path}/conf/{$property}.conf.php"))
-        // Si el archivo cargar la configuracion en la posicion path/property
-        self::$confs[$path][$property] = require($filename);
-
-      else
-        // Si el archivo no existe guardar true en la posicion indicando que ya intento cargar
-        self::$confs[$path][$property] = $def;
-
-    }
+    foreach (self::$paths as $path)
+      // Si el archivo cargar la configuracion en la posicion path/property
+      self::mergePropertiesFromFile("{$path}/{$filename}.conf.php", $property);
 
   }
 
@@ -147,48 +158,16 @@ final class Am{
   }
 
   // Agregar una ruta a la lista de rutas
-  public static function setRoute($route, $to){
-    
+  public static function setRoute($route, $to){    
     // Agregar nueva ruta
-    self::$userConf["routes"]["routes"][$route] = $to;
-    
+    self::$confs["routes"]["routes"][$route] = $to;
   }
 
   // Obtener un atributo de la confiuguracion
   public static function getAttribute($property){
-
-    self::loadConf($property); // Cargar configuraciones de require
-
-    // Obtener funcion callback para mezclar la propiedad solicitada
-    $mergeCallback = self::itemOr($property, self::$mergeCallbacks);
-    $def           = self::itemOr($property, self::$confsDef);
-
-    // Para ir encolando el lista de valores segun su prevalencia
-    $ret = array();
-
-    foreach (self::$confs as $value) {
-
-      // Obtener valor dentro del conf (del archivo conf.conf.php)
-      $confValue = isset($value["conf"][$property])? $value["conf"][$property] : $def;
-
-      // Obtener el valor del archivo ($property.conf.phh)
-      $nameValue = isset($value[$property])? $value[$property] : $def;
-
-      // Agregarlos al array
-      $ret[] = $confValue;
-      $ret[] = $nameValue;
-
-    }
-
-    // Si existen los valores de usuario de la propiedad tambien se agregan
-    if(isset(self::$userConf[$property]))
-      $ret[] = self::$userConf[$property];
-
-    // Mezclar valores
-    return self::mergeValues($mergeCallback, $ret, $def);
-
+    self::mergePropertiesFromAllFiles("conf/{$property}", $property);
+    return self::itemOr($property, self::$confs);
   }
-
 
   // Responder con descarga de archivos
   final public static function downloadFile($file, array $env = array()){
@@ -238,7 +217,7 @@ final class Am{
   public static function task(){
 
     // Obtener las configuraciones
-    self::loadConf("conf");
+    self::mergePropertiesFromAllFiles("conf/conf");
 
     // Obtener el valor 
     $errorReporting = self::getAttribute("errorReporting");
@@ -314,7 +293,7 @@ final class Am{
       $conf = require $realFile;
 
       // Obtener archivos a agregar de la extencion
-      $files = self::itemOr($conf, "files", array());
+      $files = self::itemOr("files", $conf, array());
 
       // Eliminar el item de los archivos necesarios de la configuración
       unset($conf["files"]);
@@ -325,6 +304,7 @@ final class Am{
           require_once $realFile;
         else
           die("Am: Not fount Exts file: '{$realFile}'");
+
       
       // Incluir archivo init si existe
       if(is_file($realFile = "{$file}.init.php"))
