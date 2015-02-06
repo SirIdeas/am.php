@@ -13,7 +13,7 @@ final class AmORM{
   // carpeta de la libreria
   public static function requireFile($file, $onCurrentDir = true){
     $path = ($onCurrentDir? dirname(__FILE__)."/" : "") . "{$file}.php";
-    if(!file_exists($path))
+    if(!is_file($path))
       die("AmORM: file not found '{$path}'");
     require_once $path;
   }

@@ -145,11 +145,11 @@ abstract class AmSource extends AmObject{
 
   // Inidic si todas las clases y archivos de un model existes
   public function existsModel($model){
-    return file_exists($this->getPathConfToModel($model) . ".php")
-        && file_exists($this->getPathClassTableBase($model) . ".php")
-        && file_exists($this->getPathClassTable($model) . ".php")
-        && file_exists($this->getPathClassModelBase($model) . ".php")
-        && file_exists($this->getPathClassModel($model) . ".php");
+    return is_file($this->getPathConfToModel($model) . ".php")
+        && is_file($this->getPathClassTableBase($model) . ".php")
+        && is_file($this->getPathClassTable($model) . ".php")
+        && is_file($this->getPathClassModelBase($model) . ".php")
+        && is_file($this->getPathClassModel($model) . ".php");
   }
 
   // Obtener la configuracion del archivo de configuracion propio de un model
@@ -162,7 +162,7 @@ abstract class AmSource extends AmObject{
 
     // Obtener de el nombre del archivo destino
     $path = $this->getPathConf() . ".php";
-    if(!file_exists($path) || $rw){
+    if(!is_file($path) || $rw){
       AmCoder::write($path, $this->toArray());
       return true;
     }

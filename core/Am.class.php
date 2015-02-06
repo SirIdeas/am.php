@@ -131,7 +131,7 @@ final class Am{
       // Si no existe la configuracion en el path actual crear un array vacío
       if(!isset(self::$confs[$path])) self::$confs[$path] = array();
 
-      if(file_exists($filename = "{$path}/conf/{$property}.conf.php")){
+      if(is_file($filename = "{$path}/conf/{$property}.conf.php")){
         // Si el archivo cargar la configuracion en la posicion path/property
         self::$confs[$path][$property] = require($filename);
       }else{
@@ -154,11 +154,6 @@ final class Am{
     // Agregar nueva ruta
     self::$userConf["routes"]["routes"][$route] = $to;
     
-  }
-
-  // Devuelve la ruta del archivo donde sea encontrado por primera vez 
-  public static function findFile($file){
-    return self::findFileIn($file, self::$paths);
   }
 
   // Obtener un atributo de la confiuguracion
@@ -304,13 +299,67 @@ final class Am{
 
   // Obtener la contenido de un archivo de configuración
   public static function getConfig($file){
-    return require self::findFile("$file.conf.php");
+    return require self::findFileIn("$file.conf.php", self::$paths);
+  }
+
+  //
+  private static function requireExt($file){
+
+    // Si existe el archivo retornar el mismo
+    if(is_file($realFile = "{$file}.php")){
+      require_once $realFile;
+      return true;
+    }
+
+    // Incluir como extensión
+    if(is_file($realFile = "{$file}.conf.php")){
+      // Obtener la configuracion de la extencion
+      $conf = require $realFile;
+
+      // Obtener archivos a agregar de la extencion
+      $files = isset($conf["files"])? $conf["files"] : array();
+
+      // Eliminar el item de los archivos necesarios de la configuración
+      unset($conf["files"]);
+
+      // Llamar archivo de iniciacion en la carpeta si existe.
+      foreach ($files as $item)
+        if(is_file($realFile = "{$file}{$item}.php"))
+          require_once $realFile;
+        else
+          die("Am: Not fount Exts file: '{$realFile}'");
+      
+      // Incluir archivo init si existe
+      if(is_file($realFile = "{$file}.init.php"))
+        require_once $realFile;
+
+
+      // Evaluar la configuracion particular.
+      $conf = isset($conf["conf"])? $conf["conf"] : array();
+
+      return true;
+
+    }
+
   }
 
   // Funcion para incluir un archivo
   public static function requireFile($file){
-    ($realFile = self::findFile("$file.php")) or die("Am: Not fount Exts '{$file}'");
-    require_once $realFile;
+
+    // Agregar extension
+    if(self::requireExt($file))
+      return true;
+
+    // Buscar un archivo dentro de las carpetas
+    foreach(self::$paths as $path)
+      if(self::requireExt("{$path}{$file}"))
+        return true;
+
+    // No se agregó la extension
+    die("Am: Not fount Exts '{$file}'");
+    
+    return false;
+
   }
 
   ///////////////////////////////////////////////////////////////////////////////////
@@ -373,12 +422,12 @@ final class Am{
   public static function findFileIn($file, array $paths){
     
     // Si existe el archivo retornar el mismo
-    if(file_exists($file)) return $file;
+    if(is_file($file)) return $file;
 
     // Buscar un archivo dentro de las carpetas
-    foreach($paths as $path){
-      if(file_exists($realPath = "{$path}{$file}")) return $realPath;
-    }
+    foreach($paths as $path)
+      if(is_file($realPath = "{$path}{$file}"))
+        return $realPath;
 
     return false;
 

@@ -59,5 +59,3 @@ class AmAsset{
   }
 
 }
-
-Am::setCallback("response.assets", "AmAsset::response");

@@ -10,7 +10,7 @@ class AmCoder{
   public static function decode($path){
 
     // Si el archivo exite retornar lo que devuelva el mismo
-    if(file_exists($path))  
+    if(is_file($path))  
       return require $path;
 
     // Si no existe el archivo retornan un array vacío
@@ -44,7 +44,7 @@ class AmCoder{
     //   die("Am: No se puede escribir "{$path}"");
 
     // Si el archivo no existe se crea el archivo
-    // if(!file_exists($path))
+    // if(!is_file($path))
       file_put_contents($path, self::encode($data));
     
   }

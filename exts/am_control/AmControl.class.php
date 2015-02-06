@@ -110,7 +110,7 @@ class AmControl extends AmObject{
     $controlFile = "{$conf["path"]}{$control}.control.php";
     
     // Incluir controlador si existe el archivo
-    if(file_exists($controlFile))
+    if(is_file($controlFile))
       require_once $controlFile;
 
     // Retornar la configuracion obtenida

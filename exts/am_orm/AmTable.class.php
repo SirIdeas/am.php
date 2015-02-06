@@ -116,7 +116,7 @@ class AmTable extends AmObject{
 
     // Obtener de el nombre del archivo destino
     $path = $this->getPathConf() . ".php";
-    if(!file_exists($path) || $rw){
+    if(!is_file($path) || $rw){
       AmCoder::write($path, $this->toArray());
       return true;
     }
@@ -145,7 +145,7 @@ class AmTable extends AmObject{
     $path = $this->getPathClassTable() . ".php";
     
     // Verificar que no exista
-    if(!file_exists($path)){
+    if(!is_file($path)){
       // Crear la Carpeta
       file_put_contents($path, "<?php\n\nclass {$this->getClassNameTable()} extends {$this->getClassNameTableBase()}{\n\n}\n");
       return true;
@@ -177,7 +177,7 @@ class AmTable extends AmObject{
     $path = $this->getPathClassModel() . ".php";
     
     // Verificar que no exista
-    if(!file_exists($path)){
+    if(!is_file($path)){
       // Crear la Carpeta
       file_put_contents($path, "<?php\n\nclass {$this->getClassNameModel()} extends {$this->getClassNameModelBase()}{\n\n}\n");
       return true;

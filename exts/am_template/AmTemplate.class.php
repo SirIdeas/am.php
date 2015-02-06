@@ -38,7 +38,7 @@ final class AmTemplate extends AmObject{
     // Asignar atributos
     $this->options = $options;
     $this->file = $file;
-    $this->realFile = $this->findFile($file);
+    $this->realFile = $this->findView($file);
 
     // Leer archivo
     if($this->realFile !== false)
@@ -74,7 +74,7 @@ final class AmTemplate extends AmObject{
   }
 
   // Busca una vista en los paths definidos
-  public function findFile($file){
+  public function findView($file){
     // Si no existe la vista mostrar error
     if(false === ($fileRet = Am::findFileIn($file, $this->paths))){
       $this->errors[] = "Am: No existe view '{$file}.'";
@@ -311,7 +311,7 @@ final class AmTemplate extends AmObject{
 
   // incluye la vista compilada
   public function includeView(){
-    if(file_exists($this->getCompiledFile())){
+    if(is_file($this->getCompiledFile())){
       extract($this->getVars());  // Crear variables
       include $this->getCompiledFile();          // Inluir vista
     }
