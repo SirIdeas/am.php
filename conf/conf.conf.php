@@ -25,7 +25,6 @@ return array(
   "validators" => array(),        // Configuraciones de las validaciones
 
   "requires" => array(
-    "core/AmObject.class",
     "exts/am_data_time/AmDateTime.class",
     "exts/am_route/AmRoute.class",
     "exts/am_template/AmTemplate.class",

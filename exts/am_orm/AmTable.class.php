@@ -510,7 +510,7 @@ class AmTable extends AmObject{
     $pks = $this->getPks();  // Obtener el primary keys
 
     // Si es un array no asociativo
-    if(is_array($id) && !Am::isAssocArray($id)){
+    if(is_array($id) && !isAssocArray($id)){
       // Si la cantidad de campos del PKs es igual
       // a la cantidad de valores recibidos del ID
       if(count($pks) === count($id)){

@@ -126,7 +126,7 @@ class AmCoder{
       
       $data = (array)$data;
       
-      $isAssocArray = Am::isAssocArray($data);
+      $isAssocArray = isAssocArray($data);
       
       if(!$isAssocArray){
         

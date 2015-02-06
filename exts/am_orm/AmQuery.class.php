@@ -424,7 +424,7 @@ class AmQuery extends AmObject{
     }
 
     // Formatear el valor
-    if(isset($formater) && Am::isValidCallback($formater))
+    if(isset($formater) && isValidCallback($formater))
       $r = call_user_func_array($formater, array($r));
 
     return $r;
@@ -454,7 +454,7 @@ class AmQuery extends AmObject{
 
     // Si no es callback válido asignar null para 
     // ahorrar sentencias
-    if(!Am::isValidCallback($formater))
+    if(!isValidCallback($formater))
       $formater = null;
 
     // Crear consulta
