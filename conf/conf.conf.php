@@ -8,13 +8,11 @@ return array(
 
   "errorReporting" => E_ALL,      // Indicar que errores se mostrarán
 
-  "conf" => array(),              // Define las cargas iniciales. Archivo conf/routes.conf.php
   "requires" => array(),          // Archivos a incluir en el arranque
   "routes" => array(              // Rutas
     "env" => array(),
     "routes" => array()
   ),
-  "assets" => array(),            // Archivos de recursos
   "timezone" => null,             // Zona horario
   "session" => null,              // ID para variables de sesion
   "commands" => array(),          // Target para los comandos

@@ -6,7 +6,7 @@
 
 final class Am{
 
-  public static
+  protected static
 
     // Define las callbacks del sistema
     $callbacks = array(
@@ -105,6 +105,13 @@ final class Am{
 
   }
 
+  // Mezcla un conjunto de propiedades
+  public static function mergeProperties(array $conf){
+    // Recorrer elementos obtenidos para ir 
+    foreach ($conf as $property => $value)
+      self::mergeProperty($property, $value);
+  }
+
   // Carga un archivo de configuración
   public static function mergePropertiesFromFile($filename, $property = null){
     
@@ -127,9 +134,7 @@ final class Am{
 
     else
       // Sino se debe agregar las configuraciones una por una.
-      // Recorrer elementos obtenidos para ir 
-      foreach ($conf as $property => $value)
-        self::mergeProperty($property, $value);
+      self::mergeProperties($conf);
 
   }
 
@@ -250,12 +255,7 @@ final class Am{
 
     // Incluir extensiones para peticiones
     // Archivos requeridos
-    $requires = self::getAttribute("requires");
-
-    // Incluir archivo
-    foreach($requires as $file){
-      self::requireFile($file);
-    }
+    self::requireFiles(self::getAttribute("requires"));
 
     // Llamado de accion para evaluar ruta
     self::call("route.eval", array(
@@ -270,16 +270,70 @@ final class Am{
     return require self::findFileIn("$file.conf.php", self::$paths);
   }
 
+  // Cargador de Amathista
+  public static function load($file){
+
+    // Si existe el archivo retornar el mismo
+    if(is_file($realFile = "{$file}.php")){
+      require_once $realFile;
+      return true;
+    }
+
+    // Incluir como extensión
+    if(is_file($realFile = "{$file}.conf.php")){
+      // Obtener la configuracion de la extencion
+      $conf = require $realFile;
+
+      // Obtener archivos a agregar de la extencion
+      $files = itemOr("files", $conf, array());
+
+      // Eliminar el item de los archivos necesarios de la configuración
+      unset($conf["files"]);
+
+      // Llamar archivo de iniciacion en la carpeta si existe.
+      foreach ($files as $item)
+        if(is_file($realFile = "{$file}{$item}.php"))
+          require_once $realFile;
+        else
+          die("Am: Not fount Exts file: '{$realFile}'");
+
+      
+      // Incluir archivo init si existe
+      if(is_file($realFile = "{$file}.init.php"))
+        require_once $realFile;
+
+      // Obtener dependencias
+      self::requireFiles(itemOr("requires", $conf, array()));
+
+      // Eliminar dependencias de la configuracion
+      unset($conf["requires"]);
+
+      // Sino se debe agregar las configuraciones una por una.
+      self::mergeProperties($conf);
+
+      return true;
+      
+    }
+
+  }
+
+  // Incluye varias extensiones o archivos
+  public static function requireFiles(array $requires){
+    // Incluir dependencias recursivamente
+    foreach ($requires as $value)
+      self::requireFile($value);
+  }
+
   // Funcion para incluir un archivo
   public static function requireFile($file){
 
     // Agregar extension
-    if(amLoader($file))
+    if(self::load($file))
       return true;
 
     // Buscar un archivo dentro de las carpetas
     foreach(self::$paths as $path)
-      if(amLoader("{$path}{$file}"))
+      if(self::load("{$path}{$file}"))
         return true;
 
     // No se agregó la extension

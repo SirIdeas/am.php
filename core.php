@@ -7,7 +7,9 @@
 define("AM_FOLDER", dirname(__FILE__) . "/");
 
 // Incluir núcleo de framework
-require AM_FOLDER . "/am.php";
+require AM_FOLDER . "/core/helpers.php";
+require AM_FOLDER . "/core/Am.class.php";
+require AM_FOLDER . "/core/AmObject.class.php";
 
-amLoader(AM_FOLDER . "/exts/am/");
-
+// Realizar llamada
+Am::task();
