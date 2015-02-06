@@ -7,7 +7,7 @@
  * Los mensajes son guardados por tipos
  */
 
-Am::requireFile("exts/AmSession.class");
+Am::requireFile("exts/am_session/AmSession.class");
 
 final class AmFlash{
   

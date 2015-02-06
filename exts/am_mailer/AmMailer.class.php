@@ -5,7 +5,7 @@
  */
 
 // Incluir PHPMailer
-Am::requireFile("exts/php_mailer/PHPMailerAutoload");
+Am::requireFile(dirname(__FILE__)."/php_mailer/PHPMailerAutoload");
 
 // Interfaz para clases que puedan enviar y recibir correso
 interface AmAddress{
