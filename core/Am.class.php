@@ -103,15 +103,11 @@ final class Am{
     $return = true;
 
     // Si existe callbacks definidas para la accion
-    if(isset(self::$callbacks[$action])){
-
+    if(isset(self::$callbacks[$action]))
       // Llamar los callbacks
-      foreach(self::$callbacks[$action] as $callback){
+      foreach(self::$callbacks[$action] as $callback)
         $return = $return && call_user_func_array($callback, $options);
-      }
 
-    }
-    
     return $return;
 
   }
@@ -126,18 +122,20 @@ final class Am{
     foreach (self::$paths as $path) {
 
       // Si ya fue cargada la configuracion pasar a la siguiente
-      if(isset(self::$confs[$path][$property])) continue;
+      if(isset(self::$confs[$path][$property]))
+        continue;
 
       // Si no existe la configuracion en el path actual crear un array vacío
-      if(!isset(self::$confs[$path])) self::$confs[$path] = array();
+      if(!isset(self::$confs[$path]))
+        self::$confs[$path] = array();
 
-      if(is_file($filename = "{$path}/conf/{$property}.conf.php")){
+      if(is_file($filename = "{$path}/conf/{$property}.conf.php"))
         // Si el archivo cargar la configuracion en la posicion path/property
         self::$confs[$path][$property] = require($filename);
-      }else{
+
+      else
         // Si el archivo no existe guardar true en la posicion indicando que ya intento cargar
         self::$confs[$path][$property] = $def;
-      }
 
     }
 
@@ -183,9 +181,8 @@ final class Am{
     }
 
     // Si existen los valores de usuario de la propiedad tambien se agregan
-    if(isset(self::$userConf[$property])){
+    if(isset(self::$userConf[$property]))
       $ret[] = self::$userConf[$property];
-    }
 
     // Mezclar valores
     return self::mergeValues($mergeCallback, $ret, $def);
@@ -317,7 +314,7 @@ final class Am{
       $conf = require $realFile;
 
       // Obtener archivos a agregar de la extencion
-      $files = isset($conf["files"])? $conf["files"] : array();
+      $files = self::itemOr($conf, "files", array());
 
       // Eliminar el item de los archivos necesarios de la configuración
       unset($conf["files"]);
@@ -332,10 +329,6 @@ final class Am{
       // Incluir archivo init si existe
       if(is_file($realFile = "{$file}.init.php"))
         require_once $realFile;
-
-
-      // Evaluar la configuracion particular.
-      $conf = isset($conf["conf"])? $conf["conf"] : array();
 
       return true;
 
