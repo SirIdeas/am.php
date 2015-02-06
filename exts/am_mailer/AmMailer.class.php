@@ -4,9 +4,6 @@
  * Clase para el envío de E-mails
  */
 
-// Incluir PHPMailer
-Am::requireFile(dirname(__FILE__)."/php_mailer/PHPMailerAutoload");
-
 // Interfaz para clases que puedan enviar y recibir correso
 interface AmAddress{
   public function getMail();

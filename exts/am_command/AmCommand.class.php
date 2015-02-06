@@ -26,10 +26,11 @@ class AmCommand{
                                     // $params queda con el resto de los parametros del argumento
                                     // $argv queda con el resto de los parametros recibidos
     // Determinar el nombre de la funcion que ejecuta el comando
-    $funtionName = "am_command_{$cmd}";
+    $functionName = "am_command_{$cmd}";
+    $functionFile = "{$functionName}.php";
     
     // Si la funcion no existe mostrar error
-    function_exists($funtionName) or die("Am: command not found {$cmd}");
+    function_exists($functionName) or die("Am: command not found {$cmd}");
 
     ob_start();
     // Imprimir el comando que se ejecutará
@@ -49,21 +50,19 @@ class AmCommand{
       //         2: parametros del argumento
       //         3: configuracion del target
       //         4: parametros recibidos
-      $funtionName($target, $params, $config, $file, $argv);
+      $functionName($target, $params, $config, $file, $argv);
 
     // Sino se definio el target, pero existen targets en la configuracion para el comando
     }elseif(isset($targets[$cmd])){
 
       // Ejecutar el comando con todos los targets en la configuracion
       foreach($targets[$cmd] as $target => $conf)
-        $funtionName($target, $params, $conf, $file, $argv);
+        $functionName($target, $params, $conf, $file, $argv);
 
-    }else{
+    }else
 
       // Llamado de la funcion 
-      $funtionName(null, array(), array(), $file, $argv);
-
-    }
+      $functionName(null, array(), array(), $file, $argv);
 
     echo "\n";
     return ob_get_clean();
@@ -88,24 +87,6 @@ class AmCommand{
   public static function asRequest(){
     header("content-type: text/plain");
     call_user_func_array(array("AmCommand", "asTerminal"), func_get_args());
-  }
-
-}
-
-// Agregar ruta para atender peticiones por consola
-Am::setRoute(":arguments(am\.php/.*)", "AmCommand::asTerminal");
-
-// Agregar ruta para atender petidicones HTTP
-Am::setRoute("/:arguments(am-command/.*)", "AmCommand::asRequest");
-
-// Concatenar: PENDIENTE ORGANIZAR
-function am_command_concat($target, $params, $config, $file, $argv){
-
-  foreach ($config as $fileName => $assets) {
-    // REVISAR: No se deberia usar AmAsset
-    $asset = new AmAsset($fileName, $assets);
-    file_put_contents($fileName, $asset->getContent());
-    echo "\nAm: Asset created $fileName";
   }
 
 }

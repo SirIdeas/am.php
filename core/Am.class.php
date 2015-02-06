@@ -29,9 +29,9 @@ final class Am{
       "session" => null,
       "commands" => null,
       "control" => "array_merge_recursive",
-      "smtp" => "array_merge",
-      "mails" => "array_merge",
-      "sources" => "array_merge",
+      "smtp" => "array_merge_recursive",
+      "mails" => "array_merge_recursive",
+      "sources" => "array_merge_recursive",
       "validators" => "array_merge_recursive",
     ),
 
@@ -214,7 +214,7 @@ final class Am{
   public static function task(){
 
     // Obtener las configuraciones
-    self::mergePropertiesFromAllFiles("conf/conf");
+    self::mergePropertiesFromAllFiles("conf/");
 
     // Obtener el valor 
     $errorReporting = self::getAttribute("errorReporting");
@@ -287,26 +287,26 @@ final class Am{
       // Obtener archivos a agregar de la extencion
       $files = itemOr("files", $conf, array());
 
-      // Eliminar el item de los archivos necesarios de la configuración
-      unset($conf["files"]);
+      // Obtener dependencias
+      $requires = itemOr("requires", $conf, array());
 
+      // Incluir las dependencias
+      self::requireFiles($requires);
+      
       // Llamar archivo de iniciacion en la carpeta si existe.
       foreach ($files as $item)
         if(is_file($realFile = "{$file}{$item}.php"))
           require_once $realFile;
         else
           die("Am: Not fount Exts file: '{$realFile}'");
-
       
       // Incluir archivo init si existe
       if(is_file($realFile = "{$file}.init.php"))
         require_once $realFile;
 
-      // Obtener dependencias
-      self::requireFiles(itemOr("requires", $conf, array()));
-
-      // Eliminar dependencias de la configuracion
+      // Eliminar los items de conf ya evaluados
       unset($conf["requires"]);
+      unset($conf["files"]);
 
       // Sino se debe agregar las configuraciones una por una.
       self::mergeProperties($conf);

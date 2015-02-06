@@ -4,9 +4,6 @@
  * Clase principal de Amathista
  */
 
-// Se debe iniciar la sesion
-session_start();
-
 final class AmSession{
   
   protected static
@@ -48,6 +45,3 @@ final class AmSession{
   }
 
 }
-
-// Asignar id de la sesion
-AmSession::setSessionId(Am::getAttribute("session"));

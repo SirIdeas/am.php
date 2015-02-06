@@ -181,12 +181,3 @@ final class AmORM{
   }
 
 }
-    
-// Incluir Nucleo del ORM
-AmORM::requireFile("AmField.class");
-AmORM::requireFile("AmTable.class");
-AmORM::requireFile("AmModel.class");
-AmORM::requireFile("AmRelation.class");
-AmORM::requireFile("AmQuery.class");
-AmORM::requireFile("AmSource.class");
-AmORM::requireFile("AmValidator.class");
