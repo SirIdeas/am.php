@@ -86,10 +86,10 @@ class AmControl extends AmObject{
     $confs = Am::getAttribute("control");
 
     // Obtener valores por defecto
-    $defaults = isset($confs["defaults"])? $confs["defaults"] : array();
+    $defaults = itemOr("defaults", $confs, array());
 
     // Si no existe configuracion para el controlador
-    $conf = isset($confs[$control])? $confs[$control] : array();
+    $conf = itemOr($control, $confs, array());
 
     // Si no es un array, entonces el valor indica el path del controlador
     if(is_string($conf)) $conf = array("path" => $conf);
