@@ -17,6 +17,7 @@ final class Am{
       // render.form (file, tpl)                        : Renderizar formulario
       // response.control (control, action, params, env): Responder con controlador
       // render.template (templete, paths, options)     : Renderizar vista
+      // command.addPath (path)                         : Agregar una carpeta de comandos
     ),
 
     // Callbacks para mezclar atributos
@@ -193,7 +194,7 @@ final class Am{
     return "http://" . $_SERVER["SERVER_NAME"] . self::url($path);
   }
 
-  public static function eServerUrl($path){
+  public static function eServerUrl($path = ""){
     echo self::serverUrl($path);
   }
 
@@ -315,6 +316,8 @@ final class Am{
       
     }
 
+    return false;
+
   }
 
   // Incluye varias extensiones o archivos
@@ -338,8 +341,6 @@ final class Am{
 
     // No se agregó la extension
     die("Am: Not fount Exts '{$file}'");
-    
-    return false;
 
   }
 
