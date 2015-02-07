@@ -14,7 +14,8 @@ class AmControl extends AmObject{
     $post = null,       // Variables recibidas por POST
     $request = null,    // Variables GET y POST conbinadas
     $server = null,     // Variables de SERVER
-    $filters = array(); // Filtros agregados
+    $filters = array(), // Filtros agregados
+    $paths = array();   // Carpetas de ambito del controlador
 
   public function __construct($data = null){
     parent::__construct($data);
@@ -52,14 +53,14 @@ class AmControl extends AmObject{
   }
 
   public function getPaths(){
-    $ret = array();
+    $ret = $this->paths;
     // Agregar path principal si existe
     if(null !== ($folder = $this->getPath()))
       $ret[] = $folder;
     // Agregar path de vistas principal si existe
     if(null !== ($folder = $this->getViewsPath()))
       $ret[] = $folder;
-    return $ret;
+    return array_unique($ret);
   }
 
   // Devuelve el método de la peticion
@@ -74,7 +75,6 @@ class AmControl extends AmObject{
 
   // Devuelve el prefijo para determinado elemento
   final protected function prefixs($key = null){
-    var_dump($this->prefixs);
     return isset($this->prefixs[$key]) ? $this->prefixs[$key] : "";
   }
 
@@ -92,25 +92,30 @@ class AmControl extends AmObject{
     $conf = itemOr($control, $confs, array());
 
     // Si no es un array, entonces el valor indica el path del controlador
-    if(is_string($conf)) $conf = array("path" => $conf);
-
-    // Si tiene un padre se incluye
-    // y se mezcla con la configuracion actual
-    if(isset($conf["parent"]) && !empty($conf["parent"])){
-      $conf = array_merge(
-        self::includeControl($conf["parent"]),
-        $conf
-      );
-    }
+    if(is_string($conf))
+      $conf = array("path" => $conf);
 
     // Valores por defecto
     $conf = array_merge($defaults, $conf);
 
+    if(is_file($realFile = "{$conf["path"]}.control.php"))
+      $conf = array_merge(
+        $conf,
+        require($realFile)
+      );
+
+    // Si tiene un padre se incluye
+    // y se mezcla con la configuracion actual
+    if(isset($conf["parent"]) && !empty($conf["parent"])){
+      $parentConf = self::includeControl($conf["parent"]);
+      $parentConf["paths"][] = $conf["path"];
+      $conf = array_merge($parentConf, $conf);
+    }else
+      $conf["paths"] = array($conf["path"]);
+
     // Obtener la ruta del controlador
-    $controlFile = "{$conf["path"]}{$control}.control.php";
-    
     // Incluir controlador si existe el archivo
-    if(is_file($controlFile))
+    if(is_file($controlFile = "{$conf["path"]}{$control}.control.php"))
       require_once $controlFile;
 
     // Retornar la configuracion obtenida

@@ -5,7 +5,7 @@ return array(
   "control" => array(
     "defaults" => array(
       "path" => "control/",
-      "views" => "views/"
+      "views" => "views/",
     )
   ),
 
