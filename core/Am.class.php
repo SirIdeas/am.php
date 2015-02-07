@@ -21,19 +21,8 @@ final class Am{
     ),
 
     // Callbacks para mezclar atributos
-    $mergeCallbacks = array(
-      "requires" => "array_merge",
-      "routes" => "array_merge_recursive",
-      "assets" => "array_merge",
-      "errorReporting" => null,
-      "timezone" => null,
-      "session" => null,
-      "commands" => null,
-      "control" => "array_merge_recursive",
-      "smtp" => "array_merge_recursive",
-      "mails" => "array_merge_recursive",
-      "sources" => "array_merge_recursive",
-      "validators" => "array_merge_recursive",
+    $mergeFunctions = array(
+      "requires" => "array_merge"
     ),
 
     $instances = array(),   // Instancias unicas de clases
@@ -93,11 +82,11 @@ final class Am{
   public static function mergeProperty($property, $value){
 
     // Obtener funcion callback para mezclar la propiedad solicitada
-    $mergeCallback = itemOr($property, self::$mergeCallbacks);
+    $mergeFunctions = itemOr($property, self::$mergeFunctions);
 
     // Si exite la funcion y existe un valor previo se mezcla a partir de la funcion designada
-    if($mergeCallback !== null && isset(self::$confs[$property]))
-      self::$confs[$property] = call_user_func_array($mergeCallback,
+    if($mergeFunctions !== null && isset(self::$confs[$property]))
+      self::$confs[$property] = call_user_func_array($mergeFunctions,
         array(self::$confs[$property], $value));
 
     // Si no existe el callback se devolvera el ultimo valor
@@ -168,12 +157,12 @@ final class Am{
   }
 
   // Responder con descarga de archivos
-  final public static function downloadFile($file, array $env = array()){
+  public static function downloadFile($file, array $env = array()){
     self::respondeWithFile($file, null, null, true);
   }
 
   // Responder con archivo
-  final public static function respondeFile($file, array $env = array()){
+  public static function respondeFile($file, array $env = array()){
     self::respondeWithFile($file);
   }
   
@@ -285,6 +274,12 @@ final class Am{
       // Obtener la configuracion de la extencion
       $conf = require $realFile;
 
+      // Obtener las funciones para mezclar que s definirín
+      $mergeFunctions = itemOr("mergeFunctions", $conf, array());
+
+      // Los items nuevos no sobreescriben los anteriores
+      self::$mergeFunctions = array_merge($mergeFunctions, self::$mergeFunctions);
+
       // Obtener archivos a agregar de la extencion
       $files = itemOr("files", $conf, array());
 
@@ -380,7 +375,7 @@ final class Am{
   }
 
   // Responer con un archivo
-  final public static function respondeWithFile($file, $mimeType = null, $name = null, $attachment = false){
+  public static function respondeWithFile($file, $mimeType = null, $name = null, $attachment = false){
 
     // Obtener el mime-type del archivo con el que se responderá
     if(!isset($mimeType)) $mimeType = self::mimeType($file);

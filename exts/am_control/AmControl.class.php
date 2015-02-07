@@ -7,52 +7,57 @@
 class AmControl extends AmObject{
 
   protected
+    $server = null,     // Variables de SERVER
+    $get = null,        // Variables recibidas por GET
+    $post = null,       // Variables recibidas por POST
+    $request = null,    // Todas las variables recibidas
+    $cookie = null,     // Çookies
+    $env = null,        // Variables de entorno
+
     $path = null,       // Carpeta contenedora del controlador
     $views = null,      // Carpeta contenedora de las vistas para el controlador
     $view = null,       // Nombre de la vista a renderizar
-    $get = null,        // Variables recibidas por GET
-    $post = null,       // Variables recibidas por POST
-    $request = null,    // Variables GET y POST conbinadas
-    $server = null,     // Variables de SERVER
     $filters = array(), // Filtros agregados
     $paths = array();   // Carpetas de ambito del controlador
 
   public function __construct($data = null){
     parent::__construct($data);
 
+    $this->server = new AmObject($_SERVER);
     $this->get = new AmObject($_GET);
     $this->post = new AmObject($_POST);
+    $this->cookie = new AmObject($_COOKIE);
     $this->request = new AmObject($_REQUEST);
-    $this->server = new AmObject($_SERVER);
+    $this->env = new AmObject($_ENV);
 
   }
 
   // Propiedad para get/set para render
-  public function getView(){ return $this->view; }
-  public function setView($value){ $this->view = $value; return $this; }
+  final protected function getView(){ return $this->view; }
+  final protected function setView($value){ $this->view = $value; return $this; }
 
   // Asigna la vista que se renderizará.
   // Es un Alias de la funcion setView que agrega .view.php al final
   // del valore recibido.
-  public function render($value){
+  final protected function render($value){
     // Las vista de las acciones son de extencion .view.php
     return $this->setView(self::getViewName($value));
   }
 
   // Devuelve la carpeta de ambito del controlador
-  public function getPath(){
+  final protected function getPath(){
     return $this->path;
   }
 
   // Obtener la carpeta de de las vistas
-  public function getViewsPath(){
+  final protected function getViewsPath(){
     // Si no tiene carpeta asignada se retorna null
     if(!$this->views)
       return null;
     return $this->getPath() . $this->views;
   }
 
-  public function getPaths(){
+  final protected function getPaths(){
     $ret = $this->paths;
     // Agregar path principal si existe
     if(null !== ($folder = $this->getPath()))
@@ -64,121 +69,91 @@ class AmControl extends AmObject{
   }
 
   // Devuelve el método de la peticion
-  public function getMethod(){
+  final protected function getMethod(){
     return strtolower($this->server->REQUEST_METHOD);
   }
 
   // Devuelve el nombre normal de una vista
-  public static function getViewName($value){ 
+  final protected static function getViewName($value){ 
     return "{$value}.view.php";
   }
 
   // Devuelve el prefijo para determinado elemento
-  final protected function prefixs($key = null){
-    return isset($this->prefixs[$key]) ? $this->prefixs[$key] : "";
+  final protected function getPrefix($key){
+    return itemOr($key, $this->prefixs, "");
   }
 
-  // Devuelve la configuracion para un controlador
-  // Ademas incluye el archivo conrrespondiente
-  public static function includeControl($control){
+  // Renderizar la vista
+  final protected function renderView(array $vars, $child){
 
-    // Obtener configuraciones del controlador
-    $confs = Am::getAttribute("control");
-
-    // Obtener valores por defecto
-    $defaults = itemOr("defaults", $confs, array());
-
-    // Si no existe configuracion para el controlador
-    $conf = itemOr($control, $confs, array());
-
-    // Si no es un array, entonces el valor indica el path del controlador
-    if(is_string($conf))
-      $conf = array("path" => $conf);
-
-    // Valores por defecto
-    $conf = array_merge($defaults, $conf);
-
-    if(is_file($realFile = "{$conf["path"]}.control.php"))
-      $conf = array_merge(
-        $conf,
-        require($realFile)
-      );
-
-    // Si tiene un padre se incluye
-    // y se mezcla con la configuracion actual
-    if(isset($conf["parent"]) && !empty($conf["parent"])){
-      $parentConf = self::includeControl($conf["parent"]);
-      $parentConf["paths"][] = $conf["path"];
-      $conf = array_merge($parentConf, $conf);
-    }else
-      $conf["paths"] = array($conf["path"]);
-
-    // Obtener la ruta del controlador
-    // Incluir controlador si existe el archivo
-    if(is_file($controlFile = "{$conf["path"]}{$control}.control.php"))
-      require_once $controlFile;
-
-    // Retornar la configuracion obtenida
-    return $conf;
-
-  }
-
-  // Funcion para atender las respuestas por controlador.
-  // Recive el nombre del controlador, la accion a ejecutar,
-  // Los parametros y el entorno
-  public static function response($control, $action, array $params, array $env){
-
-    // Valores por defecto
-    $conf = array_merge(
-      // Incluye el controlador y devuelve la configuracion para el mismo
-      self::includeControl($control),
-      // Asignar vista que se mostrará
-      array(
-        "view" => self::getViewName($action),
-      )
-    );
-
-    // Obtener el nombre de la clases control a instanciar
-    $controlClassName = "{$control}Control";
-    
-    // Obtener instancia del controlador
-    $obj = Am::getInstance($controlClassName, $conf);
-    
-    // Si el metodo existe llamar
-    if(method_exists($obj, $actionMethod = "action"))
-      call_user_func_array(array($obj, $actionMethod), $params);
-
-    // Si el metodo existe llamar
-    if(method_exists($obj, $actionMethod = "action_{$action}"))
-      call_user_func_array(array($obj, $actionMethod), $params);
-
-    // Si el metodo existe llamar correspondiente al metodo de la peticion
-    if(method_exists($obj, $actionMethod = "{$obj->getMethod()}_{$action}"))
-      call_user_func_array(array($obj, $actionMethod), $params);
-    
     // Renderizar vista mediante un callback
     Am::call("render.template", array(
       
       // Obtener vista a renderizar
-      $obj->getView(),
+      $this->getView(),
 
       // Obtener carpetas de ambito para el controlador
-      $obj->getPaths(),
+      $this->getPaths(),
       
       // Paths para las vistas
       array(
         // Variables en la vista
-        "env" => array_merge(
-          $env,             // Entorno: prioridad 3
-          $params,          // Paremetros de rutra: prioridad 2
-          $obj->toArray()   // Atributos de contorlaodr: prioridad 1
-        ),
-        "ignore" => true
+        "env" => array_merge($vars, $this->toArray()),
+        "ignore" => true,
+        "child" => $child,
       )
       
     ));
 
-    return true;
+  }
+
+  // Responder como servicio
+  final private function renderService($content){
+    
+    $type = "json";
+
+    isset($content) && is_object($content) AND $content = (array)$content;
+
+    switch ($type){
+      case 'json':
+        $contentType = 'application/json';
+        $content = json_encode($content);
+        break;
+      default:
+        $contentType = 'text/plain';
+        $content = print_r($content, true);
+        break;
+    }
+    
+    header("content-type: {$contentType}");
+    echo $content;
+
+  }
+
+  final public function proccess($action, array $env, array $params){
+    
+    // Todo lo que se imprimar desde este punto hasta 
+    // ob_get_clean() se guardará en una variable.
+    ob_start();
+    
+    // Ejecutar accion con sus respectivos filtros.
+    $ret = $this->executeAction($action, $this->getMethod(), $params);
+
+    // Para obtener la salida
+    $buffer = ob_get_clean();
+
+    // Si la salida es indicada como salida de un servicio
+    // o si el último retorno es un array o un objeto se procesa
+    // la salida como un servicio. De lo contrario se renderizará
+    // la vista correspondiente.
+    
+    // Responder como un sericio
+    if(is_array($ret) || is_object($ret))
+      $this->renderService($ret);
+
+    else
+    // Renderizar la vista
+      $this->renderView(array_merge($env, $params), $buffer);
 
   }
 
@@ -281,21 +256,29 @@ class AmControl extends AmObject{
         if(($filter["scope"] == "all" || in_array($methodName, $filter["to"]))){
           // Si el método no esta dentro de las excepciones del filtro
           if(!isset($filter["except"]) || !in_array($methodName, $filter["except"])){
+
+            // Obtener le nombre real del filtro
+            $filterRealName = $this->getPrefix("filters") . $filterName;
+
+            // Llamar el filtro
+            $ret = call_user_func_array(array(&$this, $filterRealName), $extraParams);
             
-            $ret = call_user_func_array(array(&$this, $this->prefixs("filters") . $filterName), $extraParams);
-            
+            // Si la accion no pasa el filtro y se trata de un filtro before
             if($ret === false && $state == "before"){
               
+              // Si se indicí una ruta de redirección
+              // se lleva a esa ruta
               if(isset($filter["redirect"])){
                 $this->redirect(url($filter["redirect"]));
               }else{
+                // Si no retornar false para indicar que no se pasó el filtro.
                 return false;
               }
-
 
             }
 
           }
+
         }
         
       }
@@ -305,6 +288,119 @@ class AmControl extends AmObject{
     // Si todos los filtros pasaron retornar verdadero.
     return true;
     
+  }
+
+  // Ejecuta una accion determinada
+  final protected function executeAction($action, $method, array $params){
+
+    // Valor de retorno
+    $ret = null;
+
+    // Si el metodo existe llamar
+    if(method_exists($this, $actionMethod = "action"))
+      call_user_func_array(array($this, $actionMethod), $params);
+
+    // Ejecutar filtros para la acción
+    if(!$this->executeFilters("before", $action, $params))
+      return false;
+
+    // Si el metodo existe llamar
+    if(method_exists($this, $actionMethod = $this->getPrefix("actions") . $action)){
+      $retTmp = call_user_func_array(array($this, $actionMethod), $params);
+      // Sobre escribir la salida
+      if($retTmp){
+        echo $ret;
+        $ret = $retTmp;
+      }
+    }
+
+    // Ejecutar filtros para la acción por el método enviado
+    if(!$this->executeFilters("before_{$method}", $action, $params))
+      return false;
+
+    // Si el metodo existe llamar correspondiente al metodo de la peticion
+    if(method_exists($this, $actionMethod = $this->getPrefix("{$method}Actions") . $action)){
+      $retTmp = call_user_func_array(array($this, $actionMethod), $params);
+      // Sobre escribir la salida
+      if($retTmp){
+        echo $ret;
+        $ret = $retTmp;
+      }
+    }
+
+    $this->executeFilters("after_{$method}", $action, $params);
+    $this->executeFilters('after', $action, $params);
+
+    return $ret;
+
+  }
+
+  // Devuelve la configuracion para un controlador
+  // Ademas incluye el archivo conrrespondiente
+  public static function includeControl($control){
+
+    // Obtener configuraciones del controlador
+    $confs = Am::getAttribute("control");
+
+    // Obtener valores por defecto
+    $defaults = itemOr("defaults", $confs, array());
+
+    // Si no existe configuracion para el controlador
+    $conf = itemOr($control, $confs, array());
+
+    // Si no es un array, entonces el valor indica el path del controlador
+    if(is_string($conf))
+      $conf = array("path" => $conf);
+
+    // Valores por defecto
+    $conf = array_merge($defaults, $conf);
+
+    if(is_file($realFile = "{$conf["path"]}.control.php"))
+      $conf = array_merge(
+        $conf,
+        require($realFile)
+      );
+
+    // Si tiene un padre se incluye
+    // y se mezcla con la configuracion actual
+    if(isset($conf["parent"]) && !empty($conf["parent"])){
+      $parentConf = self::includeControl($conf["parent"]);
+      $parentConf["paths"][] = $conf["path"];
+      $conf = array_merge($parentConf, $conf);
+    }else
+      $conf["paths"] = array($conf["path"]);
+
+    // Obtener la ruta del controlador
+    // Incluir controlador si existe el archivo
+    if(is_file($controlFile = "{$conf["path"]}{$control}.control.php"))
+      require_once $controlFile;
+
+    // Retornar la configuracion obtenida
+    return $conf;
+
+  }
+
+  // Funcion para atender las respuestas por controlador.
+  // Recive el nombre del controlador, la accion a ejecutar,
+  // Los parametros y el entorno
+  public static function response($control, $action, array $params, array $env){
+
+    // Valores por defecto
+    $conf = array_merge(
+      // Incluye el controlador y devuelve la configuracion para el mismo
+      self::includeControl($control),
+      // Asignar vista que se mostrará
+      array(
+        "view" => self::getViewName($action),
+      )
+    );
+
+    // Obtener instancia del controlador
+    Am::getInstance("{$control}Control", $conf)
+      ->proccess($action, $env, $params);
+
+    return true;
+
   }
 
 }

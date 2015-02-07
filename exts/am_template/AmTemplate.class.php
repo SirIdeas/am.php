@@ -124,12 +124,15 @@ final class AmTemplate extends AmObject{
 
     }
 
+    // Obtener el contenido
+    $content = ob_get_clean();
+
     // Si la vista tiene un padre
     if(null !== $this->parent){
       // Obtener instancia de vista del padre
       $parentView = $this->getSubView($this->parent)
         // Compilar padre
-        ->compile(ob_get_clean(), $this->sections);
+        ->compile($content, $this->sections);
 
       // Mezclar generadas en el padre con las definidas en la vista acutal
       $this->params = $parentView["vars"] = array_merge($parentView["vars"], $this->params);
@@ -138,10 +141,10 @@ final class AmTemplate extends AmObject{
     }
 
     return array(
-      "content" => ob_get_clean(),    // Todo lo impreso
+      "content" => $content,          // Todo lo impreso
       "sections" => $this->sections,  // Devolver secciones definidas
       "vars" => $this->getVars(),     // Variables definidas
-      "errors" => $this->errors        // Indica si se generó un error
+      "errors" => $this->errors       // Indica si se generó un error
     );
 
   }
@@ -302,7 +305,7 @@ final class AmTemplate extends AmObject{
     is_dir($compileFolder) or mkdir($compileFolder, 0775, true) or die("Am: can't to create folder \"{$compileFolder}\"");
     
     // Obtener contenido compilado de la vista
-    $result = $this->compile();
+    $result = $this->compile($this->child);
 
     // Guardar vista minificada
     file_put_contents($compiledView, $result["content"]);
