@@ -12,6 +12,11 @@ return array(
   "files" => array(
     "php_mailer/PHPMailerAutoload",
     "AmMailer.class",
+  ),
+
+  "mergeFunctions" => array(
+    "smtp" => "array_merge_recursive",
+    "mails" => "array_merge_recursive",
   )
 
 );

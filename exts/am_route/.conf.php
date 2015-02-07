@@ -9,6 +9,10 @@ return array(
 
   "files" => array(
     "AmRoute.class"
+  ),
+
+  "mergeFunctions" => array(
+    "routes" => "array_merge_recursive",
   )
   
 );
