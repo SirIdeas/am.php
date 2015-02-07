@@ -87,7 +87,7 @@ class AmControl extends AmObject{
   final protected function renderView(array $vars, $child){
 
     // Renderizar vista mediante un callback
-    Am::call("render.template", array(
+    $ret = Am::call("render.template", array(
       
       // Obtener vista a renderizar
       $this->getView(),
@@ -104,6 +104,11 @@ class AmControl extends AmObject{
       )
       
     ));
+
+    // Si no se logra renderizar la vista se imprime
+    // se imprime lo que viene en $child
+    if($ret === false)
+      echo $child;
 
   }
 
@@ -146,7 +151,7 @@ class AmControl extends AmObject{
     // o si el último retorno es un array o un objeto se procesa
     // la salida como un servicio. De lo contrario se renderizará
     // la vista correspondiente.
-    
+
     // Responder como un sericio
     if(is_array($ret) || is_object($ret))
       $this->renderService($ret);
