@@ -135,7 +135,8 @@ class AmControl extends AmObject{
 
   }
 
-  final public function proccess($action, array $env, array $params){
+  // Despachar una acción
+  final public function dispatch($action, array $env, array $params){
     
     // Todo lo que se imprimar desde este punto hasta 
     // ob_get_clean() se guardará en una variable.
@@ -400,10 +401,13 @@ class AmControl extends AmObject{
       )
     );
 
-    // Obtener instancia del controlador
-    Am::getInstance("{$control}Control", $conf)
-      ->proccess($action, $env, $params);
+    // Si no se puede instanciar el controlador retornar false.
+    if(null === ($control = Am::getInstance("{$control}Control", $conf)))
+      return false;
 
+    // Despachar la accion
+    $control->dispatch($action, $env, $params);
+    
     return true;
 
   }

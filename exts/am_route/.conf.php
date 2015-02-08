@@ -2,9 +2,11 @@
 
 return array(
   
-  "routes" => array(
-    "env" => array(),
-    "routes" => array()
+  "init" => array(
+    "routes" => array(
+      "env" => array(),
+      "routes" => array()
+    ),
   ),
 
   "files" => array(

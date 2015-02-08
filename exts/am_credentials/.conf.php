@@ -2,6 +2,8 @@
 
 return array(
   
+  "init" => array(),
+
   "files" => array(
     "AmCredentials.class"
     "AmCredentialsHandler.class"
@@ -12,7 +14,7 @@ return array(
   ),
 
   "mergeFunctions" => array(
-    "credentials" => "array_merge_recursive",
+    "credentials" => "merge_r_if_are_array_and_first_not_false",
   )
 
 );

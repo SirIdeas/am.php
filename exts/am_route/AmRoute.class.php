@@ -65,16 +65,11 @@ class AmRoute{
   // Responde con un archivo
   private static function file($file, $env){
 
-    // Si el archivo no esite retornar false
-    if(!is_file($file)) return false;
-
     // Responder con archivos
-    Am::call("response.file",
+    return Am::call("response.file",
       $file,
       $env
     );
-
-    return true;
     
   }
 

@@ -2,7 +2,9 @@
 
 return array(
   
-  "timezone" => null,
+  "init" => array(
+    "timezone" => null,
+  ),
 
   "files" => array(
     "AmDateTime.class"

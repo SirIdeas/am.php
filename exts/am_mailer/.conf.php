@@ -2,11 +2,14 @@
 
 return array(
   
-  "mails" => array(
-    // Configuración por defecto par ael envio de correo
-    "default" => array(
-      "dir" => "mails/",
-    )
+  "init" => array(
+    "smtp" => false,
+    "mails" => array(
+      // Configuración por defecto par ael envio de correo
+      "default" => array(
+        "dir" => "mails/",
+      )
+    ),
   ),
 
   "files" => array(
@@ -15,7 +18,7 @@ return array(
   ),
 
   "mergeFunctions" => array(
-    "smtp" => "array_merge_recursive",
+    "smtp" => "merge_r_if_are_array",
     "mails" => "array_merge_recursive",
   )
 

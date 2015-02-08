@@ -11,7 +11,8 @@ class AmCommand{
 
   // Agregar un carpeta a la lista de carpetas de comandos
   public static function addPath($path){
-    self::$paths[] = $path;
+    self::$paths[] = realpath($path);
+    self::$paths = array_unique(self::$paths);
   }
 
   // Ejecucion de un comando

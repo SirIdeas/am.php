@@ -2,9 +2,12 @@
 
 return array(
   
-  "commands" => array(),
+  "init" => array(
+    "commands" => array(),
+  ),
 
   "files" => array(
     "AmCommand.class"
   )
+  
 );

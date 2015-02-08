@@ -5,7 +5,7 @@
  * La autenticación
  */
 
-interface AmWithCredentials {
+interface AmCredentials {
 
   // Autentica un usuario por nombre y passsword
   public static function auth($nick, $password);
