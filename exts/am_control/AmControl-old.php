@@ -17,50 +17,41 @@ class AmControl extends AmHash{
   public static $initConf = array(
     
     // Domain
-    'domain' => 'localhost',
+    // 'domain' => 'localhost',
     
-    // Icon
-    'icon' => '/media/images/favicon.png',
-    
-    // Description
-    'description' => '',
-    
-    // Icon
-    'author' => '',
-    
-    // Title pages
-    'title' => 'Amathista',
-    
-    // ContentType
-    'contentType' => 'text/html',
+    'icon' => '/media/images/favicon.png',  // Icon
+    'title' => 'Amathista', // Title pages
+    'author' => '',         // Icon
+    'description' => '',    // Description
+    'contentType' => 'text/html', // ContentType
     
     // Template (may be include extension file)
-    'tpl' => 'tpl.php',
+    // 'tpl' => 'tpl.php',
     
     // State
     'state' => 'development',
     
-    // Cores classes name list to include. Is merge with parent configuration
-    'core' => array(
-      /*
-       * // indicates don't to be loaded parent configuration
-       * 0 => false,
-       * 
-       * // e.g.:
-       * array('AmBox')
-       */
-    ), 
+    // // Cores classes name list to include. Is merge with parent configuration
+    // 'core' => array(
+    //   /*
+    //    * // indicates don't to be loaded parent configuration
+    //    * 0 => false,
+    //    * 
+    //    * // e.g.:
+    //    * array('AmBox')
+    //    */
+    // ), 
     
-    // Helpers list to include. Is merge with parent configuration
-    'helpers' => array(
-      /*
-       * // indicates don't to be loaded parent configuration
-       * 0 => false,
-       * 
-       * // e.g.:
-       * array('jQuery', 'dataTable')
-       */
-    ), 
+    // // Helpers list to include. Is merge with parent configuration
+    // 'helpers' => array(
+    //   /*
+    //    * // indicates don't to be loaded parent configuration
+    //    * 0 => false,
+    //    * 
+    //    * // e.g.:
+    //    * array('jQuery', 'dataTable')
+    //    */
+    // ), 
     
     // Langs files to include. Is merge with parent configuration
     'langs' => array('site'
@@ -84,41 +75,41 @@ class AmControl extends AmHash{
        */
     ),
     
-    // Formats. Always is merge with parent configuration
-    'formats' => array(
-      'date' => 'M-d-Y h:m:s'
-    ),
+    // // Formats. Always is merge with parent configuration
+    // 'formats' => array(
+    //   'date' => 'M-d-Y h:m:s'
+    // ),
     
     // Objets types can be searched in the parent control. Always is merge with parent configuration
-    'recursive' => array(
-      'conf' => false,
-      'views' => false,
-      'tpls' => true,
-      'partials' => true,
-      'media' => true,
-      'menues' => true,
-      'mails' => true,
-    ),
+    // 'recursive' => array(
+    //   'conf' => false,
+    //   'views' => false,
+    //   'tpls' => true,
+    //   'partials' => true,
+    //   'media' => true,
+    //   'menues' => true,
+    //   'mails' => true,
+    // ),
     
-    // Folders name where ubicates each object type. Always is merge with parent configuration
-    'folders' => array(
-      'control' => 'control',
-      'views' => 'views',
-      'tpls' => 'views',
-      'partials' => 'views',
-      'media' => 'views',
-      'menues' => 'menues',
-      'mails' => 'mails',
-    ),
+    // // Folders name where ubicates each object type. Always is merge with parent configuration
+    // 'folders' => array(
+    //   'control' => 'control',
+    //   'views' => 'views',
+    //   'tpls' => 'views',
+    //   'partials' => 'views',
+    //   'media' => 'views',
+    //   'menues' => 'menues',
+    //   'mails' => 'mails',
+    // ),
     
-    // Prefixs for each method types. Always is merge with parent configuration
-    'prefixs' => array(
-      'actions' => 'action_',
-      'getActions' => 'get_',
-      'postActions' => 'post_',
-      'filters' => 'filter_',
-      'sections' => 'section_',
-    ),
+    // // Prefixs for each method types. Always is merge with parent configuration
+    // 'prefixs' => array(
+    //   'actions' => 'action_',
+    //   'getActions' => 'get_',
+    //   'postActions' => 'post_',
+    //   'filters' => 'filter_',
+    //   'sections' => 'section_',
+    // ),
     
     // List headers to intclude. Is merge with parent configuration
     'headers' => array(
@@ -174,45 +165,45 @@ class AmControl extends AmHash{
        */
     ,
     
-    // Filters configurations. Dont is merge with parent configuration
-    'filters' => array(
-      /*
-       * // indicates to be loaded de parent configuration
-       * 0 => true,
-       * 
-       * // e.g.: this filter excute {prefixFilter}filterName method before 
-       * // from 'edit' and 'delete' actions
-       * 'before' => array(   // OR 'before_get' OR 'before_post' OR 'after' OR 'after_get' OR 'after_post' 
-       * 
-       *    // List of array method an configuration
-       *    'filterName' => array(              // Filter Name method
-       *      'scope' => 'only',              // OR 'all' (default) for ignore 'to' param
-       *      'to' => array('edit', 'delete')       // actions to which to apply the filter
-       *      'redirect' => '/url/'             // URL to redirect if it not passes the filter
-       *    )
-       * )
-       */
-    ),
+    // // Filters configurations. Dont is merge with parent configuration
+    // 'filters' => array(
+      
+    //    * // indicates to be loaded de parent configuration
+    //    * 0 => true,
+    //    * 
+    //    * // e.g.: this filter excute {prefixFilter}filterName method before 
+    //    * // from 'edit' and 'delete' actions
+    //    * 'before' => array(   // OR 'before_get' OR 'before_post' OR 'after' OR 'after_get' OR 'after_post' 
+    //    * 
+    //    *    // List of array method an configuration
+    //    *    'filterName' => array(              // Filter Name method
+    //    *      'scope' => 'only',              // OR 'all' (default) for ignore 'to' param
+    //    *      'to' => array('edit', 'delete')       // actions to which to apply the filter
+    //    *      'redirect' => '/url/'             // URL to redirect if it not passes the filter
+    //    *    )
+    //    * )
+       
+    // ),
     
-    // Sections configurations
-    'sections' => array(
-      /*
-       * // e.g.:
-       * 'sectionName' => '<h1>Amathista</h1>'  // section with constant content
-       * 'sectionName' => true          // dinamic section. call section method and render sectionName.php
-       */
-    ),
+    // // Sections configurations
+    // 'sections' => array(
+    //   /*
+    //    * // e.g.:
+    //    * 'sectionName' => '<h1>Amathista</h1>'  // section with constant content
+    //    * 'sectionName' => true          // dinamic section. call section method and render sectionName.php
+    //    */
+    // ),
     
-    // Routes. Dont is merge with parent configuration
-    'routes' => array(
-      /*
-       * // indicates to be loaded de parent routes
-       * 0 => true,
-       * 
-       * // e.g.:
-       * 'auth' => 'user/auth'  // no begin and ending slashes
-       */
-    ),
+    // // Routes. Dont is merge with parent configuration
+    // 'routes' => array(
+    //   /*
+    //    * // indicates to be loaded de parent routes
+    //    * 0 => true,
+    //    * 
+    //    * // e.g.:
+    //    * 'auth' => 'user/auth'  // no begin and ending slashes
+    //    */
+    // ),
     
     // Default configuration for WebServices
     'servicesDefaults' => array(
@@ -237,98 +228,98 @@ class AmControl extends AmHash{
        */
     ),
     
-    // Javascript files list to include in html request
-    'js' => array(
-      /*
-       * // indicates don't to be loaded parent javascript files configuration
-       * 0 => false,
-       * 
-       * // e.g.: include de javascript file into media folder (no extension)
-       * js/jquery-1.8.2,
-       * 
-       * // e.g.: include de javascript file into media folder
-       * array(
-       *    
-       *    // resources type
-       *    // 'global '(default) find file into root site
-       *    // 'local' find file into current control folder
-       *    // 'external' find file outside site. 'js' param may be complete url
-       *    'type' => 'global',
-       * 
-       *    // Priority number (default: Am::MEDIUM). indicates the order for include the file
-       *    // Can to use Am::VERY_HIGH=0, Am::HIGH=100, Am::MEDIUM=200, Am::LOW=300 and Am::VERY_LOW=400 const
-       *    // The lower higher priority
-       *    'priority' => 0,
-       * 
-       *    // resources name (no extension)
-       *    'js' => 'js/main'
-       * )
-       */
-    ),
+    // // Javascript files list to include in html request
+    // 'js' => array(
+    //   /*
+    //    * // indicates don't to be loaded parent javascript files configuration
+    //    * 0 => false,
+    //    * 
+    //    * // e.g.: include de javascript file into media folder (no extension)
+    //    * js/jquery-1.8.2,
+    //    * 
+    //    * // e.g.: include de javascript file into media folder
+    //    * array(
+    //    *    
+    //    *    // resources type
+    //    *    // 'global '(default) find file into root site
+    //    *    // 'local' find file into current control folder
+    //    *    // 'external' find file outside site. 'js' param may be complete url
+    //    *    'type' => 'global',
+    //    * 
+    //    *    // Priority number (default: Am::MEDIUM). indicates the order for include the file
+    //    *    // Can to use Am::VERY_HIGH=0, Am::HIGH=100, Am::MEDIUM=200, Am::LOW=300 and Am::VERY_LOW=400 const
+    //    *    // The lower higher priority
+    //    *    'priority' => 0,
+    //    * 
+    //    *    // resources name (no extension)
+    //    *    'js' => 'js/main'
+    //    * )
+    //    */
+    // ),
     
-    // CSS files List to include 
-    'css' => array(
-      /*
-       * // indicates don't to be loaded parent css files configuration
-       * 0 => false,
-       * 
-       * // e.g.: include de javascript file into media folder (no extension)
-       * css/grid,
-       * 
-       * // e.g.: include de javascript file into media folder
-       * array(
-       *    
-       *    // resources type
-       *    // 'global '(default) find file into root site
-       *    // 'local' find file into current control folder
-       *    // 'external' find file outside site. 'css' param may be complete url
-       *    'type' => 'global',
-       * 
-       *    // Priority number (default: Am::MEDIUM). indicates the order for include the file
-       *    // Can to use Am::VERY_HIGH=0, Am::HIGH=100, Am::MEDIUM=200, Am::LOW=300 and Am::VERY_LOW=400 const
-       *    // The lower higher priority
-       *    'priority' => 0,
-       * 
-       *    // resources name (no extension)
-       *    'css' => 'css/reset'
-       * )
-       */
-    ),
+    // // CSS files List to include 
+    // 'css' => array(
+    //   /*
+    //    * // indicates don't to be loaded parent css files configuration
+    //    * 0 => false,
+    //    * 
+    //    * // e.g.: include de javascript file into media folder (no extension)
+    //    * css/grid,
+    //    * 
+    //    * // e.g.: include de javascript file into media folder
+    //    * array(
+    //    *    
+    //    *    // resources type
+    //    *    // 'global '(default) find file into root site
+    //    *    // 'local' find file into current control folder
+    //    *    // 'external' find file outside site. 'css' param may be complete url
+    //    *    'type' => 'global',
+    //    * 
+    //    *    // Priority number (default: Am::MEDIUM). indicates the order for include the file
+    //    *    // Can to use Am::VERY_HIGH=0, Am::HIGH=100, Am::MEDIUM=200, Am::LOW=300 and Am::VERY_LOW=400 const
+    //    *    // The lower higher priority
+    //    *    'priority' => 0,
+    //    * 
+    //    *    // resources name (no extension)
+    //    *    'css' => 'css/reset'
+    //    * )
+    //    */
+    // ),
 
-    'mailsDefaults' => array(
-      'smtp' => false
-    ),
+    // 'mailsDefaults' => array(
+    //   'smtp' => false
+    // ),
       
-      // Configuration for each mail.
-    'mails' => array(
-      /*
-       * e.g.: mails configuration
-       * 'index' => array(  // Nombre del mensaje
-       * 
-       *    // Remitente del mensaje
-       *    'from' => 'test@amathista.com', // Correo: test@amathista.com, nombre: test@amathista.com
-       *    
-       *    'from' => array(
-       *      'user' => 'test@amathista.com',
-       *      'name' =>   'Test Amathista'
-       *    ),
-       * 
-       *    'charSet' => 'UTF-8'
-       * 
-       *    // Subject del mensaje
-       *    'subject' => 'Mensaje de Prueba de Amathista', 
-       * 
-       *    // Pantilla para el mensaje
-       *    'tpl' => 'tpl',
-       * 
-       *    // Cuerpo Alternativo
-       *    'altBody' => '',
-       * 
-       *    // Nombre del mensaje (Para buscar la vista a renderizar)
-       *    'message' => 'confirmar',
-       * ),
-       */
-      ),
+    //   // Configuration for each mail.
+    // 'mails' => array(
+      
+    //    * e.g.: mails configuration
+    //    * 'index' => array(  // Nombre del mensaje
+    //    * 
+    //    *    // Remitente del mensaje
+    //    *    'from' => 'test@amathista.com', // Correo: test@amathista.com, nombre: test@amathista.com
+    //    *    
+    //    *    'from' => array(
+    //    *      'user' => 'test@amathista.com',
+    //    *      'name' =>   'Test Amathista'
+    //    *    ),
+    //    * 
+    //    *    'charSet' => 'UTF-8'
+    //    * 
+    //    *    // Subject del mensaje
+    //    *    'subject' => 'Mensaje de Prueba de Amathista', 
+    //    * 
+    //    *    // Pantilla para el mensaje
+    //    *    'tpl' => 'tpl',
+    //    * 
+    //    *    // Cuerpo Alternativo
+    //    *    'altBody' => '',
+    //    * 
+    //    *    // Nombre del mensaje (Para buscar la vista a renderizar)
+    //    *    'message' => 'confirmar',
+    //    * ),
+       
+    //   ),
     
     // Configuration for each action.
     'actions' => array(
@@ -361,28 +352,28 @@ class AmControl extends AmHash{
     
   );
   
-  public static $requestPath = null;
-  public static $control = null;
-  public static $action = null;
-  public static $method = null;
-  public static $params = null;
-  public static $crendentialsInstance = null;
+  // public static $requestPath = null;
+  // public static $control = null;
+  // public static $action = null;
+  // public static $method = null;
+  // public static $params = null;
+  // public static $crendentialsInstance = null;
   
-  protected $server = null;
-  protected $get = null;
-  protected $post = null;
-  protected $session = null;
-  protected $cookie = null;
-  protected $request = null;
-  protected $env = null;
-  protected $files = null;
-  protected $args = null;
+  // protected $server = null;
+  // protected $get = null;
+  // protected $post = null;
+  // protected $session = null;
+  // protected $cookie = null;
+  // protected $request = null;
+  // protected $env = null;
+  // protected $files = null;
+  // protected $args = null;
   
-  private $render = null;
-  private $conf = null;
-  private $name = null;
-  private $fileForResponse = null;
-  private $path = null;
+  // private $render = null;
+  // private $conf = null;
+  // private $name = null;
+  // private $fileForResponse = null;
+  // private $path = null;
   
   final public function getCredentials(){
     
@@ -407,11 +398,11 @@ class AmControl extends AmHash{
     return $this->getCredentials()->isAuth();
   }
   
-  final protected function conf(){ return $this->conf; }
-  final protected function name(){ return $this->name; }
+  // final protected function conf(){ return $this->conf; }
+  // final protected function name(){ return $this->name; }
   final protected function fileForResponse(){ return $this->fileForResponse; }
-  final protected function root(){ return $this->root; }
-  final public function path(){ return $this->path; }
+  // final protected function root(){ return $this->root; }
+  // final public function path(){ return $this->path; }
   
   // final public function domain($domain = null){ return $this->conf->attr('domain', $domain); }
   // final protected function icon($icon = null){ return $this->conf->attr('icon', $icon); }
@@ -422,90 +413,90 @@ class AmControl extends AmHash{
   // final protected function state($state = null){ return $this->conf->attr('state', $state); }
   final protected function servicesDefaults($servicesDefaults = null){ return $this->conf->attr('servicesDefaults', $servicesDefaults); }
   
-  final protected function recursive($key = null){ return itemOr($this->conf->recursive, $key, true); }
-  final protected function folders($key = null){ return itemOr($this->conf->folders, $key, '/'); }
-  final protected function prefixs($key = null){ return itemOr($this->conf->prefixs, $key); }
+  // final protected function recursive($key = null){ return itemOr($this->conf->recursive, $key, true); }
+  // final protected function folders($key = null){ return itemOr($this->conf->folders, $key, '/'); }
+  // final protected function prefixs($key = null){ return itemOr($this->conf->prefixs, $key); }
   final protected function headers($key = null){ return itemOr($this->conf->headers, $key); }
-  final protected function sections($key = null){ return itemOr($this->conf->sections, $key); }
-  final protected function filters($key = null){ return itemOr($this->conf->filters, $key, array()); }
-  final protected function routes($key = null){ return itemOr($this->conf->routes, $key); }
-  final public function mails($key = null){ return itemOr($this->conf->mails, $key, array()); }
-  final public function mailsDefaults($mailsDefaults = null){ return $this->conf->attr('mailsDefaults', $mailsDefaults); }
+  // final protected function sections($key = null){ return itemOr($this->conf->sections, $key); }
+  // final protected function filters($key = null){ return itemOr($this->conf->filters, $key, array()); }
+  // final protected function routes($key = null){ return itemOr($this->conf->routes, $key); }
+  // final public function mails($key = null){ return itemOr($this->conf->mails, $key, array()); }
+  // final public function mailsDefaults($mailsDefaults = null){ return $this->conf->attr('mailsDefaults', $mailsDefaults); }
     
-  final protected function getHttpReferer(){
-    return $this->server->HTTP_REFERER;
-  }
+  // final protected function getHttpReferer(){
+  //   return $this->server->HTTP_REFERER;
+  // }
   
-  final static public function currentControl(){
-    return self::$control;
-  }
+  // final static public function currentControl(){
+  //   return self::$control;
+  // }
   
-  final protected function formats($key = null, $value = null){
+  // final protected function formats($key = null, $value = null){
     
-    if(!isset($value)){
+  //   if(!isset($value)){
       
-      return itemOr($this->conf->formats, $key);
+  //     return itemOr($this->conf->formats, $key);
       
-    }
+  //   }
     
-    $this->conf->formats[$key] = $value;
+  //   $this->conf->formats[$key] = $value;
     
-  }
+  // }
   
-  final public function resources($ext){
+  // final public function resources($ext){
     
-    return $this->conf->$ext;
+  //   return $this->conf->$ext;
     
-  }
+  // }
   
-  final private function haveResource($ext, $resource, $type){
+  // final private function haveResource($ext, $resource, $type){
     
-    foreach($this->conf->$ext as $v){
-      if($v[$ext] == $resource && $v['type'] == $type){
-        return true;
-      }
-    }
-    return false;
+  //   foreach($this->conf->$ext as $v){
+  //     if($v[$ext] == $resource && $v['type'] == $type){
+  //       return true;
+  //     }
+  //   }
+  //   return false;
     
-  }
+  // }
   
-  final public function addResource($ext, $resource, $priority = Am::MEDIUM, $type = 'global', $unique = true){
+  // final public function addResource($ext, $resource, $priority = Am::MEDIUM, $type = 'global', $unique = true){
     
-    if(!is_numeric($priority)){
-      $type = $priority;
-      $priority = Am::MEDIUM;
-    }
+  //   if(!is_numeric($priority)){
+  //     $type = $priority;
+  //     $priority = Am::MEDIUM;
+  //   }
     
-    if(!$unique || !$this->haveResource($ext, $resource, $type)){
-      array_push($this->conf->$ext, array($ext => $resource, 'type' => $type, 'priority' => $priority));
-      return true;
-    }
+  //   if(!$unique || !$this->haveResource($ext, $resource, $type)){
+  //     array_push($this->conf->$ext, array($ext => $resource, 'type' => $type, 'priority' => $priority));
+  //     return true;
+  //   }
     
-    return false;
+  //   return false;
     
-  }
+  // }
   
-  final public function deleteResource($ext, $resource = null, $type = 'local', $num = 0){
+  // final public function deleteResource($ext, $resource = null, $type = 'local', $num = 0){
     
-    $ret = array();
+  //   $ret = array();
     
-    if(isset($resource)){
+  //   if(isset($resource)){
       
-      $i = 0;
-      foreach($this->conf->$ext as $v){
-        if($v[$ext] == $resource && $v['type'] == $type){
-          $i++;
-          if($num != 0 && $i != $num){
-            $ret[] = $v;
-          }
-        }
-      }
+  //     $i = 0;
+  //     foreach($this->conf->$ext as $v){
+  //       if($v[$ext] == $resource && $v['type'] == $type){
+  //         $i++;
+  //         if($num != 0 && $i != $num){
+  //           $ret[] = $v;
+  //         }
+  //       }
+  //     }
       
-    }
+  //   }
     
-    $this->conf->$ext = $ret;
+  //   $this->conf->$ext = $ret;
     
-  }
+  // }
   
   
   
@@ -565,195 +556,195 @@ class AmControl extends AmHash{
    * Esta funcion inserta lo generado por la funcion 'callback' en la secion
    * 'name'.
    **/
-  final protected function setSectionContent($name, $content){
+  // final protected function setSectionContent($name, $content){
     
-    $this->conf->sections[$name] = $content;
+  //   $this->conf->sections[$name] = $content;
     
-  }
+  // }
 
-  /**
-   * Inicializa una seccion
-   **/
-  final protected function initSection(){
+  // /**
+  //  * Inicializa una seccion
+  //  **/
+  // final protected function initSection(){
     
-    ob_start();
+  //   ob_start();
     
-    return $this;
+  //   return $this;
 
-  }
+  // }
 
-  /**
-   * Inserta en la seccion 'name' lo generado hasta el momento siempre y
-   * cuando este dentro de un nivel
-   **/
-  final public function endSection($name = null, $rw = true){
+  // /**
+  //  * Inserta en la seccion 'name' lo generado hasta el momento siempre y
+  //  * cuando este dentro de un nivel
+  //  **/
+  // final public function endSection($name = null, $rw = true){
     
-    $return = ob_get_clean();
+  //   $return = ob_get_clean();
 
-    if(empty($name)){
+  //   if(empty($name)){
 
-      return $return;
+  //     return $return;
 
-    }
+  //   }
     
-    if(!isset($this->conf->sections[$name]) || $rw){
-      $this->conf->sections[$name] = $return;
-    }
+  //   if(!isset($this->conf->sections[$name]) || $rw){
+  //     $this->conf->sections[$name] = $return;
+  //   }
     
     
-    return $this;
+  //   return $this;
 
-  }
+  // }
   
-  final public function getSection($sectionName, $renderPartial = null, $args = array()){
+  // final public function getSection($sectionName, $renderPartial = null, $args = array()){
     
-    if(is_array($renderPartial)){
-      $args = $renderPartial;
-      $renderPartial= null;
-    }
+  //   if(is_array($renderPartial)){
+  //     $args = $renderPartial;
+  //     $renderPartial= null;
+  //   }
     
-    if(!isset($renderPartial)){
-      $renderPartial = "$sectionName.php";
-    }
+  //   if(!isset($renderPartial)){
+  //     $renderPartial = "$sectionName.php";
+  //   }
     
-    $funcSectionName = $this->prefixs('sections') . $sectionName;
+  //   $funcSectionName = $this->prefixs('sections') . $sectionName;
     
-    if(method_exists($this, $funcSectionName)){
+  //   if(method_exists($this, $funcSectionName)){
     
-      $this->initSection();
-      $this->$funcSectionName();
-      echo $this->partial($renderPartial, $args);
-      return $this->endSection();
+  //     $this->initSection();
+  //     $this->$funcSectionName();
+  //     echo $this->partial($renderPartial, $args);
+  //     return $this->endSection();
       
-    }
+  //   }
     
-    return null;
+  //   return null;
     
-  }
+  // }
   
-  /**
-   * Control de filtros
-   **/
-  final protected function addFilter($nameFilter, $state, $to = 'all', $except = array(), $redirect = null){
+  // /**
+  //  * Control de filtros
+  //  **/
+  // final protected function addFilter($nameFilter, $state, $to = 'all', $except = array(), $redirect = null){
     
-    if(is_array($to)){
-      $scope = 'only';
-    }else{
-      $scope = $to;
-      $to = array();
-    }
+  //   if(is_array($to)){
+  //     $scope = 'only';
+  //   }else{
+  //     $scope = $to;
+  //     $to = array();
+  //   }
     
-    if(!isset($this->conf->filters[$state][$nameFilter])){
+  //   if(!isset($this->conf->filters[$state][$nameFilter])){
       
-      $this->conf->filters[$state][$nameFilter] = array(
-        'scope' => $scope,
-        'to' => array(),
-        'except' => $except,
-        'redirect' => $redirect
-      );
+  //     $this->conf->filters[$state][$nameFilter] = array(
+  //       'scope' => $scope,
+  //       'to' => array(),
+  //       'except' => $except,
+  //       'redirect' => $redirect
+  //     );
       
-    }
+  //   }
     
-    foreach($to as $m){
-      $this->conf->filters[$state][$nameFilter]['to'][] = $m;
-    }
+  //   foreach($to as $m){
+  //     $this->conf->filters[$state][$nameFilter]['to'][] = $m;
+  //   }
     
-    $this->conf->filters[$state][$nameFilter]['to'] =
-        array_unique($this->conf->filters[$state][$nameFilter]['to']);
+  //   $this->conf->filters[$state][$nameFilter]['to'] =
+  //       array_unique($this->conf->filters[$state][$nameFilter]['to']);
     
-  }
+  // }
   
-  final protected function addBeforeFilter($nameFilter, $to = 'all', $except = array(), $redirect = null){
-    $this->addFilter($nameFilter, 'before', $to, $except, $redirect);
-  }
+  // final protected function addBeforeFilter($nameFilter, $to = 'all', $except = array(), $redirect = null){
+  //   $this->addFilter($nameFilter, 'before', $to, $except, $redirect);
+  // }
   
-  final protected function addBeforeGetFilter($nameFilter, $to = 'all', $except = array(), $redirect = null){
-    $this->addFilter($nameFilter, 'before_get', $to, $except, $redirect);
-  }
+  // final protected function addBeforeGetFilter($nameFilter, $to = 'all', $except = array(), $redirect = null){
+  //   $this->addFilter($nameFilter, 'before_get', $to, $except, $redirect);
+  // }
   
-  final protected function addBeforePostFilter($nameFilter, $to = 'all', $except = array(), $redirect = null){
-    $this->addFilter($nameFilter, 'before_post', $to, $except, $redirect);
-  }
+  // final protected function addBeforePostFilter($nameFilter, $to = 'all', $except = array(), $redirect = null){
+  //   $this->addFilter($nameFilter, 'before_post', $to, $except, $redirect);
+  // }
   
-  final protected function addAfterFilter($nameFilter, $to = 'all', $except = array()){
-    $this->addFilter($nameFilter, 'after', $to, $except);
-  }
+  // final protected function addAfterFilter($nameFilter, $to = 'all', $except = array()){
+  //   $this->addFilter($nameFilter, 'after', $to, $except);
+  // }
   
-  final protected function addAfterGetFilter($nameFilter, $to = 'all', $except = array()){
-    $this->addFilter($nameFilter, 'after_get', $to, $except);
-  }
+  // final protected function addAfterGetFilter($nameFilter, $to = 'all', $except = array()){
+  //   $this->addFilter($nameFilter, 'after_get', $to, $except);
+  // }
   
-  final protected function addAfterPostFilter($nameFilter, $to = 'all', $except = array()){
-    $this->addFilter($nameFilter, 'after_post', $to, $except);
-  }
+  // final protected function addAfterPostFilter($nameFilter, $to = 'all', $except = array()){
+  //   $this->addFilter($nameFilter, 'after_post', $to, $except);
+  // }
   
-  final protected function executeFilters($state, $methodName, $extraParams){
+  // final protected function executeFilters($state, $methodName, $extraParams){
     
-    if(isset($this->conf->filters[$state])){
+  //   if(isset($this->conf->filters[$state])){
       
-      foreach($this->conf->filters[$state] as $filterName => $filter){
+  //     foreach($this->conf->filters[$state] as $filterName => $filter){
         
-        if(($filter['scope'] == 'all' || in_array($methodName, $filter['to']))){
-          if(!isset($filter['except']) || !in_array($methodName, $filter['except'])){
+  //       if(($filter['scope'] == 'all' || in_array($methodName, $filter['to']))){
+  //         if(!isset($filter['except']) || !in_array($methodName, $filter['except'])){
             
-            $ret = call_user_func_array(array(&$this, $this->prefixs('filters') . $filterName), $extraParams);
+  //           $ret = call_user_func_array(array(&$this, $this->prefixs('filters') . $filterName), $extraParams);
             
-            if($ret === false && $state == 'before'){
+  //           if($ret === false && $state == 'before'){
               
-              if(isset($filter['redirect'])){
-                $this->redirect(url($filter['redirect']));
-              }else{
-                return false;
-              }
+  //             if(isset($filter['redirect'])){
+  //               $this->redirect(url($filter['redirect']));
+  //             }else{
+  //               return false;
+  //             }
 
 
-            }
-          }
-        }
+  //           }
+  //         }
+  //       }
         
-      }
+  //     }
       
-    }
+  //   }
     
-    return true;
+  //   return true;
     
   }
   
   /**
    * Redirecciona a otra pagina
    **/
-  final public function redirect($url){
+  // final public function redirect($url){
     
-    if(!empty($url)){
+  //   if(!empty($url)){
       
-      header("location: $url");
-      exit();
+  //     header("location: $url");
+  //     exit();
       
-    }
+  //   }
     
-  }
+  // }
 
   /**
    * Redireccion a a una pagina siempre y cuando la condicion sea true
    **/
-  final protected function redirectIf($condition, $url){
+  // final protected function redirectIf($condition, $url){
 
-    if($condition){
+  //   if($condition){
 
-      $this->redirect($url);
+  //     $this->redirect($url);
       
-    }
+  //   }
 
-  }
+  // }
 
   /**
    * Redireccion a a una pagina siempre y cuando la condicion sea false
    **/
-  final protected function redirectUnless($condition, $url){
+  // final protected function redirectUnless($condition, $url){
 
-    $this->redirectIf(!$condition, $url);
+  //   $this->redirectIf(!$condition, $url);
 
-  }
+  // }
   
   final protected function responseAsService($conf = array()){
     
@@ -800,180 +791,180 @@ class AmControl extends AmHash{
    * Vista actual. Si no se omite "method' se toma el nombre de la vista a
    * buscar sera 'method'."_".'action'.
    **/
-  final protected function render($view = ''){
+  // final protected function render($view = ''){
     
-    if(!isset($this->render)){
+  //   if(!isset($this->render)){
       
-      $this->render = $this->_render($view);
+  //     $this->render = $this->_render($view);
       
-    }
+  //   }
     
-    return $this->render;
+  //   return $this->render;
     
-  }
+  // }
   
-  // Obtiene el nombre de la vista
-  final private function _render($view = ''){
+  // // Obtiene el nombre de la vista
+  // final private function _render($view = ''){
     
-    if(!isset($view)){
-      return '';
-    }
+  //   if(!isset($view)){
+  //     return '';
+  //   }
     
-    if($view === ''){
-      return $this->render;
-    }
+  //   if($view === ''){
+  //     return $this->render;
+  //   }
     
-    return $this->pathFile($view, 'views');
+  //   return $this->pathFile($view, 'views');
     
-  }
+  // }
   
-  final protected function partial($partial, $args = array()){
+  // final protected function partial($partial, $args = array()){
     
-    $renderPath = $this->pathFile($partial, 'partials');
+  //   $renderPath = $this->pathFile($partial, 'partials');
     
-    $args = array_merge($this->toArray(), $args);
-    extract($args);
+  //   $args = array_merge($this->toArray(), $args);
+  //   extract($args);
     
-    $this->initSection();
+  //   $this->initSection();
     
-    if($renderPath){
-      include $renderPath;
-    }
+  //   if($renderPath){
+  //     include $renderPath;
+  //   }
         
-    return $this->endSection();
+  //   return $this->endSection();
     
-  }
+  // }
   
   /**
    * Acciones base
    **/
   
-  final protected function media(){
+  // final protected function media(){
     
-    $this->tpl(null);
+  //   $this->tpl(null);
     
-    $file = $this->pathFile(implode('/', func_get_args()), 'media');
+  //   $file = $this->pathFile(implode('/', func_get_args()), 'media');
     
-    if(is_file($file)){
+  //   if(is_file($file)){
       
-      $this->respondeWithFile($file);
+  //     $this->respondeWithFile($file);
       
-    }else{
+  //   }else{
       
-      $this->addHeader("HTTP/1.0 404 Not Found");
-      $this->addHeader("Status: 404 Not Found");
+  //     $this->addHeader("HTTP/1.0 404 Not Found");
+  //     $this->addHeader("Status: 404 Not Found");
       
-    }
+  //   }
     
-  }
+  // }
   
-  final protected function parentControl(){
-    return Am::getInstances(get_parent_class($this));
-  }
+  // final protected function parentControl(){
+  //   return Am::getInstances(get_parent_class($this));
+  // }
   
-  final protected function childControl($name){
+  // final protected function childControl($name){
     
-    $controlName = get_class($this) . _tcc($name, true);
-    $control = Am::getInstances($controlName);
+  //   $controlName = get_class($this) . _tcc($name, true);
+  //   $control = Am::getInstances($controlName);
     
-    if(isset($control)){
+  //   if(isset($control)){
 
-      return $control; 
+  //     return $control; 
 
-    }else{
+  //   }else{
       
-      $inFolder = trim($this->folders('control'));
+  //     $inFolder = trim($this->folders('control'));
       
-      if(!empty($inFolder)){
-        $inFolder = "$inFolder/";
-      }
+  //     if(!empty($inFolder)){
+  //       $inFolder = "$inFolder/";
+  //     }
       
-      $controlPath = $this->root() . "/$inFolder" . _fcc($name);
+  //     $controlPath = $this->root() . "/$inFolder" . _fcc($name);
       
-      if(Am::control("$controlPath/$controlName")){
+  //     if(Am::control("$controlPath/$controlName")){
 
-        $control = Am::instances($controlName);
-        $control->initialize($controlPath);
+  //       $control = Am::instances($controlName);
+  //       $control->initialize($controlPath);
         
-      }
+  //     }
       
-    }
+  //   }
     
-    return $control;
+  //   return $control;
     
-  }
+  // }
   
-  final protected function findControl(array $file){
+  // final protected function findControl(array $file){
     
-    if(count($file)>1){
+  //   if(count($file)>1){
       
-      $folder = array_shift($file);
-      $control = $this->childControl($folder);
+  //     $folder = array_shift($file);
+  //     $control = $this->childControl($folder);
 
-      if(isset($control)){
+  //     if(isset($control)){
 
-        return $control->findControl($file);
+  //       return $control->findControl($file);
 
-      }
+  //     }
 
-      array_unshift($file, $folder);
+  //     array_unshift($file, $folder);
       
-    }
+  //   }
     
-    return array($this, $file);
+  //   return array($this, $file);
     
-  }
+  // }
   
-  final protected function findFile($file, $in, $withRoot = true, $recursive = false){
+  // final protected function findFile($file, $in, $withRoot = true, $recursive = false){
     
-    $recursiveThis = $recursive || $this->recursive($in);
+  //   $recursiveThis = $recursive || $this->recursive($in);
     
-    $inFolder = trim($this->folders($in));
+  //   $inFolder = trim($this->folders($in));
 
-    if(!empty($inFolder)){
-      $inFolder = "$inFolder/";
-    }
+  //   if(!empty($inFolder)){
+  //     $inFolder = "$inFolder/";
+  //   }
 
-    $filePath = ($withRoot? (SITE_FOLDER . Am::APP_FOLDER) : '') . $this->root() . "/$inFolder" . implode('/', $file);
+  //   $filePath = ($withRoot? (SITE_FOLDER . Am::APP_FOLDER) : '') . $this->root() . "/$inFolder" . implode('/', $file);
     
-    $filePathAbsolute = SITE_FOLDER . Am::APP_FOLDER . $this->root() . "/$inFolder" . implode('/', $file);
+  //   $filePathAbsolute = SITE_FOLDER . Am::APP_FOLDER . $this->root() . "/$inFolder" . implode('/', $file);
     
-    if(!is_file($filePathAbsolute) && !is_dir($filePathAbsolute) && $recursiveThis && get_class($this) != 'Control'){
-      return $this->parentControl()->findFile($file, $in, $withRoot, $recursive);
-    }
+  //   if(!is_file($filePathAbsolute) && !is_dir($filePathAbsolute) && $recursiveThis && get_class($this) != 'Control'){
+  //     return $this->parentControl()->findFile($file, $in, $withRoot, $recursive);
+  //   }
     
-    return $filePath;
+  //   return $filePath;
     
-  }
+  // }
   
-  final public function pathFile($file, $in, $withRoot = true, $recursive = false){
+  // final public function pathFile($file, $in, $withRoot = true, $recursive = false){
     
-    if(!is_array($file)){
-      $file = explode('/', $file);
-    }
+  //   if(!is_array($file)){
+  //     $file = explode('/', $file);
+  //   }
     
-    $control = $this;
-    $path = array();
+  //   $control = $this;
+  //   $path = array();
     
-    foreach($file as $folder){
-      if($folder == '..'){
-        if(!empty($path)){
-          array_pop($path);
-        }elseif(get_class($control) != 'Control'){
-          $control = $control->parentControl();
-        }
-      }elseif(!empty($folder) && $folder != '.'){
-        $path[] = $folder;
-      }
-    }
+  //   foreach($file as $folder){
+  //     if($folder == '..'){
+  //       if(!empty($path)){
+  //         array_pop($path);
+  //       }elseif(get_class($control) != 'Control'){
+  //         $control = $control->parentControl();
+  //       }
+  //     }elseif(!empty($folder) && $folder != '.'){
+  //       $path[] = $folder;
+  //     }
+  //   }
     
-    $control = $file[0] == '' ? Am::getInstances('Control') : $control;
+  //   $control = $file[0] == '' ? Am::getInstances('Control') : $control;
     
-    list($control, $path) = $control->findControl($path);
+  //   list($control, $path) = $control->findControl($path);
     
-    return $control->findFile($path, $in, $withRoot, $recursive);
+  //   return $control->findFile($path, $in, $withRoot, $recursive);
     
-  }
+  // }
   
   private static function mergeConf($conf, $confParent){
     
@@ -1091,440 +1082,440 @@ class AmControl extends AmHash{
     
   }
   
-  public function initialize($root = ''){
+  // public function initialize($root = ''){
     
-    $this->root = $root;
+  //   $this->root = $root;
     
-    $conf = readConf(SITE_FOLDER . "/control{$this->root}/conf");
+  //   $conf = readConf(SITE_FOLDER . "/control{$this->root}/conf");
     
-    if(get_class($this) == 'Control'){
+  //   if(get_class($this) == 'Control'){
       
-      if(isset($_SERVER['SERVER_NAME'])){
-        $conf['domain'] = $_SERVER['SERVER_NAME'];
-      }
+  //     if(isset($_SERVER['SERVER_NAME'])){
+  //       $conf['domain'] = $_SERVER['SERVER_NAME'];
+  //     }
       
-      $this->path = array();
-      $confParent = self::$initConf;
+  //     $this->path = array();
+  //     $confParent = self::$initConf;
       
-    }else{
+  //   }else{
       
-      $parent = $this->parentControl();
+  //     $parent = $this->parentControl();
       
-      $confParent = $parent->conf()->toArray();
+  //     $confParent = $parent->conf()->toArray();
       
-      $this->name = _fcc(substr_replace(get_class($this), '', 0, strlen(get_parent_class($this))));
-      $this->path = $parent->path();
-      array_push($this->path, $this->name());
+  //     $this->name = _fcc(substr_replace(get_class($this), '', 0, strlen(get_parent_class($this))));
+  //     $this->path = $parent->path();
+  //     array_push($this->path, $this->name());
       
-    }
+  //   }
 
-    $this->conf = new AmHash(self::mergeConf($conf, $confParent));
+  //   $this->conf = new AmHash(self::mergeConf($conf, $confParent));
     
-    if(isset($parent)){
-      $this->conf->title = str_replace('{prev}', $parent->title(), $this->conf->title);
-    }
+  //   if(isset($parent)){
+  //     $this->conf->title = str_replace('{prev}', $parent->title(), $this->conf->title);
+  //   }
     
-  }
+  // }
   
-  final public function respondeWithAction($url, $method = null){
+  // final public function respondeWithAction($url, $method = null){
     
-    $url = explode('/', $url);
-    $params = array();
-    $control = trim($params[0]) == '' ? Am::instances('Control') : $this;
+  //   $url = explode('/', $url);
+  //   $params = array();
+  //   $control = trim($params[0]) == '' ? Am::instances('Control') : $this;
     
-    foreach($url as $param){
-      $param = trim($param);
-      if($param == '..'){
-        array_pop($params);
-      }elseif($param != '.' && $param == ''){
-        $params[] = $param;
-      }
-    }
+  //   foreach($url as $param){
+  //     $param = trim($param);
+  //     if($param == '..'){
+  //       array_pop($params);
+  //     }elseif($param != '.' && $param == ''){
+  //       $params[] = $param;
+  //     }
+  //   }
     
-    return $control->dispatch($params, $method);
+  //   return $control->dispatch($params, $method);
     
-  }
+  // }
   
-  final public function dispatch(array $extraParams, $method = null){
+  // final public function dispatch(array $extraParams, $method = null){
     
-    $action = 'index';
+  //   $action = 'index';
     
-    if(!isset($method)){
-      $method = self::$method;
-    }
+  //   if(!isset($method)){
+  //     $method = self::$method;
+  //   }
     
-    if(!empty($extraParams)){
+  //   if(!empty($extraParams)){
       
-      $action = array_shift($extraParams);
+  //     $action = array_shift($extraParams);
       
-      if($action == '..'){
+  //     if($action == '..'){
         
-        if(get_class($this) == 'Control'){
-          return $this->parentControl()->dispatch($extraParams);
-        }
+  //       if(get_class($this) == 'Control'){
+  //         return $this->parentControl()->dispatch($extraParams);
+  //       }
         
-        return $this->dispatch($extraParams);
-      }
+  //       return $this->dispatch($extraParams);
+  //     }
       
-      $route = $this->routes(_fcc($action));
-      if(isset($route)){
+  //     $route = $this->routes(_fcc($action));
+  //     if(isset($route)){
         
-        return $this->dispatch(array_merge(explode('/', $route), $extraParams));
+  //       return $this->dispatch(array_merge(explode('/', $route), $extraParams));
         
-      }
+  //     }
       
-      $control = $this->childControl($action);
+  //     $control = $this->childControl($action);
       
-      if(isset($control)){
+  //     if(isset($control)){
         
-        $conf = $control->conf();
+  //       $conf = $control->conf();
         
-        switch ($conf->state) {
-          case 'development':
-            error_reporting(E_ALL);
-            break;
-          default:
-            error_reporting(0);
-            break;
-        }
+  //       switch ($conf->state) {
+  //         case 'development':
+  //           error_reporting(E_ALL);
+  //           break;
+  //         default:
+  //           error_reporting(0);
+  //           break;
+  //       }
         
-        return $control->dispatch($extraParams);
+  //       return $control->dispatch($extraParams);
         
-      }
+  //     }
       
-    }
+  //   }
     
-    $actionName = _tcc($action);
-    $controlMethods = array_merge(
-        array_diff(
-          get_class_methods(get_class($this)),
-          get_class_methods(get_parent_class('Control'))));
+  //   $actionName = _tcc($action);
+  //   $controlMethods = array_merge(
+  //       array_diff(
+  //         get_class_methods(get_class($this)),
+  //         get_class_methods(get_parent_class('Control'))));
     
-    if($actionName != 'media' &&
-        !in_array($this->prefixs('actions') . $actionName , $controlMethods) &&
-        !in_array($this->prefixs("{$method}Actions")  . $actionName, $controlMethods)){
+  //   if($actionName != 'media' &&
+  //       !in_array($this->prefixs('actions') . $actionName , $controlMethods) &&
+  //       !in_array($this->prefixs("{$method}Actions")  . $actionName, $controlMethods)){
         
-        array_unshift($extraParams, $action);
-        $action = 'index';
+  //       array_unshift($extraParams, $action);
+  //       $action = 'index';
         
-    }
+  //   }
     
-    $redirect = $this->conf->redirect;
+  //   $redirect = $this->conf->redirect;
     
-    if(isset($redirect[$action])){
+  //   if(isset($redirect[$action])){
       
-      $redirect = $redirect[$action];
+  //     $redirect = $redirect[$action];
       
-      if(is_array($redirect)){
-        if(!isset($redirect['method'])){
-          $redirect['method'] = $method;
-        }
-      }else{
-        $redirect = array(
-          'url' => $redirect,
-          'method' => $method
-        );
-      }
+  //     if(is_array($redirect)){
+  //       if(!isset($redirect['method'])){
+  //         $redirect['method'] = $method;
+  //       }
+  //     }else{
+  //       $redirect = array(
+  //         'url' => $redirect,
+  //         'method' => $method
+  //       );
+  //     }
       
-      if($method == $redirect['method']){
+  //     if($method == $redirect['method']){
         
-        array_shift($extraParams);
+  //       array_shift($extraParams);
         
-        $ret = array();
-        $redirect = explode('/', $redirect['url']);
+  //       $ret = array();
+  //       $redirect = explode('/', $redirect['url']);
         
-        foreach ($redirect as $value) {
-          $value = trim($value);
-          if($value == '..'){
-            array_pop($ret);
-          }elseif($value != '.'){
-            $ret[] =  $value;
-          }
-        }
+  //       foreach ($redirect as $value) {
+  //         $value = trim($value);
+  //         if($value == '..'){
+  //           array_pop($ret);
+  //         }elseif($value != '.'){
+  //           $ret[] =  $value;
+  //         }
+  //       }
         
-        foreach ($ret as $value) {
-          if(trim($value) != ''){
-            array_unshift($extraParams, $value);
-          }
-        }
+  //       foreach ($ret as $value) {
+  //         if(trim($value) != ''){
+  //           array_unshift($extraParams, $value);
+  //         }
+  //       }
         
-        if(trim($ret[0]) == ''){
-          Am::instances('Control')->dispatch($extraParams);
-        }else{
-          $this->dispatch($extraParams);
-        }
+  //       if(trim($ret[0]) == ''){
+  //         Am::instances('Control')->dispatch($extraParams);
+  //       }else{
+  //         $this->dispatch($extraParams);
+  //       }
         
-        return;
+  //       return;
         
-      }
+  //     }
       
-    }
+  //   }
     
-    $this->callAction($method, $action, $extraParams);
+  //   $this->callAction($method, $action, $extraParams);
     
-  }
+  // }
   
   /**
    * Realiza el despacho de a una peticion. la accion solicitada se indica
    * por ''action', solicitada por el metodo 'method' y con los parametros
    * 'params
    **/
-  final private function callAction($method, $action, $args){
+  // final private function callAction($method, $action, $args){
     
-    self::$control = $this;
-    self::$action = $action;
-    self::$method = $method;
-    self::$params = $args;
+  //   self::$control = $this;
+  //   self::$action = $action;
+  //   self::$method = $method;
+  //   self::$params = $args;
 
-    $this->conf->actions[$action] = itemOr($this->conf->actions, $action, array());
-    $this->conf->actions["{$method}_{$action}"] = itemOr($this->conf->actions, "{$method}_{$action}", array());
+  //   $this->conf->actions[$action] = itemOr($this->conf->actions, $action, array());
+  //   $this->conf->actions["{$method}_{$action}"] = itemOr($this->conf->actions, "{$method}_{$action}", array());
     
-    $this->conf->actions[$action]['filters'] = $this->conf->actions[$action]['routes'] = $this->conf->actions[$action]['services'] = array(true);
-    $this->conf->actions["{$method}_{$action}"]['filters'] = $this->conf->actions["{$method}_{$action}"]['routes'] = $this->conf->actions["{$method}_{$action}"]['services'] = array(true);
+  //   $this->conf->actions[$action]['filters'] = $this->conf->actions[$action]['routes'] = $this->conf->actions[$action]['services'] = array(true);
+  //   $this->conf->actions["{$method}_{$action}"]['filters'] = $this->conf->actions["{$method}_{$action}"]['routes'] = $this->conf->actions["{$method}_{$action}"]['services'] = array(true);
 
-    $this->conf = new AmHash(self::mergeConf($this->conf->actions[$action], $this->conf->toArray()));
-    $this->conf = new AmHash(self::mergeConf($this->conf->actions["{$method}_{$action}"], $this->conf->toArray()));
+  //   $this->conf = new AmHash(self::mergeConf($this->conf->actions[$action], $this->conf->toArray()));
+  //   $this->conf = new AmHash(self::mergeConf($this->conf->actions["{$method}_{$action}"], $this->conf->toArray()));
 
-    $services = itemOr($this->conf->services, $action, false);
-    $services = itemOr($this->conf->services, "{$method}_{$action}", $services);
-    $this->conf->services = $services;
-    unset($services);
+  //   $services = itemOr($this->conf->services, $action, false);
+  //   $services = itemOr($this->conf->services, "{$method}_{$action}", $services);
+  //   $this->conf->services = $services;
+  //   unset($services);
     
-    $this->loadCore();
-    $this->loadHelpers();
-    $this->loadLangs();
-    $this->loadValues();
+  //   $this->loadCore();
+  //   $this->loadHelpers();
+  //   $this->loadLangs();
+  //   $this->loadValues();
     
-    $this->server = new AmHash($_SERVER);
-    $this->get = new AmHash($_GET);
-    $this->post = new AmHash($_POST);
-    $this->session = new AmHash($_SESSION);
-    $this->cookie = new AmHash($_COOKIE);
-    $this->request = new AmHash($_REQUEST);
-    $this->env = new AmHash($_ENV);
-    $this->files = new AmHash($_FILES);
-    $this->args = $args;
+  //   $this->server = new AmHash($_SERVER);
+  //   $this->get = new AmHash($_GET);
+  //   $this->post = new AmHash($_POST);
+  //   $this->session = new AmHash($_SESSION);
+  //   $this->cookie = new AmHash($_COOKIE);
+  //   $this->request = new AmHash($_REQUEST);
+  //   $this->env = new AmHash($_ENV);
+  //   $this->files = new AmHash($_FILES);
+  //   $this->args = $args;
     
-    $action = _tcc($action);
+  //   $action = _tcc($action);
 
-    $this->initSection();
+  //   $this->initSection();
     
-    if($action == 'media'){
+  //   if($action == 'media'){
       
-      call_user_func_array(array(&$this, 'media'), $args);
+  //     call_user_func_array(array(&$this, 'media'), $args);
 
-    }else{
+  //   }else{
       
-      $actionName = $this->prefixs('actions') . $action;
-      $methodName = "{$method}Action";
-      $actionMethodName = $this->prefixs("{$method}Actions") . $action;
+  //     $actionName = $this->prefixs('actions') . $action;
+  //     $methodName = "{$method}Action";
+  //     $actionMethodName = $this->prefixs("{$method}Actions") . $action;
       
-      // Verificar las credenciales
-      $this->getCredentials()->checkCredentials($this->conf->credentials, $action);
+  //     // Verificar las credenciales
+  //     $this->getCredentials()->checkCredentials($this->conf->credentials, $action);
       
-      $ret = call_user_func_array(array(&$this, "action"), $args);
+  //     $ret = call_user_func_array(array(&$this, "action"), $args);
       
-      if($this->executeFilters('before', $action, $args)){
+  //     if($this->executeFilters('before', $action, $args)){
         
-        $error = true;
+  //       $error = true;
         
-        if(method_exists($this, $actionName)){
-          $error = false;
-          $retTmp = call_user_func_array(array(&$this, $actionName), $args);
-          isset($retTmp) AND $ret = $retTmp;
-        }
+  //       if(method_exists($this, $actionName)){
+  //         $error = false;
+  //         $retTmp = call_user_func_array(array(&$this, $actionName), $args);
+  //         isset($retTmp) AND $ret = $retTmp;
+  //       }
         
-        if(method_exists($this, $methodName)){
-          $error = false;
-          $retTmp = call_user_func_array(array(&$this, $methodName), $args);
-          isset($retTmp) AND $ret = $retTmp;
-        }
+  //       if(method_exists($this, $methodName)){
+  //         $error = false;
+  //         $retTmp = call_user_func_array(array(&$this, $methodName), $args);
+  //         isset($retTmp) AND $ret = $retTmp;
+  //       }
         
-        if($this->executeFilters("before_{$method}", $action, $args)){
+  //       if($this->executeFilters("before_{$method}", $action, $args)){
           
-          // Si no existe el metodo ni la vista de la accin solicitada, entonces
-          // Se debe renderizar el error.
+  //         // Si no existe el metodo ni la vista de la accin solicitada, entonces
+  //         // Se debe renderizar el error.
           
-          if(method_exists($this, $actionMethodName)){
+  //         if(method_exists($this, $actionMethodName)){
             
-            $error = false;
-            $retTmp = call_user_func_array(array(&$this, $actionMethodName), $args);
-            isset($retTmp) AND $ret = $retTmp;
+  //           $error = false;
+  //           $retTmp = call_user_func_array(array(&$this, $actionMethodName), $args);
+  //           isset($retTmp) AND $ret = $retTmp;
             
-          }
+  //         }
 
-          $this->executeFilters("after_{$method}", $action, $args);
-          $this->executeFilters('after', $action, $args);
+  //         $this->executeFilters("after_{$method}", $action, $args);
+  //         $this->executeFilters('after', $action, $args);
 
-          if ('' === ($render = $this->render())) {
+  //         if ('' === ($render = $this->render())) {
 
-            $error = false;
+  //           $error = false;
 
-          }elseif (is_file($render = $this->render())){
+  //         }elseif (is_file($render = $this->render())){
 
-            $error = false;
+  //           $error = false;
 
-          }elseif (is_file($render = $this->_render("$action.php"))){
+  //         }elseif (is_file($render = $this->_render("$action.php"))){
 
-            $error = false;
+  //           $error = false;
 
-          }
+  //         }
           
-          if(!$error){
+  //         if(!$error){
             
-            if($this->conf->services === false && !is_array($ret) && !is_object($ret)){
+  //           if($this->conf->services === false && !is_array($ret) && !is_object($ret)){
               
-              echo $ret;
+  //             echo $ret;
               
-              // Se generan nuevas variables basados en las variables generadas
-              // durante la ejecucion del metodo
+  //             // Se generan nuevas variables basados en las variables generadas
+  //             // durante la ejecucion del metodo
 
-              extract($this->toArray());
+  //             extract($this->toArray());
 
-              if(is_file($render)){
+  //             if(is_file($render)){
                 
-                include $render;
+  //               include $render;
                 
-              }
+  //             }
               
-            }
+  //           }
             
-          }else{
+  //         }else{
             
-            array_unshift($args, lang('not_found_action') . ': '. get_class($this) ."->". $action);
-            call_user_func_array(array(&$this, 'actionError404'), $args);
+  //           array_unshift($args, lang('not_found_action') . ': '. get_class($this) ."->". $action);
+  //           call_user_func_array(array(&$this, 'actionError404'), $args);
             
-          }
+  //         }
 
-        }
+  //       }
 
-      }
+  //     }
 
-    }
+  //   }
     
-    $this->endSection('body');
+  //   $this->endSection('body');
     
-    if($this->fileForResponse()){
+  //   if($this->fileForResponse()){
       
-      // Incluir cabeceras
-      $this->includeHeaders();
+  //     // Incluir cabeceras
+  //     $this->includeHeaders();
       
-      readfile($this->fileForResponse());
+  //     readfile($this->fileForResponse());
       
-    }else{
+  //   }else{
       
-      if(isset($ret)){
-        if(is_object($ret)) $ret = (array)$ret;
-        if(is_array($ret)) $this->responseAsService(array(
-            'content' => $ret
-        ));
-      }
+  //     if(isset($ret)){
+  //       if(is_object($ret)) $ret = (array)$ret;
+  //       if(is_array($ret)) $this->responseAsService(array(
+  //           'content' => $ret
+  //       ));
+  //     }
       
-      if($this->conf->services !== false){
+  //     if($this->conf->services !== false){
       
-        $type = $this->conf->services['type'];
-        $content = $this->conf->services['content'];
+  //       $type = $this->conf->services['type'];
+  //       $content = $this->conf->services['content'];
         
-        if(!isset($content)){
-          $content = $this->conf->sections['body'];
-        }
+  //       if(!isset($content)){
+  //         $content = $this->conf->sections['body'];
+  //       }
 
-        switch ($type){
-          case 'text':
-            $contentType = 'text/plain';
-            $fnEncode = 'print_r';
-            break;
-          case 'json':
-            $contentType = 'application/json';
-            $fnEncode = 'json_encode';
-            break;
-          default :
-            $contentType = 'text/html';
-            $fnEncode = 'var_dump';
-        }
+  //       switch ($type){
+  //         case 'text':
+  //           $contentType = 'text/plain';
+  //           $fnEncode = 'print_r';
+  //           break;
+  //         case 'json':
+  //           $contentType = 'application/json';
+  //           $fnEncode = 'json_encode';
+  //           break;
+  //         default :
+  //           $contentType = 'text/html';
+  //           $fnEncode = 'var_dump';
+  //       }
         
-        $this->contentType($contentType);
-        $this->conf->sections['body'] = $fnEncode($content);
+  //       $this->contentType($contentType);
+  //       $this->conf->sections['body'] = $fnEncode($content);
 
-      }
+  //     }
       
-      if(in_array($this->contentType(), array('text/plain', 'application/json', 'application/x-javascript', 'text/javacript'))){
+  //     if(in_array($this->contentType(), array('text/plain', 'application/json', 'application/x-javascript', 'text/javacript'))){
       
-        $this->includeHeaders();
-        echo $this->conf->sections['body'];
+  //       $this->includeHeaders();
+  //       echo $this->conf->sections['body'];
 
-      }elseif(in_array($this->contentType(), array('text/html'))){
+  //     }elseif(in_array($this->contentType(), array('text/html'))){
         
-        $this->includeHeaders();
+  //       $this->includeHeaders();
         
-        // Configurar parametros para el template
-        $sections = new AmHash;
+  //       // Configurar parametros para el template
+  //       $sections = new AmHash;
 
-        foreach($this->conf->sections as $k => $content){
-          if($content === true){
-            $content = $this->getSection($k);
-          }
-          $sections->$k = $content;
-        }
+  //       foreach($this->conf->sections as $k => $content){
+  //         if($content === true){
+  //           $content = $this->getSection($k);
+  //         }
+  //         $sections->$k = $content;
+  //       }
 
-        $pathTemplate = $this->pathFile($this->conf->tpl, 'tpls');
+  //       $pathTemplate = $this->pathFile($this->conf->tpl, 'tpls');
 
-        if(!empty($this->conf->tpl) && is_file($pathTemplate)){
+  //       if(!empty($this->conf->tpl) && is_file($pathTemplate)){
 
-          include $pathTemplate;
+  //         include $pathTemplate;
 
-        }else{
+  //       }else{
 
-          echo $sections->body;
+  //         echo $sections->body;
 
-        }
-      }else{
+  //       }
+  //     }else{
 
-        echo lang('unknown_content_type') . " '{$this->contentType()}'";
+  //       echo lang('unknown_content_type') . " '{$this->contentType()}'";
 
-      }
+  //     }
     
-    }
+  //   }
     
-  }
+  // }
   
-  final public static function processRequest(){
+  // final public static function processRequest(){
     
-    error_reporting(E_ALL);
+  //   error_reporting(E_ALL);
     
-    $pathinfo = substr_replace($_SERVER['REDIRECT_URL'], '', 0, strlen(Am::vars('site_root')));
-    $method = strtolower($_SERVER['REQUEST_METHOD']);
-    $extraParams = array();
+  //   $pathinfo = substr_replace($_SERVER['REDIRECT_URL'], '', 0, strlen(Am::vars('site_root')));
+  //   $method = strtolower($_SERVER['REQUEST_METHOD']);
+  //   $extraParams = array();
     
-    foreach(explode('/', $pathinfo) as $v){
-      if(!empty($v)!= ''){
-        $extraParams[] = trim($v);
-      }
-    }
+  //   foreach(explode('/', $pathinfo) as $v){
+  //     if(!empty($v)!= ''){
+  //       $extraParams[] = trim($v);
+  //     }
+  //   }
     
-    self::$requestPath = "/" . implode('/', $extraParams);
-    self::$method = $method;
+  //   self::$requestPath = "/" . implode('/', $extraParams);
+  //   self::$method = $method;
 
-    Am::control('Control');
+  //   Am::control('Control');
     
-    $control = Am::instances('Control');
+  //   $control = Am::instances('Control');
 
-    $control->initialize();
+  //   $control->initialize();
       
-    $control->dispatch($extraParams);
+  //   $control->dispatch($extraParams);
     
-  }
+  // }
   
-  protected function action(){}
-  protected function getAction(){}
-  protected function postAction(){}
+  // protected function action(){}
+  // protected function getAction(){}
+  // protected function postAction(){}
   
-  protected function actionError404($errorMsg){
+  // protected function actionError404($errorMsg){
     
-    AmAlert::danger("Error 404: {$errorMsg}");
+  //   AmAlert::danger("Error 404: {$errorMsg}");
     
-    $this->render(null);
+  //   $this->render(null);
     
-  }
+  // }
   
 }

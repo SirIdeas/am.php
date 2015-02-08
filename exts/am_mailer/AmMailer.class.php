@@ -219,14 +219,14 @@ class AmMailer extends PHPMailer{
     ob_start();
 
     // Renderizar vista mediante un callback
-    $ret = Am::call("render.template", array(
+    $ret = Am::call("render.template",
       $this->template,
       array($this->dir),
       array(
         "ignore" => true,
         "env" => $env
       )
-    ));
+    );
 
     // Obtener contenido renderizado
     $content = ob_get_clean();

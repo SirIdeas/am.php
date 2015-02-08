@@ -52,13 +52,13 @@ class AmRoute{
   private static function template($file, $env){
 
     // Renderizar vista mediante un callback
-    return Am::call("render.template", array(
+    return Am::call("render.template",
       $file,
       array(),
       array(
         "env" => $env
       )
-    ));
+    );
     
   }
 
@@ -69,10 +69,10 @@ class AmRoute{
     if(!is_file($file)) return false;
 
     // Responder con archivos
-    Am::call("response.file", array(
+    Am::call("response.file",
       $file,
       $env
-    ));
+    );
 
     return true;
     
@@ -82,10 +82,10 @@ class AmRoute{
   private static function download($file, $env){
 
     // Responder con archivos
-    return Am::call("response.download", array(
+    return Am::call("response.download",
       $file,
       $env
-    ));
+    );
 
   }
 
@@ -99,11 +99,11 @@ class AmRoute{
     if(!isset($assets[$file])) return false;
 
     // Responder con archivos
-    return Am::call("response.assets", array(
+    return Am::call("response.assets",
       $file,
       $assets[$file],
       $env
-    ));
+    );
 
   }
 
@@ -221,12 +221,12 @@ class AmRoute{
           }elseif(preg_match("/^(.*)@(.*)$/", $destiny, $a)){
 
             // Despachar con controlador
-            if(Am::call("response.control", array(
+            if(Am::call("response.control",
               $a[1],
               $a[2],
               $params,
               $env
-            )) === true) return true;
+            ) === true) return true;
 
             continue;
 

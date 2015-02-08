@@ -10,14 +10,15 @@ final class Am{
 
     // Define las callbacks del sistema
     $callbacks = array(
-      // route.eval (request, routes)                   : Evalucación del route
+      // // route.eval (request, routes)                   : Evalucación del route
       // response.file (file, env)                      : Responder con archivo
       // response.download (file, env)                  : Responder con descarga de archivo
       // response.assets (file, assets, env)            : Responder con archivo
       // render.form (file, tpl)                        : Renderizar formulario
       // response.control (control, action, params, env): Responder con controlador
-      // render.template (templete, paths, options)     : Renderizar vista
+      // // render.template (templete, paths, options)     : Renderizar vista
       // command.addPath (path)                         : Agregar una carpeta de comandos
+      // *credentials.instance                           : Obtener una instancia del manejador de credencales
     ),
 
     // Callbacks para mezclar atributos
@@ -25,11 +26,12 @@ final class Am{
       "requires" => "array_merge"
     ),
 
-    $instances = array(),   // Instancias unicas de clases
-    $paths = array(),       // Herarquia de carpetas
-    $confsLoaded = array(), // Archivos de configuración cargados.
-    $confs = array(),       // Configuraciones cargadas
-    $urlBase = "";          // URL base para el sitio     
+    $instances = array(),       // Instancias unicas de clases
+    $paths = array(),           // Herarquia de carpetas
+    $confsLoaded = array(),     // Archivos de configuración cargados.
+    $confs = array(),           // Configuraciones cargadas
+    $urlBase = "",              // URL base para el sitio     
+    $credentialsHandler = null; // Manejador de credenciales 
     
   // Devuelve la instancia de una clase existente. Sino existe la instancia se crea una nueva
   public final static function getInstance($className, array $params = array()){
@@ -64,15 +66,34 @@ final class Am{
     self::addCallback($action, $callback);
   }
 
+  // Llamar los callbacks de un accion procesando los argumentos
+  // recibidos.
+  public static function call($action/* Resto de los parametros*/){
+    $options = func_get_args();
+    array_shift($options);  // Quitar el primer parametros, corresponde a $action
+    return self::callArray($action, $options);
+  }
+
   // Llamada de una acción. Devuelve verdadero su todos los calbacks devuelve verdadero
-  public static function call($action, $options){
-    $return = true;
+  public static function callArray($action, $options){
+    $return = array();
 
     // Si existe callbacks definidas para la accion
     if(isset(self::$callbacks[$action]))
       // Llamar los callbacks
       foreach(self::$callbacks[$action] as $callback)
-        $return = $return && call_user_func_array($callback, $options);
+        $return[] = call_user_func_array($callback, $options);
+
+    // Eliminar valores vacíos
+    $return = array_filter($return);
+
+    // Si el array tiene un solo elementos retornar dicho elemento
+    if(count($return) === 1)
+      $return[0];
+
+    // Si no se genero ninguna llamada simplemente salir
+    if(empty($return))
+      return;
 
     return $return;
 
@@ -166,7 +187,6 @@ final class Am{
     self::respondeWithFile($file);
   }
   
-
   // Devuelve la url base del sitio
   public static function urlBase(){
     return self::$urlBase;
@@ -193,16 +213,27 @@ final class Am{
   }
 
   // Redirigir a una URL
-  public static function redirect($url){
-    self::gotoUrl(self::url($url));
-  }
-
-  // Redirigir a una URL
   public static function gotoUrl($url){
     if(!empty($url)){
       header("location: ". $url);
       exit();
     }
+  }
+
+  // Redirigir a una URL
+  public static function redirect($url){
+    self::gotoUrl(self::url($url));
+  }
+
+  // Redirige si la condifcion es verdadera
+  public static function redirectIf($condition, $url){
+    if($condition)
+      $this->redirect($url);
+  }
+
+  // Redirige se la condifcion es falsa.
+  public static function redirectUnless($condition, $url){
+    self::redirectIf(!$condition, $url);
   }
 
   // Inicio del Amathista
@@ -253,10 +284,10 @@ final class Am{
     self::requireFiles(self::getAttribute("requires"));
 
     // Llamado de accion para evaluar ruta
-    self::call("route.eval", array(
+    self::call("route.eval",
       $request,
       self::getAttribute("routes")
-    ));
+    );
 
   }
 
