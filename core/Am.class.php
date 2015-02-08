@@ -194,8 +194,13 @@ final class Am{
 
   // Redirigir a una URL
   public static function redirect($url){
+    self::gotoUrl(self::url($url));
+  }
+
+  // Redirigir a una URL
+  public static function gotoUrl($url){
     if(!empty($url)){
-      header("location: ". self::url($url));
+      header("location: ". $url);
       exit();
     }
   }

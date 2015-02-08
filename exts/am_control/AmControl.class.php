@@ -274,7 +274,7 @@ class AmControl extends AmObject{
               // Si se indicí una ruta de redirección
               // se lleva a esa ruta
               if(isset($filter["redirect"])){
-                $this->redirect(url($filter["redirect"]));
+                Am::redirect($filter["redirect"]);
               }else{
                 // Si no retornar false para indicar que no se pasó el filtro.
                 return false;
