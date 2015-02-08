@@ -10,34 +10,33 @@ final class Am{
 
     // Define las callbacks del sistema
     $callbacks = array(
-      // // route.eval (request, routes)                   : Evalucación del route
+      // route.eval (request, routes)                   : Evalucación del route
       // response.file (file, env)                      : Responder con archivo
       // response.download (file, env)                  : Responder con descarga de archivo
       // response.assets (file, assets, env)            : Responder con archivo
-      // render.form (file, tpl)                        : Renderizar formulario
       // response.control (control, action, params, env): Responder con controlador
-      // // render.template (templete, paths, options)     : Renderizar vista
+      // render.template (templete, paths, options)     : Renderizar vista
       // command.addPath (path)                         : Agregar una carpeta de comandos
-      // *credentials.instance                           : Obtener una instancia del manejador de credencales
+      // credentials.instance()                         : Obtener una instancia del manejador de credencales
     ),
 
     // Callbacks para mezclar atributos
     $mergeFunctions = array(
-      "requires" => "array_merge"
+      "requires" => "merge_if_snd_first_not_false"
     ),
 
     $instances = array(),       // Instancias unicas de clases
     $paths = array(),           // Herarquia de carpetas
     $confsLoaded = array(),     // Archivos de configuración cargados.
     $confs = array(),           // Configuraciones cargadas
-    $urlBase = "",              // URL base para el sitio     
-    $credentialsHandler = null; // Manejador de credenciales 
+    $urlBase = "";              // URL base para el sitio     
     
   // Devuelve la instancia de una clase existente. Sino existe la instancia se crea una nueva
   public final static function getInstance($className, array $params = array()){
 
     // Si la clase no existe devolver error
-    class_exists($className) or die("Am: No existe clase '{$className}'");
+    if(!class_exists($className))
+      return null;
     
     // Si la instancia existe se devuelve
     if(isset(self::$instances[$className]))
@@ -84,12 +83,16 @@ final class Am{
       foreach(self::$callbacks[$action] as $callback)
         $return[] = call_user_func_array($callback, $options);
 
+    // Si el array tiene un solo elementos retornar dicho elemento
+    if(count($return) === 1)
+      return $return[0];
+
     // Eliminar valores vacíos
     $return = array_filter($return);
 
     // Si el array tiene un solo elementos retornar dicho elemento
     if(count($return) === 1)
-      $return[0];
+      return $return[0];
 
     // Si no se genero ninguna llamada simplemente salir
     if(empty($return))
@@ -109,7 +112,7 @@ final class Am{
     if($mergeFunctions !== null && isset(self::$confs[$property]))
       self::$confs[$property] = call_user_func_array($mergeFunctions,
         array(self::$confs[$property], $value));
-
+    
     // Si no existe el callback se devolvera el ultimo valor
     else
       self::$confs[$property] = $value;
@@ -179,12 +182,13 @@ final class Am{
 
   // Responder con descarga de archivos
   public static function downloadFile($file, array $env = array()){
-    self::respondeWithFile($file, null, null, true);
+    return self::respondeWithFile($file, null, null, true);
   }
 
   // Responder con archivo
   public static function respondeFile($file, array $env = array()){
-    self::respondeWithFile($file);
+    // Devolver archivo
+    return self::respondeWithFile($file);
   }
   
   // Devuelve la url base del sitio
@@ -313,14 +317,17 @@ final class Am{
       // Obtener las funciones para mezclar que s definirín
       $mergeFunctions = itemOr("mergeFunctions", $conf, array());
 
-      // Los items nuevos no sobreescriben los anteriores
-      self::$mergeFunctions = array_merge($mergeFunctions, self::$mergeFunctions);
-
       // Obtener archivos a agregar de la extencion
       $files = itemOr("files", $conf, array());
 
       // Obtener dependencias
       $requires = itemOr("requires", $conf, array());
+
+      // Obtener dependencias
+      $init = itemOr("init", $conf, array());
+
+      // Los items nuevos no sobreescriben los anteriores
+      self::$mergeFunctions = array_merge($mergeFunctions, self::$mergeFunctions);
 
       // Incluir las dependencias
       self::requireFiles($requires);
@@ -336,12 +343,8 @@ final class Am{
       if(is_file($realFile = "{$file}.init.php"))
         require_once $realFile;
 
-      // Eliminar los items de conf ya evaluados
-      unset($conf["requires"]);
-      unset($conf["files"]);
-
       // Sino se debe agregar las configuraciones una por una.
-      self::mergeProperties($conf);
+      self::mergeProperties($init);
 
       return true;
       
@@ -413,6 +416,9 @@ final class Am{
   // Responer con un archivo
   public static function respondeWithFile($file, $mimeType = null, $name = null, $attachment = false){
 
+    // Si el archivo no esite retornar false
+    if(!is_file($file)) return false;
+
     // Obtener el mime-type del archivo con el que se responderá
     if(!isset($mimeType)) $mimeType = self::mimeType($file);
     if(!isset($name)) $name = basename($file);
@@ -430,6 +436,8 @@ final class Am{
 
     // Leer archivo
     readfile($file);
+
+    return true;
 
   }
   
