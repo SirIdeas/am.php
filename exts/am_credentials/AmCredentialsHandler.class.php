@@ -14,14 +14,14 @@ final class AmCredentialsHandler{
     // Identificador del usuario logeado
     $credentialsId = null,
 
-    // 
+    // Instancia de las credenciales del usuario logeado
     $credentials = null,
 
     // Url donde se autentica el usuario.
     $authUrl = null;
 
   // Constructor de la clase
-  public function __construct(array $params = array()){
+  public function __construct(){
 
     // Obtener la configuracion
     $conf = Am::getAttribute("credentials", array());
@@ -44,9 +44,12 @@ final class AmCredentialsHandler{
     $this->credentialsClass = $credentialClass;
     $this->credentialsId = $credentialsId;
     
+    // Si la clase no existe no se puede buscar las credenciales
+    if(!class_exists($credentialClass))
+      return;
+
     // Obtener instancia de las credenciales mediante el Id.
-    if(class_exists($credentialClass))
-      $this->credentials = $credentialClass::getCredentialsInstance($credentialsId);
+    $this->credentials = $credentialClass::getCredentialsInstance($credentialsId);
     
     // Sino se obtivieron credenciales se destruye el ID guardado
     if(!$this->isAuth()){
@@ -63,7 +66,7 @@ final class AmCredentialsHandler{
   
   // Redirigue al enlace para autenticar al usuario
   public function redirectToAuth(){
-    Am::redirect($this->getAuthUrl());
+    Am::gotoUrl($this->authUrl);
   }
   
   // Devuelve la instancia del usuario logeado
@@ -156,7 +159,7 @@ final class AmCredentialsHandler{
 
       // Si la accion que se ejecutada no necetida dicha
       // credencial se continua con la verificacion de la próxima
-      if(!self::actionNeedCredentials($credential, $action))
+      if(!self::actionNeedCredentials($action, $credential))
         continue;
         
       // Convertir la credencia en array si no lo es.
@@ -164,7 +167,7 @@ final class AmCredentialsHandler{
         $credential = array($credential);
       // Si es un arrahy asociativo se debe obtener el item "roles"
       elseif(isAssocArray($credential))
-        $credential = itemOr($credential, "roles", array());
+        $credential = itemOr("roles", $credential, array());
 
       // Si no posee dichas credenciales rediriguir a la pantalla de logueo.
       if(!$this->hasCredentials($credential))
@@ -176,7 +179,7 @@ final class AmCredentialsHandler{
   
   // Verificar su un accion necesita la credencial solicitada
   private static function actionNeedCredentials($action, $credential){
-
+    
     // si la credenciale soliocitada no es un array se
     // se entenderá que todas las acciones nececitan 
     // dicha credencial.

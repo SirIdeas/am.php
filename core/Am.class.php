@@ -31,7 +31,7 @@ final class Am{
       /**** Otras ****/
       // render.template (templete, paths, options)     : Renderizar vista
       // command.addPath (path)                         : Agregar una carpeta de comandos
-      // credentials.instance()                         : Obtener una instancia del manejador de credencales
+      // credentials.handler()                          : Obtener una instancia del manejador de credencales
     ),
 
     // Callbacks para mezclar atributos
@@ -402,14 +402,14 @@ final class Am{
 
   // Obtener manejador de credencailes
   public static function getCredentialsHandler(){
-    return self::call("credentials.instance");
+    return self::call("credentials.handler");
   }
 
   // Devuelve las credenciales del usuario logeado
   public static function getCredentials(){
 
     // Si no existe la instancai del manejador de credenciales
-    if(!($credentialsManager = self::call("credentials.instance")))
+    if(!($credentialsManager = self::call("credentials.handler")))
       return null;
 
     // Devuelve la instancia del usuario actual
@@ -426,7 +426,7 @@ final class Am{
   public static function hasCredentiales($credential){
 
     // Si no existe la instancai del manejador de credenciales
-    if(!($credentialsManager = self::call("credentials.instance")))
+    if(!($credentialsManager = self::call("credentials.handler")))
       return false;
 
     // Verificar si el usuario logeado tiene las credenciales
