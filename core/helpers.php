@@ -71,7 +71,7 @@ function merge_r_if_are_array($arr1, $arr2){
 
 // Mezcla dos arrays sin ambos parametros son arrays y si
 // el primer elemento del segundo parametro no es falso.
-function merge_if_are_array_and_first_not_false($arr1, $arr2){
+function merge_if_are_array_and_snd_first_not_false($arr1, $arr2){
   if(is_array($arr1) && is_array($arr2))
     merge_if_snd_first_not_false($arr1, $arr2);
   return $arr2;

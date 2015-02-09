@@ -30,7 +30,10 @@ class AmControl extends AmHash{
     
     // State
     'state' => 'development',
-    
+    'langs' => array(),
+    'values' => array(),
+    'actions' => array(),
+
     // // Cores classes name list to include. Is merge with parent configuration
     // 'core' => array(
     //   /*
@@ -54,26 +57,26 @@ class AmControl extends AmHash{
     // ), 
     
     // Langs files to include. Is merge with parent configuration
-    'langs' => array('site'
-      /*
-       * // indicates don't to be loaded parent configuration
-       * 0 => false,
-       * 
-       * // e.g.:
-       * array('backend', 'admin')
-       */
-    ),
+    // 'langs' => array('site'
+      
+    //    * // indicates don't to be loaded parent configuration
+    //    * 0 => false,
+    //    * 
+    //    * // e.g.:
+    //    * array('backend', 'admin')
+       
+    // ),
     
     // Default values. Is merge with parent configuration
-    'values' => array(
-      /*
-       * // indicates don't to be loaded parent configuration
-       * 0 => false,
-       * 
-       * // e.g.:
-       * array('name' => 'Peter', 'color' => 'red')
-       */
-    ),
+    // 'values' => array(
+      
+    //    * // indicates don't to be loaded parent configuration
+    //    * 0 => false,
+    //    * 
+    //    * // e.g.:
+    //    * array('name' => 'Peter', 'color' => 'red')
+       
+    // ),
     
     // // Formats. Always is merge with parent configuration
     // 'formats' => array(
@@ -112,12 +115,12 @@ class AmControl extends AmHash{
     // ),
     
     // List headers to intclude. Is merge with parent configuration
-    'headers' => array(
-      /*
-       * // indicates don't to be loaded parent headers configuration
-       * 0 => false,
-       */
-    ),
+    // 'headers' => array(
+      
+    //    * // indicates don't to be loaded parent headers configuration
+    //    * 0 => false,
+       
+    // ),
     
     // Roles lists for controller
     'credentials' => false
@@ -163,10 +166,10 @@ class AmControl extends AmHash{
        * )
        * 
        */
-    ,
+    // ,
     
     // // Filters configurations. Dont is merge with parent configuration
-    // 'filters' => array(
+    'filters' => array(
       
     //    * // indicates to be loaded de parent configuration
     //    * 0 => true,
@@ -322,33 +325,33 @@ class AmControl extends AmHash{
     //   ),
     
     // Configuration for each action.
-    'actions' => array(
-      /*
-       * e.g.: action configuration
-       * 'index' => array(
-       * 
-       *    // Params speficications equals to controller configuration
-       *    'icon' => ...,
-       *    'description' => ...,
-       *    'author' => ...,
-       *    'title' => ...,
-       *    'contentType' => ...
-       *    'tpl' => ...,
-       *    'core' => ....,
-       *    'hepers' => ....,
-       *    'langs' => ....,
-       *    'values' => ....,
-       *    'formats' => ....,
-       *    'headers' => ....,
-       *    'credentials' => ....,
-       *    'filter' => ....,
-       *    'sections' => ....,
-       *    'js' => ....,
-       *    'css' => ....,
-       * ),
-       * 'get_index' => array(...)    // Only for action index for get method
-       */
-    )
+    // 'actions' => array(
+      
+    //    * e.g.: action configuration
+    //    * 'index' => array(
+    //    * 
+    //    *    // Params speficications equals to controller configuration
+    //    *    'icon' => ...,
+    //    *    'description' => ...,
+    //    *    'author' => ...,
+    //    *    'title' => ...,
+    //    *    'contentType' => ...
+    //    *    'tpl' => ...,
+    //    *    'core' => ....,
+    //    *    'hepers' => ....,
+    //    *    'langs' => ....,
+    //    *    'values' => ....,
+    //    *    'formats' => ....,
+    //    *    'headers' => ....,
+    //    *    'credentials' => ....,
+    //    *    'filter' => ....,
+    //    *    'sections' => ....,
+    //    *    'js' => ....,
+    //    *    'css' => ....,
+    //    * ),
+    //    * 'get_index' => array(...)    // Only for action index for get method
+       
+    // )
     
   );
   
@@ -506,50 +509,50 @@ class AmControl extends AmHash{
    * Agrega la cabecera 'header' a la lista de header que se incluiran en la
    * respuestas. Si key es recibida, indicara elnombre de la cabecera
    **/
-  final protected function addHeader($header, $key = null){
+  // final protected function addHeader($header, $key = null){
 
-    if(empty($key)){
-      $this->conf->headers[] = $header;
-    }else{
-      $this->conf->headers[$key] = $header;
-    }
+  //   if(empty($key)){
+  //     $this->conf->headers[] = $header;
+  //   }else{
+  //     $this->conf->headers[$key] = $header;
+  //   }
     
-    return $this;
+  //   return $this;
 
-  }
+  // }
 
-  /**
-   * Elimina la cabecera guardada en 'key'
-   **/
-  final protected function delHeader($key){
+  // /**
+  //  * Elimina la cabecera guardada en 'key'
+  //  **/
+  // final protected function delHeader($key){
 
-    unset($this->conf->headers[$key]);
-    return $this;
+  //   unset($this->conf->headers[$key]);
+  //   return $this;
 
-  }
+  // }
 
-  /**
-   * Elimina todas las cabeceras agregadas
-   **/
-  final protected function clearHeader(){
+  // *
+  //  * Elimina todas las cabeceras agregadas
+  //  *
+  // final protected function clearHeader(){
 
-    $this->conf->headers = array();
-    return $this;
+  //   $this->conf->headers = array();
+  //   return $this;
 
-  }
+  // }
 
-  /**
-   * Incluye las cabeceras agregadas, la cabecera que indica el tipo
-   **/
-  final protected function includeHeaders(){
+  // /**
+  //  * Incluye las cabeceras agregadas, la cabecera que indica el tipo
+  //  **/
+  // final protected function includeHeaders(){
 
-    $this->addHeader('content-type: ' . $this->contentType());
+  //   $this->addHeader('content-type: ' . $this->contentType());
     
-    foreach($this->conf->headers as $header){
-      header($header);
-    }
+  //   foreach($this->conf->headers as $header){
+  //     header($header);
+  //   }
 
-  }
+  // }
   
   /**
    * Control y manejo de secciones
@@ -762,27 +765,27 @@ class AmControl extends AmHash{
     
   }
   
-  final protected function respondeWithFile($file, $mimeType = null, $name = null, $attachment = false){
+  // final protected function respondeWithFile($file, $mimeType = null, $name = null, $attachment = false){
     
-    if(!isset($mimeType)){
-      $mimeType = AmFileSystem::mimeType($file);
-    }
+  //   if(!isset($mimeType)){
+  //     $mimeType = AmFileSystem::mimeType($file);
+  //   }
     
-    if(!isset($name)){
-      $name = basename($file);
-    }
+  //   if(!isset($name)){
+  //     $name = basename($file);
+  //   }
     
-    $this->contentType($mimeType);
-    $this->addHeader('Content-Disposition: ' . ($attachment ? 'attachment;' : '') . 'filename="'.$name.'"');
-    $this->addHeader('Content-Transfer-Encoding: binary');
-    $this->addHeader('Expires: 0');
-    $this->addHeader('Cache-Control: must-revalidate');
-    $this->addHeader('Pragma: public');
-    $this->addHeader('Content-Length: ' . filesize($file));
+  //   $this->contentType($mimeType);
+  //   $this->addHeader('Content-Disposition: ' . ($attachment ? 'attachment;' : '') . 'filename="'.$name.'"');
+  //   $this->addHeader('Content-Transfer-Encoding: binary');
+  //   $this->addHeader('Expires: 0');
+  //   $this->addHeader('Cache-Control: must-revalidate');
+  //   $this->addHeader('Pragma: public');
+  //   $this->addHeader('Content-Length: ' . filesize($file));
     
-    $this->fileForResponse = $file;
+  //   $this->fileForResponse = $file;
 
-  }
+  // }
   
   /**
    * Renderiza una la vista de una action. Si se omite el

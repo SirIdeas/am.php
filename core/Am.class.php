@@ -6,7 +6,7 @@
 
 final class Am{
 
-  protected static
+  private static
 
     // Define las callbacks del sistema
     $callbacks = array(

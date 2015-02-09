@@ -14,7 +14,7 @@ return array(
   ),
 
   "mergeFunctions" => array(
-    "credentials" => "merge_r_if_are_array_and_first_not_false",
+    "credentials" => "merge_r_if_are_array_and_snd_first_not_false",
   )
 
 );
