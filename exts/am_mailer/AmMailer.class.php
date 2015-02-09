@@ -15,7 +15,7 @@ class AmMailer extends PHPMailer{
   // Nombre del SMTP
   protected
     $isHTML = false,  // Indica si el contenido es o no HTML
-    $dir = null,      // Directorio donde se buscara la vista a renderizar
+    $dir = "mails/",  // Directorio donde se buscara la vista a renderizar
     $template = null, // Configuracion STMP. Si es null entonces no se enviará por smtp
     $with = array();  // Variables a utilizar en las vistas
 
@@ -275,7 +275,7 @@ class AmMailer extends PHPMailer{
     if(!is_array($options["smtp"])){
 
       // Obtener configuraciones STMP
-      $smtpConfs = Am::getAttribute("smtp");
+      $smtpConfs = Am::getAttribute("smtp", array());
 
       // Si se debe tomar la configuracion por defecto
       if($options["smtp"] === true)

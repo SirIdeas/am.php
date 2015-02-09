@@ -288,49 +288,48 @@ final class Am{
       return true;
     }
 
-    // Incluir como extensión
-    if(is_file($realFile = "{$file}.conf.php")){
-      // Obtener la configuracion de la extencion
-      $conf = require $realFile;
+    // Si no existe el archivo .conf para dicho ruta retornar, de 
+    // lo contrario se intentara incluir como una extension
+    if(!is_file($realFile = "{$file}.conf.php"))
+      return false;
 
-      // Obtener las funciones para mezclar que s definirín
-      $mergeFunctions = itemOr("mergeFunctions", $conf, array());
+    // Obtener la configuracion de la extencion
+    $conf = require $realFile;
 
-      // Obtener archivos a agregar de la extencion
-      $files = itemOr("files", $conf, array());
+    // Obtener las funciones para mezclar que s definirín
+    $mergeFunctions = itemOr("mergeFunctions", $conf, array());
 
-      // Obtener dependencias
-      $requires = itemOr("requires", $conf, array());
+    // Obtener archivos a agregar de la extencion
+    $files = itemOr("files", $conf, array());
 
-      // Obtener dependencias
-      $init = itemOr("init", $conf, array());
+    // Obtener dependencias
+    $requires = itemOr("requires", $conf, array());
 
-      // Los items nuevos no sobreescriben los anteriores
-      self::$mergeFunctions = array_merge($mergeFunctions, self::$mergeFunctions);
+    // Obtener dependencias
+    $init = itemOr("init", $conf, array());
 
-      // Incluir las dependencias
-      self::requireFiles($requires);
-      
-      // Llamar archivo de iniciacion en la carpeta si existe.
-      foreach ($files as $item)
-        if(is_file($realFile = "{$file}{$item}.php"))
-          require_once $realFile;
-        else
-          die("Am: Not fount Exts file: '{$realFile}'");
-      
-      // Incluir archivo init si existe
-      if(is_file($realFile = "{$file}.init.php"))
+    // Los items nuevos no sobreescriben los anteriores
+    self::$mergeFunctions = array_merge($mergeFunctions, self::$mergeFunctions);
+
+    // Incluir las dependencias
+    self::requireFiles($requires);
+    
+    // Llamar archivo de iniciacion en la carpeta si existe.
+    foreach ($files as $item)
+      if(is_file($realFile = "{$file}{$item}.php"))
         require_once $realFile;
+      else
+        die("Am: Not fount Exts file: '{$realFile}'");
+    
+    // Incluir archivo init si existe
+    if(is_file($realFile = "{$file}.init.php"))
+      require_once $realFile;
 
-      // Sino se debe agregar las configuraciones una por una.
-      self::mergeProperties($init);
+    // Sino se debe agregar las configuraciones una por una.
+    self::mergeProperties($init);
 
-      return true;
+    return true;
       
-    }
-
-    return false;
-
   }
 
   // Funcion para incluir un archivo

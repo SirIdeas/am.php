@@ -2,16 +2,6 @@
 
 return array(
   
-  "init" => array(
-    "smtp" => false,
-    "mails" => array(
-      // Configuración por defecto par ael envio de correo
-      "defaults" => array(
-        "dir" => "mails/",
-      )
-    ),
-  ),
-
   "files" => array(
     "php_mailer/PHPMailerAutoload",
     "AmMailer.class",
