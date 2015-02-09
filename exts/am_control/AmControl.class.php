@@ -18,7 +18,7 @@ class AmControl extends AmObject{
     $paths = array(),       // Carpetas donde se buscara las vistas
     $view = null,           // Nombre de la vista a renderizar
     $filters = array(),     // Filtros agregados
-    $credentials = array(), // Credenciales para el controlador
+    $credentials = false,   // Credenciales para el controlador
     $prefixs = array(),
 
     $server = null,     // Variables de SERVER
@@ -302,8 +302,8 @@ class AmControl extends AmObject{
   final protected function executeAction($action, $method, array $params){
 
     // Verificar las credenciales
-    // Am::getCredentialsHandler()
-    //   ->checkCredentials($this->credentials, $action);
+    Am::getCredentialsHandler()
+      ->checkCredentials($action, $this->credentials);
 
     // Valor de retorno
     $ret = null;
