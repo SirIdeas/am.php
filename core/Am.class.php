@@ -273,7 +273,7 @@ final class Am{
   ///////////////////////////////////////////////////////////////////////////////////
 
   // Cargador de Amathista
-  public static function load($file){
+  protected static function load($file){
 
     // Si existe el archivo retornar el mismo
     if(is_file($realFile = "{$file}.php")){
@@ -305,7 +305,7 @@ final class Am{
     self::$mergeFunctions = array_merge($mergeFunctions, self::$mergeFunctions);
 
     // Incluir las dependencias
-    self::requireFiles($requires);
+    self::requireExt($requires);
     
     // Llamar archivo de iniciacion en la carpeta si existe.
     foreach ($files as $item)
@@ -327,6 +327,22 @@ final class Am{
 
   // Funcion para incluir una extension
   public static function requireExt($file){
+    
+    // Si se trata de una array recorrer para agregar
+    // dependencias una por una.
+    if(is_array($file)){
+
+      // Incluir dependencias recursivamente
+      foreach ($file as $value)
+        self::requireExt($value);
+
+      return;
+
+    }
+
+    // Obtener el manejador de session
+    if(isset(self::$aliasExts[$file]))
+      $file = self::$aliasExts[$file];
 
     // Agregar extension
     if(self::load($file))
@@ -342,26 +358,6 @@ final class Am{
 
   }
 
-  // Incluya una extension desde un alias. Si la extencion
-  // no existe se intentara incluir el alias
-  public static function requireAliasExts($alias){
-
-    // Obtener el manejador de session
-    if(isset(self::$aliasExts[$alias]))
-      $alias = self::$aliasExts[$alias];
-    
-    // Incluir extension    
-    return self::requireExt($alias);
-
-  }
-
-  // Incluye varias extensiones o archivos
-  public static function requireFiles(array $requires){
-    // Incluir dependencias recursivamente
-    foreach ($requires as $value)
-      self::requireExt($value);
-  }
-
   ///////////////////////////////////////////////////////////////////////////////////
   // Manejo de session
   ///////////////////////////////////////////////////////////////////////////////////
@@ -374,11 +370,12 @@ final class Am{
     if(class_exists("AmSession"))
       return;
 
-    // Incluir extension desde el aclias
-    self::requireAliasExts(self::$confs["sessionManager"]);
-
-    // Incluir manejador principal de session
-    Am::requireExt("core/am_session/");
+    self::requireExt(array(
+      // Incluir extension desde el aclias
+      self::$confs["sessionManager"],
+      // Incluir manejador principal de session
+      "core/am_session/"
+    ));
 
   }
 
@@ -469,7 +466,7 @@ final class Am{
 
     // Incluir extensiones para peticiones
     // Archivos requeridos
-    self::requireFiles(self::getAttribute("requires"));
+    self::requireExt(self::getAttribute("requires"));
 
     // Llamado de accion para evaluar ruta
     self::call("route.evaluate", $request);
