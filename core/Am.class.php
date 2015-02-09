@@ -12,7 +12,7 @@ final class Am{
     $callbacks = array(
 
       /**** Rutas ****/
-      // route.eval (request)                           : Evalucación del route
+      // route.evaluate (request)                       : Evalucación del route
       
       /**** Respuestas ****/
       // response.file (file, env)                      : Responder con archivo
