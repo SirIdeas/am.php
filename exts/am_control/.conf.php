@@ -4,6 +4,7 @@ return array(
 
   "init" => array(
     "control" => array(
+      
       "defaults" => array(
 
         "root" => "control/", // Carpeta raiz del controlador

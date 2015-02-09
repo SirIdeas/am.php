@@ -1,9 +1,9 @@
 <?php
 
 return array(
-  
+
   "files" => array(
-    "AmFlash.class"
+    "AmNormalSession.class"
   ),
 
 );

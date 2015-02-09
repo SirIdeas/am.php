@@ -6,15 +6,29 @@
 
 final class Am{
 
-  private static
+  public static
 
     // Define las callbacks del sistema
     $callbacks = array(
+
+      /**** Rutas ****/
       // route.eval (request, routes)                   : Evalucación del route
+      
+      /**** Respuestas ****/
       // response.file (file, env)                      : Responder con archivo
       // response.download (file, env)                  : Responder con descarga de archivo
       // response.assets (file, assets, env)            : Responder con archivo
       // response.control (control, action, params, env): Responder con controlador
+
+      /**** Session ****/
+      // session.id(index)          : Asignar identificador de la sesion
+      // session.all()              : Obtener el todos los datos de sesion
+      // session.get(index)         : Obtener elemento
+      // session.has(index)         : Indica si existe un elemento
+      // session.set(index, value)  : Asignar un elemento
+      // session.delete(index)      : Eliminar un elemento
+
+      /**** Otras ****/
       // render.template (templete, paths, options)     : Renderizar vista
       // command.addPath (path)                         : Agregar una carpeta de comandos
       // credentials.instance()                         : Obtener una instancia del manejador de credencales
@@ -25,6 +39,11 @@ final class Am{
       "requires" => "merge_if_snd_first_not_false"
     ),
 
+    // Exteciones manejadoras de session
+    $aliasExts = array(
+      "normalSession" => "exts/am_normal_session/"
+    ),
+
     $instances = array(),       // Instancias unicas de clases
     $paths = array(),           // Herarquia de carpetas
     $confsLoaded = array(),     // Archivos de configuración cargados.
@@ -33,7 +52,6 @@ final class Am{
     
   // Devuelve la instancia de una clase existente. Sino existe la instancia se crea una nueva
   public final static function getInstance($className, array $params = array()){
-
     // Si la clase no existe devolver error
     if(!class_exists($className))
       return null;
@@ -41,7 +59,7 @@ final class Am{
     // Si la instancia existe se devuelve
     if(isset(self::$instances[$className]))
       return self::$instances[$className];
-
+    
     // Si la instancia no existe se crea una instancia de la clase
     return self::$instances[$className] = new $className($params);
 
@@ -133,7 +151,8 @@ final class Am{
     $filename = realpath($filename);
 
     // Si el archivo no existe salir
-    if(!is_file($filename) || in_array($filename, self::$confsLoaded)) return;
+    if(!is_file($filename) || in_array($filename, self::$confsLoaded))
+      return;
 
     // Agregar el archivo a la lita de archivos de configuracion cargados
     self::$confsLoaded[] = $filename;
@@ -174,6 +193,11 @@ final class Am{
     self::$confs["routes"]["routes"][$route] = $to;
   }
 
+  // Obtener la contenido de un archivo de configuración
+  public static function getConfig($file){
+    return require self::findFileIn("$file.conf.php", self::$paths);
+  }
+
   // Obtener un atributo de la confiuguracion
   public static function getAttribute($property){
     self::mergePropertiesFromAllFiles("conf/{$property}", $property);
@@ -190,6 +214,10 @@ final class Am{
     // Devolver archivo
     return self::respondeWithFile($file);
   }
+
+  ///////////////////////////////////////////////////////////////////////////////////
+  // Urls y redicciones
+  ///////////////////////////////////////////////////////////////////////////////////
   
   // Devuelve la url base del sitio
   public static function urlBase(){
@@ -240,64 +268,15 @@ final class Am{
     self::redirectIf(!$condition, $url);
   }
 
-  // Inicio del Amathista
-  public static function task(){
+  ///////////////////////////////////////////////////////////////////////////////////
+  // Inclusion de archivos y extenciones
+  ///////////////////////////////////////////////////////////////////////////////////
 
-    // Obtener las configuraciones
-    self::mergePropertiesFromAllFiles("conf/");
-
-    // Obtener el valor 
-    $errorReporting = self::getAttribute("errorReporting");
-    error_reporting($errorReporting);
-    
-    // Variable global de argumentos
-    global $argv;
-
-    // Peticion
-    $request = "";
-
-    // determinar peticion
-    if(isset($argv)){ // Es una peticion desde la consola
-
-      // La URL Base es vacía
-      self::$urlBase = "";
-
-      // La peticion es la concatenacion de todos los parametros
-      $request = implode("/", $argv);
-
-    }else{ // Es una peticion HTTP
-
-      // Definicion de la URL Base
-      self::$urlBase = dirname($_SERVER["PHP_SELF"]);
-      
-      // Validacion para cuando este en el root
-      if(self::$urlBase === "/")
-        self::$urlBase = "";
-      
-      // Obtener peticion
-      $request = substr_replace($_SERVER["REQUEST_URI"], "", 0, strlen(self::$urlBase));
-
-      // Validacion para cuando este en la peticion no comienze con "/"
-      if($request[0] !== "/")
-        $request = "/" . $request;
-
-    }
-
-    // Incluir extensiones para peticiones
-    // Archivos requeridos
-    self::requireFiles(self::getAttribute("requires"));
-
-    // Llamado de accion para evaluar ruta
-    self::call("route.eval",
-      $request,
-      self::getAttribute("routes")
-    );
-
-  }
-
-  // Obtener la contenido de un archivo de configuración
-  public static function getConfig($file){
-    return require self::findFileIn("$file.conf.php", self::$paths);
+  // Incluye varias extensiones o archivos
+  public static function requireFiles(array $requires){
+    // Incluir dependencias recursivamente
+    foreach ($requires as $value)
+      self::requireFile($value);
   }
 
   // Cargador de Amathista
@@ -354,13 +333,6 @@ final class Am{
 
   }
 
-  // Incluye varias extensiones o archivos
-  public static function requireFiles(array $requires){
-    // Incluir dependencias recursivamente
-    foreach ($requires as $value)
-      self::requireFile($value);
-  }
-
   // Funcion para incluir un archivo
   public static function requireFile($file){
 
@@ -375,6 +347,136 @@ final class Am{
 
     // No se agregó la extension
     die("Am: Not fount Exts '{$file}'");
+
+  }
+
+  // Incluya una extension desde un alias. Si la extencion
+  // no existe se intentara incluir el alias
+  public static function requireAliasExts($alias){
+
+    // Obtener el manejador de session
+    if(isset(self::$aliasExts[$alias]))
+      $alias = self::$aliasExts[$alias];
+    
+    // Incluir extension    
+    return self::requireFile($alias);
+
+  }
+
+  ///////////////////////////////////////////////////////////////////////////////////
+  // Manejo de session
+  ///////////////////////////////////////////////////////////////////////////////////
+
+  // Realiza incializaciones para el manejo de session
+  public static function startSession(){
+    
+    // Si ya esta cargada la clase AmSession es porque
+    // ya se realizó la inicializacion. 
+    if(class_exists("AmSession"))
+      return;
+
+    // Incluir extension desde el aclias
+    self::requireAliasExts(self::$confs["sessionManager"]);
+
+    // Incluir manejador principal de session
+    Am::requireFile("core/am_session/");
+
+  }
+
+  ///////////////////////////////////////////////////////////////////////////////////
+  // Manejo de credenciales
+  ///////////////////////////////////////////////////////////////////////////////////
+
+  // Obtener manejador de credencailes
+  public static function getCredentialsHandler(){
+    return self::call("credentials.instance");
+  }
+
+  // Devuelve las credenciales del usuario logeado
+  public static function getCredentials(){
+
+    // Si no existe la instancai del manejador de credenciales
+    if(!($credentialsManager = self::call("credentials.instance")))
+      return null;
+
+    // Devuelve la instancia del usuario actual
+    return $credentialsManager->getCredentials();
+
+  }
+
+  // Indica si existe o no un usuario logeado.
+  public static function isAuth(){
+    return null !== self::getCredentials();
+  }
+
+  // Inidica si el usuario logeado tiene las credenciales solicitadas
+  public static function hasCredentiales($credential){
+
+    // Si no existe la instancai del manejador de credenciales
+    if(!($credentialsManager = self::call("credentials.instance")))
+      return false;
+
+    // Verificar si el usuario logeado tiene las credenciales
+    return $credentialsManager->hasCredentials($credential);
+
+  }
+
+  ///////////////////////////////////////////////////////////////////////////////////
+  // Manejo de credenciales
+  ///////////////////////////////////////////////////////////////////////////////////
+
+  // Inicio del Amathista
+  public static function task(){
+
+    // Obtener las configuraciones
+    self::mergePropertiesFromAllFiles("conf/");
+
+    // Obtener el valor 
+    $errorReporting = self::getAttribute("errorReporting");
+    error_reporting($errorReporting);
+
+    // Variable global de argumentos
+    global $argv;
+
+    // Peticion
+    $request = "";
+
+    // determinar peticion
+    if(isset($argv)){ // Es una peticion desde la consola
+
+      // La URL Base es vacía
+      self::$urlBase = "";
+
+      // La peticion es la concatenacion de todos los parametros
+      $request = implode("/", $argv);
+
+    }else{ // Es una peticion HTTP
+
+      // Definicion de la URL Base
+      self::$urlBase = dirname($_SERVER["PHP_SELF"]);
+      
+      // Validacion para cuando este en el root
+      if(self::$urlBase === "/")
+        self::$urlBase = "";
+      
+      // Obtener peticion
+      $request = substr_replace($_SERVER["REQUEST_URI"], "", 0, strlen(self::$urlBase));
+
+      // Validacion para cuando este en la peticion no comienze con "/"
+      if($request[0] !== "/")
+        $request = "/" . $request;
+
+    }
+
+    // Incluir extensiones para peticiones
+    // Archivos requeridos
+    self::requireFiles(self::getAttribute("requires"));
+
+    // Llamado de accion para evaluar ruta
+    self::call("route.eval",
+      $request,
+      self::getAttribute("routes")
+    );
 
   }
 

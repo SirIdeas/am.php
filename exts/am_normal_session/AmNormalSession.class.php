@@ -4,7 +4,18 @@
  * Clase principal de Amathista
  */
 
-final class AmSession{
+final class AmNormalSession{
+  
+  // Asigna una ID de sesion
+  public final static function id($sessionId){
+    
+    self::$sessionId = $sessionId;
+    
+    // Crear contendor de la sesion   
+    if(!isset($_SESSION[$sessionId]))
+      $_SESSION[$sessionId] = array();
+    
+  }
   
   protected static
     $sessionId; // ID de la sesion
@@ -31,17 +42,6 @@ final class AmSession{
   // Elimina una variable de la sesion
   public final static function delete($name){
     unset($_SESSION[self::$sessionId][$name]);
-  }
-  
-  // Asigna una ID de sesion
-  public final static function setSessionId($sessionId){
-    
-    self::$sessionId = $sessionId;
-    
-    // Crear contendor de la sesion   
-    if(!isset($_SESSION[$sessionId]))
-      $_SESSION[$sessionId] = array();
-    
   }
 
 }

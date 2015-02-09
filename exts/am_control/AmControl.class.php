@@ -14,10 +14,11 @@ class AmControl extends AmObject{
     );
 
   protected
-    $root = null,       // Carpeta raiz del controlador
-    $paths = array(),   // Carpetas donde se buscara las vistas
-    $view = null,       // Nombre de la vista a renderizar
-    $filters = array(), // Filtros agregados
+    $root = null,           // Carpeta raiz del controlador
+    $paths = array(),       // Carpetas donde se buscara las vistas
+    $view = null,           // Nombre de la vista a renderizar
+    $filters = array(),     // Filtros agregados
+    $credentials = array(), // Credenciales para el controlador 
 
     $server = null,     // Variables de SERVER
     $get = null,        // Variables recibidas por GET
@@ -299,8 +300,13 @@ class AmControl extends AmObject{
   // Ejecuta una accion determinada
   final protected function executeAction($action, $method, array $params){
 
+    // Verificar las credenciales
+    // Am::getCredentialsHandler()
+    //   ->checkCredentials($this->credentials, $action);
+
     // Valor de retorno
     $ret = null;
+
     // Si el metodo existe llamar
     if(method_exists($this, $actionMethod = "action"))
       call_user_func_array(array($this, $actionMethod), $params);
@@ -385,6 +391,18 @@ class AmControl extends AmObject{
     if(is_string($conf))
       $conf = array("root" => $conf);
 
+    // Obtener la ruta del controlador
+    // Incluir controlador si existe el archivo
+    if(is_file($controlFile = "{$conf["root"]}{$control}.control.php"))
+      require_once $controlFile;
+
+    // Cargar controlador como una librería
+    Am::load($conf["root"]);
+
+    // Mezclar obtener configuracion global a agregar
+    if(is_file($realFile = "{$conf["root"]}.conf.php"))
+      $conf = self::mergeConf($conf, require($realFile));
+
     // Mezclar con el archivo de configuracion en la raiz del
     // controlador.
     if(is_file($realFile = "{$conf["root"]}.control.php"))
@@ -406,11 +424,6 @@ class AmControl extends AmObject{
       // Mezclar con la configuracion del padre
       $conf = self::mergeConf($confParent, $conf);
     }
-
-    // Obtener la ruta del controlador
-    // Incluir controlador si existe el archivo
-    if(is_file($controlFile = "{$conf["root"]}{$control}.control.php"))
-      require_once $controlFile;
 
     // Retornar la configuracion obtenida
     return $conf;

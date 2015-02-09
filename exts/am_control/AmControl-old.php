@@ -378,28 +378,28 @@ class AmControl extends AmHash{
   // private $fileForResponse = null;
   // private $path = null;
   
-  final public function getCredentials(){
+  // final public function getCredentials(){
     
-    if(!isset(self::$crendentialsInstance)){
-      self::$crendentialsInstance = new AmCredentials;
-      self::$crendentialsInstance->setCredentialsClassDefault();
-    }
+  //   if(!isset(self::$crendentialsInstance)){
+  //     self::$crendentialsInstance = new AmCredentials;
+  //     self::$crendentialsInstance->setCredentialsClassDefault();
+  //   }
     
-    return self::$crendentialsInstance;
+  //   return self::$crendentialsInstance;
   
-  }
+  // }
 
-  final public function getProfile(){
-    return $this->getCredentials()->getCredentials();
-  }
+  // final public function getProfile(){
+  //   return $this->getCredentials()->getCredentials();
+  // }
 
-  final public function hasCrendentials($credential){
-    return $this->getCredentials()->hasCredentials($credential);
-  }
+  // final public function hasCrendentials($credential){
+  //   return $this->getCredentials()->hasCredentials($credential);
+  // }
 
-  final public function isAuth(){
-    return $this->getCredentials()->isAuth();
-  }
+  // final public function isAuth(){
+  //   return $this->getCredentials()->isAuth();
+  // }
   
   // final protected function conf(){ return $this->conf; }
   // final protected function name(){ return $this->name; }

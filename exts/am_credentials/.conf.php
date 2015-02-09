@@ -2,15 +2,17 @@
 
 return array(
   
-  "init" => array(),
+  "init" => array(
+    "credentials" => array()
+  ),
 
   "files" => array(
-    "AmCredentials.class"
+    "AmCredentials.class",
     "AmCredentialsHandler.class"
   ),
 
   "requires" => array(
-    "exts/am_session/",
+    "core/am_session/",
   ),
 
   "mergeFunctions" => array(
