@@ -6,19 +6,25 @@
 
 class AmControl extends AmObject{
 
+  private static
+    // Callbacks para mezclar atributos
+    $mergeFunctions = array(
+      "paths" => "array_merge",
+      "prefix" => "array_merge"
+    );
+
   protected
+    $root = null,       // Carpeta raiz del controlador
+    $paths = array(),   // Carpetas donde se buscara las vistas
+    $view = null,       // Nombre de la vista a renderizar
+    $filters = array(), // Filtros agregados
+
     $server = null,     // Variables de SERVER
     $get = null,        // Variables recibidas por GET
     $post = null,       // Variables recibidas por POST
     $request = null,    // Todas las variables recibidas
     $cookie = null,     // Çookies
-    $env = null,        // Variables de entorno
-
-    $path = null,       // Carpeta contenedora del controlador
-    $views = null,      // Carpeta contenedora de las vistas para el controlador
-    $view = null,       // Nombre de la vista a renderizar
-    $filters = array(), // Filtros agregados
-    $paths = array();   // Carpetas de ambito del controlador
+    $env = null;        // Variables de entorno
 
   public function __construct($data = null){
     parent::__construct($data);
@@ -36,36 +42,25 @@ class AmControl extends AmObject{
   final protected function getView(){ return $this->view; }
   final protected function setView($value){ $this->view = $value; return $this; }
 
-  // Asigna la vista que se renderizará.
-  // Es un Alias de la funcion setView que agrega .view.php al final
-  // del valore recibido.
-  final protected function render($value){
-    // Las vista de las acciones son de extencion .view.php
-    return $this->setView(self::getViewName($value));
-  }
-
-  // Devuelve la carpeta de ambito del controlador
-  final protected function getPath(){
-    return $this->path;
-  }
-
-  // Obtener la carpeta de de las vistas
-  final protected function getViewsPath(){
-    // Si no tiene carpeta asignada se retorna null
-    if(!$this->views)
-      return null;
-    return $this->getPath() . $this->views;
-  }
-
+  // Devuelve un array de los paths de ambito del controlador
   final protected function getPaths(){
-    $ret = $this->paths;
-    // Agregar path principal si existe
-    if(null !== ($folder = $this->getPath()))
-      $ret[] = $folder;
-    // Agregar path de vistas principal si existe
-    if(null !== ($folder = $this->getViewsPath()))
-      $ret[] = $folder;
-    return array_unique($ret);
+    
+    $ret = array_filter($this->paths);  // Tomar valores validos
+    $ret = array_unique($ret);          // Valor unicos
+    $ret = array_reverse($ret);         // Invertir array
+
+    // Agregar carpeta raiz del controlador si existe si existe
+    if(isset($this->root))
+      array_unshift($ret, $this->root);
+
+    // Agregar carpeta raiz del controlador para vistas
+    // si existe si existe
+    if(isset($this->views))
+      array_unshift($ret, $this->root . $this->views);
+
+    // Invertir array,
+    return $ret;
+
   }
 
   // Devuelve el método de la peticion
@@ -83,8 +78,16 @@ class AmControl extends AmObject{
     return itemOr($key, $this->prefixs, "");
   }
 
+  // Asigna la vista que se renderizará.
+  // Es un Alias de la funcion setView que agrega .view.php al final
+  // del valore recibido.
+  final protected function render($value){
+    // Las vista de las acciones son de extencion .view.php
+    return $this->setView(self::getViewName($value));
+  }
+
   // Renderizar la vista
-  final protected function renderView(array $vars, $child){
+  final private function renderView(array $vars, $child){
 
     // Renderizar vista mediante un callback
     $ret = Am::call("render.template",
@@ -251,46 +254,43 @@ class AmControl extends AmObject{
   // estraParams: Parámetros extras para los filtros.
   final protected function executeFilters($state, $methodName, $extraParams){
     
-    // Si hay filtro a ejecutar para dicha peticion
-    if(isset($this->filters[$state])){
+    // Si no hay filtro a ejecutar para dicha peticion salir
+    if(!isset($this->filters[$state]))
+      return true;
+
       
-      // Recorrer los filtros del peditoestado
-      foreach($this->filters[$state] as $filterName => $filter){
-        
-        // Si el filtro se aplica a todos, o si el metodo solicitado esta dentro de los
-        // métodos a los que se aplicará el filtro actual.
-        if(($filter["scope"] == "all" || in_array($methodName, $filter["to"]))){
-          // Si el método no esta dentro de las excepciones del filtro
-          if(!isset($filter["except"]) || !in_array($methodName, $filter["except"])){
-
-            // Obtener le nombre real del filtro
-            $filterRealName = $this->getPrefix("filters") . $filterName;
-
-            // Llamar el filtro
-            $ret = call_user_func_array(array(&$this, $filterRealName), $extraParams);
-            
-            // Si la accion no pasa el filtro y se trata de un filtro before
-            if($ret === false && $state == "before"){
-              
-              // Si se indicí una ruta de redirección
-              // se lleva a esa ruta
-              if(isset($filter["redirect"])){
-                Am::redirect($filter["redirect"]);
-              }else{
-                // Si no retornar false para indicar que no se pasó el filtro.
-                return false;
-              }
-
-            }
-
-          }
-
-        }
-        
-      }
+    // Recorrer los filtros del peditoestado
+    foreach($this->filters[$state] as $filterName => $filter){
       
+      // Si el filtro no se aplica a todos y si el metodo solicitado no esta dentro de los
+      // métodos a los que se aplicará el filtro actual continuar con el siguiente filtro.
+      if($filter["scope"] != "all" && !in_array($methodName, $filter["to"]))
+        continue;
+
+      // Si el método esta dentro de las excepciones del filtro
+      // continuar con el siguiente filtro
+      if(isset($filter["except"]) && in_array($methodName, $filter["except"]))
+        continue;
+
+      // Obtener le nombre real del filtro
+      $filterRealName = $this->getPrefix("filters") . $filterName;
+
+      // Llamar el filtro
+      $ret = call_user_func_array(array(&$this, $filterRealName), $extraParams);
+      
+      // Si la accion pasa el filtro o no se trata de un filtro before
+      // se debe continuar con el siguiente filtro
+      if($ret !== false || $state != "before")
+        continue;
+      
+      // Si se indica una ruta de redirección se lleva a esa ruta
+      Am::redirectIf(isset($filter["redirect"]), $filter["redirect"]);
+
+      // Si no retornar false para indicar que no se pasó el filtro.
+      return false;
+
     }
-    
+
     // Si todos los filtros pasaron retornar verdadero.
     return true;
     
@@ -301,7 +301,6 @@ class AmControl extends AmObject{
 
     // Valor de retorno
     $ret = null;
-
     // Si el metodo existe llamar
     if(method_exists($this, $actionMethod = "action"))
       call_user_func_array(array($this, $actionMethod), $params);
@@ -341,6 +340,34 @@ class AmControl extends AmObject{
 
   }
 
+  // Mezclador de configuraciones
+  private static function mergeConf(array $confParent, array $conf){
+
+    // Agregar items de
+    foreach ($confParent as $key => $value)
+      
+      // Si no existe en la configuraicon hija se asigna.
+      if(!isset($conf[$key]))
+        $conf[$key] = $confParent[$key];
+
+      // Si no se ha indicado una funcion para mezclar
+      // continuar con la siguiente propiedad
+      else if(!isset(self::$mergeFunctions[$key]))
+        continue;
+
+      // De lo contrario mezclar los datos 
+      else
+        $conf[$key] = call_user_func_array(self::$mergeFunctions[$key],
+          array(
+            $confParent[$key],
+            $conf[$key]
+          )
+        );
+
+    return $conf;
+
+  }
+
   // Devuelve la configuracion para un controlador
   // Ademas incluye el archivo conrrespondiente
   public static function includeControl($control){
@@ -356,29 +383,33 @@ class AmControl extends AmObject{
 
     // Si no es un array, entonces el valor indica el path del controlador
     if(is_string($conf))
-      $conf = array("path" => $conf);
+      $conf = array("root" => $conf);
 
-    // Valores por defecto
-    $conf = array_merge($defaults, $conf);
+    // Mezclar con el archivo de configuracion en la raiz del
+    // controlador.
+    if(is_file($realFile = "{$conf["root"]}.control.php"))
+      $conf = self::mergeConf($conf, require($realFile));
 
-    if(is_file($realFile = "{$conf["path"]}.control.php"))
-      $conf = array_merge(
-        $conf,
-        require($realFile)
-      );
+    // Si tiene no tiene padre o si el padre esta vacío
+    // y se mezcla con la configuracion por defecto
+    if(!isset($conf["parent"]) || empty($conf["parent"]))
+      // Mezclar con valores por defecto
+      $conf = self::mergeConf($defaults, $conf);
 
-    // Si tiene un padre se incluye
-    // y se mezcla con la configuracion actual
-    if(isset($conf["parent"]) && !empty($conf["parent"])){
-      $parentConf = self::includeControl($conf["parent"]);
-      $parentConf["paths"][] = $conf["path"];
-      $conf = array_merge($parentConf, $conf);
-    }else
-      $conf["paths"] = array($conf["path"]);
+    // Mezclar con configuracion del padre
+    else{
+      $confParent = self::includeControl($conf["parent"]);
+
+      // Agregar carpeta de vistas por defecto del padre.
+      $confParent["paths"][] = $confParent["root"] . $confParent["views"];
+
+      // Mezclar con la configuracion del padre
+      $conf = self::mergeConf($confParent, $conf);
+    }
 
     // Obtener la ruta del controlador
     // Incluir controlador si existe el archivo
-    if(is_file($controlFile = "{$conf["path"]}{$control}.control.php"))
+    if(is_file($controlFile = "{$conf["root"]}{$control}.control.php"))
       require_once $controlFile;
 
     // Retornar la configuracion obtenida
