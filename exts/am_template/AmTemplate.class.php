@@ -329,10 +329,10 @@ final class AmTemplate extends AmObject{
   public static function render($file, $paths, $options = array()){
 
     // Obtener configuraciones del controlador
-    $confs = Am::getAttribute("views");
+    $confs = Am::getAttribute("views", array());
     
     // Obtener valores por defecto
-    $defaults = isset($confs["defaults"])? $confs["defaults"] : array();
+    $defaults = itemOr("defaults", $confs, array());
 
     // Si no existe configuracion para la vista
     $conf = isset($confs[$file])? $confs[$file] : array();
