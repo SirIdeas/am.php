@@ -121,31 +121,39 @@ final class Am{
   }
 
   // Asignar/Mezcla valor con propiedad.
-  public static function mergeProperty($property, $value){
+  public static function mergeProperty($property, $value, $extend = false){
 
     // Obtener funcion callback para mezclar la propiedad solicitada
     $mergeFunctions = itemOr($property, self::$mergeFunctions);
 
     // Si exite la funcion y existe un valor previo se mezcla a partir de la funcion designada
-    if($mergeFunctions !== null && isset(self::$confs[$property]))
-      self::$confs[$property] = call_user_func_array($mergeFunctions,
-        array(self::$confs[$property], $value));
+    if($mergeFunctions !== null && isset(self::$confs[$property])){
+      
+      // Si se desea extender. Entonces los valores nuevos son sobre escritos pors los viejos
+      if($extend === true)
+        $params = array($value, self::$confs[$property]);
+
+      // De lo contrario los valores nuevos sobre escriben a los viejos
+      else
+        $params = array(self::$confs[$property], $value);
+
+      self::$confs[$property] = call_user_func_array($mergeFunctions, $params);
     
     // Si no existe el callback se devolvera el ultimo valor
-    else
+    }else
       self::$confs[$property] = $value;
 
   }
 
   // Mezcla un conjunto de propiedades
-  public static function mergeProperties(array $conf){
+  public static function mergeProperties(array $conf, $extend = false){
     // Recorrer elementos obtenidos para ir 
     foreach ($conf as $property => $value)
-      self::mergeProperty($property, $value);
+      self::mergeProperty($property, $value, $extend);
   }
 
   // Carga un archivo de configuración
-  public static function mergePropertiesFromFile($filename, $property = null){
+  public static function mergePropertiesFromFile($filename, $property = null, $extend = false){
     
     // Obtener el nombre real del archivo
     $filename = realpath($filename);
@@ -163,22 +171,22 @@ final class Am{
     // Si la configuración esta destinada a una propiedad especifica
     // mezclar con dicha configuracion
     if(isset($property))
-      self::mergeProperty($property, $conf);
+      self::mergeProperty($property, $conf, $extend);
 
     else
       // Sino se debe agregar las configuraciones una por una.
-      self::mergeProperties($conf);
+      self::mergeProperties($conf, $extend);
 
   }
 
   // Cargar propiedades de todos los archivos de coniguracion en las carpetas
   // del ambito
-  public static function mergePropertiesFromAllFiles($filename, $property = null){
+  public static function mergePropertiesFromAllFiles($filename, $property = null, $extend = false){
 
     // Recorrer cada uno de las carpetas en el path
     foreach (self::$paths as $path)
       // Si el archivo cargar la configuracion en la posicion path/property
-      self::mergePropertiesFromFile("{$path}/{$filename}.conf.php", $property);
+      self::mergePropertiesFromFile("{$path}/{$filename}.conf.php", $property, $extend);
 
   }
 
@@ -273,7 +281,7 @@ final class Am{
   ///////////////////////////////////////////////////////////////////////////////////
 
   // Cargador de Amathista
-  protected static function load($file){
+  public static function load($file){
 
     // Si existe el archivo retornar el mismo
     if(is_file($realFile = "{$file}.php")){
@@ -281,47 +289,56 @@ final class Am{
       return true;
     }
 
-    // Si no existe el archivo .conf para dicho ruta retornar, de 
-    // lo contrario se intentara incluir como una extension
-    if(!is_file($realFile = "{$file}.conf.php"))
-      return false;
+    // Si existe el archivo .conf para dicha ruta retornar se intentara
+    // incluir como una extension
+    if(is_file($realFile = "{$file}.conf.php")){
 
-    // Obtener la configuracion de la extencion
-    $conf = require $realFile;
+      // Obtener la configuracion de la extencion
+      $conf = require $realFile;
 
-    // Obtener las funciones para mezclar que s definirín
-    $mergeFunctions = itemOr("mergeFunctions", $conf, array());
+      // Obtener las funciones para mezclar que s definirán
+      $mergeFunctions = itemOr("mergeFunctions", $conf, array());
+      // Los items nuevos no sobreescriben los anteriores
+      self::$mergeFunctions = array_merge($mergeFunctions, self::$mergeFunctions);
 
-    // Obtener archivos a agregar de la extencion
-    $files = itemOr("files", $conf, array());
+      // Obtener dependencias
+      $requires = itemOr("requires", $conf, array());
+      // Incluir las dependencias
+      self::requireExt($requires);
 
-    // Obtener dependencias
-    $requires = itemOr("requires", $conf, array());
+      // Extender propiedades por defecto
+      $extend = itemOr("extend", $conf, array());
+      self::mergeProperties($extend, true);
 
-    // Obtener dependencias
-    $init = itemOr("init", $conf, array());
+      // Obtener archivos a agregar de la extencion
+      $files = itemOr("files", $conf, array());
+      // Llamar archivo de iniciacion en la carpeta si existe.
+      foreach ($files as $item)
+        if(is_file($realFile = "{$file}{$item}.php"))
+          require_once $realFile;
+        else
+          die("Am: Not fount Exts file: '{$realFile}'");
 
-    // Los items nuevos no sobreescriben los anteriores
-    self::$mergeFunctions = array_merge($mergeFunctions, self::$mergeFunctions);
-
-    // Incluir las dependencias
-    self::requireExt($requires);
-    
-    // Llamar archivo de iniciacion en la carpeta si existe.
-    foreach ($files as $item)
-      if(is_file($realFile = "{$file}{$item}.php"))
-        require_once $realFile;
-      else
-        die("Am: Not fount Exts file: '{$realFile}'");
+    }
     
     // Incluir archivo init si existe
-    if(is_file($realFile = "{$file}.init.php"))
-      require_once $realFile;
+    if(is_file($realFile = "{$file}.init.php")){
+      $conf = true;
+      // Incluir el archivo init.
+      $init = require_once($realFile);
+      // Si es un array entonces representan parametros que extender
+      // del conf global.
+      if(is_array($init))
+        self::mergeProperties($init, true);
 
-    // Sino se debe agregar las configuraciones una por una.
-    self::mergeProperties($init);
+    }
 
-    return true;
+    // Si esta definida la variable $conf, entonces retornar verdadero.
+    if(isset($conf))
+      return true;
+
+    // De lo contrarion no se pudo cargar la extension
+    return false;
       
   }
 
@@ -466,7 +483,7 @@ final class Am{
 
     // Incluir extensiones para peticiones
     // Archivos requeridos
-    self::requireExt(self::getAttribute("requires"));
+    self::requireExt(self::getAttribute("requires", array()));
 
     // Llamado de accion para evaluar ruta
     self::call("route.evaluate", $request);

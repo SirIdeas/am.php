@@ -2,7 +2,7 @@
 
 return array(
 
-  "init" => array(
+  "extend" => array(
 
     "control" => array(
       "defaults" => array(

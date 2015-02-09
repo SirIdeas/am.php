@@ -2,7 +2,7 @@
 
 return array(
   
-  "init" => array(
+  "extend" => array(
     "routes" => array(
       "env" => array(),
       "routes" => array()

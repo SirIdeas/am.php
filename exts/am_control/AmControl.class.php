@@ -422,6 +422,9 @@ class AmControl extends AmObject{
     // Incluir controlador si existe el archivo
     if(is_file($controlFile = "{$conf["root"]}{$control}.control.php"))
       require_once $controlFile;
+
+    // Incluir como extension
+    Am::load($conf["root"]);
     
     // Retornar la configuracion obtenida
     return $conf;
