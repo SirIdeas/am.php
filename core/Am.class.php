@@ -472,7 +472,7 @@ final class Am{
     self::requireFiles(self::getAttribute("requires"));
 
     // Llamado de accion para evaluar ruta
-    self::call("route.eval", $request);
+    self::call("route.evaluate", $request);
 
   }
 
