@@ -416,6 +416,8 @@ class AmControl extends AmObject{
 
     // Mezclar con configuracion del padre
     else{
+
+      // Obtener la configuracion del padre
       $confParent = self::includeControl($conf["parent"]);
 
       // Agregar carpeta de vistas por defecto del padre.
@@ -423,6 +425,7 @@ class AmControl extends AmObject{
 
       // Mezclar con la configuracion del padre
       $conf = self::mergeConf($confParent, $conf);
+      
     }
 
     // Retornar la configuracion obtenida
