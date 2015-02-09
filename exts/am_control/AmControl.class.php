@@ -18,7 +18,8 @@ class AmControl extends AmObject{
     $paths = array(),       // Carpetas donde se buscara las vistas
     $view = null,           // Nombre de la vista a renderizar
     $filters = array(),     // Filtros agregados
-    $credentials = array(), // Credenciales para el controlador 
+    $credentials = array(), // Credenciales para el controlador
+    $prefixs = array(),
 
     $server = null,     // Variables de SERVER
     $get = null,        // Variables recibidas por GET
@@ -391,18 +392,6 @@ class AmControl extends AmObject{
     if(is_string($conf))
       $conf = array("root" => $conf);
 
-    // Obtener la ruta del controlador
-    // Incluir controlador si existe el archivo
-    if(is_file($controlFile = "{$conf["root"]}{$control}.control.php"))
-      require_once $controlFile;
-
-    // Cargar controlador como una librería
-    Am::load($conf["root"]);
-
-    // Mezclar obtener configuracion global a agregar
-    if(is_file($realFile = "{$conf["root"]}.conf.php"))
-      $conf = self::mergeConf($conf, require($realFile));
-
     // Mezclar con el archivo de configuracion en la raiz del
     // controlador.
     if(is_file($realFile = "{$conf["root"]}.control.php"))
@@ -421,13 +410,26 @@ class AmControl extends AmObject{
       $confParent = self::includeControl($conf["parent"]);
 
       // Agregar carpeta de vistas por defecto del padre.
+      $confParent["paths"][] = $confParent["root"];
       $confParent["paths"][] = $confParent["root"] . $confParent["views"];
 
       // Mezclar con la configuracion del padre
       $conf = self::mergeConf($confParent, $conf);
-      
+
     }
 
+    // Obtener la ruta del controlador
+    // Incluir controlador si existe el archivo
+    if(is_file($controlFile = "{$conf["root"]}{$control}.control.php"))
+      require_once $controlFile;
+
+    // Cargar controlador como una librería
+    // Am::load($conf["root"]);
+
+    // // Mezclar obtener configuracion global a agregar
+    // if(is_file($realFile = "{$conf["root"]}.conf.php"))
+    //   $conf = self::mergeConf($conf, require($realFile));
+    
     // Retornar la configuracion obtenida
     return $conf;
 

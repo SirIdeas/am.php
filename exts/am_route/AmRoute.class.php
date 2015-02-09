@@ -145,8 +145,13 @@ class AmRoute{
 
   }
 
+  // Callback para evaluar las rutas
+  public static final function eval($request, $routes, array $env = array(), $prevMatch = ""){
+    return self::evaluate($request, self::getAttribute("routes"), $env, $prevMatch);
+  }
+
   // Metodo busca la ruta con la que conincide la peticion actual.
-  public static final function evaluate($request, $routes, array $env = array(), $prevMatch = ""){
+  private static final function evaluate($request, $routes, array $env = array(), $prevMatch = ""){
     
     // Conviar entorno de la ruta con el heredado
     if(isset($routes["env"]))

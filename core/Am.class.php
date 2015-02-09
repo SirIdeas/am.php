@@ -6,13 +6,13 @@
 
 final class Am{
 
-  public static
+  protected static
 
     // Define las callbacks del sistema
     $callbacks = array(
 
       /**** Rutas ****/
-      // route.eval (request, routes)                   : Evalucación del route
+      // route.eval (request)                           : Evalucación del route
       
       /**** Respuestas ****/
       // response.file (file, env)                      : Responder con archivo
@@ -272,13 +272,6 @@ final class Am{
   // Inclusion de archivos y extenciones
   ///////////////////////////////////////////////////////////////////////////////////
 
-  // Incluye varias extensiones o archivos
-  public static function requireFiles(array $requires){
-    // Incluir dependencias recursivamente
-    foreach ($requires as $value)
-      self::requireFile($value);
-  }
-
   // Cargador de Amathista
   public static function load($file){
 
@@ -332,8 +325,8 @@ final class Am{
       
   }
 
-  // Funcion para incluir un archivo
-  public static function requireFile($file){
+  // Funcion para incluir una extension
+  public static function requireExt($file){
 
     // Agregar extension
     if(self::load($file))
@@ -341,7 +334,7 @@ final class Am{
 
     // Buscar un archivo dentro de las carpetas
     foreach(self::$paths as $path)
-      if(self::load("{$path}{$file}"))
+      if(self::load($path.$file))
         return true;
 
     // No se agregó la extension
@@ -358,8 +351,15 @@ final class Am{
       $alias = self::$aliasExts[$alias];
     
     // Incluir extension    
-    return self::requireFile($alias);
+    return self::requireExt($alias);
 
+  }
+
+  // Incluye varias extensiones o archivos
+  public static function requireFiles(array $requires){
+    // Incluir dependencias recursivamente
+    foreach ($requires as $value)
+      self::requireExt($value);
   }
 
   ///////////////////////////////////////////////////////////////////////////////////
@@ -378,7 +378,7 @@ final class Am{
     self::requireAliasExts(self::$confs["sessionManager"]);
 
     // Incluir manejador principal de session
-    Am::requireFile("core/am_session/");
+    Am::requireExt("core/am_session/");
 
   }
 
@@ -472,10 +472,7 @@ final class Am{
     self::requireFiles(self::getAttribute("requires"));
 
     // Llamado de accion para evaluar ruta
-    self::call("route.eval",
-      $request,
-      self::getAttribute("routes")
-    );
+    self::call("route.eval", $request);
 
   }
 

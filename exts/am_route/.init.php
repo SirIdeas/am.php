@@ -1,4 +1,4 @@
 <?php
 
 // Atender llamada de evaluacion de rutas
-Am::setCallback("route.eval", "AmRoute::evaluate");
+Am::setCallback("route.eval", "AmRoute::eval");
