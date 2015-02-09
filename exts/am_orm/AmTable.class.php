@@ -252,19 +252,6 @@ class AmTable extends AmObject{
 
   }
 
-  // Devuelve todos lo validators de la tabla o los de un campo
-  public function getValidators($name = null){
-    if(isset($name))
-      return isset($this->validators[$name])? $this->validators[$name] : null;
-    return $this->validators;
-  }
-
-  // Devuelve un validator en especifico
-  public function getValidator($name, $validatorName){
-    return isset($this->validators[$name][$validatorName])?
-      $this->validators[$name][$validatorName] : null;
-  }
-
   // Indica su un campo forma o no parte del primary key de la tabla
   public function isPk($fieldName){
     return in_array($fieldName, $this->getPks());
@@ -311,19 +298,41 @@ class AmTable extends AmObject{
       
   }
 
+  // Devuelve todos lo validators de la tabla o los de un campo
+  public function getValidators($name = null){
+    if(isset($name))
+      return isset($this->validators[$name])? $this->validators[$name] : null;
+    return $this->validators;
+  }
+
+  // Devuelve un validator en especifico
+  public function getValidator($name, $validatorName){
+    return isset($this->validators[$name][$validatorName])?
+      $this->validators[$name][$validatorName] : null;
+  }
+
   // Agrega un validator a la tabla
   public function setValidator($name, $validatorName, $validator = null, $options = array()){
 
     // Si el segundo parámetro es una instancia de un validator
     // se agrega
     if($validatorName instanceof AmValidator)
-      return $this->validators($name, null, $validatorName);
+      return $this->setValidator($name, null, $validatorName);
 
+    // Si el tercer parametro es un array, entonces este representa las opciones.
+    // El nombre del parametro pasa a ser tambien el validator que se buscara.
+    if(is_array($validator))
+      return $this->setValidator($name, $validatorName, null, $validator);
+
+    // Si no se indico el 3er parametros, entonces se tomara el nombre como validador
+    if(!isset($validator))
+      return $this->setValidator($name, $validatorName, $validatorName, $options);
+
+    // Si el validator no es una instancia de un validador
+    // Entonce obtener instancia del validador.
     if(!$validator instanceof AmValidator){
-        
         $validator = AmORM::validator($validator);
         $validator = new $validator($options);
-        
     }
     
     // Asignar el nombre al validator
@@ -466,7 +475,7 @@ class AmTable extends AmObject{
   }
 
   // Devuelve un Query que devuelve todos los registros de la Tabla
-  public function qAll($as = "q", $withFields = false){
+  public function all($as = "q", $withFields = false){
       
     // por si se obvio el primer parametro
     if(is_bool($as)){
@@ -490,7 +499,7 @@ class AmTable extends AmObject{
 
   // Obtener consulta para buscar por un campos
   public function findBy($field, $value){
-    return $this->qAll()->where("$field='$value'");
+    return $this->all()->where("$field='$value'");
   }
 
   // Obtener todos los registros de buscar por un campos
@@ -506,7 +515,7 @@ class AmTable extends AmObject{
   // Obtener la consulta para encontrar el registro con un determinado ID
   public function findById($id){
     
-    $q = $this->qAll();   // Obtener consultar para obtener todos los registros  
+    $q = $this->all();   // Obtener consultar para obtener todos los registros  
     $pks = $this->getPks();  // Obtener el primary keys
 
     // Si es un array no asociativo

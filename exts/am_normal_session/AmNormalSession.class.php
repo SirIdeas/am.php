@@ -40,8 +40,8 @@ final class AmNormalSession{
   }
   
   // Elimina una variable de la sesion
-  public final static function delete($name){
-    unset($_SESSION[self::$sessionId][$name]);
+  public final static function delete($index){
+    unset($_SESSION[self::$sessionId][$index]);
   }
 
 }

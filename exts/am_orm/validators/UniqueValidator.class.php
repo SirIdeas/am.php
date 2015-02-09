@@ -13,7 +13,7 @@ class UniqueValidator extends AmValidator{
     
     // Crear una consulta de todos los registro en la tabla del model
     // Con el mismo valor de actual del modelo en el campo evaluado
-    $result = $model->getTable()->qAll()
+    $result = $model->getTable()->all()
       ->where("{$this->getFieldName()}='{$this->value($model)}'");
 
     // Se agrega una condicion and por cada campo extra configurado

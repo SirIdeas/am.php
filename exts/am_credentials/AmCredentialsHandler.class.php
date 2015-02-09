@@ -22,12 +22,12 @@ final class AmCredentialsHandler{
 
   // Constructor de la clase
   public function __construct(array $params = array()){
-    
+
     // Obtener la configuracion
     $conf = Am::getAttribute("credentials", array());
 
     // Inicializar parametros
-    $this->authUrl = itemOr("authUrl", $conf);  
+    $this->authUrl = itemOr("authUrl", $conf);
     
     // Aignar clase que se utilizará para las credenciales    
     $this->setCredentialsClass(
@@ -53,7 +53,7 @@ final class AmCredentialsHandler{
       AmSession::delete("credentials_id");
       $this->credentialsId = null;
     }
-    
+
   }
   
   // Indica si hay un usuario autenticado o no
@@ -119,7 +119,7 @@ final class AmCredentialsHandler{
       // de las credenciales del grupo.
       $hasOneCredential = false;
       foreach($credential as $credentialOr){
-        if($c->hasCredential($credentialOr)){
+        if($this->credentials->hasCredential($credentialOr)){
           $hasOneCredential = true;
           break;
         }
@@ -134,33 +134,6 @@ final class AmCredentialsHandler{
     
     // Tiene todas las credenciales
     return true;
-
-  }
-  
-  // Verificar su un accion necesita la credencial solicitada
-  private function actionNeedCredentials($action, $credential){
-
-    // si la credenciale soliocitada no es un array se
-    // se entenderá que todas las acciones nececitan 
-    // dicha credencial.
-    if(!is_array($credential))
-      return true;
-
-    // Si esta definido el parametro only se chequea
-    // que la accion este dentro de las acciones que necesitan
-    // esta credencial.
-    if(isset($credential["only"]) && is_array($credential["only"]))
-      return in_array($action, $credential["only"]);
-
-    // Si esta definido el parametro except se chequea
-    // que la accion este dentro de las acciones que no 
-    // necesitan esta credencial.
-    if(isset($credential["except"]) && is_array($credential["except"]))
-      return !in_array($action, $credential["except"]);
-
-    // De lo contrario la accion no requiere dicha credencial
-    return false;
-
 
   }
 
@@ -183,7 +156,7 @@ final class AmCredentialsHandler{
 
       // Si la accion que se ejecutada no necetida dicha
       // credencial se continua con la verificacion de la próxima
-      if(!$this->actionNeedCredentials($credential, $action))
+      if(!self::actionNeedCredentials($credential, $action))
         continue;
         
       // Convertir la credencia en array si no lo es.
@@ -198,6 +171,33 @@ final class AmCredentialsHandler{
         $this->redirectToAuth();
 
     }
+
+  }
+  
+  // Verificar su un accion necesita la credencial solicitada
+  private static function actionNeedCredentials($action, $credential){
+
+    // si la credenciale soliocitada no es un array se
+    // se entenderá que todas las acciones nececitan 
+    // dicha credencial.
+    if(!is_array($credential))
+      return true;
+
+    // Si esta definido el parametro only se chequea
+    // que la accion este dentro de las acciones que necesitan
+    // esta credencial.
+    if(isset($credential["only"]) && is_array($credential["only"]))
+      return in_array($action, $credential["only"]);
+
+    // Si esta definido el parametro except se chequea
+    // que la accion este dentro de las acciones que no 
+    // necesitan esta credencial.
+    if(isset($credential["except"]) && is_array($credential["except"]))
+      return !in_array($action, $credential["except"]);
+
+    // De lo contrario la accion no requiere dicha credencial
+    return false;
+
 
   }
 

@@ -227,7 +227,7 @@ class MysqlSource extends AmSource{
       ->selectAs("DATA_TYPE", "type")
       ->selectAs("CHARACTER_MAXIMUM_LENGTH", "charLenght")
       ->selectAs("NUMERIC_PRECISION", "floatPrecision")
-      ->selectAs("IS_NULLABLE = 'NO'", "notNull")
+      ->selectAs("IS_NULLABLE <> 'NO'", "notNull")
       ->selectAs("COLUMN_DEFAULT", "defaultValue")
       ->selectAs("COLLATION_NAME", "collage")
       ->selectAs("CHARACTER_SET_NAME", "charset")

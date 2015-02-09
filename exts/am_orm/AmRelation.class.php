@@ -16,7 +16,7 @@ class AmRelation extends AmObject{
   public function getQuery($model){
     
     // Una consulta para todos los registros de la tabla
-    $q = AmORM::table($this->table(), $this->getSource())->qAll();
+    $q = AmORM::table($this->table(), $this->getSource())->all();
     
     foreach($this->columns() as $from => $to){
       $q->where("$to='{$model->$from}'");

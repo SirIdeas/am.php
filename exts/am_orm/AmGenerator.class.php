@@ -86,7 +86,7 @@ final class AmGenerator{
 
         if($f->getNotNull()){
 
-          $relationsValidators[] = "\$this->setValidator(\"{$f->getName()}\", \"fk_{$r->getTable()}\", \"in_query\", array(\"query\" => AmORM::table(\"{$r->getTable()}\", \"{$table->getSource()->getName()}\")->qAll(), \"field\" => \"{$cols[$colName[0]]}\"));";
+          $relationsValidators[] = "\$this->setValidator(\"{$f->getName()}\", \"fk_{$r->getTable()}\", \"in_query\", array(\"query\" => AmORM::table(\"{$r->getTable()}\", \"{$table->getSource()->getName()}\")->all(), \"field\" => \"{$cols[$colName[0]]}\"));";
 
         }
 
@@ -137,8 +137,8 @@ final class AmGenerator{
 
     echo "\n\n  }";
 
-    echo "\n\n  public static function all(){";
-    echo "\n\n    return AmORM::table(\"{$table->getTableName()}\", \"{$table->getSource()->getName()}\")->qAll();";
+    echo "\n\n  public static function me(){";
+    echo "\n\n    return AmORM::table(\"{$table->getTableName()}\", \"{$table->getSource()->getName()}\");";
     echo "\n\n  }";
 
     echo "\n\n}\n";
