@@ -128,8 +128,8 @@ final class AmORM{
     // Obtener la instancia de la tabla
     $table = self::table($table, $source);
 
-    self::requireFile($table->getPathClassModelBase(), false);               // Clase base para el modelo
-    self::requireFile($table->getPathClassModel(), false); // Clase para el model
+    self::requireFile($table->getPathClassModelBase(), false);  // Clase base para el modelo
+    self::requireFile($table->getPathClassModel(), false);      // Clase para el model
 
     return $table->getClassNameModel();
 
