@@ -423,7 +423,7 @@ final class Am{
   }
 
   // Inidica si el usuario logeado tiene las credenciales solicitadas
-  public static function hasCredentiales($credential){
+  public static function hasCredentials($credential){
 
     // Si no existe la instancai del manejador de credenciales
     if(!($credentialsManager = self::call("credentials.handler")))
