@@ -2,10 +2,6 @@
 
 return array(
   
-  "init" => array(
-    "credentials" => array()
-  ),
-
   "files" => array(
     "AmCredentials.class",
     "AmCredentialsHandler.class"

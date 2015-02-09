@@ -6,7 +6,7 @@ return array(
     "smtp" => false,
     "mails" => array(
       // Configuración por defecto par ael envio de correo
-      "default" => array(
+      "defaults" => array(
         "dir" => "mails/",
       )
     ),

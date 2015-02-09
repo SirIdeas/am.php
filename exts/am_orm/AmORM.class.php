@@ -50,7 +50,7 @@ final class AmORM{
   public static function getSourceConf($sourceName = "default"){
 
     // Obtener configuraciones para las fuentes
-    $sources = Am::getAttribute("sources");
+    $sources = Am::getAttribute("sources", array());
 
     // Si no existe una configuración para el nombre de fuente
     if(!isset($sources[$sourceName]))

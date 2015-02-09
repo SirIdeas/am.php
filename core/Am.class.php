@@ -17,7 +17,7 @@ final class Am{
       /**** Respuestas ****/
       // response.file (file, env)                      : Responder con archivo
       // response.download (file, env)                  : Responder con descarga de archivo
-      // response.assets (file, assets, env)            : Responder con archivo
+      // response.assets (file, env)                    : Responder con archivo
       // response.control (control, action, params, env): Responder con controlador
 
       /**** Session ****/
@@ -199,9 +199,9 @@ final class Am{
   }
 
   // Obtener un atributo de la confiuguracion
-  public static function getAttribute($property){
+  public static function getAttribute($property, $default = null){
     self::mergePropertiesFromAllFiles("conf/{$property}", $property);
-    return itemOr($property, self::$confs);
+    return itemOr($property, self::$confs, $default);
   }
 
   // Responder con descarga de archivos

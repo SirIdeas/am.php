@@ -19,7 +19,7 @@ class AmCommand{
   public static function exec($argv){
 
     // Obtener los targets del archivo de configuracion
-    $targets = Am::getAttribute("commands");
+    $targets = Am::getAttribute("commands", array());
 
     // 1er: origen de la peticion: HTTP/consola
     $file = array_shift($argv);

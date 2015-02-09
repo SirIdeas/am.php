@@ -2,11 +2,6 @@
 
 return array(
 
-  "init" => array(
-    "sources" => array(),
-    "validators" => array(),
-  ),
-  
   "files" => array(
     "AmORM.class",
     "AmField.class",

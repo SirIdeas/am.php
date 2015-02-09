@@ -263,7 +263,7 @@ class AmMailer extends PHPMailer{
     // establecidas en el archivo de configuracion
     $options = array_merge(
       // Configuración de valores po defecto
-      isset($mails["default"])? $mails["default"] : array(),
+      isset($mails["defaults"])? $mails["defaults"] : array(),
       // Configuración de valores del mail
       isset($mails[$name])? $mails[$name] : array(),
       // Parametros locales
@@ -278,7 +278,8 @@ class AmMailer extends PHPMailer{
       $smtpConfs = Am::getAttribute("smtp");
 
       // Si se debe tomar la configuracion por defecto
-      if($options["smtp"] === true) $options["smtp"] = "default";
+      if($options["smtp"] === true)
+        $options["smtp"] = "default";
 
       // Asignar configuraio
       $options["smtp"] = $smtpConfs[$options["smtp"]];

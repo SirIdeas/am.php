@@ -87,16 +87,9 @@ class AmRoute{
   // Responde con un recurso configurado
   private static function assets($file, $env){
 
-    // Obtener los recursos configurados
-    $assets = Am::getAttribute("assets");
-
-    // Si no exite un recurso con el nombre del solicitado retornar falso
-    if(!isset($assets[$file])) return false;
-
     // Responder con archivos
     return Am::call("response.assets",
       $file,
-      $assets[$file],
       $env
     );
 

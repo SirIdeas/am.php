@@ -2,10 +2,6 @@
  
 return array(
   
-  "init" => array(
-    "assets" => array(),
-  ),
-
   "files" => array(
     "AmAsset.class"
   ),

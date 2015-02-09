@@ -26,7 +26,7 @@ class AmValidator extends AmObject{
       
       // Obtener la configuraciones de los validators
       if(!isset(self::$conf))
-        self::$conf = Am::getAttribute("validators");
+        self::$conf = Am::getAttribute("validators", array());
 
       // Obtener el nombre del validator
       $validatorName = strtolower($this->getValidatorName());
