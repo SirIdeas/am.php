@@ -286,7 +286,8 @@ class AmControl extends AmObject{
         continue;
       
       // Si se indica una ruta de redirección se lleva a esa ruta
-      Am::redirectIf(isset($filter["redirect"]), $filter["redirect"]);
+      if(isset($filter["redirect"]))
+        Am::gotoUrl($filter["redirect"]);
 
       // Si no retornar false para indicar que no se pasó el filtro.
       return false;
@@ -418,9 +419,12 @@ class AmControl extends AmObject{
 
     }
 
+    // Obtener el nombre real del controlador
+    $conf["name"] = itemOr("name", $conf, $control);
+
     // Obtener la ruta del controlador
     // Incluir controlador si existe el archivo
-    if(is_file($controlFile = "{$conf["root"]}{$control}.control.php"))
+    if(is_file($controlFile = "{$conf["root"]}{$conf["name"]}.control.php"))
       require_once $controlFile;
 
     // Incluir como extension
@@ -447,7 +451,7 @@ class AmControl extends AmObject{
     );
 
     // Si no se puede instanciar el controlador retornar false.
-    if(null === ($control = Am::getInstance("{$control}Control", $conf)))
+    if(null === ($control = Am::getInstance("{$conf["name"]}Control", $conf)))
       return false;
 
     // Despachar la accion
