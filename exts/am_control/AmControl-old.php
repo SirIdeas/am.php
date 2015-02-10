@@ -123,7 +123,7 @@ class AmControl extends AmHash{
     // ),
     
     // Roles lists for controller
-    'credentials' => false
+    // 'credentials' => false
       /*
        * // Inidcates dont't to be loaded parent credentials
        * array(false)
@@ -169,7 +169,7 @@ class AmControl extends AmHash{
     // ,
     
     // // Filters configurations. Dont is merge with parent configuration
-    'filters' => array(
+    // 'filters' => array(
       
     //    * // indicates to be loaded de parent configuration
     //    * 0 => true,
@@ -229,7 +229,7 @@ class AmControl extends AmHash{
        * // Only Methos POST e.g.: 
        * 'post_actionName' => array(...)
        */
-    ),
+    // ),
     
     // // Javascript files list to include in html request
     // 'js' => array(
