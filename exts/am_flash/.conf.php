@@ -6,4 +6,9 @@ return array(
     "AmFlash.class"
   ),
 
+  // REVISAR
+  // "requires" => array(
+  //   "core/am_session/",
+  // ),
+
 );

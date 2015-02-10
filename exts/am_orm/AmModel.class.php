@@ -145,9 +145,9 @@ class AmModel extends AmObject{
     foreach($fields as $fieldName){
       $field = $table->getField($fieldName);  // Obtener el campos
       // Si exist el campo y es no es un campo autoincrementable
-      if(!$field || !$field->getAutoIncrement())
+      if((!$field || !$field->getAutoIncrement()) && isset($values[$fieldName]))
         // Se asigna el valor
-        $this->$fieldName = isset($values[$fieldName])? $values[$fieldName] : null;
+        $this->$fieldName = $values[$fieldName];
     }
     
   }

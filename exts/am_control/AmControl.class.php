@@ -7,19 +7,23 @@
 class AmControl extends AmObject{
 
   private static
+
     // Callbacks para mezclar atributos
     $mergeFunctions = array(
       "paths" => "array_merge",
-      "prefix" => "array_merge"
+      "prefix" => "array_merge",
+      "actionAllows" => "array_merge"
     );
 
   protected
-    $root = null,           // Carpeta raiz del controlador
-    $paths = array(),       // Carpetas donde se buscara las vistas
-    $view = null,           // Nombre de la vista a renderizar
-    $filters = array(),     // Filtros agregados
-    $credentials = false,   // Credenciales para el controlador
-    $prefixs = array(),
+    $url = "",                // URL base del controlador
+    $root = null,             // Carpeta raiz del controlador
+    $paths = array(),         // Carpetas donde se buscara las vistas
+    $view = null,             // Nombre de la vista a renderizar
+    $filters = array(),       // Filtros agregados
+    $credentials = false,     // Credenciales para el controlador
+    $prefixs = array(),       // Prefijos para diferentes elementos en el controlador
+    $actionAllows = array(),  // Acciones permitidas
 
     $server = null,     // Variables de SERVER
     $get = null,        // Variables recibidas por GET
@@ -38,6 +42,11 @@ class AmControl extends AmObject{
     $this->request = new AmObject($_REQUEST);
     $this->env = new AmObject($_ENV);
 
+  }
+
+  // Devuelve la URL de base del controlador
+  final public function getUrl(){
+    return $this->url;
   }
 
   // Propiedad para get/set para render
@@ -138,6 +147,27 @@ class AmControl extends AmObject{
     header("content-type: {$contentType}");
     echo $content;
 
+  }
+
+  // Devuelve el array de acciones permitidas
+  final public function getActionAllows(){
+    return $this->actionAllows;
+  }
+
+  // Indica si una accion esta permitida o no.
+  // Si las acciones permitidas no tiene el item 
+  // correspondiente a la acción solicitada entonces
+  // se asume que esta permitida la acción.
+  final public function isActionAllow($action){
+    return isset($this->actionAllows[$action])? 
+      $this->actionAllows[$action] : true;
+  }
+
+  // Revisa si una accion esta permitida. Si la acción no esta 
+  // permitida se redirigue a la url raiz del controlador
+  final public function checkIsActionAllow($action){
+    if(!$this->isActionAllow($action))
+      Am::gotoUrl($this->url);
   }
 
   // Despachar una acción
@@ -301,6 +331,9 @@ class AmControl extends AmObject{
 
   // Ejecuta una accion determinada
   final protected function executeAction($action, $method, array $params){
+
+    // Chequear si esta permitida o no la acción
+    $this->checkIsActionAllow($action);
 
     // Verificar las credenciales
     Am::getCredentialsHandler()
