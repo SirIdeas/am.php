@@ -400,12 +400,16 @@ class AmControl extends AmObject{
 
     // Si tiene no tiene padre o si el padre esta vacío
     // y se mezcla con la configuracion por defecto
-    if(!isset($conf["parent"]) || empty($conf["parent"]))
+    if(!isset($conf["parent"]) || empty($conf["parent"])){
+      
       // Mezclar con valores por defecto
       $conf = self::mergeConf($defaults, $conf);
 
+      // Obtener el nombre real del controlador
+      $controlName = itemOr("name", $conf, $control);
+
     // Mezclar con configuracion del padre
-    else{
+    }else{
 
       // Obtener la configuracion del padre
       $confParent = self::includeControl($conf["parent"]);
@@ -414,18 +418,20 @@ class AmControl extends AmObject{
       $confParent["paths"][] = $confParent["root"];
       $confParent["paths"][] = $confParent["root"] . $confParent["views"];
 
+      // Obtener el nombre real del controlador antes de mezclar con el padre
+      $controlName = itemOr("name", $conf, $control);
+
       // Mezclar con la configuracion del padre
       $conf = self::mergeConf($confParent, $conf);
 
     }
 
-    // Obtener el nombre real del controlador
-    $conf["name"] = itemOr("name", $conf, $control);
-
     // Obtener la ruta del controlador
     // Incluir controlador si existe el archivo
-    if(is_file($controlFile = "{$conf["root"]}{$conf["name"]}.control.php"))
+    if(is_file($controlFile = "{$conf["root"]}{$controlName}.control.php")){
+      $conf["name"] = $controlName;
       require_once $controlFile;
+    }
 
     // Incluir como extension
     Am::load($conf["root"]);
