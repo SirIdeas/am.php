@@ -10,9 +10,10 @@ class AmControl extends AmObject{
 
     // Callbacks para mezclar atributos
     $mergeFunctions = array(
-      "paths" => "array_merge",
-      "prefix" => "array_merge",
-      "actionAllows" => "array_merge"
+      "paths"         => "array_merge",
+      "prefix"        => "array_merge",
+      "actionAllows"  => "array_merge",
+      "filters"       => "merge_r_if_snd_first_not_false",
     );
 
   protected
