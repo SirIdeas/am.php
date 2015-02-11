@@ -147,7 +147,16 @@ class AmRoute{
 
   // Callback para evaluar las rutas
   public static final function evaluate($request, array $env = array()){
-    return self::evalMatch($request, Am::getAttribute("routes", array()), $env);
+
+    // Si retorna verdadero 
+    if(true === ($lastError = self::evalMatch($request, Am::getAttribute("routes", array()), $env)))
+      return true;
+
+    // No se encontró una ruta valida
+    
+    Am::e404($lastError);
+    return false;
+
   }
 
   // Metodo busca la ruta con la que conincide la peticion actual.
@@ -156,6 +165,8 @@ class AmRoute{
     // Conviar entorno de la ruta con el heredado
     if(isset($routes["env"]))
       $env = array_merge($env, $routes["env"]);
+
+    $lastError = "not found route";
 
     // Por cada ruta
     foreach($routes["routes"] as $from => $to){
@@ -166,11 +177,11 @@ class AmRoute{
       
       // Si es un grupo de rutas
       if(is_array($to)){
-        if(self::evalMatch(
+        if(true === ($lastError = self::evalMatch(
           $request,
           isset($to["routes"])? $to : array("routes" => $to),
           $env,
-          $from))
+          $from)))
             return true;
         continue;
       }
@@ -181,69 +192,69 @@ class AmRoute{
       // Si hace match con la peticion
       if(false !== ($params = $r->match($request))){
         
-        // Respuestas como array
-        if(is_string($to)){
+        // Calcular destino
+        $destiny = $to;
 
-          // Calcular destino
-          $destiny = $to;
-
-          // Reemplazar cada parámetro en el destino de la peticion
-          // Los parámetros que no esten el destino de la peticion serán
-          // los parámetros para la llamada de de respuesta
-          foreach($params as $key => $val){
-            $newDestiny = str_replace(":{$key}", $val, $destiny);
-            if($newDestiny !== $destiny) unset($params[$key]);
-            $destiny = $newDestiny;
-          }
-
-          // Responder como una función
-          if(function_exists($destiny)){
-
-            // Llamar funcion
-            call_user_func_array($destiny, $params);
-            return true;
-
-          // Respuesta como template, file o assets
-          }elseif(preg_match("/^(template|file|assets|download)#(.*)$/", $destiny, $a)){
-
-            // Renderizar
-            if(self::$a[1]($a[2], array_merge($env, $params))) return true;
-            continue; // Si vista no existe ir a error 404
-
-          // Respuesta como un controlador
-          }elseif(preg_match("/^(.*)@(.*)$/", $destiny, $a)){
-
-            // Despachar con controlador
-            if(Am::call("response.control",
-              $a[1],
-              $a[2],
-              $params,
-              $env
-            ) === true) return true;
-
-            continue;
-
-          }elseif(preg_match("/^(.*)::(.*)$/", $destiny, $a)){
-            array_shift($a);
-            if(call_user_func_array("method_exists", $a)){
-              call_user_func_array($a, $params);
-              return true;
-            }
-            continue;
-
-          }
-
+        // Reemplazar cada parámetro en el destino de la peticion
+        // Los parámetros que no esten el destino de la peticion serán
+        // los parámetros para la llamada de de respuesta
+        foreach($params as $key => $val){
+          $newDestiny = str_replace(":{$key}", $val, $destiny);
+          if($newDestiny !== $destiny) unset($params[$key]);
+          $destiny = $newDestiny;
         }
 
-        // Si la ruta no es un string entonces no es una ruta válida.
-        return false;
+        // Responder como una función
+        if(function_exists($destiny)){
+
+          // Llamar funcion
+          call_user_func_array($destiny, $params);
+          return true;
+
+        // Respuesta como template, file o assets
+        }elseif(preg_match("/^(template|file|assets|download)#(.*)$/", $destiny, $a)){
+
+          // Renderizar
+          if(self::$a[1]($a[2], array_merge($env, $params)))
+            return true;
+
+          // Si vista no existe ir a error 404
+          $lastError = "not fount {$a[1]}";
+
+        // Respuesta como un controlador
+        }elseif(preg_match("/^(.*)@(.*)$/", $destiny, $a)){
+          array_shift($a);
+
+          // Despachar con controlador
+          if(Am::call("response.control",
+            $a[0],
+            $a[1],
+            $params,
+            $env
+          ) === true)
+            return true;
+
+          // La accion en el controlador no existe
+          $lastError = "not fount action {$a[0]}@{$a[1]}";
+
+        }elseif(preg_match("/^(.*)::(.*)$/", $destiny, $a)){
+          array_shift($a);
+          if(call_user_func_array("method_exists", $a)){
+            call_user_func_array($a, $params);
+            return true;
+          }
+
+          // El callback no existe
+          $lastError = "not fount callback {$a[0]}::$a[1]";
+
+        }
 
       }
 
     }
 
     // Si ninguna ruta coincide con la petición entonces se devuelve un error.
-    return false;
+    return $lastError;
 
   }
 
