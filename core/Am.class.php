@@ -181,7 +181,7 @@ final class Am{
 
   // Cargar propiedades de todos los archivos de coniguracion en las carpetas
   // del ambito
-  public static function mergePropertiesFromAllFiles($filename, $property = null, $extend = false){
+  public static function mergePropertiesFromAllFiles($filename = "", $property = null, $extend = false){
 
     // Recorrer cada uno de las carpetas en el path
     foreach (self::$paths as $path)
@@ -191,8 +191,9 @@ final class Am{
   }
 
   // Agrega una carpeta al final de la lista de paths
-  public static function addPath($path){
-    self::$paths[] = $path;
+  public static function addDir($path){
+    self::$paths[] = realpath($path);
+    self::$paths = array_unique(self::$paths);
   }
 
   // Agregar una ruta a la lista de rutas
@@ -367,7 +368,7 @@ final class Am{
 
     // Buscar un archivo dentro de las carpetas
     foreach(self::$paths as $path)
-      if(self::load($path.$file))
+      if(self::load("$path/$file"))
         return true;
 
     // No se agregó la extension
@@ -447,10 +448,16 @@ final class Am{
   ///////////////////////////////////////////////////////////////////////////////////
 
   // Inicio del Amathista
-  public static function task(){
+  public static function task($appRoot = null){
+
+    // Cambiar directorio de trabajo si este fue asignado
+    if(isset($appRoot)){
+      self::addDir($appRoot);
+      chdir($appRoot);
+    }
 
     // Obtener las configuraciones
-    self::mergePropertiesFromAllFiles("conf/");
+    self::mergePropertiesFromAllFiles();
 
     // Obtener el valor 
     $errorReporting = self::getAttribute("errorReporting");
@@ -484,7 +491,7 @@ final class Am{
       $request = substr_replace($_SERVER["REQUEST_URI"], "", 0, strlen(self::$urlBase));
 
       // Validacion para cuando este en la peticion no comienze con "/"
-      if($request[0] !== "/")
+      if(empty($request) || $request[0] !== "/")
         $request = "/" . $request;
 
     }
@@ -502,6 +509,9 @@ final class Am{
   // UTILIDADES
   ///////////////////////////////////////////////////////////////////////////////////
 
+  public static function findFile($file){
+    return self::findFileIn($file, self::$paths);
+  }
   // Busca un archivo en los paths indicados
   public static function findFileIn($file, array $paths){
     
@@ -510,7 +520,7 @@ final class Am{
 
     // Buscar un archivo dentro de las carpetas
     foreach($paths as $path)
-      if(is_file($realPath = "{$path}{$file}"))
+      if(is_file($realPath = "{$path}/{$file}"))
         return $realPath;
 
     return false;
@@ -518,12 +528,12 @@ final class Am{
   }
 
   // Obtienen tipo mime de un determinado archivo.
-  public final static function mimeType($filename, $mimePath = null) {
-    $mimePath = isset($mimePath)? $mimePath : AM_FOLDER . "resources";
+  public final static function mimeType($filename) {
+    $mimePath = self::findFileIn("resources/mime.types", self::$paths);
     $fileext = substr(strrchr($filename, "."), 1);
     if (empty($fileext)) return (false);
     $regex = "/^([\w\+\-\.\/]+)\s+(\w+\s)*($fileext\s)/i";
-    $lines = file("$mimePath/mime.types");
+    $lines = file($mimePath);
     foreach($lines as $line) {
       if (substr($line, 0, 1) == "#") continue; // skip comments
       $line = rtrim($line) . " ";
@@ -566,6 +576,3 @@ final class Am{
 // Callbacks por defecto
 Am::setCallback("response.file",   "Am::respondeFile");
 Am::setCallback("response.download",   "Am::downloadFile");
-
-Am::addPath(AM_FOLDER);
-Am::addPath(getcwd()."/");

@@ -7,7 +7,7 @@
 abstract class AmSource extends AmObject{
 
   protected static
-    $ORM_FOLDER = "/model";
+    $ORM_FOLDER = "model";
 
   // Propiedades
   protected
@@ -683,7 +683,7 @@ abstract class AmSource extends AmObject{
   
   // Devuelve la carpeta destino para los orm
   public static function getFolderOrm(){
-    return getcwd() . self::$ORM_FOLDER;
+    return self::$ORM_FOLDER;
   }
 
 }
