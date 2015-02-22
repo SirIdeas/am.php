@@ -61,6 +61,7 @@ class AmValidator extends AmObject{
       return true;
     
     // Realizar validacion
+    $this->value = $this->value($model);
     return $this->validate($model);
     
   }
@@ -76,7 +77,7 @@ class AmValidator extends AmObject{
   public function getFieldName(){           return $this->name; }
   public function getSustitutions(){        return $this->sustitutions; }
   public function getSustitution($substr){  return isset($this->sustitutions[$substr])? $this->sustitutions[$substr] : null; }
-  public function getMessage(){
+  public function getMessage(AmModel $model){
 
     $ret = $this->message;  // Obtener mensaje
 

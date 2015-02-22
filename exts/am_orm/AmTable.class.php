@@ -314,6 +314,14 @@ class AmTable extends AmObject{
   // Agrega un validator a la tabla
   public function setValidator($name, $validatorName, $validator = null, $options = array()){
 
+    // Si el nombre es un array, entonces
+    if(is_array($name)){
+      // Agregar un  validator por cada elemento
+      foreach ($name as $value)
+        $this->setValidator($value, $validatorName, $validator, $options);
+      return;
+    }
+
     // Si el segundo parámetro es una instancia de un validator
     // se agrega
     if($validatorName instanceof AmValidator)

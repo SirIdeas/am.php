@@ -275,7 +275,7 @@ class AmModel extends AmObject{
       // Si el modelo no cumple con la validacion
       if(!$validator->isValid($this))
         // Se agrega el error
-        $this->addError($field, $nameValidator, $validator->getMessage());
+        $this->addError($field, $nameValidator, $validator->getMessage($this));
     }
 
   }
