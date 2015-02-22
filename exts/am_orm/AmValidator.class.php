@@ -57,9 +57,8 @@ class AmValidator extends AmObject{
     
     // Condiciones para no validar
     if((!$notNull && null === $this->value($model) && false === $this->getForce()) ||
-        !($fnIf === null || call_user_func_array($fnIf, array($this, $model)))){
+        (method_exists($model, $fnIf) && !$model->$fnIf($this)))
       return true;
-    }
     
     // Realizar validacion
     return $this->validate($model);
@@ -110,9 +109,7 @@ class AmValidator extends AmObject{
   
   // Obtener el valor de un modelo dependiendo el campos vigilado por el validator
   protected function value(AmModel $model){
-    $name = $this->getFieldName();
-    $value = $model->$name;
-    return $value;
+    return $model->getFieldValue($this->getFieldName());
   }
 
 }

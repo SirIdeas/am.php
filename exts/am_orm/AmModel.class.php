@@ -83,6 +83,18 @@ class AmModel extends AmObject{
   public function errorsCount(){ return $this->errorsCount; }
   public function getRealValues(){ return $this->realValues; }
   public function getRealValue($name){ return isset($this->realValues[$name]) ? $this->realValues[$name] : null; }
+
+  // Devuelve el valor de un campo. Si existe un metodo get para dicho campo
+  // se obtiene el valor mediante este. De lo contrario se obtiene
+  // directamente.
+  public function getFieldValue($field){
+
+    // Obtener el valor del campo
+    if(method_exists($this, $methodName = "get_{$field}"))
+      return $this->$methodName();
+    return $this->$field;
+
+  }
   
   // Devuelve todos los errores del model, los errores de un campo, o un error especifico
   public function getErrors($field = null, $errorName = null){
@@ -252,7 +264,6 @@ class AmModel extends AmObject{
     // Validar todos los campos
     foreach($validatorNames as $field)
       $this->validateField($field);
-
   }
 
   // Ejecuta las validaciones para un campo
@@ -260,11 +271,12 @@ class AmModel extends AmObject{
     // Obtener validator del campo
     $validators = $this->getTable()->getValidators($field);
 
-    foreach($validators as $nameValidator => $validator)
+    foreach($validators as $nameValidator => $validator){
       // Si el modelo no cumple con la validacion
       if(!$validator->isValid($this))
         // Se agrega el error
         $this->addError($field, $nameValidator, $validator->getMessage());
+    }
 
   }
   
