@@ -392,7 +392,7 @@ class AmTable extends AmObject{
 
   // Vaciar una tabla
   public function sqlTruncate(){  return $this->getSource()->sqlTruncate($this); }
-  public function truncate(){     return $this->getSource()->truncate($this) !== false; }
+  public function truncate($ignoreFK = false){     return $this->getSource()->truncate($this, $ignoreFK) !== false; }
 
   // Insertar registros en la tabla
   public function sqlInsertInto($values, array $fields = array()){  return $this->getSource()->sqlInsertInto($this, $values, $fields); }

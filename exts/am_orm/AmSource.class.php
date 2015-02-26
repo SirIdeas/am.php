@@ -73,7 +73,7 @@ abstract class AmSource extends AmObject{
     if($table instanceof AmTable)
       return $table;
 
-    // Si ya existe la instancia en de la tabla 
+    // Si ya existe la instancia de la tabla
     if($this->hasTableInstance($table))
       return $this->tables[$table];
 
@@ -515,8 +515,14 @@ abstract class AmSource extends AmObject{
   }
 
   // Vaciar tabla
-  public function truncate(AmTable $t){
-    return false !== $this->execute($this->sqlTruncate($t));
+  public function truncate(AmTable $t, $ignoreFK = false){
+    $sql = "";
+    if($ignoreFK === true)
+      $sql .= $this->setServerVar("FOREIGN_KEY_CHECKS", 0);
+    $ret = $this->execute($this->sqlTruncate($t));
+    if($ignoreFK === true)
+      $sql .= $this->setServerVar("FOREIGN_KEY_CHECKS", 1);
+    return false !== $ret;
   }
 
   // Indica si la tabla existe
