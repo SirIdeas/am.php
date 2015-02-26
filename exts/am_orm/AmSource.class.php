@@ -310,6 +310,21 @@ abstract class AmSource extends AmObject{
 
   }
 
+  // Ejecuta un conjunto de consultas
+  public function executeGroup(array $queries){
+    $sqls = array();
+    foreach ($queries as $key => $q)
+      // Si es un query obtener el SQL
+      if($q instanceof AmQuery)
+        $sqls[] = $q->sql();
+      else
+        // Si no convetir a string
+        $sqls[] = (string)$q;
+
+    return $this->execute(implode(";", $sqls));
+    
+  }
+
   // Devuelve un array con el listado de tablas de la BD
   public function getTablesFromSchema(){
     return $this->newQuery($this->sqlGetTables())
