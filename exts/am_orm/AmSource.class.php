@@ -406,7 +406,7 @@ abstract class AmSource extends AmObject{
       if(!isset($ret[$name])){
         $ret[$name] = array(
           "source" => $sourceName,
-          "table" => $fk["name"],
+          "table" => $fk["toTable"],
           "columns" => array()
         );
       }

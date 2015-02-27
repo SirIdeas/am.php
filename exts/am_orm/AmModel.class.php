@@ -142,7 +142,7 @@ class AmModel extends AmObject{
     // Recorrer cada columan de cada referencia
     $references = $this->getTable()->getReferencesTo();
     foreach($references as $rel){
-      $cols = array_keys($rel->columns());
+      $cols = array_keys($rel->getColumns());
       foreach($cols as $from){
         
         // Las referencias si es un valor vacío se debe setear a null 
