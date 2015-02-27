@@ -16,7 +16,6 @@ return array(
     "exts/am_data_time/",
     "exts/am_asset/",
     "exts/am_template/",
-    // "exts/am_command/",
     "exts/am_mailer/",
     "exts/am_flash/",
     "exts/am_orm/",
