@@ -488,7 +488,8 @@ final class Am{
         self::$urlBase = "";
       
       // Obtener peticion
-      $request = substr_replace($_SERVER["REQUEST_URI"], "", 0, strlen(self::$urlBase));
+      // $request = substr_replace($_SERVER["REQUEST_URI"], "", 0, strlen(self::$urlBase));
+      $request = substr_replace($_SERVER["REDIRECT_URL"], "", 0, strlen(self::$urlBase));
 
       // Validacion para cuando este en la peticion no comienze con "/"
       if(empty($request) || $request[0] !== "/")
