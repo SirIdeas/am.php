@@ -151,7 +151,7 @@ class AmRoute{
     // Si retorna verdadero 
     if(true === ($lastError = self::evalMatch($request, Am::getAttribute("routes", array()), $env)))
       return true;
-
+    
     // No se encontró una ruta valida
     
     Am::e404($lastError);
@@ -212,16 +212,16 @@ class AmRoute{
           return true;
 
         // Respuesta como template, file o assets
-        }elseif(preg_match("/^(template|file|assets|download)#(.*)$/", $destiny, $a)){
-
-          // Renderizar
-          if(self::$a[1]($a[2], array_merge($env, $params)))
+        }elseif(preg_match("/^(.*)::(.*)$/", $destiny, $a)){
+          array_shift($a);
+          if(call_user_func_array("method_exists", $a)){
+            call_user_func_array($a, $params);
             return true;
+          }
 
-          // Si vista no existe ir a error 404
-          $lastError = "not fount {$a[1]}";
+          // El callback no existe
+          $lastError = "not fount callback {$a[0]}::$a[1]";
 
-        // Respuesta como un controlador
         }elseif(preg_match("/^(.*)@(.*)$/", $destiny, $a)){
           array_shift($a);
 
@@ -237,16 +237,25 @@ class AmRoute{
           // La accion en el controlador no existe
           $lastError = "not fount action {$a[0]}@{$a[1]}";
 
-        }elseif(preg_match("/^(.*)::(.*)$/", $destiny, $a)){
-          array_shift($a);
-          if(call_user_func_array("method_exists", $a)){
-            call_user_func_array($a, $params);
+        }elseif(preg_match("/^(redirect|goto)#(.*)$/", $destiny, $a)){
+
+          $a[1] = itemOr($a[1], array(
+            "redirect" => "redirect",
+            "goto" => "gotoUrl",
+          ));
+          Am::$a[1]($a[2]);
+          return true;
+
+        }elseif(preg_match("/^(template|file|assets|download)#(.*)$/", $destiny, $a)){
+
+          // Renderizar
+          if(self::$a[1]($a[2], array_merge($env, $params)))
             return true;
-          }
 
-          // El callback no existe
-          $lastError = "not fount callback {$a[0]}::$a[1]";
+          // Si vista no existe ir a error 404
+          $lastError = "not fount {$a[1]}";
 
+        // Respuesta como un controlador
         }
 
       }
