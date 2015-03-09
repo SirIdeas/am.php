@@ -1,7 +1,7 @@
 <?php
 
 return array(
-  
+
   "files" => array(
     "php_mailer/PHPMailerAutoload",
     "AmMailer.class",

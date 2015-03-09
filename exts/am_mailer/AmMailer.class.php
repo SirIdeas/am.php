@@ -221,8 +221,8 @@ class AmMailer extends PHPMailer{
     // Renderizar vista mediante un callback
     $ret = Am::call("render.template",
       $this->template,
-      array($this->dir),
       array(
+        "paths" => array($this->dir),
         "ignore" => true,
         "env" => $env
       )

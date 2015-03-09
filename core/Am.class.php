@@ -13,11 +13,11 @@ final class Am{
 
       /**** Rutas ****/
       // route.evaluate (request)                       : Evalucación del route
-      
+
       /**** Respuestas ****/
-      // response.file (file, env)                      : Responder con archivo
-      // response.download (file, env)                  : Responder con descarga de archivo
-      // response.assets (file, env)                    : Responder con archivo
+      // response.file (file)                           : Responder con archivo
+      // response.download (file)                       : Responder con descarga de archivo
+      // response.assets (file)                         : Responder con archivo
       // response.control (control, action, params, env): Responder con controlador
 
       /**** Session ****/
@@ -48,18 +48,18 @@ final class Am{
     $paths = array(),           // Herarquia de carpetas
     $confsLoaded = array(),     // Archivos de configuración cargados.
     $confs = array(),           // Configuraciones cargadas
-    $urlBase = "";              // URL base para el sitio     
-    
+    $urlBase = "";              // URL base para el sitio
+
   // Devuelve la instancia de una clase existente. Sino existe la instancia se crea una nueva
   public final static function getInstance($className, array $params = array()){
     // Si la clase no existe devolver error
     if(!class_exists($className))
       return null;
-    
+
     // Si la instancia existe se devuelve
     if(isset(self::$instances[$className]))
       return self::$instances[$className];
-    
+
     // Si la instancia no existe se crea una instancia de la clase
     return self::$instances[$className] = new $className($params);
 
@@ -128,7 +128,7 @@ final class Am{
 
     // Si exite la funcion y existe un valor previo se mezcla a partir de la funcion designada
     if($mergeFunctions !== null && isset(self::$confs[$property])){
-      
+
       // Si se desea extender. Entonces los valores nuevos son sobre escritos pors los viejos
       if($extend === true)
         $params = array($value, self::$confs[$property]);
@@ -138,7 +138,7 @@ final class Am{
         $params = array(self::$confs[$property], $value);
 
       self::$confs[$property] = call_user_func_array($mergeFunctions, $params);
-    
+
     // Si no existe el callback se devolvera el ultimo valor
     }else
       self::$confs[$property] = $value;
@@ -147,14 +147,14 @@ final class Am{
 
   // Mezcla un conjunto de propiedades
   public static function mergeProperties(array $conf, $extend = false){
-    // Recorrer elementos obtenidos para ir 
+    // Recorrer elementos obtenidos para ir
     foreach ($conf as $property => $value)
       self::mergeProperty($property, $value, $extend);
   }
 
   // Carga un archivo de configuración
   public static function mergePropertiesFromFile($filename, $property = null, $extend = false){
-    
+
     // Obtener el nombre real del archivo
     $filename = realpath($filename);
 
@@ -197,7 +197,7 @@ final class Am{
   }
 
   // Agregar una ruta a la lista de rutas
-  public static function setRoute($route, $to){    
+  public static function setRoute($route, $to){
     // Agregar nueva ruta
     self::$confs["routes"]["routes"][$route] = $to;
   }
@@ -209,17 +209,17 @@ final class Am{
 
   // Obtener un atributo de la confiuguracion
   public static function getAttribute($property, $default = null){
-    self::mergePropertiesFromAllFiles("conf/{$property}", $property);
+    self::mergePropertiesFromAllFiles("{$property}", $property);
     return itemOr($property, self::$confs, $default);
   }
 
   // Responder con descarga de archivos
-  public static function downloadFile($file, array $env = array()){
+  public static function downloadFile($file){
     return self::respondeWithFile($file, null, null, true);
   }
 
   // Responder con archivo
-  public static function respondeFile($file, array $env = array()){
+  public static function respondeFile($file){
     // Devolver archivo
     return self::respondeWithFile($file);
   }
@@ -227,7 +227,7 @@ final class Am{
   ///////////////////////////////////////////////////////////////////////////////////
   // Urls y redicciones
   ///////////////////////////////////////////////////////////////////////////////////
-  
+
   // Devuelve la url base del sitio
   public static function urlBase(){
     return self::$urlBase;
@@ -321,7 +321,7 @@ final class Am{
           die("Am: Not fount Exts file: '{$realFile}'");
 
     }
-    
+
     // Incluir archivo init si existe
     if(is_file($realFile = "{$file}.init.php")){
       $conf = true;
@@ -340,12 +340,12 @@ final class Am{
 
     // De lo contrarion no se pudo cargar la extension
     return false;
-      
+
   }
 
   // Funcion para incluir una extension
   public static function requireExt($file){
-    
+
     // Si se trata de una array recorrer para agregar
     // dependencias una por una.
     if(is_array($file)){
@@ -382,9 +382,9 @@ final class Am{
 
   // Realiza incializaciones para el manejo de session
   public static function startSession(){
-    
+
     // Si ya esta cargada la clase AmSession es porque
-    // ya se realizó la inicializacion. 
+    // ya se realizó la inicializacion.
     if(class_exists("AmSession"))
       return;
 
@@ -443,6 +443,11 @@ final class Am{
     header("Status: 404 {$msg}");
   }
 
+  // Muestra un error
+  public static function error($msg){
+    throw new Exception($msg);
+  }
+
   ///////////////////////////////////////////////////////////////////////////////////
   // Inicio de Amathista
   ///////////////////////////////////////////////////////////////////////////////////
@@ -459,7 +464,7 @@ final class Am{
     // Obtener las configuraciones
     self::mergePropertiesFromAllFiles();
 
-    // Obtener el valor 
+    // Obtener el valor
     $errorReporting = self::getAttribute("errorReporting");
     error_reporting($errorReporting);
 
@@ -470,23 +475,15 @@ final class Am{
     $request = "";
 
     // determinar peticion
-    if(isset($argv)){ // Es una peticion desde la consola
-
-      // La URL Base es vacía
-      self::$urlBase = "";
-
-      // La peticion es la concatenacion de todos los parametros
-      $request = implode("/", $argv);
-
-    }else{ // Es una peticion HTTP
+    if(!isset($argv)){ // Es una peticion HTTP
 
       // Definicion de la URL Base
       self::$urlBase = dirname($_SERVER["PHP_SELF"]);
-      
+
       // Validacion para cuando este en el root
       if(self::$urlBase === "/")
         self::$urlBase = "";
-      
+
       // Obtener peticion
       // $request = substr_replace($_SERVER["REDIRECT_URL"], "", 0, strlen(self::$urlBase));
       $request = substr_replace($_SERVER["REQUEST_URI"], "", 0, strlen(self::$urlBase));
@@ -500,6 +497,30 @@ final class Am{
       // Validacion para cuando este en la peticion no comienze con "/"
       if(empty($request) || $request[0] !== "/")
         $request = "/" . $request;
+
+    }else{  // Es una peticion desde la consola
+
+      // La URL Base es vacía
+      self::$urlBase = "";
+
+      // La peticion es la concatenacion de todos los parametros
+      $request = implode("/", $argv);
+
+      echo "Amathista ".AM_VERSION.". Command Line\n";
+
+      while(1){
+        try{
+          // Obtener el comando enviado
+          $line = trim(fgets(STDIN));
+          // Ejecutarlo
+          print_r(eval("return $line;"));
+
+        // Si se captura un error mostrarlo
+        }catch(Exception $e){
+          echo $e->getMessage() . "\n";
+        }
+        echo "\n";
+      }
 
     }
 
@@ -521,7 +542,7 @@ final class Am{
   }
   // Busca un archivo en los paths indicados
   public static function findFileIn($file, array $paths){
-    
+
     // Si existe el archivo retornar el mismo
     if(is_file($file)) return $file;
 
@@ -577,7 +598,7 @@ final class Am{
     return true;
 
   }
-  
+
 }
 
 // Callbacks por defecto

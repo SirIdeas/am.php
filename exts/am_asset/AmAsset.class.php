@@ -46,7 +46,7 @@ class AmAsset{
   }
 
   // Funcion para atender la llamada de archivos virtuales compuestos
-  public static function response($file, array $env){
+  public static function response($file){
 
     // Obtener los recursos configurados
     $assets = Am::getAttribute("assets", array());
@@ -54,10 +54,10 @@ class AmAsset{
     // Si no exite un recurso con el nombre del solicitado retornar falso
     if(!isset($assets[$file]))
       return false;
-    
+
     // Instanciar archivo
     $asset = new self($file, $assets[$file]);
-    
+
     // Responder
     $asset->render();
 

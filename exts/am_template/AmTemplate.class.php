@@ -6,15 +6,11 @@
 
 final class AmTemplate extends AmObject{
 
-  // Carpeta donde se guardan los compilados de las vistas
-  const BUILD_FOLDER = "../gen/";
-
   protected
     $file = null,             // Vista a buscar
-    $realFile = null,         // Ruta real de la vista
     $content = "",            // Contenido del archivo
     $env = array(),           // Entorno
-    $params = array(),        // Variables definidas en la vista 
+    $params = array(),        // Variables definidas en la vista
     $parent = null,           // Vista padre
     $openSections = array(),  // Lista de secciones abiertas
     $sections = array(),      // Lista de secciones y su contenido
@@ -25,15 +21,12 @@ final class AmTemplate extends AmObject{
     $errors = array(),        // Indica si se generó o no un error durante el renderizado
     $options = array();       // Guarda los parametros con los que se inicializó la vista
 
-  public function __construct($file, $paths, $options = array()){
+  public function __construct($file, $options = array()){
     parent::__construct($options);
-
+    
     // setear paths
-    if(is_array($paths)){
-      $this->paths = $paths;
-    }else{
-      $this->paths[] = $paths;
-    }
+    if(!is_array($this->paths))
+      $this->paths[] = $this->paths;
 
     // Asignar atributos
     $this->options = $options;
@@ -47,13 +40,13 @@ final class AmTemplate extends AmObject{
     // Obtener padre
     preg_match_all("/\(# parent:(.*) #\)/", $this->content, $parents);
     $this->parent = array_pop($parents[1]);
-    
+
     // Quitar sentencias de padres
     $this->content = implode("", preg_split("/\(# parent:(.*) #\)/", $this->content));
 
     // Obtener lista de hijos en comandos place
     preg_match_all("/\(# (place:(.*)|put:.* = (.*)) #\)/", $this->content, $dependences1);
-    
+
     // Obtener lista de hijos en comandos put
     $this->dependences = array_merge($dependences1[2], $dependences1[3]);
     if(!empty($this->dependences))
@@ -78,7 +71,7 @@ final class AmTemplate extends AmObject{
     // Si no existe la vista mostrar error
     if(false === ($fileRet = Am::findFileIn($file, $this->paths))){
       $this->errors[] = "Am: No existe view '{$file}.'";
-      $this->ignore or die(implode(" ", $this->errors));
+      $this->ignore or die(implode(",", $this->errors));
     }
     return $fileRet;
   }
@@ -155,8 +148,8 @@ final class AmTemplate extends AmObject{
     isset($this->dependences[$name]) or die("Am: not found subview \"{$name}\" in \"{$this->realFile}\"");
     // Si la dependencia no es una instancia de AmView
     if(!$this->dependences[$name] instanceof self){
-      // Se instancia la vista 
-      $this->dependences[$name] = new self($name, $this->paths, $this->options);
+      // Se instancia la vista
+      $this->dependences[$name] = new self($name, $this->options);
     }
     // Devolver instancia de la vista
     return $this->dependences[$name];
@@ -216,7 +209,7 @@ final class AmTemplate extends AmObject{
     // No se recibió comandos
     if(empty($start) && empty($end))
       $this->sections[$name] = $content;
-    
+
     // Agregar al principio
     if($start === "+")
       $this->sections[$name] = $content . $this->sections[$name];
@@ -258,66 +251,16 @@ final class AmTemplate extends AmObject{
 
   }
 
-  // Devuelve la ruta donde se guardara la vista compilada
-  public function getCompiledFile(){
-    if($this->realFile === false) return false;
-    return self::BUILD_FOLDER . $this->realFile;
-  }
-
-  // Indica si la vista esta acutalizada.
-  // Para esto se verifica que ninguna de las vista dependientes 
-  // haya sido modificada despues de la fecha de la ultima fecha
-  // de compilacion de la vista actual 
-  public function isUpdate($compiledView){
-
-    // Si no se ha compilado no esta actualizado
-    if(!is_file($compiledView)) return false;
-
-    // Obtener fecha de creacion de la vista compilada
-    $compiledTime = filemtime($compiledView);
-
-    // Obtener dependencias
-    $dependences = $this->dependences();
-
-    // Si alguna fue modificada despues de la fecha de compilacion
-    // No esta actualizada
-    foreach ($dependences as $file) {
-      if($compiledTime<filemtime($file)) return false;
-    }
-
-    return true;
-
-  }
-
   // Generar vista
-  public function save(){
+  public function render(){
 
-    // Obtener vista generada
-    if(false === $compiledView = $this->getCompiledFile()) return;
-
-    // Si esta actualizada salir
-    // if($this->isUpdate($compiledView)) return;
-
-    // Carpeta donde se ubicara la vista compilada
-    $compileFolder = dirname($compiledView);
-
-    // Si no existe el directorio se crea, y sino se puede crear se muestra un error
-    is_dir($compileFolder) or mkdir($compileFolder, 0775, true) or die("Am: can't to create folder \"{$compileFolder}\"");
-    
     // Obtener contenido compilado de la vista
-    $result = $this->compile($this->child);
+    $this->result = $this->compile($this->child);
 
     // Guardar vista minificada
-    file_put_contents($compiledView, $result["content"]);
+    extract($this->getVars());  // Crear variables
+    eval("?> {$this->result["content"]} <?");
 
-  }
-
-  // incluye la vista compilada
-  public function includeView(){
-    if(is_file($this->getCompiledFile())){
-      extract($this->getVars());  // Crear variables
-      include $this->getCompiledFile();          // Inluir vista
-    }
   }
 
   // Método que indica si se generó algun error al renderizar la vista
@@ -326,11 +269,11 @@ final class AmTemplate extends AmObject{
   }
 
   // Funcion para atender el llamado de render.tempalte
-  public static function render($file, $paths, $options = array()){
+  public static function renderize($file, $options = array()){
 
     // Obtener configuraciones del controlador
     $confs = Am::getAttribute("views", array());
-    
+
     // Obtener valores por defecto
     $defaults = itemOr("defaults", $confs, array());
 
@@ -340,10 +283,10 @@ final class AmTemplate extends AmObject{
     // Mezclar todas las opciones
     $options = array_merge_recursive($defaults, $conf, $options);
 
-    $view = new self($file, $paths, $options); // Instancia vista
-    $view->save();        // Compilar y guardar
-    $view->includeView(); // Incluir vista
+    $view = new self($file, $options); // Instancia vista
+    $view->render();        // Compilar y guardar
     return !$view->hasError();
+
   }
 
 }
