@@ -10,7 +10,7 @@ function isValidCallback($callback){
     return function_exists($callback);
   // Es un callback invalido
   return false;
-} 
+}
 
 // Devuele un valor de una posicion del array. Si el valor
 // no existe devuelve el valor por $def
@@ -84,4 +84,3 @@ function merge_r_if_are_array_and_snd_first_not_false($arr1, $arr2){
     merge_r_if_snd_first_not_false($arr1, $arr2);
   return $arr2;
 }
-

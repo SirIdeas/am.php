@@ -6,147 +6,6 @@
 
 final class AmGenerator{
 
-  // Generar clase base para una tabla de la BD
-  public final static function classTableBase(AmTable $table){
-
-    $nullValidators = array();
-    $emptyValidators = array();
-    $uniqueValidators = array();
-    $strlenValidators = array();
-    $integerValidators = array();
-    $floatValidators = array();
-    $dateValidators = array();
-    $timeValidators = array();
-    $datetimeValidators = array();
-    $relationsValidators = array();
-
-    // Agregar validators
-    foreach($table->getFields() as $f){
-
-      if(!$f->getAutoIncrement()){
-
-        // Agregar validador de campo unico para los primary keys
-        if(count($table->getPks()) == 1 && $f->getPrimaryKey()){
-          $uniqueValidators[] = "\$this->setValidator(\"{$f->getName()}\", \"unique\", \"unique\");";
-        }
-        
-        $type = $f->getType();
-        
-        // Agregar validator para el tipo de datos seleccionado
-        switch ($type){
-
-          case "string": 
-            $len = $f->getCharLenght();
-            if(isset($len)){
-              $strlenValidators[] = "\$this->setValidator(\"{$f->getName()}\", \"max_length\", \"max_length\", array(\"max\" => $len));";
-            }
-            // $emptyValidators[] = "\$this->setValidator(\"{$f->getName()}\", \"empty\", \"empty\");";
-            break;
-
-          case "integer": 
-          case "biginteger": 
-            $integerValidators[] = "\$this->setValidator(\"{$f->getName()}\", \"integer\", \"integer\");";
-            break;
-
-          case "float": 
-            $floatValidators[] = "\$this->setValidator(\"{$f->getName()}\", \"float\", \"float\");";
-            break;
-
-          case "date": 
-            $dateValidators[] = "\$this->setValidator(\"{$f->getName()}\", \"date\", \"date\");";
-            break;
-
-          case "time": 
-    //        $timeValidators[] = "\$this->setValidator(\"{$f->getName()}\", \"time\", \"time\");";
-    //        break;
-
-          case "datetime": 
-    //        $datetimeValidators[] = "\$this->setValidator(\"{$f->getName()}\", \"datetime\", \"datetime\");";
-    //        break;
-
-          default:
-            if($f->getNotNull()){
-              $nullValidators[] = "\$this->setValidator(\"{$f->getName()}\", \"null\", \"null\");";
-            }
-
-        }
-      }
-
-    }
-
-    // Agregar validators de de referencias
-    foreach($table->getReferencesTo() as $r){
-
-      $cols = $r->getColumns();
-
-      if(count($cols) == 1){
-
-        $colName = array_keys($cols);
-        $f = $table->getField($colName[0]);
-
-        if($f->getNotNull()){
-
-          $relationsValidators[] = "\$this->setValidator(\"{$f->getName()}\", \"fk_{$r->getTable()}\", \"in_query\", array(\"query\" => AmORM::table(\"{$r->getTable()}\", \"{$table->getSource()->getName()}\")->all(), \"field\" => \"{$cols[$colName[0]]}\"));";
-
-        }
-
-      }
-
-    }
-
-    // Impresion de la clase
-    ob_start();
-
-    echo "abstract class {$table->getClassNameTableBase()} extends AmTable{";
-
-    echo "\n\n  final public function __construct(){";
-    echo "\n\n    parent::__construct(array(\"source\" => \"{$table->getSource()->getName()}\", \"tableName\" => \"{$table->getTableName()}\"));";
-    echo "\n\n  }";
-
-    echo "\n\n  public function initialize(){";
-
-    echo "\n\n    // UNIQUE\n    ";
-    echo implode("\n    ", $uniqueValidators);
-
-    echo "\n\n    // NOT NULLS\n    ";
-    echo implode("\n    ", $nullValidators);
-
-    echo "\n\n    // EMPTYS\n    ";
-    echo implode("\n    ", $emptyValidators);
-
-    echo "\n\n    // INTEGERS\n    ";
-    echo implode("\n    ", $integerValidators);
-
-    echo "\n\n    // FLOATS\n    ";
-    echo implode("\n    ", $floatValidators);
-
-    echo "\n\n    // DATE\n    ";
-    echo implode("\n    ", $dateValidators);
-
-    echo "\n\n    // TIME\n    ";
-    echo implode("\n    ", $timeValidators);
-
-    echo "\n\n    // DATE TIME\n    ";
-    echo implode("\n    ", $datetimeValidators);
-
-    echo "\n\n    // STRING LENGTH\n    ";
-    echo implode("\n    ", $strlenValidators);
-
-    echo "\n\n    // RELATIONS\n    ";
-    echo implode("\n    ", $relationsValidators);
-
-    echo "\n\n  }";
-
-    echo "\n\n  public static function me(){";
-    echo "\n\n    return AmORM::table(\"{$table->getTableName()}\", \"{$table->getSource()->getName()}\");";
-    echo "\n\n  }";
-
-    echo "\n\n}\n";
-
-    return ob_get_clean();
-
-  }
-
   // Generar clase base para un model
   public final static function classModelBase(AmTable $table){
 
@@ -154,7 +13,6 @@ final class AmGenerator{
 
     $fields = array_keys((array)$table->getFields());
 
-    $fieldMethods = array();
     $getFieldMethods = array();
     $setFieldMethods = array();
     $hasManyMethods = array();
@@ -200,39 +58,193 @@ final class AmGenerator{
 
     }
 
+    $nullValidators = array();
+    $emptyValidators = array();
+    $uniqueValidators = array();
+    $strlenValidators = array();
+    $integerValidators = array();
+    $floatValidators = array();
+    $dateValidators = array();
+    $timeValidators = array();
+    $datetimeValidators = array();
+    $relationsValidators = array();
+
+    // Agregar validators
+    foreach($table->getFields() as $f){
+
+      if(!$f->getAutoIncrement()){
+
+        // Agregar validador de campo unico para los primary keys
+        if(count($table->getPks()) == 1 && $f->getPrimaryKey()){
+          $uniqueValidators[] = "\$table->setValidator(\"{$f->getName()}\", \"unique\", \"unique\");";
+        }
+
+        $type = $f->getType();
+
+        // Agregar validator para el tipo de datos seleccionado
+        switch ($type){
+
+          case "string":
+            $len = $f->getCharLenght();
+            if(isset($len)){
+              $strlenValidators[] = "\$table->setValidator(\"{$f->getName()}\", \"max_length\", \"max_length\", array(\"max\" => $len));";
+            }
+            // $emptyValidators[] = "\$table->setValidator(\"{$f->getName()}\", \"empty\", \"empty\");";
+            break;
+
+          case "integer":
+          case "biginteger":
+            $integerValidators[] = "\$table->setValidator(\"{$f->getName()}\", \"integer\", \"integer\");";
+            break;
+
+          case "float":
+            $floatValidators[] = "\$table->setValidator(\"{$f->getName()}\", \"float\", \"float\");";
+            break;
+
+          case "date":
+            $dateValidators[] = "\$table->setValidator(\"{$f->getName()}\", \"date\", \"date\");";
+            break;
+
+          case "time":
+    //        $timeValidators[] = "\$table->setValidator(\"{$f->getName()}\", \"time\", \"time\");";
+    //        break;
+
+          case "datetime":
+    //        $datetimeValidators[] = "\$table->setValidator(\"{$f->getName()}\", \"datetime\", \"datetime\");";
+    //        break;
+
+          default:
+            if($f->getNotNull()){
+              $nullValidators[] = "\$table->setValidator(\"{$f->getName()}\", \"null\", \"null\");";
+            }
+
+        }
+      }
+
+    }
+
+    // Agregar validators de de referencias
+    foreach($table->getReferencesTo() as $r){
+
+      $cols = $r->getColumns();
+
+      if(count($cols) == 1){
+
+        $colName = array_keys($cols);
+        $f = $table->getField($colName[0]);
+
+        if($f->getNotNull()){
+
+          $relationsValidators[] = "\$table->setValidator(\"{$f->getName()}\", \"fk_{$r->getTable()}\", \"in_query\", array(\"query\" => AmORM::table(\"{$r->getTable()}\", \"{$table->getSource()->getName()}\")->all(), \"field\" => \"{$cols[$colName[0]]}\"));";
+
+        }
+
+      }
+
+    }
+
     // Generar clase Base
     ob_start();
 
-    echo "abstract class {$table->getClassNameModelBase()} extends AmModel{";
-
-    echo "\n\n    final public function __construct(\$params = array()){\n";
-    echo "\n        parent::__construct(array_merge(\$params, array(";
-    echo "\n          \"source\" => \"{$table->getSource()->getName()}\",";
-    echo "\n          \"tableName\" => \"{$table->getTableName()}\",";
-    echo "\n        )));";
-    echo "\n\n    }";
-
-    // Preparacion de los metodos
-    echo "\n\n    // FIELDS\n    ";
-    echo implode("\n    ", $fieldMethods);
+    echo "class {$table->getClassNameModelBase()} extends AmModel{";
+    echo "\n";
+    echo "\n  protected static";
+    echo "\n    \$sourceName = \"{$table->getSource()->getName()}\",";
+    echo "\n    \$tableName  = \"{$table->getTableName()}\";";
+    echo "\n";
 
     // Preparacion de los metodos Get
-    echo "\n\n    // GETTERS\n    ";
-    echo implode("\n    ", $getFieldMethods);
+    echo "\n  // GETTERS\n  ";
+    echo implode("\n  ", $getFieldMethods);
+    echo "\n";
 
     // Preparacion de los metodos Set
-    echo "\n\n    // GETTERS\n    ";
-    echo implode("\n    ", $setFieldMethods);
+    echo "\n  // SETTERS\n  ";
+    echo implode("\n  ", $setFieldMethods);
+    echo "\n";
 
     // Has Many
-    echo "\n\n    // HAS MANY\n    ";
-    echo implode("\n    ", $hasManyMethods);
+    echo "\n  // HAS MANY\n  ";
+    echo implode("\n  ", $hasManyMethods);
+    echo "\n";
 
     // Has One
-    echo "\n\n    // HAS ONE\n    ";
-    echo implode("\n    ", $hasOneMethods);
+    echo "\n  // HAS ONE\n  ";
+    echo implode("\n  ", $hasOneMethods);
+    echo "\n";
 
-    echo "\n\n}\n";
+    echo "\n  protected static function initialize(AmTable \$table){";
+    echo "\n    parent::initialize(\$table);";
+
+    if(!empty($uniqueValidators)){
+      echo "\n";
+      echo "\n    // UNIQUE\n    ";
+      echo implode("\n    ", $uniqueValidators);
+    }
+
+    if(!empty($nullValidators)){
+      echo "\n";
+      echo "\n    // NOT NULLS\n    ";
+      echo implode("\n    ", $nullValidators);
+    }
+
+    if(!empty($emptyValidators)){
+      echo "\n";
+      echo "\n    // EMPTYS\n    ";
+      echo implode("\n    ", $emptyValidators);
+    }
+
+    if(!empty($integerValidators)){
+      echo "\n";
+      echo "\n    // INTEGERS\n    ";
+      echo implode("\n    ", $integerValidators);
+    }
+
+    if(!empty($floatValidators)){
+      echo "\n";
+      echo "\n    // FLOATS\n    ";
+      echo implode("\n    ", $floatValidators);
+    }
+
+    if(!empty($dateValidators)){
+      echo "\n";
+      echo "\n    // DATE\n    ";
+      echo implode("\n    ", $dateValidators);
+    }
+
+    if(!empty($timeValidators)){
+      echo "\n";
+      echo "\n    // TIME\n    ";
+      echo implode("\n    ", $timeValidators);
+    }
+
+    if(!empty($datetimeValidators)){
+      echo "\n";
+      echo "\n    // DATE TIME\n    ";
+      echo implode("\n    ", $datetimeValidators);
+    }
+    if(!empty($strlenValidators)){
+      echo "\n";
+      echo "\n    // STRING LENGTH\n    ";
+      echo implode("\n    ", $strlenValidators);
+    }
+
+    if(!empty($relationsValidators)){
+      echo "\n";
+      echo "\n    // RELATIONS\n    ";
+      echo implode("\n    ", $relationsValidators);
+    }
+
+    echo "\n  }";
+
+    echo "\n";
+    echo "\n  public static function me(){";
+    echo "\n    return AmORM::table(\"{$table->getTableName()}\", \"{$table->getSource()->getName()}\");";
+    echo "\n  }";
+    echo "\n";
+
+    echo "\n}";
+    echo "\n";
 
     return ob_get_clean();
 

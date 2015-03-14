@@ -41,7 +41,7 @@ abstract class AmSource extends AmObject{
 
     // Eliminar el nombre porque ya se asignó
     unset($params["name"]);
-    
+
     // Llamar al constructor con los nuevos argumentos
     parent::__construct($params);
 
@@ -86,12 +86,6 @@ abstract class AmSource extends AmObject{
     return isset($this->tables[$table]);
   }
 
-  // Nombre de las clases relacionadas a una tabla
-  public function getClassNameTableBase($model){  return $this->getClassNameTable($model)."Base"; }
-  public function getClassNameTable($model){      return $this->getClassNameModel($model)."Table"; }  
-  public function getClassNameModelBase($model){  return $this->getClassNameModel($model)."Base"; }
-  public function getClassNameModel($model){      return $this->getPrefix() . AmORM::camelCase($model, true); }
-
   // Obtener la ruta de la carpeta para las clases del ORM de la BD actual
   public function getFolder(){
     return self::getFolderOrm() . "/" . $this->getName();
@@ -108,29 +102,19 @@ abstract class AmSource extends AmObject{
     return AmCoder::read($path);
   }
 
-  // Obtener la carpeta para un tabla
-  public function getFolderModel($model){
+  // Obtener la carpeta de archivos bases para un tabla
+  public function getFolderModelBase($model){
     return $this->getFolder() . "/" . AmORM::underscor($model);
   }
 
-  // Obtener la carpeta de archivos bases para un tabla
-  public function getFolderModelBase($model){
-    return $this->getFolderModel($model) . "/base";
+  // // Nombre de las clases relacionadas a una tabla
+  public function getClassNameModelBase($model){
+    return $this->getPrefix() . AmORM::camelCase($model, true)."Base";
   }
 
   // Devuelve la direccion del archivo de configuracion
-  public function getPathConfToModel($model){
+  public function getPathConfModel($model){
     return $this->getFolderModelBase($model) . "/". AmORM::underscor($model) .".conf";
-  }
-
-  // Devuelve la dirección de la clase de la tabla Base
-  public function getPathClassTableBase($model){
-    return $this->getFolderModelBase($model) . "/". $this->getClassNameTableBase($model) .".class";
-  }
-
-  // Devuelve la dirección de la clase de la tabla
-  public function getPathClassTable($model){
-    return $this->getFolderModel($model) . "/". $this->getClassNameTable($model) .".class";
   }
 
   // Devuelve la dirección de la clase del model Base
@@ -138,23 +122,15 @@ abstract class AmSource extends AmObject{
     return $this->getFolderModelBase($model) . "/". $this->getClassNameModelBase($model) .".class";
   }
 
-  // Devuelve la dirección de la clase del model
-  public function getPathClassModel($model){
-    return $this->getFolderModel($model) . "/". $this->getClassNameModel($model) .".class";
-  }
-
   // Inidic si todas las clases y archivos de un model existes
   public function existsModel($model){
-    return is_file($this->getPathConfToModel($model) . ".php")
-        && is_file($this->getPathClassTableBase($model) . ".php")
-        && is_file($this->getPathClassTable($model) . ".php")
-        && is_file($this->getPathClassModelBase($model) . ".php")
-        && is_file($this->getPathClassModel($model) . ".php");
+    return is_file($this->getPathConfModel($model) . ".php")
+        && is_file($this->getPathClassModelBase($model) . ".php");
   }
 
   // Obtener la configuracion del archivo de configuracion propio de un model
   public function getTableConf($model){
-    return AmCoder::decode($this->getPathConfToModel($model).".php");
+    return AmCoder::decode($this->getPathConfModel($model).".php");
   }
 
   // Crea el archivo de configuracion para una fuente
@@ -171,7 +147,7 @@ abstract class AmSource extends AmObject{
 
   // Crear carpetas de todas las tablas de la BD
   public function mkdirModel(){
-    
+
     $ret = array(); // Para retorno
 
     $tables = $this->newQuery($this->sqlGetTables())
@@ -211,9 +187,9 @@ abstract class AmSource extends AmObject{
 
   }
 
-  // Creaa todas las tablas de la BD
+  // Crea todas las tablas de la BD
   public function createTables(){
-    
+
     $ret = array(); // Para el retorno
 
     // Obtener los nombres de la tabla en el archivo
@@ -244,7 +220,7 @@ abstract class AmSource extends AmObject{
       // REVISAR
       $this->execute("set names 'utf8'");
     }
-    
+
     return $ret;
   }
 
@@ -256,7 +232,7 @@ abstract class AmSource extends AmObject{
 
   // Devuelve la cadena de conexión del servidor
   public function getServerString(){
-    
+
     $port = $this->getPort();
     $defPort = $this->getDefaultPort();
 
@@ -281,7 +257,7 @@ abstract class AmSource extends AmObject{
 
   // Devuelve el nombre de una tabla para ser reconocida en el gestor de BD
   public function getParseNameTable($table, $only = false){
-    
+
     // Obtenerl solo el nombre de la tabla
     $table = $table instanceof AmTable? $table->getTableName() : $table;
     $table = $this->getParseName($table);
@@ -322,7 +298,7 @@ abstract class AmSource extends AmObject{
         $sqls[] = (string)$q;
 
     return $this->execute(implode(";", $sqls));
-    
+
   }
 
   // Devuelve un array con el listado de tablas de la BD
@@ -341,14 +317,14 @@ abstract class AmSource extends AmObject{
   // Devuelve la descripcion completa de una tabla
   // incluyendo los campos
   public function describeTable($tableName){
-      
+
     // Obtener la descripcion basica
     $table = $this->getTableDescription($tableName);
-    
+
     // Si no se encontró la tabla retornar falso
     if($table === false)
       return false;
-      
+
     // Asignar fuente
     $table["source"] = $this;
 
@@ -356,26 +332,26 @@ abstract class AmSource extends AmObject{
     $table = new AmTable($table);
     // Buscar la descripcion de sus campos y relaciones
     $table->describeTable();
-    
+
     // Retornar tgabla
     return $table;
-      
+
   }
 
   // Obtener un listado de los campos primarios de una tabla
   public function getTablePrimaryKey(AmTable $t){
-        
+
     $ret = array(); // Valor de retorno
 
     // Obtener los campos primarios de la tabla
     $pks = $this->newQuery($this->sqlGetTablePrimaryKeys($t))->getResult("array");
-    
+
     // Agregar campos al retorn
     foreach($pks as $pk)
       $ret[] = $pk["name"];
-    
+
     return $ret;
-      
+
   }
 
   // Obtener un listado de las columnas de una tabla
@@ -393,15 +369,15 @@ abstract class AmSource extends AmObject{
 
     // Obtener los ForeignKeys
     $fks = $this->newQuery($this->sqlGetTableForeignKeys($t))->getResult("array");
-        
+
     foreach($fks as $fk){
-      
+
       // Dividir el nombre del FK
       $name = explode(".", $fk["name"]);
 
       // Obtener el ultimo elemento
       $name = array_pop($name);
-      
+
       // Si no existe el elmento en el array se crea
       if(!isset($ret[$name])){
         $ret[$name] = array(
@@ -410,19 +386,19 @@ abstract class AmSource extends AmObject{
           "columns" => array()
         );
       }
-      
+
       // Agregar la columna a la lista de columnas
       $ret[$name]["columns"][$fk["columnName"]] = $fk["toColumn"];
 
     }
-    
+
     return $ret;
 
   }
 
   // Obtener el listado de referencias a una tabla
   public function getTableReferences(AmTable $t){
-    
+
     $ret = array(); // Para el retorno
 
     // Obtener el nombre de la fuente
@@ -430,16 +406,16 @@ abstract class AmSource extends AmObject{
 
     // Obtener las referencias a una tabla
     $fks = $this->newQuery($this->sqlGetTableReferences($t))->getResult("array");
-    
+
     // Recorrer los FKs
     foreach($fks as $fk){
-      
+
       // Dividir el nombre del FK
       $name = explode(".", $fk["name"]);
 
       // Obtener el ultimo elemento
       $name = array_shift($name);
-      
+
       // Si no existe el elmento en el array se crea
       if(!isset($ret[$name])){
         $ret[$name] = array(
@@ -448,14 +424,14 @@ abstract class AmSource extends AmObject{
           "columns" => array()
         );
       }
-      
+
       // Agregar la columna a la lista de columnas
       $ret[$name]["columns"][$fk["toColumn"]] = $fk["columnName"];
 
     }
-    
+
     return $ret;
-      
+
   }
 
   // Setea el valor de una variable en el gestor
@@ -546,13 +522,13 @@ abstract class AmSource extends AmObject{
       // como campos los de la consulta
       if(count($fields) == 0)
         $fields = array_keys($values->select());
-    
+
     // Si los valores es un array con al menos un registro
     }elseif(is_array($values) && count($values)>0){
 
       // Indica si
       $mergeWithFields = count($fields) == 0;
-      
+
       // Recorrer cada registro en $values par obtener los valores a insertar
       foreach($values as $i => $v){
 
@@ -563,7 +539,7 @@ abstract class AmSource extends AmObject{
         elseif($v instanceof AmObject)
           // Si es una instancia de AmObjet se obtiene como array asociativo
           $values[$i] = $v->toArray();
-        
+
         // Si no se recibieron campos, entonces se mezclaran con los
         // indices obtenidos
         if($mergeWithFields)
@@ -589,10 +565,10 @@ abstract class AmSource extends AmObject{
       $values = $resultValues;
 
     }
-    
+
     // Obtener el SQL para saber si es valido
     $sql = $this->sqlInsertInto($table, $values, $fields);
-    
+
     // Si el SQL está vacío o si se genera un error en la insercion
     // se devuelve falso
     if(trim($sql) == "" || $this->execute($sql) === false)
@@ -604,7 +580,7 @@ abstract class AmSource extends AmObject{
     // Se retorna el el último id insertado o true en
     // el caso de que se hayan insertado varios registros
     return $id === 0 ? true : $id;
-    
+
   }
 
   // Converite el objeto en un array
@@ -651,10 +627,10 @@ abstract class AmSource extends AmObject{
 
   // Metodo para cerrar una conexión
   abstract public function close();
-  
+
   // Obtener el número del último error generado en la conexión
   abstract public function getErrNo();
-  
+
   // Obtener la descripcion del último error generado en la conexión
   abstract public function getError();
 
@@ -697,11 +673,11 @@ abstract class AmSource extends AmObject{
 
   // SQL para obtener el listado de tablas
   abstract public function sqlGetTables();
-  
+
   /////////////////////////////////////////////////////////////////////////////
   // Metodos Abstractos que deben ser definidos en las implementaciones
   /////////////////////////////////////////////////////////////////////////////
-  
+
   // Devuelve la carpeta destino para los orm
   public static function getFolderOrm(){
     return self::$ORM_FOLDER;

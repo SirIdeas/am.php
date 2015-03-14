@@ -37,7 +37,7 @@ final class AmORM{
 
     // Obtener el nombre de la clase
     $validatorClassName = AmORM::camelCase($validator, true)."Validator";
-    
+
     // Si se incluye satisfactoriamente el validator
     self::requireFile("validators/{$validatorClassName}.class");
 
@@ -83,7 +83,7 @@ final class AmORM{
     if($sourceConf === null)
       die("Am: No se encontró la configuración para la fuente '{$name}'");
 
-    // Obtener el driver de la fuente 
+    // Obtener el driver de la fuente
     $driverClassName = AmORM::driver($sourceConf["driver"]);
 
     // Crear instancia de la fuente
@@ -95,43 +95,29 @@ final class AmORM{
   }
 
   // Devuelve la instancia de una tabla en una fuente determinada
-  public static function table($table, $source = "default"){
-    
+  public static function table($tableName, $source = "default"){
+
     // Obtener la instancia de la fuente
     $source = self::source($source);
 
     // Si ya ha sido instanciada la tabla
     // entonces se devuelve la instancia
-    if($source->hasTableInstance($table))
-      return $source->getTable($table);
-
-    // Incluir Modelo de la tabla
-    self::requireFile($source->getPathClassTableBase($table), false);  // Clase Base para la tabla
-    self::requireFile($source->getPathClassTable($table), false);      // Clase para la Tabla
-
-    // Obtener el nombre de la tabla
-    $tableClassName = $source->getClassNameTable($table);
+    if($source->hasTableInstance($tableName))
+      return $source->getTable($tableName);
 
     // Instancia la clase
-    $instance = new $tableClassName();
+    $table = new AmTable(array(
+      "source" => $source,
+      "tableName" => $tableName
+    ));
+
+    // Incluir modelo
+    self::requireFile($table->getPathClassModelBase(), false);  // Clase base para el modelo
 
     // Asignar tabla
-    $source->setTable($table, $instance);
+    $source->setTable($tableName, $table);
 
-    return $instance;
-
-  }
-
-  // Incluye las clases model de una tabla y devuelve el nombre de la clase
-  public static function model($table, $source = "default"){
-    
-    // Obtener la instancia de la tabla
-    $table = self::table($table, $source);
-
-    self::requireFile($table->getPathClassModelBase(), false);  // Clase base para el modelo
-    self::requireFile($table->getPathClassModel(), false);      // Clase para el model
-
-    return $table->getClassNameModel();
+    return $table;
 
   }
 
@@ -150,19 +136,19 @@ final class AmORM{
     if(!empty($s)){
       $s[0] = strtolower($s[0]);
     }
-    
+
     // Crear funcion para convertir en minuscula
     $func = create_function('$c', 'return "_" . strtolower($c[1]);');
 
     // Operar
     return preg_replace_callback("/([A-Z])/", $func, str_replace(" ", "_", $s));
-    
+
   }
 
   // Devuelve una cadena "s" en formato camelCase. Si "cfc == true" entonces
   // el primer caracter tambien es convertido en mayusculas
   public static function camelCase($s, $cfc = false){
-    
+
     // Primer caracter en mayuscula o en miniscula
     if(!empty($s)){
       if($cfc){

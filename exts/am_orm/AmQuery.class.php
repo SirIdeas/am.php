@@ -12,7 +12,7 @@ class AmQuery extends AmObject{
     $table = null,      // Tabla en la que se basa la consulta
     $model = null,      // Nombre dle modelo para los registros de la consulta
     $selects = array(), // Lista de campos para la clausula SELECT
-    $distinct = false,  // Para solo obtener los registros diferentes 
+    $distinct = false,  // Para solo obtener los registros diferentes
     $froms = array(),   // Lista de tablas para la clausula FROM
     $wheres = array(),  // Lista de condiciones para la clausula WHERE
     $joins = array(),   // Lista de tablas para la clausula JOIN
@@ -75,7 +75,7 @@ class AmQuery extends AmObject{
     return clone($this);
   }
 
-  // Devuelve una copia aislada de la consulta actual 
+  // Devuelve una copia aislada de la consulta actual
   public function getAlone($as = "q"){
     return $this->getSource()->newQuery($this, $as);
   }
@@ -83,7 +83,7 @@ class AmQuery extends AmObject{
   // Método para asignar array de valores por un metodo
   // Destinado al metodo ->select y ->from
   private function setArrayAttribute($method, $args){
-    
+
     // Agregar cada argmento
     foreach($args as $arg){
       // Si es un array
@@ -100,7 +100,7 @@ class AmQuery extends AmObject{
     return $this;
 
   }
-  
+
   // Asignar los selects
   public function select(){
     return $this->setArrayAttribute("selectAs", func_get_args());
@@ -108,7 +108,7 @@ class AmQuery extends AmObject{
 
   // Método para agregar clausula SELECT
   public function selectAs($field, $as = null){
-    
+
     // Si no se indicó el argumetno $as
     if(empty($as)){
       if (AmORM::isNameValid($field)){
@@ -125,11 +125,11 @@ class AmQuery extends AmObject{
       // Agregar al final
       $this->selects[] = $field;
     }
-    
+
     return $this;
 
   }
-  
+
   // Asignar los selects
   public function from(){
     return $this->setArrayAttribute("fromAs", func_get_args());
@@ -137,8 +137,8 @@ class AmQuery extends AmObject{
 
   // Método para agregar clausula FROM
   public function fromAs($from, $as = null){
-    
-    // Asignacion de la tabla si aun no ha sido asignada  
+
+    // Asignacion de la tabla si aun no ha sido asignada
     if(!isset($this->table)){
       if($from instanceof AmTable){
         // Asignar como tabla
@@ -177,7 +177,7 @@ class AmQuery extends AmObject{
         // Si es nua tabla se asigna en una posicion especifica
         $this->froms[$from->getTableName()] = $from;
       }elseif (AmORM::isNameValid($from)){
-        // Se asigna en una posicion especifica 
+        // Se asigna en una posicion especifica
         $this->froms[$from] = $from;
       }else{
         // Agregar al final
@@ -193,12 +193,12 @@ class AmQuery extends AmObject{
     }
 
     return $this;
-      
+
   }
 
   // Preparar las condiciones para agregarlas al array de condiciones
   protected function parseWhere($conditions){
-    
+
     // Si no es un array de retornar tal cual
     if(!is_array($conditions)) return $conditions;
 
@@ -208,7 +208,7 @@ class AmQuery extends AmObject{
 
     // Por cada condicione
     foreach($conditions as $condition){
-      
+
       // Obtiene la condicion de union y la vuelve mayuscula
       if(!is_array($condition)){
         $upperCondition = strtoupper($condition);
@@ -235,7 +235,7 @@ class AmQuery extends AmObject{
           "condition" => $upperCondition == "IN"? $condition : $this->parseWhere($condition),
           "isIn" => $upperCondition == "IN"
         );
-        
+
         $nextPrefijo = "";
 
       }
@@ -248,7 +248,7 @@ class AmQuery extends AmObject{
 
   // Metodo para agregar condiciones
   public function where(){
-        
+
     $args = func_get_args();
 
     // Parchar las condificones para luego agregarlas
@@ -284,7 +284,7 @@ class AmQuery extends AmObject{
     $this->joins[$type][] = array("table" => $table, "on" => $on, "as" => $as);
 
     return $this;
-      
+
   }
 
   // INNER, LEFT y RIGHT Join
@@ -320,7 +320,7 @@ class AmQuery extends AmObject{
 
   // Agregar campos para agrupar
   public function groups(array $groups){
-      
+
     // Elimintar los campos que se agregaran de los existentes
     $this->groups = array_diff($this->groups, $groups);
 
@@ -329,7 +329,7 @@ class AmQuery extends AmObject{
       $this->groups[] = $group;
 
     return $this;
-      
+
   }
 
   // Agregar un campos para agrupar
@@ -370,26 +370,26 @@ class AmQuery extends AmObject{
     // Si se generó un error devolver cero, de lo contrari
     // devolver el valor obtenido
     return $ret === false ? 0 : intval($ret->count);
-    
+
   }
 
   // Obtener un registro del resultado de la consulta
   public function getRow($as = null, $formater = null){
 
-    // Obtener la fuente de datos  
+    // Obtener la fuente de datos
     $s = $this->getSource();
-    
+
     // Se ejecuta la consulta si no se ha ejecutado la consulta
     if(null === $this->result)
       $this->execute();
-    
+
     // Si se generó un error en la consulta retornar false
     if(false === $this->result)
       return false;
 
     // Obtener el registro
     $r = $s->getFetchAssoc($this->result);
-    
+
     // Si no existe mas registros
     if(false === $r)
       return false;
@@ -398,8 +398,9 @@ class AmQuery extends AmObject{
     if(!isset($as)){
 
       // Obtener el nombre de la clase del model
-      $className = AmORM::model($this->getModel(), $s->getName());
-      
+      $table = AmORM::table($this->getModel(), $s->getName());
+      $className = $table->getClassNameModelBase();
+
       // Se encontró el modelo
       if (false !== $className){
         $r["isNew"] = false;      // Indica que no es un registr nuevo
@@ -408,7 +409,7 @@ class AmQuery extends AmObject{
         // Devolver como objeto de Amathista
         $r = new AmObject($r);
       }
-    
+
     }elseif($as == "array"){
       // Retornar como erray
       // $r = $r;
@@ -433,26 +434,26 @@ class AmQuery extends AmObject{
 
   // Devuelve una columna de la consulta.
   public function getCol($field){
-    
+
     // Crear la consulta
     $q = $this->getSource()->newQuery($this)->selectAs($field);
-    
+
     // Array para retorno
     $ret = array();
 
     // Mientras exista resgistros en cola
-    while(false !== ($row = $q->getRow("array"))){ 
+    while(false !== ($row = $q->getRow("array"))){
       $ret[] = $row[$field]; // Agregar registros al array
     }
-    
+
     return $ret;
-      
+
   }
 
   // Devuelve un array con los registros resultantes de la consulta
   public function getResult($as = null, $formater = null){
 
-    // Si no es callback válido asignar null para 
+    // Si no es callback válido asignar null para
     // ahorrar sentencias
     if(!isValidCallback($formater))
       $formater = null;
@@ -462,12 +463,12 @@ class AmQuery extends AmObject{
 
     // Array para retorno
     $ret = array();
-    
+
     // Mientras exista resgistros en cola
     while(false !== ($row = $q->getRow($as, $formater))){
       $ret[] = $row; // Agregar registros al array
     }
-    
+
     return $ret;
 
   }
@@ -529,10 +530,10 @@ class AmQuery extends AmObject{
   // PENDIENTE DESARROLLAR
   public function createSql(){}
   public function create(){}
-  
+
   public function dropSQL(){}
   public function drop(){}
-    
+
   public static function export(){}
 
 }
