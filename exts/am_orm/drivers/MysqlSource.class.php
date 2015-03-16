@@ -5,7 +5,7 @@
  */
 
 class MysqlSource extends AmSource{
-  
+
   // Puerto por defecto para la conexion
   const DEFAULT_PORT = 3306;
 
@@ -27,7 +27,7 @@ class MysqlSource extends AmSource{
       // Cadenas de caracteres
       "char"       => "char",       // Longuitud exacta
       "varchar"    => "varchar",    // Longuitud maxima parametrizada
-      "tinytext"   => "tinytext",   // Longuitud maxima 255 
+      "tinytext"   => "tinytext",   // Longuitud maxima 255
       "text"       => "text",       // Longuitud maxima 65535
       "mediumtext" => "mediumtext", // Longuitud maxima 16777215
       "longtext"   => "longtext",   // Longuitud maxima 4294967295
@@ -57,7 +57,7 @@ class MysqlSource extends AmSource{
       true
     );
   }
-  
+
   // Cerrar una conexion
   public function close() {
     if($this->handle)
@@ -71,7 +71,7 @@ class MysqlSource extends AmSource{
       return mysql_errno($this->handle);
     return false;
   }
-  
+
   // Obtener la descripcion del último error generado en la conexión
   public function getError(){
     if($this->handle)
@@ -89,7 +89,7 @@ class MysqlSource extends AmSource{
   public function getFetchAssoc($result){
     return mysql_fetch_assoc($result);
   }
-  
+
   // Obtener el ID del ultimo registro insertado
   public function getLastInsertedId(){
     return mysql_insert_id();
@@ -113,11 +113,11 @@ class MysqlSource extends AmSource{
 
   // Set de Caracteres
   public function sqlCharset($charset = null){
-    
+
     // Si no recibió argumentos obtener el charset de la BD
     if(!count(func_get_args())>0)
       $charset = $this->getCharset();
-    
+
     // El el argumento esta vacío retornar cadena vacia
     if(empty($charset))
       return "";
@@ -129,12 +129,12 @@ class MysqlSource extends AmSource{
   }
 
   // Coleccion de caracteres
-  public function sqlCollage(){
+  public function sqlCollage($collage = null){
 
     // Si no recibió argumentos obtener el college de la BD
     if(!count(func_get_args())>0)
       $collage = $this->getCollage();
-    
+
     // El el argumento esta vacío retornar cadena vacia
     if(empty($collage))
       return "";
@@ -165,7 +165,7 @@ class MysqlSource extends AmSource{
     $sql = "DROP DATABASE {$database}";
     return $sql;
   }
-  
+
   // SQL para seleccionar la BD
   public function sqlSelectDatabase(){
     $database = $this->getParseNameDatabase();
@@ -184,7 +184,7 @@ class MysqlSource extends AmSource{
       ->sql();
 
     return $sql;
-    
+
   }
 
   // SQL para obtener el listado de tablas
@@ -201,33 +201,33 @@ class MysqlSource extends AmSource{
       ->sql();
 
     return $sql;
-      
+
   }
 
   // SQL par obtener los primary keys de una tabla
   public function sqlGetTablePrimaryKeys(AmTable $t){
-    
+
     $sql = $this
       ->newQuery("information_schema.KEY_COLUMN_USAGE")
       ->selectAs("COLUMN_NAME", "name")
       ->where("TABLE_SCHEMA='{$this->getDatabase()}'", "and", "TABLE_NAME='{$t->getTableName()}'", "and", "CONSTRAINT_NAME='PRIMARY'")
       ->orderBy("ORDINAL_POSITION")
       ->sql();
-    
+
     return $sql;
 
   }
 
   // SQL para obtener el listado de columnas de una tabla
   public function sqlGetTableColumns(AmTable $t){
-    
+
     $sql = $this
       ->newQuery("information_schema.COLUMNS")
       ->selectAs("COLUMN_NAME", "name")
       ->selectAs("DATA_TYPE", "type")
       ->selectAs("CHARACTER_MAXIMUM_LENGTH", "charLenght")
       ->selectAs("NUMERIC_PRECISION", "floatPrecision")
-      ->selectAs("IS_NULLABLE <> 'NO'", "notNull")
+      ->selectAs("IS_NULLABLE = 'NO'", "notNull")
       ->selectAs("COLUMN_DEFAULT", "defaultValue")
       ->selectAs("COLLATION_NAME", "collage")
       ->selectAs("CHARACTER_SET_NAME", "charset")
@@ -235,14 +235,14 @@ class MysqlSource extends AmSource{
       ->where("TABLE_SCHEMA='{$this->getDatabase()}'", "and", "TABLE_NAME='{$t->getTableName()}'")
       ->orderBy("ORDINAL_POSITION")
       ->sql();
-    
+
     return $sql;
-    
+
   }
-  
+
   // SQL para obtener el listade de foreign keys de una tabla
   public function sqlGetTableForeignKeys(AmTable $t){
-      
+
     $sql = $this
       ->newQuery("information_schema.KEY_COLUMN_USAGE")
       ->selectAs("CONSTRAINT_NAME", "name")
@@ -252,14 +252,14 @@ class MysqlSource extends AmSource{
       ->where("TABLE_SCHEMA='{$this->getDatabase()}'", "and", "TABLE_NAME='{$t->getTableName()}'", "and", "CONSTRAINT_NAME<>'PRIMARY'", "and", "REFERENCED_TABLE_SCHEMA=TABLE_SCHEMA")
       ->orderBy("CONSTRAINT_NAME", "ORDINAL_POSITION")
       ->sql();
-        
+
     return $sql;
 
   }
-  
+
   // SQL para obtener el lista de de referencias a una tabla
   public function sqlGetTableReferences(AmTable $t){
-      
+
     $sql = $this
       ->newQuery("information_schema.KEY_COLUMN_USAGE")
       ->selectAs("CONSTRAINT_NAME", "name")
@@ -269,9 +269,9 @@ class MysqlSource extends AmSource{
       ->where("TABLE_SCHEMA='{$this->getDatabase()}'", "and", "REFERENCED_TABLE_NAME='{$t->getTableName()}'", "and", "CONSTRAINT_NAME<>'PRIMARY'", "and", "REFERENCED_TABLE_SCHEMA=TABLE_SCHEMA")
       ->orderBy("CONSTRAINT_NAME", "ORDINAL_POSITION")
       ->sql();
-    
+
     return $sql;
-      
+
   }
 
   // Obtener el SQL para la clausula SELECT
@@ -287,7 +287,7 @@ class MysqlSource extends AmSource{
       // Si es una consulta se incierra entre parentesis
       if($field instanceof AmQuery)
         $field = "({$field->sql()})";
-      
+
       // Agregar parametro AS
       $selects[] = AmORM::isNameValid($as) ? "$field AS '$as'" : (string)$field;
 
@@ -306,13 +306,13 @@ class MysqlSource extends AmSource{
 
   // Obtener el SQL para la clausula FROM
   public function sqlFrom(AmQuery $q, $with = true){
-      
-    $fromsOri = $q->getFroms();  // Listado de argumentos de la clausula FROM 
+
+    $fromsOri = $q->getFroms();  // Listado de argumentos de la clausula FROM
     $froms = array();   // Listado de retorno
-    
+
     // Recorrer lista del FROM
     foreach($fromsOri as $as => $from){
-            
+
       if($from instanceof AmQuery){
         // Si es una consulta se encierra en parentesis
         $from = "({$from->sql()})";
@@ -328,15 +328,15 @@ class MysqlSource extends AmSource{
       }elseif(is_string($from)){
         $from = $from = "($from)";
       }
-            
+
       // Agregar parametro AS
       $froms[] = AmORM::isNameValid($as) ? "$from AS $as" : $from;
-            
+
     }
-        
-    // Unir argumentos procesados      
+
+    // Unir argumentos procesados
     $froms = implode(", ", $froms);
-    
+
     // Agregar FROM
     return trim(empty($froms) ? "" : (($with ? "FROM " : "").$froms));
 
@@ -344,45 +344,45 @@ class MysqlSource extends AmSource{
 
   // Obtener el SQL para una condicion IN
   public static function in($field, $collection){
-    
+
     // Si es un array se debe preparar la condició
     if(is_array($collection)){
-        
+
         // Filtrar elementos repetidos
         $collection = array_filter($collection);
-        
+
         // Si no esta vacía la colecion
         if(!empty($collection)){
-          
+
           // Agregar cadenas dentro de los comillas simple
           $func = create_function('$c', 'return is_numeric($c) ? $c : "\'$c\'";');
           $collection = array_map($func, array_values($collection));
 
           // Unir colecion por comas
           $collection = implode($collection, ",");
-            
+
         }else{
           // Si es una colecion vacía
           $collection = null;
         }
-        
+
     }elseif($collection instanceof AmQuery){
 
       // Si es una consulta entonces se obtiene el SQL
       $collection = $collection->sql();
 
     }
-    
+
     // Agregar el comando IN
     return isset($collection) ? "$field IN($collection)" : "false";
-      
+
   }
 
   // Helper para obtener el SQL de la clausula WHERE
   protected function parseWhere($condition, $prefix = null, $isIn = false){
 
     if($isIn){
-      
+
       // Es una condicion IN
       $condition = self::in($condition[0], $condition[1]);
 
@@ -433,7 +433,7 @@ class MysqlSource extends AmSource{
 
   // Obtener SQL para la clausula WHERE de una consulta
   public function sqlWhere(AmQuery $q, $with = true){
-    $where = $this->parseWhere($q->getWheres());  
+    $where = $this->parseWhere($q->getWheres());
     return trim(empty($where) ? "" : (($with ? "WHERE " : "").$where));
   }
 
@@ -443,12 +443,12 @@ class MysqlSource extends AmSource{
     // Resultado
     $joinsOri = $q->getJoins();
     $joinsResult = array();
-    
+
     //Recorrer cada tipo de join
     foreach($joinsOri as $type => $joins){
       // Recorrer cada join
       foreach($joins as $join){
-          
+
           // Declarar posiciones del array como variables
           // Define $on, $as y $table
           extract($join);
@@ -456,7 +456,7 @@ class MysqlSource extends AmSource{
           // Eliminar espacios iniciales y finales
           $on = trim($on);
           $as = trim($as);
-          
+
           // Si los parametros quedan vacios
           if(!empty($on)) $on = " ON $on";
           if(!empty($as)) $as = " AS $as";
@@ -471,7 +471,7 @@ class MysqlSource extends AmSource{
 
           // Agrgar parte de join
           $joinsResult[] = " $type JOIN $table$as$on";
-          
+
           // Liberar variables
           unset($table, $as, $on);
 
@@ -493,10 +493,10 @@ class MysqlSource extends AmSource{
     foreach($ordersOri as $order => $dir){
       $orders[] = "$order $dir";
     }
-    
+
     // Unir resultado
     $orders = implode(", ", $orders);
-    
+
     // Agregar ORDER BY
     return trim(empty($orders) ? "" : (($with ? "ORDER BY " : "").$orders));
 
@@ -544,9 +544,9 @@ class MysqlSource extends AmSource{
 
     // Recorrer los sets
     foreach($setsOri as $set){
-        
+
       $value = $set["value"];
-      
+
       // Acrear asignacion
       if($value === null){
         $sets[] = "{$set["field"]} = NULL";
@@ -555,9 +555,9 @@ class MysqlSource extends AmSource{
       }elseif($set["const"] === false){
         $sets[] = "{$set["field"]} = $value";
       }
-        
+
     }
-    
+
     // Unir resultado
     $sets = implode(",", $sets);
 
@@ -568,7 +568,7 @@ class MysqlSource extends AmSource{
 
   // Obtener el SQL para una consulta UPDATE
   public function sqlUpdate(AmQuery $q){
-        
+
     return implode(" ", array(
       "UPDATE",
       trim($q->sqlFrom(false)),
@@ -581,10 +581,10 @@ class MysqlSource extends AmSource{
 
   // Obtener el SQL para una consulta DELETE
   public function sqlDelete(AmQuery $q){
-      
+
     // Obtener el nombre de la tabla
     $tableName = $this->getParseNameTable($q->getTable());
-    
+
     // Agregar DELETE FROM
     return implode(" ", array(
       "DELETE FROM",
@@ -596,7 +596,7 @@ class MysqlSource extends AmSource{
 
   // Obtener el SQL para una consulta de insercon
   public function sqlInsertInto($table = null, $values = array(), array $fields = array()){
-    
+
     // Si es una consulta
     if($values instanceof AmQuery){
 
@@ -618,7 +618,7 @@ class MysqlSource extends AmSource{
       $strValues = "VALUES $values";
 
     }
-      
+
     // Si el Str de valores no está vacío
     if(!empty($strValues)){
 
@@ -631,15 +631,15 @@ class MysqlSource extends AmSource{
 
       // Unir campos
       $fields = implode(",", $fields);
-      
+
       // Generar SQL
       return "INSERT INTO $tableName($fields) $strValues";
-        
+
     }
-    
+
     // Consulta invalida
     return "";
-      
+
   }
 
   // Devuelve una cadena con un valor valido en el gesto de BD
@@ -669,9 +669,9 @@ class MysqlSource extends AmSource{
   // Obtener el SQL para un campo de una tabla al momento de crear la tabla
   public function sqlField(AmField $field){
 
-    // Preparar las propiedades  
+    // Preparar las propiedades
     $name = $this->getParseName($field->getName());
-    $type = array_search(self::$TYPES, $field->getType());
+    $type = array_search($field->getType(), self::$TYPES);
     if(!$type) $type = $field->getType();
     $lenght = $field->getCharLenght();
     $lenght = !empty($lenght) ? "({$lenght})" : "";
@@ -681,16 +681,16 @@ class MysqlSource extends AmSource{
 
     $default = $field->getDefaultValue();
     $default = $default === null ? "" : " DEFAULT '{$default}'";
-    
+
     $autoIncrement = $field->getAutoIncrement() ? " AUTO_INCREMENT" : "";
-    
+
     return "$name$type$lenght$autoIncrement$charset$collage$notNull$default";
 
   }
 
   // Obtener el SQL para crear una tabla
   public function sqlCreateTable(AmTable $t){
-      
+
     // Obtener nombre de la tabla
     $tableName = $this->getParseNameTable($t->getTableName());
 
@@ -701,20 +701,20 @@ class MysqlSource extends AmSource{
     // Obtener el SQL para cada camppo
     foreach($realFields as $field)
       $fields[] = $this->sqlField($field);
-      
+
     // Obtener los nombres de los primary keys
     $pks = $t->getPks();
     foreach($pks as $offset => $pk)
       $pks[$offset] = $this->getParseName($t->getField($pk)->getName());
 
     // Preparar otras propiedades
-    $engine = empty($t->engine) ? "" : "ENGINE={$t->engine} ";        
+    $engine = empty($t->engine) ? "" : "ENGINE={$t->engine} ";
     $charset = $this->sqlCharset($t->getCharset());
     $collage = $this->sqlCollage($t->getCollage());
 
     // Agregar los primaris key al final de los campos
     $fields[] = empty($pks) ? "" : "PRIMARY KEY (" . implode(", ", $pks). ")";
-    
+
     // Unir los campos
     $fields = implode(", ", $fields);
 
@@ -725,22 +725,22 @@ class MysqlSource extends AmSource{
 
   // Obtener el SQL para una consulta TRUNCATE: Vaciar una tabla
   public function sqlTruncate($table = null){
-    
+
     // Obtener nombre de la tabla
     $tableName = $this->getParseNameTable($table);
 
     return "TRUNCATE $tableName";
-    
+
   }
 
   // Obtener el SQL para eliminar una tabla
   public function sqlDropTable($table){
-    
+
     // Obtener nombre de la tabla
     $tableName = $this->getParseNameTable($table);
 
     return "TRUNCATE $tableName";
-    
+
   }
 
 
