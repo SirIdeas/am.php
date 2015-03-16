@@ -113,7 +113,7 @@ abstract class AmSource extends AmObject{
   }
 
   // Devuelve la direccion del archivo de configuracion
-  public function getPathConfModel($model){
+  public function getPathConfModelBase($model){
     return $this->getFolderModelBase($model) . "/". AmORM::underscor($model) .".conf";
   }
 
@@ -124,13 +124,13 @@ abstract class AmSource extends AmObject{
 
   // Inidic si todas las clases y archivos de un model existes
   public function existsModel($model){
-    return is_file($this->getPathConfModel($model) . ".php")
+    return is_file($this->getPathConfModelBase($model) . ".php")
         && is_file($this->getPathClassModelBase($model) . ".php");
   }
 
   // Obtener la configuracion del archivo de configuracion propio de un model
   public function getTableConf($model){
-    return AmCoder::decode($this->getPathConfModel($model).".php");
+    return AmCoder::decode($this->getPathConfModelBase($model).".php");
   }
 
   // Crea el archivo de configuracion para una fuente
@@ -580,6 +580,73 @@ abstract class AmSource extends AmObject{
     // Se retorna el el último id insertado o true en
     // el caso de que se hayan insertado varios registros
     return $id === 0 ? true : $id;
+
+  }
+
+  // Devuelve las diferencias entre el esquema del ORM local
+  // y el esquema real de la BD
+  public function diff(){
+
+    // Obtener atributos de la BD locales
+    $conf = $this->getConf();
+    $conf = array(
+      "charset" => itemOr("charset", $conf),
+      "collage" => itemOr("collage", $conf),
+    );
+
+    // Obtener atributos del esquema en la BD
+    $info = $this->getInfo();
+
+    // Obtener diferencias.
+    $diff = diff($conf, $info);
+
+    $tablesDiff = array();
+
+    // Obtener diferencias entre las tablas
+    $tables = array_unique(array_merge(
+      $this->getTableNames(),
+      $this->newQuery($this->sqlGetTables())
+            ->getCol("tableName")
+    ));
+
+    foreach($tables as $t)
+      if(true !== ($tableDiff = $this->diffLocalAndSchemaTables($t)))
+        $tablesDiff[$t] = $tableDiff;
+
+    if(count($tablesDiff)>0)
+      if($diff === true)
+        $diff = array("tables" => $tablesDiff);
+      else
+        $diff["tables"] = $tablesDiff;
+
+    print_r($diff);
+
+  }
+
+  // Devuelve la diferencia de la tabla del modelo y la tabla
+  // en la base de datos
+  public function diffLocalAndSchemaTables($tableName){
+
+    // Obtener configuracion local
+    $localConf = $this->getTableConf($tableName);
+    $localConf = empty($localConf)? null : $localConf;
+
+    // Obtener descripcion de la tabla desde la BD
+    $schemaConf = $this->describeTable($tableName);
+    $schemaConf = $schemaConf? $schemaConf->toArray() : null;
+
+    // Obtener los codigo de chequeo para saber si
+    // la estructura de la tabla cambio
+    $localMd5 = md5(json_encode($localConf));
+    $schemaMd5 = md5(json_encode($schemaConf));
+
+    // Si son iguales los codigo entonces no ha cambiado la tabla
+    if(md5(json_encode($localConf)) == md5(json_encode($schemaConf)))
+      return true;
+
+    // Si no son iguales los codigo de verificacion
+    // se devuelve la diferencia entre las tablas
+    return diff($localConf, $schemaConf);
 
   }
 

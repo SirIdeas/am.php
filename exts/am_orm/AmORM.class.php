@@ -7,6 +7,7 @@
 final class AmORM{
 
   protected static
+    $includedModels = array(),
     $sources = array();
 
   // Incluye un archivo dentro buscado dentro de la
@@ -118,6 +119,67 @@ final class AmORM{
     $source->setTable($tableName, $table);
 
     return $table;
+
+  }
+
+  public static function model($model){
+
+    // Si es un modelo nativo
+    if(preg_match("/^:(.*)@(.*)$/", $model, $m) || preg_match("/^:(.*)$/", $model, $m)){
+
+      // Si no se indica la fuente tomar la fuente por defecto
+      if(empty($m[2]))
+        $m[2] = "default";
+
+      // Incluir modelo y  obtener la tabla
+      $table = self::table($m[1], $m[2]);
+
+      // Retornar el nombre de la clase del modelo correspondiente
+      return $table->getClassNameModelBase();
+
+    }
+
+    // Obtener configuraciones de mails
+    $models = Am::getAttribute("models");
+
+    // Si se recibió un string asignar como nombre del modelo
+    if(is_string($model))
+      $model = array("name" => $model);
+
+    // Si no se recibió el nombre del modelo retornar falso
+    if(!isset($model["name"]))
+      return false;
+
+    // Combinar opciones recibidas en el constructor con las
+    // establecidas en el archivo de configuracion
+    $model = array_merge(
+      // Configuración de valores po defecto
+      isset($models["defaults"])? $models["defaults"] : array(),
+      // Configuración de valores del mail
+      isset($models[$model["name"]])? $models[$model["name"]] : array(),
+      // Configuracion recibida
+      $model
+    );
+
+    // Si ya fue incluido el model salir
+    if(in_array($model["name"], self::$includedModels))
+      return $model["name"];
+    else
+      // Incluir como modelo de usuario
+      // Guardar el nombre del modelo dentro de los modelos incluidos
+      // para no generar bucles infinitos
+      self::$includedModels[] = $model["name"];
+
+    // Incluir modelos requeridos por el modelo actual
+    foreach($model["models"] as $require)
+      self::model($require);
+
+    // Incluir archivo del modelo
+    if(is_file($modelFile = $model["root"] . $model["name"] . ".model.php"))
+      require_once($modelFile);
+
+    // Retornar el nombre de la clase
+    return $model["name"];
 
   }
 

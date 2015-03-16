@@ -2,6 +2,15 @@
 
 return array(
 
+  "extend" => array(
+    "models" => array(
+      "defaults" => array(
+        "root" => "model/",
+        "models" => array()
+      )
+    )
+  ),
+
   "files" => array(
     "AmORM.class",
     "AmField.class",
@@ -12,7 +21,7 @@ return array(
     "AmSource.class",
     "AmValidator.class",
   ),
-  
+
   "requires" => array(
     "exts/am_coder/",
   ),

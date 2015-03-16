@@ -38,7 +38,10 @@ final class AmTable extends AmObject{
 
     // Obtener configuracion del modelo
     if(isset($params["tableName"]))
-      $params = $source->getTableConf($params["tableName"]);
+      $params = array_merge(
+        $params,
+        $source->getTableConf($params["tableName"])
+      );
 
     // Aaignar modelo
     $params["source"] = $source;
@@ -89,7 +92,9 @@ final class AmTable extends AmObject{
   }
 
   // Nombre de las clases relacionadas a una tabla
-  public function getClassNameModelBase(){  return $this->getSource()->getClassNameModelBase($this->getModelName()); }
+  public function getClassNameModelBase(){
+    return $this->getSource()->getClassNameModelBase($this->getModelName());
+  }
 
   // Metodos GET para obtener las carpetas pertinentes
   public function getFolder(){
@@ -97,7 +102,7 @@ final class AmTable extends AmObject{
   }
 
   public function getPathConf(){
-    return $this->getSource()->getPathConfModel($this->getModelName());
+    return $this->getSource()->getPathConfModelBase($this->getModelName());
   }
 
   public function getPathClassModelBase(){
@@ -350,7 +355,6 @@ final class AmTable extends AmObject{
       unset($this->validators[$name]);
     }
   }
-
   // Obtener un listado de los campos primarios de una tabla
   public function sqlGetTablePrimaryKey(){  return $this->getSource()->sqlGetTablePrimaryKey($this); }
   public function getTablePrimaryKey(){     return $this->getSource()->getTablePrimaryKey($this); }

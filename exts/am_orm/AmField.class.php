@@ -64,12 +64,15 @@ class AmField extends AmObject{
       // Verdadera asiignación para la propiedad autoIncrement
       $this->autoIncrement = $this->getAutoIncrement() || preg_match("/auto_increment/", $params["extra"]) != 0;
 
+      $this->charLenght = isset($this->charLenght)? (int)$this->charLenght : null;
+      $this->floatPrecision = isset($this->floatPrecision)? (int)$this->floatPrecision : null;
+
       // Verdadera asignación para la propiedad extra
       $this->extra = str_replace("auto_increment", "", $params["extra"]);
-      
+
       // Verdadera asignación para la propiedad primaryKey
       $this->setPrimaryKey($params["primaryKey"] === true || $params["primaryKey"] == 1 || $params["primaryKey"] == "true");
-        
+
     }
 
     // Métodos get para las propiedades del campo
@@ -84,13 +87,13 @@ class AmField extends AmObject{
     public function getCharset(){ return $this->charset; }
     public function getCollage(){ return $this->collage; }
     public function getPrimaryKey(){ return $this->primaryKey; }
-    
+
     // Métodos set para algunas propiedades
     public function setPrimaryKey($value){ $this->primaryKey = $value; return $this; }
 
     // Convertir campo en array
     public function toArray(){
-        
+      
       return array(
         "name" => $this->getName(),
         "type" => $this->getType(),
@@ -104,7 +107,7 @@ class AmField extends AmObject{
         "collage" => $this->getCollage(),
         "primaryKey" => $this->getPrimaryKey(),
       );
-        
+
     }
 
     // Realizar casting a un valor por el tipo de datos del campo

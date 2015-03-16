@@ -1,5 +1,27 @@
 <?php
 
+// Devuelve la diferencia entre dos valores.
+// Si los elementos on array se compara recursivamente
+// Devuelve true si no hay diferencia. De lo contrario
+// devuelve un valores que son diferentes.
+function diff($v1, $v2){
+  if(is_array($v1) && is_array($v2)){
+    $ret = array();
+    $ks = array_unique(array_merge(array_keys($v1), array_keys($v2)));
+    foreach($ks as $k){
+      $vk1 = isset($v1[$k])?$v1[$k]:null;
+      $vk2 = isset($v2[$k])?$v2[$k]:null;
+      if(true !== ($diff = diff($vk1, $vk2)))
+        $ret[$k] = $diff;
+    }
+    return count($ret)>0? $ret : true;
+  }else if($v1 === $v2){
+    return true;
+  }
+  return array($v1, $v2);
+
+}
+
 // Indica si un callback es válido o no.
 function isValidCallback($callback){
   // Si es un array evaluar como metodo
