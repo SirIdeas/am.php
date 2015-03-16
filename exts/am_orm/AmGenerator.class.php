@@ -173,8 +173,8 @@ final class AmGenerator{
     echo implode("\n  ", $hasOneMethods);
     echo "\n";
 
-    echo "\n  protected static function initialize(AmTable \$table){";
-    echo "\n    parent::initialize(\$table);";
+    echo "\n  protected function initModel(){";
+    echo "\n    parent::initModel();";
 
     if(!empty($uniqueValidators)){
       echo "\n";

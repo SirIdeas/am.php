@@ -6,13 +6,17 @@
 
 class AmModel extends AmObject{
 
+  private static
+    $allValidators = array();
+
   // Propiedades
-  protected
-    $table = null,        // Instancia de la tabla
-    $isNew = true,        // Indica si es un registro nuevo
-    $errors = array(),    // Listados de errores
-    $realValues =array(), // Valores reales
-    $errorsCount = 0;     // Cantidad de errores
+  private
+    $table = null,          // Instancia de la tabla
+    $isNew = true,          // Indica si es un registro nuevo
+    $errors = array(),      // Listados de errores
+    $realValues = array(),  // Valores reales
+    $validators = null,     // Validators del modelo
+    $errorsCount = 0;       // Cantidad de errores
 
   // El constructor se encarga de asignar la instancia de la tabla correspondiente al model
   public function __construct($params = array()) {
@@ -22,16 +26,17 @@ class AmModel extends AmObject{
     $sourceName = $className::$sourceName;
     $tableName  = $className::$tableName;
 
-    // Obtener el nombre de la fuente
-    $source = AmORM::source($sourceName)->getName();
+    // Inicializar los validators
+    if(!isset(self::$allValidators[$className])){
+      self::$allValidators[$className] = new AmObject;
+      $this->validators = self::$allValidators[$className];
+      $this->initModel();
+    }else{
+      $this->validators = self::$allValidators[$className];
+    }
 
     // Obtener el nombre de la tabla
-    $this->table = AmORM::table($tableName, $source);
-
-    if(!$this->table->isInit()){
-      $className::initialize($this->table);
-      $this->table->markAsInit();
-    }
+    $this->table = AmORM::table($tableName, $sourceName);
 
     // Obtener los campos
     $fields = (array)$this->table->getFields();
@@ -79,7 +84,86 @@ class AmModel extends AmObject{
   }
 
   // Inicializacion de la tabla
-  protected static function initialize(AmTable $table){
+  protected function initModel(){
+  }
+
+  // Devuelve todos lo validators de la tabla o los de un campo
+  public function getValidators($name = null){
+    if(isset($name))
+      return isset($this->validators->$name)? $this->validators->$name : null;
+    return $this->validators;
+  }
+
+  // Devuelve un validator en especifico
+  public function getValidator($name, $validatorName){
+    return isset($this->validators->$name[$validatorName])?
+      $this->validators->$name[$validatorName] : null;
+  }
+
+  // Metodo para eliminar validator
+  public function dropValidator($name, $validatorName = null){
+    if(isset($this->validators->$name[$validatorName])){
+      // Si esta definido el validator en la posicion especifica se eliminan
+      unset($this->validators->$name[$validatorName]);
+    }else if(isset($this->validators->$name)){
+      // Sino esta definido los validators para un atributo se eliminan
+      unset($this->validators->$name);
+    }
+  }
+
+  // Agrega un validator a la tabla
+  public function setValidator($name, $validatorName, $validator = null, $options = array()){
+
+    // Si el nombre es un array, entonces
+    if(is_array($name)){
+      // Agregar un  validator por cada elemento
+      foreach ($name as $value)
+        $this->setValidator($value, $validatorName, $validator, $options);
+      return;
+    }
+
+    // Si el segundo parámetro es una instancia de un validator
+    // se agrega
+    if($validatorName instanceof AmValidator)
+      return $this->setValidator($name, null, $validatorName);
+
+    // Si el tercer parametro es un array, entonces este representa las opciones.
+    // El nombre del parametro pasa a ser tambien el validator que se buscara.
+    if(is_array($validator))
+      return $this->setValidator($name, $validatorName, null, $validator);
+
+    // Si no se indico el 3er parametros, entonces se tomara el nombre como validador
+    if(!isset($validator))
+      return $this->setValidator($name, $validatorName, $validatorName, $options);
+
+    // Si el validator no es una instancia de un validador
+    // Entonce obtener instancia del validador.
+    if(!$validator instanceof AmValidator){
+        $validator = AmORM::validator($validator);
+        $validator = new $validator($options);
+    }
+
+    // Asignar el nombre al validator
+    $validator->setFieldName($name);
+    $validators = $this->validators;
+
+    // Crear array si no ha sido creado
+    if(!isset($validators->$name))
+      $validators->$name = array();
+
+    // Agregar el validator a la tabla
+    if(isset($validatorName)){
+      $validators->$name = array_merge($validators->$name, array(
+        $validatorName => $validator
+      ));
+      return $validator;
+    }
+
+    // Agregar al final
+    array_push($validators->$name, $validator);
+
+    return $validator;
+
   }
 
   // Método redefinido el usuario para inicializaciones customizadas
@@ -267,7 +351,7 @@ class AmModel extends AmObject{
     $this->clearErrors();
 
     // Obtener nombre de validator definidos
-    $validatorNames = array_keys((array)$this->getTable()->getValidators());
+    $validatorNames = array_keys((array)$this->getValidators());
 
     // Validar todos los campos
     foreach($validatorNames as $field)
@@ -277,7 +361,12 @@ class AmModel extends AmObject{
   // Ejecuta las validaciones para un campo
   public function validateField($field){
     // Obtener validator del campo
-    $validators = $this->getTable()->getValidators($field);
+    $validators = $this->getValidators($field);
+
+    // Sino se obtiene un array de validators retornar
+    // sine valuar 
+    if(!is_array($validators))
+      return;
 
     foreach($validators as $nameValidator => $validator){
       // Si el modelo no cumple con la validacion

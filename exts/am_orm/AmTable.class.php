@@ -23,9 +23,7 @@ final class AmTable extends AmObject{
     $pks = array(),           // Array de nombres de campos que forman el PK
     $referencesTo = array(),  // Tablas a las que hace referencia
     $referencesBy = array(),  // Tablas que le hacen referencia
-    $validators = array(),    // Validadores
-    $source = null,           // Fuente de datos
-    $isInit = false;          // Indica si la tabla fue inicializada o no
+    $source = null;           // Fuente de datos
 
   // Constructor para la clase
   public function __construct($params = null){
@@ -82,14 +80,6 @@ final class AmTable extends AmObject{
   public function getField($name){ return $this->hasField($name)? $this->fields->$name : null; }
 
   public function hasField($name){ return isset($this->fields->$name); }
-
-  public function isInit(){
-    return $this->isInit;
-  }
-
-  public function markAsInit(){
-    return $this->isInit = true;
-  }
 
   // Nombre de las clases relacionadas a una tabla
   public function getClassNameModelBase(){
@@ -288,73 +278,6 @@ final class AmTable extends AmObject{
 
   }
 
-  // Devuelve todos lo validators de la tabla o los de un campo
-  public function getValidators($name = null){
-    if(isset($name))
-      return isset($this->validators[$name])? $this->validators[$name] : null;
-    return $this->validators;
-  }
-
-  // Devuelve un validator en especifico
-  public function getValidator($name, $validatorName){
-    return isset($this->validators[$name][$validatorName])?
-      $this->validators[$name][$validatorName] : null;
-  }
-
-  // Agrega un validator a la tabla
-  public function setValidator($name, $validatorName, $validator = null, $options = array()){
-
-    // Si el nombre es un array, entonces
-    if(is_array($name)){
-      // Agregar un  validator por cada elemento
-      foreach ($name as $value)
-        $this->setValidator($value, $validatorName, $validator, $options);
-      return;
-    }
-
-    // Si el segundo parámetro es una instancia de un validator
-    // se agrega
-    if($validatorName instanceof AmValidator)
-      return $this->setValidator($name, null, $validatorName);
-
-    // Si el tercer parametro es un array, entonces este representa las opciones.
-    // El nombre del parametro pasa a ser tambien el validator que se buscara.
-    if(is_array($validator))
-      return $this->setValidator($name, $validatorName, null, $validator);
-
-    // Si no se indico el 3er parametros, entonces se tomara el nombre como validador
-    if(!isset($validator))
-      return $this->setValidator($name, $validatorName, $validatorName, $options);
-
-    // Si el validator no es una instancia de un validador
-    // Entonce obtener instancia del validador.
-    if(!$validator instanceof AmValidator){
-        $validator = AmORM::validator($validator);
-        $validator = new $validator($options);
-    }
-
-    // Asignar el nombre al validator
-    $validator->setFieldName($name);
-
-    // Agregar el validator a la tabla
-    if(isset($validatorName))
-      return $this->validators[$name][$validatorName] = $validator;
-
-    // Agregar al final
-    return $this->validators[$name][] = $validator;
-
-  }
-
-  // Metodo para eliminar validator
-  public function dropValidator($name, $validatorName = null){
-    if(isset($this->validators[$name][$validatorName])){
-      // Si esta definido el validator en la posicion especifica se eliminan
-      unset($this->validators[$name][$validatorName]);
-    }else if(isset($this->validators[$name])){
-      // Sino esta definido los validators para un atributo se eliminan
-      unset($this->validators[$name]);
-    }
-  }
   // Obtener un listado de los campos primarios de una tabla
   public function sqlGetTablePrimaryKey(){  return $this->getSource()->sqlGetTablePrimaryKey($this); }
   public function getTablePrimaryKey(){     return $this->getSource()->getTablePrimaryKey($this); }
