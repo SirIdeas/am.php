@@ -11,17 +11,12 @@ class AmResourceControl extends AmControl{
   }
 
   // Accion para mostrar el listado de un modelo
-  public function get_index(){
-    $this->r = new $this->classModel;
-    var_dump($this->r->save());
-    var_dump($this->r->getErrors());
-    $this->render(null);
-  }
+  public function action_index(){}
+  public function get_index(){}
+  public function post_index(){}
 
   protected function action_data(){
 
-    // Am::requireExt("exts/dinamicTableServer");
-    //
     // $columns = array_keys($this->columns);
     //
     // $q = AmORM::table($this->model)
@@ -37,12 +32,11 @@ class AmResourceControl extends AmControl{
   public function format_list($r){
     $r["cls"] = "";
     return $r;
-
   }
 
-  // Acción para agregsar un nuevo usuario
+  // Acción para agregar un nuevo usuario
   public function action_new(){
-    $this->r = new Inscrito();
+    $this->r = new $this->classModel;
   }
 
   public function post_new(){
@@ -63,10 +57,12 @@ class AmResourceControl extends AmControl{
   }
 
   // Accion para mostrar el detalle de los registros
+  public function action_detail($id){}
   public function get_detail($id){
     if(method_exists($this, "format_detail"))
       $this->r = $this->format_detail($this->r);
   }
+  public function get_post($id){}
 
   // Accion para modificar los datos del registro
   public function action_edit($id){
@@ -117,7 +113,8 @@ class AmResourceControl extends AmControl{
   public function filter_loadRecord($id){
 
     // Obtener le model con que trabaja el controlador
-    $this->r = AmORM::table($this->model)->find($id);
+    $className = $this->classModel;
+    $this->r = $className::me()->find($id);
 
     // Si no se encontró el registro mostrar un mensaje
     if(!$this->r){

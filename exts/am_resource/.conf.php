@@ -11,6 +11,7 @@ return array(
   "requires" => array(
     "exts/am_control/",
     "exts/am_orm/",
+    "exts/dinamic_table/",
   ),
 
 );

@@ -1,15 +1,9 @@
-(# set:menu=$menu #)
-(# set:title="Lista de $model" #)
-(# set:titulo="Lista de $model" #)
-
-(# put:tableTop #)
-
-(# section:title #)
+<div>
   <?php if ($allow["new"]): ?>
-    <a href="<?php Am::eUrl("/admin/{$menu}/new") ?>" class="btn btn-default btn-xs">Nuevo</a>
+    <a href="new" class="btn btn-default btn-xs">Nuevo</a>
   <?php endif ?>
-(# endsection #)
-
+</div>
+(# child #)
 <div>
   <input id="table-search" type="text" class="form-control" placeholder="Buscar">
 </div>
@@ -18,7 +12,7 @@
   class="table records-list"
   id="dinamic-table"
   data-param-len="15"
-  data-param-data-url="<?php Am::eUrl("/admin/$menu/data") ?>"
+  data-param-data-url="data"
   data-param-input-search-selector="#table-search"
   data-param-pagination-selector="#table-pagination"
   data-param-count-record="#dinamic-table-count-record"
@@ -41,7 +35,7 @@
           <?php endif ?>
         </th>
       <?php endforeach ?>
-      <?php if ($allow["opciones"]): ?>
+      <?php if ($allow["options"]): ?>
         <th data-param-show="false"></th>
         <th data-param-sort="false" data-param-class="text-center">
           <div>Opciones</div>
@@ -52,7 +46,7 @@
   </thead>
   <tfoot>
     <tr>
-      <td colspan="<?php echo count($columns)+($allow["opciones"]? 1:0) ?>">
+      <td colspan="<?php echo count($columns)+($allow["options"]? 1:0) ?>">
         <p id="dinamic-table-count-record" class="text-muted pull-left table-count-record">
           <i>
             <small dinamic-table-msg="showing">Mostrando registros del {$rf} - {$rt} de {$fc} encontrados de un total {$co} en la tabla</small>
@@ -89,11 +83,11 @@
   </small>
 </script>
 
-(# section:head+ #)
+(section:head+ #)
   <link rel="stylesheet" href="<?php Am::eUrl() ?>/vendor/dinamictable/jquery.dinamictable.css">
-(# endsection #)
+(endsection #)
 
-(# section:foot+ #)
+(section:foot+ #)
   <script src="<?php Am::eUrl() ?>/vendor/tmpl.min.js"></script>
   <script src="<?php Am::eUrl() ?>/vendor/dinamictable/jquery.dinamictable.js"></script>
   <script>
@@ -118,4 +112,4 @@
 
     });
   </script>
-(# endsection #)
+(endsection #)

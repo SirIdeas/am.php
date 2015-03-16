@@ -1,3 +1,1 @@
-index.view.php
-
-<?php var_dump($r) ?>
+(# parent:index.base.php #)

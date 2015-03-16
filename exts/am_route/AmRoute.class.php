@@ -136,9 +136,24 @@ class AmRoute{
   // Metodo busca la ruta con la que conincide la peticion actual.
   private static final function evalMatch($request, $routes, array $prev = array()){
 
+    // Si se indicó la ruta como un recurso
+    if(isset($routes["resource"])){
+      $routes["routes"] = array_merge(
+        itemOr("routes", $routes, array()),
+        array(
+          "/"           => "control => {$routes["resource"]}@index",
+          "/new"        => "control => {$routes["resource"]}@new",
+          "/:id/detail" => "control => {$routes["resource"]}@detail",
+          "/:id/edit"   => "control => {$routes["resource"]}@edit",
+          "/:id/remove" => "control => {$routes["resource"]}@remove",
+        )
+      );
+      unset($routes["resource"]);
+    }
+
     $lastError = false;
 
-    $methods = array("template", "file", "download", "assets", "redirect", "goto", "control", "app");
+    $methods = array("template", "file", "download", "assets", "redirect", "goto", "control", "app", "resource");
 
     if(isset($routes["routes"])){
       foreach($routes["routes"] as $key => $route){
@@ -179,7 +194,7 @@ class AmRoute{
 
     // Crear instancia de la ruta.
     $r = new self($routes["route"]);
-
+    
     // Si hace match con la peticion
     if(false !== ($params = $r->match($request))){
 
@@ -246,7 +261,7 @@ class AmRoute{
 
             }elseif(preg_match("/^(.*)@(.*)$/", $destiny, $a)){
               array_shift($a);
-              
+
               // Despachar con controlador
               if(Am::call("response.control",
                 $a[0],

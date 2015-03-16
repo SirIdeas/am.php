@@ -1,0 +1,28 @@
+.dinamic-table-wrap{
+  position: relative;
+}
+
+.dinamic-table-mask-loading{
+  position: absolute;
+  display: none;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  background-image: url('images/mask.png');
+  background-repeat: repeat;
+  z-index: 2;
+}
+
+.dinamic-table-count-record{
+  margin-bottom: 0px;
+  margin-left: 10px;
+  font-style: italic;
+  color: gray;
+  font-size: 11px;
+  line-height: 34px;
+}
+
+.dinamic-table-count-record > *{
+  display: none;
+}
