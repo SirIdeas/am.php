@@ -76,7 +76,7 @@ final class AmGenerator{
 
         // Agregar validador de campo unico para los primary keys
         if(count($table->getPks()) == 1 && $f->getPrimaryKey()){
-          $uniqueValidators[] = "\$table->setValidator(\"{$f->getName()}\", \"unique\", \"unique\");";
+          $uniqueValidators[] = "\$this->setValidator(\"{$f->getName()}\", \"unique\", \"unique\");";
         }
 
         $type = $f->getType();
@@ -87,35 +87,35 @@ final class AmGenerator{
           case "string":
             $len = $f->getCharLenght();
             if(isset($len)){
-              $strlenValidators[] = "\$table->setValidator(\"{$f->getName()}\", \"max_length\", \"max_length\", array(\"max\" => $len));";
+              $strlenValidators[] = "\$this->setValidator(\"{$f->getName()}\", \"max_length\", \"max_length\", array(\"max\" => $len));";
             }
-            // $emptyValidators[] = "\$table->setValidator(\"{$f->getName()}\", \"empty\", \"empty\");";
+            // $emptyValidators[] = "\$this->setValidator(\"{$f->getName()}\", \"empty\", \"empty\");";
             break;
 
           case "integer":
           case "biginteger":
-            $integerValidators[] = "\$table->setValidator(\"{$f->getName()}\", \"integer\", \"integer\");";
+            $integerValidators[] = "\$this->setValidator(\"{$f->getName()}\", \"integer\", \"integer\");";
             break;
 
           case "float":
-            $floatValidators[] = "\$table->setValidator(\"{$f->getName()}\", \"float\", \"float\");";
+            $floatValidators[] = "\$this->setValidator(\"{$f->getName()}\", \"float\", \"float\");";
             break;
 
           case "date":
-            $dateValidators[] = "\$table->setValidator(\"{$f->getName()}\", \"date\", \"date\");";
+            $dateValidators[] = "\$this->setValidator(\"{$f->getName()}\", \"date\", \"date\");";
             break;
 
           case "time":
-    //        $timeValidators[] = "\$table->setValidator(\"{$f->getName()}\", \"time\", \"time\");";
+    //        $timeValidators[] = "\$this->setValidator(\"{$f->getName()}\", \"time\", \"time\");";
     //        break;
 
           case "datetime":
-    //        $datetimeValidators[] = "\$table->setValidator(\"{$f->getName()}\", \"datetime\", \"datetime\");";
+    //        $datetimeValidators[] = "\$this->setValidator(\"{$f->getName()}\", \"datetime\", \"datetime\");";
     //        break;
 
           default:
             if($f->getNotNull()){
-              $nullValidators[] = "\$table->setValidator(\"{$f->getName()}\", \"null\", \"null\");";
+              $nullValidators[] = "\$this->setValidator(\"{$f->getName()}\", \"null\", \"null\");";
             }
 
         }
@@ -135,7 +135,7 @@ final class AmGenerator{
 
         if($f->getNotNull()){
 
-          $relationsValidators[] = "\$table->setValidator(\"{$f->getName()}\", \"fk_{$r->getTable()}\", \"in_query\", array(\"query\" => AmORM::table(\"{$r->getTable()}\", \"{$table->getSource()->getName()}\")->all(), \"field\" => \"{$cols[$colName[0]]}\"));";
+          $relationsValidators[] = "\$this->setValidator(\"{$f->getName()}\", \"fk_{$r->getTable()}\", \"in_query\", array(\"query\" => AmORM::table(\"{$r->getTable()}\", \"{$table->getSource()->getName()}\")->all(), \"field\" => \"{$cols[$colName[0]]}\"));";
 
         }
 
