@@ -194,7 +194,7 @@ class AmRoute{
 
     // Crear instancia de la ruta.
     $r = new self($routes["route"]);
-    
+
     // Si hace match con la peticion
     if(false !== ($params = $r->match($request))){
 
@@ -250,7 +250,9 @@ class AmRoute{
               // Respuesta como template, file o assets
 
             }elseif(preg_match("/^(.*)::(.*)$/", $destiny, $a)){
+
               array_shift($a);
+
               if(call_user_func_array("method_exists", $a)){
                 call_user_func_array($a, $params);
                 return true;

@@ -9,7 +9,7 @@ return array(
         "root" => "control/", // Carpeta raiz del controlador
         "views" => "views/",  // Carpeta por defecto para las vistas
         "paths" => array(     // Carpetas de vistas del controlador
-          dirname(__FILE__) . "/",
+          dirname(__FILE__) . "/views/",
         ),
       ),
     ),

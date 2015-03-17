@@ -9,11 +9,11 @@
 
 <link rel="shortcut icon" href="<?php Am::eUrl() ?>/favicon.ico"/>
 
-<link rel="stylesheet" href="<?php Am::eUrl() ?>/styles/vendor.css">
-<link rel="stylesheet" href="<?php Am::eUrl() ?>/styles/styles.css">
+<link rel="stylesheet" href="<?php Am::eUrl() ?>/vendor/vendor.css">
+<link rel="stylesheet" href="<?php Am::eUrl() ?>/css/styles.css">
 
 <!--[if lt IE 9]>
-  <link rel="stylesheet" href="<?php Am::eUrl() ?>/styles/ie7fix.css">
+  <link rel="stylesheet" href="<?php Am::eUrl() ?>/vendor/ie-fixs.css">
   <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
   <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->

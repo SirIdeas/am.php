@@ -9,13 +9,13 @@
   </script>
 <?php endif ?>
 <!--[if lt IE 9]>
-  <script src="<?php Am::eUrl() ?>/scripts/ie-fixs.js"></script>
+  <script src="<?php Am::eUrl() ?>/vendor/ie-fixs.js"></script>
 <![endif]-->
-<script src="<?php Am::eUrl() ?>/scripts/vendor.js"></script>
+<script src="<?php Am::eUrl() ?>/vendor/vendor.js"></script>
 <!--[if lt IE 9]>
-  <script src="<?php Am::eUrl() ?>/scripts/nav-dep.js"></script>
+  <script src="<?php Am::eUrl() ?>/vendor/nav-dep.js"></script>
 <![endif]-->
-<script src="<?php Am::eUrl() ?>/scripts/cookie-msg.js"></script>
+<script src="<?php Am::eUrl() ?>/vendor/cookie-msg.js"></script>
 <script type="text/javascript">
   $.cookieMsg('bottom', 'simposiumtos-web', '<?php Am::eUrl() ?>/politicas-de-privacidad');
 </script>
