@@ -3,7 +3,7 @@
 return array(
 
   "errorReporting" => E_ALL,    // Indicar que errores se mostrarán
-  
+
   "sessionManager" => "normalSession", // MAnejador de session
 
   "requires" => array(
@@ -13,7 +13,8 @@ return array(
     "exts/am_template/",
     "exts/am_mailer/",
     "exts/am_flash/",
-    "exts/am_credentials/",
+    "exts/am_flash/",
+    "exts/tag_helpers",
   ),
 
 

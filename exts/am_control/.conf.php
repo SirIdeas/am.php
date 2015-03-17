@@ -20,6 +20,10 @@ return array(
 
   "mergeFunctions" => array(
     "control" => "array_merge_recursive",
+  ),
+
+  "requires" => array(
+    "exts/am_credentials/",
   )
 
 );
