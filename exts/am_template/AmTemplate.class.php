@@ -16,7 +16,7 @@ final class AmTemplate extends AmObject{
     $child = null,            // Contenido de la vista hija
     $dependences = array(),   // Lista de vistas de las que depende (padre, hijas y anidadas)
     $paths = array(),         // Lista de directorios donde se buscará la vista
-    $ignore = false,          // Bandera que indica si se ignoran las vistas inexistentes sin generar error
+    $ignore = true,           // Bandera que indica si se ignoran las vistas inexistentes sin generar error
     $errors = array(),        // Indica si se generó o no un error durante el renderizado
     $options = array();       // Guarda los parametros con los que se inicializó la vista
 
@@ -41,10 +41,14 @@ final class AmTemplate extends AmObject{
     $this->parent = array_pop($parents[1]);
 
     // Quitar sentencias de padres
-    $this->content = implode("", preg_split("/\(# parent:(.*) #\)/", $this->content));
+    $this->content = implode("",
+      preg_split("/\(# parent:(.*) #\)/",
+      $this->content)
+    );
 
     // Obtener lista de hijos en comandos place
-    preg_match_all("/\(# (place:(.*)|put:.* = (.*)) #\)/", $this->content, $dependences1);
+    preg_match_all("/\(# (place:(.*)|put:.* = (.*)) #\)/",
+      $this->content, $dependences1);
 
     // Obtener lista de hijos en comandos put
     $this->dependences = array_merge($dependences1[2], $dependences1[3]);
@@ -60,7 +64,10 @@ final class AmTemplate extends AmObject{
     // Convertir el array de dependencias a un array asociativo
     // donde todos los valores sean false
     if(0<count($this->dependences)){
-      $this->dependences = array_combine($this->dependences, array_fill(0, count($this->dependences), false));
+      $this->dependences = array_combine(
+        $this->dependences,
+        array_fill(0, count($this->dependences), false)
+      );
     }
 
   }

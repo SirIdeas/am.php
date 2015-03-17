@@ -111,7 +111,6 @@ class AmControl extends AmObject{
         "paths" => $this->getPaths(), // Obtener carpetas de ambito para el controlador
           // Variables en la vista
         "env" => array_merge($vars, $this->toArray()),
-        "ignore" => true,
         "child" => $child,
       )
 
@@ -476,14 +475,16 @@ class AmControl extends AmObject{
   // Funcion para atender las respuestas por controlador.
   // Recive el nombre del controlador, la accion a ejecutar,
   // Los parametros y el entorno
-  public static function response($control, $action, array $params, array $env){
+  public static function response($control, $action, array $params = array(), array $env = array()){
 
     // Valores por defecto
     $conf = array_merge(
       // Incluye el controlador y devuelve la configuracion para el mismo
       self::includeControl($control),
-      // Entono recibido
+
+      // Entorno
       $env,
+      
       // Asignar vista que se mostrará,
       array(
         "view" => self::getViewName($action),

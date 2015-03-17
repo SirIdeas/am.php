@@ -37,8 +37,8 @@ class AmRoute{
   }
 
   // Indica si una peticion conincide con la ruta actual
-  // Devuelve falso si no conincide o un array con los
-  // parémtros pasados por la ruta.
+  // Devuelve falso si no conincide o un array con los parémtros pasados por la
+  // ruta.
   public function match($request){
     $params = array();
 
@@ -53,19 +53,6 @@ class AmRoute{
 
     }
     return false;
-  }
-
-  // Renderiza un template
-  private static function template($file, $env){
-
-    // Renderizar vista mediante un callback
-    return Am::call("render.template",
-      $file,
-      array(
-        "env" => $env
-      )
-    );
-
   }
 
   // Obtiene la regex correspondientes con una ruta.
@@ -119,13 +106,13 @@ class AmRoute{
   }
 
   // Callback para evaluar las rutas
-  public static final function evaluate($request, array $env = array()){
+  public static final function evaluate($request){
 
-    // Si retorna verdadero
-    $prev = array("env" => $env);
-
-    if(true === ($lastError = self::evalMatch($request, Am::getAttribute("routes", array()), $prev)))
-      return true;
+    if(true === ($lastError = self::evalMatch($request,
+      Am::getAttribute("routes", array()),
+      Am::getAttribute("env", array())
+    )))
+        return true;
 
     // No se encontró una ruta valida
     Am::e404($lastError);
@@ -134,34 +121,41 @@ class AmRoute{
   }
 
   // Metodo busca la ruta con la que conincide la peticion actual.
-  private static final function evalMatch($request, $routes, array $prev = array()){
+  private static final function evalMatch($request, $routes,
+  array $env = array(), array $prev = array()){
 
     // Si se indicó la ruta como un recurso
     if(isset($routes["resource"])){
+      $routes["control"] = $routes["resource"];
       $routes["routes"] = array_merge(
         itemOr("routes", $routes, array()),
         array(
-          "/"           => "control => {$routes["resource"]}@index",
-          "/new"        => "control => {$routes["resource"]}@new",
-          "/:id/detail" => "control => {$routes["resource"]}@detail",
-          "/:id/edit"   => "control => {$routes["resource"]}@edit",
-          "/:id/remove" => "control => {$routes["resource"]}@remove",
+          "/"           => "control => @index",
+          "/new"        => "control => @new",
+          "/:id/detail" => "control => @detail",
+          "/:id/edit"   => "control => @edit",
+          "/:id/remove" => "control => @remove",
         )
       );
+      // Se elimina el parametro resource para que no pueda vuelva a entrar en
+      // esta condicion
       unset($routes["resource"]);
     }
 
     $lastError = false;
 
-    $methods = array("template", "file", "download", "assets", "redirect", "goto", "control", "app", "resource");
+    $methods = array(
+      "template", "file", "download", "assets", "redirect",
+      "goto", "control", "app", "resource"
+    );
 
+    // Si tiene rutas internas
     if(isset($routes["routes"])){
       foreach($routes["routes"] as $key => $route){
 
         // Si la ruta es una cadena de caracteres
-        // Se parte la cadena con el caracter #
-        // el primer paremtro es un key y el segundo
-        // el valor
+        // Se parte la cadena con el caracter # el primer paremtro es un key y
+        // el segundo el valor
         if(is_string($route)){
           list($prop, $value) = explode(" => ", $route);
           $route = array($prop => $value);
@@ -170,27 +164,31 @@ class AmRoute{
         // Asignar key como ruta si no tiene ruta asignada
         $route["route"] = itemOr("route", $route, $key);
 
+        // Concatenar los parametros de la ruta parametro con los de la ruta
+        // hija
         foreach($routes as $key => $value)
           if(in_array($key, $methods))
             $route[$key] = $value . itemOr($key, $route, "");
 
-          if(true === ($newError = self::evalMatch($request, $route, $routes)))
-            return true;
-          else if($newError !== false)
-            $lastError = $newError;
+        // Llamar para la ruta interna
+        $newError = self::evalMatch($request, $route, $env, $routes);
+
+        // Se atendió la llamada
+        if(true === $newError)
+          return true;
+
+        // Si se retorno un error reescirbir el error anterior
+        if($newError !== false)
+          $lastError = $newError;
 
       }
     }
 
-    // Si no esta indicada la ruta
-    // se toma el indice de la ruta como indice
+    // No tiene rutas hijas o ninguna de las rutas hijas atendió la pentición
+
+    // Si no esta indicada la ruta se toma el indice de la ruta como indice
     $routes["route"] = itemOr("route", $prev, "") .
                        itemOr("route", $routes, "");
-
-    $routes["env"] = array_merge(
-        itemOr("env", $prev, array()),
-        itemOr("env", $routes, array())
-    );
 
     // Crear instancia de la ruta.
     $r = new self($routes["route"]);
@@ -210,20 +208,17 @@ class AmRoute{
           // los parámetros para la llamada de de respuesta
           foreach($params as $key => $val){
             $newDestiny = str_replace(":{$key}", $val, $destiny);
-            if($newDestiny !== $destiny) unset($params[$key]);
+            if($newDestiny !== $destiny)
+              unset($params[$key]);
             $destiny = $newDestiny;
           }
-
-          if($method === "template")
-            $env = array("env" => $routes["env"], "ignore" => true);
-          else
-            $env = $routes["env"];
 
           // Callbacks predefinidos
           if(isset(self::$callbacks[$method])){
 
-            if(Am::call(self::$callbacks[$method], $destiny, $env))
-              return true;
+            if(Am::call(self::$callbacks[$method], $destiny, array(),
+              array_merge($env, $params)))
+                return true;
 
             $lastError = "not fount {$method} : $destiny";
 
@@ -244,16 +239,17 @@ class AmRoute{
             if(function_exists($destiny)){
 
               // Llamar funcion
+              $params[] = $env;
               call_user_func_array($destiny, $params);
               return true;
 
               // Respuesta como template, file o assets
 
             }elseif(preg_match("/^(.*)::(.*)$/", $destiny, $a)){
-
               array_shift($a);
 
               if(call_user_func_array("method_exists", $a)){
+                $params[] = $env;
                 call_user_func_array($a, $params);
                 return true;
               }
@@ -263,15 +259,11 @@ class AmRoute{
 
             }elseif(preg_match("/^(.*)@(.*)$/", $destiny, $a)){
               array_shift($a);
-
+              
               // Despachar con controlador
-              if(Am::call("response.control",
-                $a[0],
-                $a[1],
-                $params,
-                $env
-              ) === true)
-                return true;
+              if(Am::call("response.control", $a[0], $a[1], $params, $env)
+                === true)
+                  return true;
 
               // La accion en el controlador no existe
               $lastError = "not fount action {$a[0]}@{$a[1]}";
@@ -284,100 +276,6 @@ class AmRoute{
       }
 
     }
-
-    // Por cada ruta
-    // foreach($routes["routes"] as $from => $to){
-    //
-    //   // Agregar la cadena padre si la cadena hija comienza con "."
-    //   if(substr($from, 0, 1) === ".")
-    //     $from = $prevMatch . substr($from, 1, strlen($from)-1);
-    //
-    //   // Si es un grupo de rutas
-    //   if(is_array($to)){
-    //     if(true === ($lastError = self::evalMatch(
-    //       $request,
-    //       isset($to["routes"])? $to : array("routes" => $to),
-    //       $env,
-    //       $from)))
-    //         return true;
-    //     continue;
-    //   }
-    //
-    //   // Crear instancia de la ruta.
-    //   $r = new self($from);
-    //
-    //   // Si hace match con la peticion
-    //   if(false !== ($params = $r->match($request))){
-    //
-    //     // Calcular destino
-    //     $destiny = $to;
-    //
-    //     // Reemplazar cada parámetro en el destino de la peticion
-    //     // Los parámetros que no esten el destino de la peticion serán
-    //     // los parámetros para la llamada de de respuesta
-    //     foreach($params as $key => $val){
-    //       $newDestiny = str_replace(":{$key}", $val, $destiny);
-    //       if($newDestiny !== $destiny) unset($params[$key]);
-    //       $destiny = $newDestiny;
-    //     }
-    //
-    //     // Responder como una función
-    //     if(function_exists($destiny)){
-    //
-    //       // Llamar funcion
-    //       call_user_func_array($destiny, $params);
-    //       return true;
-    //
-    //     // Respuesta como template, file o assets
-    //     }elseif(preg_match("/^(.*)::(.*)$/", $destiny, $a)){
-    //       array_shift($a);
-    //       if(call_user_func_array("method_exists", $a)){
-    //         call_user_func_array($a, $params);
-    //         return true;
-    //       }
-    //
-    //       // El callback no existe
-    //       $lastError = "not fount callback {$a[0]}::$a[1]";
-    //
-    //     }elseif(preg_match("/^(.*)@(.*)$/", $destiny, $a)){
-    //       array_shift($a);
-    //
-    //       // Despachar con controlador
-    //       if(Am::call("response.control",
-    //         $a[0],
-    //         $a[1],
-    //         $params,
-    //         $env
-    //       ) === true)
-    //         return true;
-    //
-    //       // La accion en el controlador no existe
-    //       $lastError = "not fount action {$a[0]}@{$a[1]}";
-    //
-    //     }elseif(preg_match("/^(redirect|goto)#(.*)$/", $destiny, $a)){
-    //
-    //       $a[1] = itemOr($a[1], array(
-    //         "redirect" => "redirect",
-    //         "goto" => "gotoUrl",
-    //       ));
-    //       Am::$a[1]($a[2]);
-    //       return true;
-    //
-    //     }elseif(preg_match("/^(template|file|assets|download)#(.*)$/", $destiny, $a)){
-    //
-    //       // Renderizar
-    //       if(self::$a[1]($a[2], array_merge($env, $params)))
-    //         return true;
-    //
-    //       // Si vista no existe ir a error 404
-    //       $lastError = "not fount {$a[1]}";
-    //
-    //     // Respuesta como un controlador
-    //     }
-    //
-    //   }
-    //
-    // }
 
     // Si ninguna ruta coincide con la petición entonces se devuelve un error.
     return $lastError;

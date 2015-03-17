@@ -8,13 +8,17 @@
     ga('send', 'pageview');
   </script>
 <?php endif ?>
+
 <!--[if lt IE 9]>
   <script src="<?php Am::eUrl() ?>/vendor/ie-fixs.js"></script>
 <![endif]-->
+
 <script src="<?php Am::eUrl() ?>/vendor/vendor.js"></script>
+
 <!--[if lt IE 9]>
   <script src="<?php Am::eUrl() ?>/vendor/nav-dep.js"></script>
 <![endif]-->
+
 <script src="<?php Am::eUrl() ?>/vendor/cookie-msg.js"></script>
 <script type="text/javascript">
   $.cookieMsg('bottom', 'simposiumtos-web', '<?php Am::eUrl() ?>/politicas-de-privacidad');

@@ -215,13 +215,13 @@ final class Am{
 
   // Responder con descarga de archivos
   public static function downloadFile($file){
-    return self::respondeWithFile($file, null, null, true);
+    return self::respondeWithFile(self::findFile($file), null, null, true);
   }
 
   // Responder con archivo
   public static function respondeFile($file){
     // Devolver archivo
-    return self::respondeWithFile($file);
+    return self::respondeWithFile(self::findFile($file));
   }
 
   ///////////////////////////////////////////////////////////////////////////////////

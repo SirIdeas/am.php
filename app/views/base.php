@@ -4,11 +4,14 @@
 <!--[if IE 8]>   <html xmlns="http://www.w3.org/1999/xhtml" class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]><!-->
 <html xmlns="http://www.w3.org/1999/xhtml" class="no-js"> <!--<![endif]-->
+
   <head>
     (# put:head = head.php #)
   </head>
+
   <body>
     (# child #)
     (# put:foot = foot.php #)
   </body>
+  
 </html>
