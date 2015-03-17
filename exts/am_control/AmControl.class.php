@@ -107,10 +107,9 @@ class AmControl extends AmObject{
       // Obtener vista a renderizar
       $this->getView(),
 
-      // Paths para las vistas
       array(
-        // Variables en la vista
         "paths" => $this->getPaths(), // Obtener carpetas de ambito para el controlador
+          // Variables en la vista
         "env" => array_merge($vars, $this->toArray()),
         "ignore" => true,
         "child" => $child,
@@ -170,7 +169,7 @@ class AmControl extends AmObject{
   }
 
   // Despachar una acción
-  final public function dispatch($action, array $env, array $params){
+  final public function dispatch($action, array $params){
 
     // Todo lo que se imprimar desde este punto hasta
     // ob_get_clean() se guardará en una variable.
@@ -193,7 +192,7 @@ class AmControl extends AmObject{
 
     else
     // Renderizar la vista
-      $this->renderView(array_merge($env, $params), $buffer);
+      $this->renderView($params, $buffer);
 
   }
 
@@ -483,7 +482,9 @@ class AmControl extends AmObject{
     $conf = array_merge(
       // Incluye el controlador y devuelve la configuracion para el mismo
       self::includeControl($control),
-      // Asignar vista que se mostrará
+      // Entono recibido
+      $env,
+      // Asignar vista que se mostrará,
       array(
         "view" => self::getViewName($action),
       )
@@ -494,7 +495,7 @@ class AmControl extends AmObject{
       return false;
 
     // Despachar la accion
-    $control->dispatch($action, $env, $params);
+    $control->dispatch($action, $params);
 
     return true;
 

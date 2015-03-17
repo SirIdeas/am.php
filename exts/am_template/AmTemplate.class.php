@@ -10,7 +10,6 @@ final class AmTemplate extends AmObject{
     $file = null,             // Vista a buscar
     $content = "",            // Contenido del archivo
     $env = array(),           // Entorno
-    $params = array(),        // Variables definidas en la vista
     $parent = null,           // Vista padre
     $openSections = array(),  // Lista de secciones abiertas
     $sections = array(),      // Lista de secciones y su contenido
@@ -23,7 +22,7 @@ final class AmTemplate extends AmObject{
 
   public function __construct($file, $options = array()){
     parent::__construct($options);
-    
+
     // setear paths
     if(!is_array($this->paths))
       $this->paths[] = $this->paths;
@@ -128,16 +127,16 @@ final class AmTemplate extends AmObject{
         ->compile($content, $this->sections);
 
       // Mezclar generadas en el padre con las definidas en la vista acutal
-      $this->params = $parentView["vars"] = array_merge($parentView["vars"], $this->params);
-      $this->errors  = array_merge($this->errors, $parentView["errors"]);
+      $this->env = $parentView["env"] = array_merge($parentView["env"], $this->env);
+      $this->errors = array_merge($this->errors, $parentView["errors"]);
       return $parentView;
     }
 
     return array(
-      "content" => $content,          // Todo lo impreso
-      "sections" => $this->sections,  // Devolver secciones definidas
-      "vars" => $this->getVars(),     // Variables definidas
-      "errors" => $this->errors       // Indica si se generó un error
+      "content"   => $content,        // Todo lo impreso
+      "sections"  => $this->sections, // Devolver secciones definidas
+      "env"       => $this->getEnv(), // Variables definidas
+      "errors"    => $this->errors    // Indica si se generó un error
     );
 
   }
@@ -160,7 +159,7 @@ final class AmTemplate extends AmObject{
     $view = $this->getSubView($view)->compile("", $this->sections);
     echo $view["content"];
     $this->sections = array_merge($view["sections"], $this->sections);
-    $this->params = array_merge($view["vars"], $this->params);
+    $this->env = array_merge($view["env"], $this->env);
     $this->errors  = array_merge($this->errors, $view["errors"]);
   }
 
@@ -227,13 +226,13 @@ final class AmTemplate extends AmObject{
 
   // Agregar variable
   public function set(){
-    extract($this->getVars());
-    eval("\$this->params['".func_get_arg(0)."'] = ".func_get_arg(1).";");
+    extract($this->getEnv());
+    eval("\$this->env['".func_get_arg(0)."'] = ".func_get_arg(1).";");
   }
 
   // Obtener variables de la vista. Cinluye el entorno + las variables definidas en la vista
-  public function getVars(){
-    return array_merge($this->env, $this->params);
+  public function getEnv(){
+    return $this->env;
   }
 
   // Obtener lista de dependencas
@@ -258,7 +257,7 @@ final class AmTemplate extends AmObject{
     $this->result = $this->compile($this->child);
 
     // Guardar vista minificada
-    extract($this->getVars());  // Crear variables
+    extract($this->getEnv());  // Crear variables
     eval("?> {$this->result["content"]} <?");
 
   }
