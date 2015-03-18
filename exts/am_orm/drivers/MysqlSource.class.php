@@ -25,7 +25,7 @@ class MysqlSource extends AmSource{
       "float"      => "decimal",
       "double"     => "decimal",
 
-      "bit"        => "bit",      // Longuitud variable
+      "bit"        => "bit",
 
       // Fechas
       "date"       => "date",
@@ -35,12 +35,12 @@ class MysqlSource extends AmSource{
       "year"       => "year",
 
       // Cadenas de caracteres
-      "char"       => "char",     // Longuitud variable
-      "varchar"    => "varchar",  // Longuitud variable
-      "tinytext"   => "text",     // Longuitud maxima 255
-      "text"       => "text",     // Longuitud maxima 65535
-      "mediumtext" => "text",     // Longuitud maxima 16777215
-      "longtext"   => "text",     // Longuitud maxima 4294967295
+      "char"       => "char",
+      "varchar"    => "varchar",
+      "tinytext"   => "text",
+      "text"       => "text",
+      "mediumtext" => "text",
+      "longtext"   => "text",
 
     ),
 
@@ -52,6 +52,12 @@ class MysqlSource extends AmSource{
       "bigint"      => 8,
     ),
 
+    $DECIMAL_BYTES = array(
+      "decimal" => 0,
+      "float"   => 1,
+      "double"  => 2,
+    ),
+
     $TEXT_BYTES = array(
       "tinytext"    => 1,
       "text"        => 2,
@@ -59,67 +65,59 @@ class MysqlSource extends AmSource{
       "longtext"    => 4,
     );
 
-    // Devuelve el tipo de datos del gestor para un tipo de datos en el lenguaje
-    public function sanitize(array $column){
-      // Si no se encuentra el tipo se retorna el tipo recibido
+  // Obtener el SQL para un campo de una tabla al momento de crear la tabla
+  public function sqlField(AmField $field){
 
-      $nativeType = $column["type"];
-      $column["type"] = itemOr($column["type"], self::$TYPES, $column["type"]);
+    // Preparar las propiedades
+    $name = $this->getParseName($field->getName());
+    $type = $field->getType();
+    $len = $field->getLen();
+    $charset = $this->sqlCharset($field->getCharset());
+    $collage = $this->sqlCollage($field->getCollage());
+    $default = $field->getDefaultValue();
+    $extra = $field->getExtra();
 
-      // Parse bool values
-      $column["primaryKey"] = parseBool($column["primaryKey"]);
-      $column["allowNull"]  = parseBool($column["allowNull"]);
+    $attrs = array();
 
-      // Get len of field
-      // if is a bit, char or varchar take len
-      if(in_array($nativeType, array("bit", "char", "varchar")))
-        $len = itemOr("len", $column);
+    if($field->isUnsigned())      $attrs[] = "unsigned";
+    if($field->isZerofill())      $attrs[] = "unsigned";
+    if(!empty($charset))          $attrs[] = $charset;
+    if(!empty($collage))          $attrs[] = $collage;
+    if(!$field->allowNull())      $attrs[] = "NOT NULL";
+    if($field->isAutoIncrement()) $attrs[] = "AUTO_INCREMENT";
+    if(!empty($default))          $attrs[] = "DEFAULT '{$default}'";
+    if(!empty($extra))            $attrs[] = $extra;
 
-      // if is a float take presicion as len
-      elseif($column["type"] == "decimal")
-        $len = $column["precision"];
+    $attrs = implode(" ", $attrs);
 
-      // else look len into bytes used for native byte
-      else
-        $len  = itemOr($nativeType,
-              array_merge(self::$INTEGER_BYTES, self::$TEXT_BYTES));
+    // Get type
+    // As integer
+    if($type === "integer")
+      $type = array_search($len, self::$INTEGER_BYTES);
 
-      // Set len
-      $column["len"] = $len;
+    // As text
+    elseif($type === "text")
+      $type = array_search($len, self::$TEXT_BYTES);
 
-      if(in_array($column["type"], array("integer", "decimal"))){
-        $column["unsigned"]       = preg_match("/unsigned/", $column["columnType"]) != 0;
-        $column["zerofill"]       = preg_match("/unsigned zerofill/", $column["columnType"]) != 0;
-        $column["autoIncrement"]  = preg_match("/auto_increment/", $column["extra"]) != 0;
-      }
+    // As Decimal
+    elseif($type === "text")
+      $type = array_search($len, self::$TEXT_BYTES);
 
-      // Unset scale is not is a decimal
-      if($column["type"] != "decimal")
-        unset($column["scale"]);
-      else
-        $column["scale"] = itemOr("scale", $column, 0);
+    // with var len
+    elseif(in_array($type, array("bit", "char", "varchar")))
+      $type = "$type($len)";
 
-      // Unset columnType an prescicion
-      unset($column["columnType"], $column["precision"]);
-
-      // Drop auto_increment of extra param
-      $column["extra"] = trim(str_replace("auto_increment", "", $column["extra"]));
-
-      // Eliminar campos vacios
-      foreach(array(
-        "defaultValue",
-        "collage",
-        "charset",
-        "len",
-        "extra"
-      ) as $attr)
-        if(!isset($column[$attr]) || trim($column[$attr])==="")
-          unset($column[$attr]);
-
-      var_dump($column);
-
-      return $column;
+    // as decimal precision
+    elseif($type == "decimal"){
+      $type = array_search($len, self::$DECIMAL_BYTES);
+      $precision = $field->getPrecision();
+      $scale = $field->getScale();
+      $type = "$type($precision, $scale)";
     }
+
+    return "$name $type $attrs";
+
+  }
 
   // Propiedades propias para el Driver
   protected
@@ -754,26 +752,61 @@ class MysqlSource extends AmSource{
 
   }
 
-  // Obtener el SQL para un campo de una tabla al momento de crear la tabla
-  public function sqlField(AmField $field){
+  // Devuelve el tipo de datos del gestor para un tipo de datos en el lenguaje
+  public function sanitize(array $column){
+    // Si no se encuentra el tipo se retorna el tipo recibido
 
-    // Preparar las propiedades
-    $name = $this->getParseName($field->getName());
-    $type = array_search($field->getType(), self::$TYPES);
-    if(!$type) $type = $field->getType();
-    $lenght = $field->getLen();
-    $lenght = !empty($lenght) && $type!=="mediumtext" ? "({$lenght})" : "";
-    $allowNull = $field->allowNull() ? "" : " NOT NULL";
-    $charset = $this->sqlCharset($field->getCharset());
-    $collage = $this->sqlCollage($field->getCollage());
+    $nativeType = $column["type"];
+    $column["type"] = itemOr($column["type"], self::$TYPES, $column["type"]);
 
-    $default = $field->getDefaultValue();
-    $default = $default === null ? "" : " DEFAULT '{$default}'";
+    // Parse bool values
+    $column["primaryKey"] = parseBool($column["primaryKey"]);
+    $column["allowNull"]  = parseBool($column["allowNull"]);
 
-    $autoIncrement = $field->isAutoIncrement() ? " AUTO_INCREMENT" : "";
+    // Get len of field
+    // if is a bit, char or varchar take len
+    if(in_array($nativeType, array("bit", "char", "varchar")))
+      $column["len"] = itemOr("len", $column);
 
-    return "$name $type$lenght$autoIncrement$charset$collage$allowNull$default";
+    // else look len into bytes used for native byte
+    else
+      $column["len"]  = itemOr($nativeType, array_merge(
+                self::$INTEGER_BYTES,
+                self::$DECIMAL_BYTES,
+                self::$TEXT_BYTES
+              ));
 
+    if(in_array($column["type"], array("integer", "decimal"))){
+      $column["unsigned"]       = preg_match("/unsigned/", $column["columnType"]) != 0;
+      $column["zerofill"]       = preg_match("/unsigned zerofill/", $column["columnType"]) != 0;
+      $column["autoIncrement"]  = preg_match("/auto_increment/", $column["extra"]) != 0;
+    }
+
+    // Unset scale is not is a decimal
+    if($column["type"] != "decimal")
+      unset($column["precision"], $column["scale"]);
+
+    else
+      $column["scale"] = itemOr("scale", $column, 0);
+
+    // Unset columnType an prescicion
+    unset($column["columnType"], $column["precision"]);
+
+    // Drop auto_increment of extra param
+    $column["extra"] = trim(str_replace("auto_increment", "", $column["extra"]));
+
+    // Eliminar campos vacios
+    foreach(array(
+      "defaultValue",
+      "collage",
+      "charset",
+      "len",
+      "extra"
+    ) as $attr)
+      if(!isset($column[$attr]) || trim($column[$attr])==="")
+        unset($column[$attr]);
+
+    return $column;
   }
 
   // Obtener el SQL para crear una tabla
@@ -804,7 +837,7 @@ class MysqlSource extends AmSource{
     $fields[] = empty($pks) ? "" : "PRIMARY KEY (" . implode(", ", $pks). ")";
 
     // Unir los campos
-    $fields = implode(", ", $fields);
+    $fields = "\n".implode(",\n", $fields);
 
     // Preparar el SQL final
     return "CREATE TABLE IF NOT EXISTS $tableName($fields)$engine$charset$collage;";

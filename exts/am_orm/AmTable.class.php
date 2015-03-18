@@ -315,10 +315,6 @@ final class AmTable extends AmObject{
   // Carga los columnas, referencias y PKs de la tabla desde la BD
   public function describeTable(){
 
-    // Parsear las columnas
-    foreach ($columns as $key => $value)
-      $columns[$key] = $value;
-
     // Realizar asignacion
     $this->describeTableInner(
       $this->getTableColumns(),
