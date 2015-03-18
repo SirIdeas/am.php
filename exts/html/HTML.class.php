@@ -16,9 +16,8 @@ class HTML{
 
     // Crear tag hijos
     if(is_array($content))
-      foreach($content as $i => $value){
+      foreach($content as $i => $value)
         $content[$i] = call_user_func_array(array(__CLASS__, "t"), $value);
-      }
 
     $this->content = $content;
 
@@ -46,8 +45,8 @@ class HTML{
 
   }
 
-  public static function t($tag = "div", $attrs = array(), $content = null){
-    return new self($tag, $attrs, $content);
+  public static function t($tag = "div", $content = null, $attrs = array()){
+    return new self($tag, $content, $attrs);
   }
 
 }

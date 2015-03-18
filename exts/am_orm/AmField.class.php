@@ -49,7 +49,7 @@ class AmField extends AmObject{
     $unsigned = null,         // Indica si el campo admite valores negitos
     $zerofill = null,         // Indica si se completa con zeros
 
-    $presicion = null,        // Numero de digitos del numero
+    $precision = null,        // Numero de digitos del numero
     $scale = null,            // Numero de digitos decimales
     $autoIncrement = false,   // Indica si es un campo autoincrementable
     $extra = null;            // Atributos extras
@@ -101,7 +101,7 @@ class AmField extends AmObject{
           $ret[$attr] = $this->$attr;
 
       if($this->type == "decimal"){
-        $ret["presicion"] = $this->getPrecision();
+        $ret["precision"] = $this->getPrecision();
         $ret["scale"] = $this->getScale();
       }
 

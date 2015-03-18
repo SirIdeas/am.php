@@ -65,60 +65,6 @@ class MysqlSource extends AmSource{
       "longtext"    => 4,
     );
 
-  // Obtener el SQL para un campo de una tabla al momento de crear la tabla
-  public function sqlField(AmField $field){
-
-    // Preparar las propiedades
-    $name = $this->getParseName($field->getName());
-    $type = $field->getType();
-    $len = $field->getLen();
-    $charset = $this->sqlCharset($field->getCharset());
-    $collage = $this->sqlCollage($field->getCollage());
-    $default = $field->getDefaultValue();
-    $extra = $field->getExtra();
-
-    $attrs = array();
-
-    if($field->isUnsigned())      $attrs[] = "unsigned";
-    if($field->isZerofill())      $attrs[] = "unsigned";
-    if(!empty($charset))          $attrs[] = $charset;
-    if(!empty($collage))          $attrs[] = $collage;
-    if(!$field->allowNull())      $attrs[] = "NOT NULL";
-    if($field->isAutoIncrement()) $attrs[] = "AUTO_INCREMENT";
-    if(!empty($default))          $attrs[] = "DEFAULT '{$default}'";
-    if(!empty($extra))            $attrs[] = $extra;
-
-    $attrs = implode(" ", $attrs);
-
-    // Get type
-    // As integer
-    if($type === "integer")
-      $type = array_search($len, self::$INTEGER_BYTES);
-
-    // As text
-    elseif($type === "text")
-      $type = array_search($len, self::$TEXT_BYTES);
-
-    // As Decimal
-    elseif($type === "text")
-      $type = array_search($len, self::$TEXT_BYTES);
-
-    // with var len
-    elseif(in_array($type, array("bit", "char", "varchar")))
-      $type = "$type($len)";
-
-    // as decimal precision
-    elseif($type == "decimal"){
-      $type = array_search($len, self::$DECIMAL_BYTES);
-      $precision = $field->getPrecision();
-      $scale = $field->getScale();
-      $type = "$type($precision, $scale)";
-    }
-
-    return "$name $type $attrs";
-
-  }
-
   // Propiedades propias para el Driver
   protected
     $handle = null; // Identificador de la conexion
@@ -765,8 +711,11 @@ class MysqlSource extends AmSource{
 
     // Get len of field
     // if is a bit, char or varchar take len
-    if(in_array($nativeType, array("bit", "char", "varchar")))
+    if(in_array($nativeType, array("char", "varchar")))
       $column["len"] = itemOr("len", $column);
+
+    elseif($nativeType == "bit")
+      $column["len"] = itemOr("precision", $column);
 
     // else look len into bytes used for native byte
     else
@@ -790,7 +739,7 @@ class MysqlSource extends AmSource{
       $column["scale"] = itemOr("scale", $column, 0);
 
     // Unset columnType an prescicion
-    unset($column["columnType"], $column["precision"]);
+    unset($column["columnType"]);
 
     // Drop auto_increment of extra param
     $column["extra"] = trim(str_replace("auto_increment", "", $column["extra"]));
@@ -807,6 +756,60 @@ class MysqlSource extends AmSource{
         unset($column[$attr]);
 
     return $column;
+  }
+
+  // Obtener el SQL para un campo de una tabla al momento de crear la tabla
+  public function sqlField(AmField $field){
+
+    // Preparar las propiedades
+    $name = $this->getParseName($field->getName());
+    $type = $field->getType();
+    $len = $field->getLen();
+    $charset = $this->sqlCharset($field->getCharset());
+    $collage = $this->sqlCollage($field->getCollage());
+    $default = $field->getDefaultValue();
+    $extra = $field->getExtra();
+
+    $attrs = array();
+
+    if($field->isUnsigned())      $attrs[] = "unsigned";
+    if($field->isZerofill())      $attrs[] = "unsigned";
+    if(!empty($charset))          $attrs[] = $charset;
+    if(!empty($collage))          $attrs[] = $collage;
+    if(!$field->allowNull())      $attrs[] = "NOT NULL";
+    if($field->isAutoIncrement()) $attrs[] = "AUTO_INCREMENT";
+    if(!empty($default))          $attrs[] = "DEFAULT '{$default}'";
+    if(!empty($extra))            $attrs[] = $extra;
+
+    $attrs = implode(" ", $attrs);
+
+    // Get type
+    // As integer
+    if($type === "integer")
+      $type = array_search($len, self::$INTEGER_BYTES);
+
+    // As text
+    elseif($type === "text")
+      $type = array_search($len, self::$TEXT_BYTES);
+
+    // As Decimal
+    elseif($type === "text")
+      $type = array_search($len, self::$TEXT_BYTES);
+
+    // with var len
+    elseif(in_array($type, array("bit", "char", "varchar")))
+      $type = "$type($len)";
+
+    // as decimal precision
+    elseif($type == "decimal"){
+      $type = array_search($len, self::$DECIMAL_BYTES);
+      $precision = $field->getPrecision();
+      $scale = $field->getScale();
+      $type = "$type($precision, $scale)";
+    }
+
+    return "$name $type $attrs";
+
   }
 
   // Obtener el SQL para crear una tabla
