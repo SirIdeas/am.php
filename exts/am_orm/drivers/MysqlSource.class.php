@@ -773,12 +773,12 @@ class MysqlSource extends AmSource{
     $attrs = array();
 
     if($field->isUnsigned())      $attrs[] = "unsigned";
-    if($field->isZerofill())      $attrs[] = "unsigned";
+    if($field->isZerofill())      $attrs[] = "zerofill";
     if(!empty($charset))          $attrs[] = $charset;
     if(!empty($collage))          $attrs[] = $collage;
     if(!$field->allowNull())      $attrs[] = "NOT NULL";
     if($field->isAutoIncrement()) $attrs[] = "AUTO_INCREMENT";
-    if(!empty($default))          $attrs[] = "DEFAULT '{$default}'";
+    if(isset($default))           $attrs[] = "DEFAULT '{$default}'";
     if(!empty($extra))            $attrs[] = $extra;
 
     $attrs = implode(" ", $attrs);
