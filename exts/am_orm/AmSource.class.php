@@ -341,22 +341,20 @@ abstract class AmSource extends AmObject{
   // Obtener un listado de los campos primarios de una tabla
   public function getTablePrimaryKey(AmTable $t){
 
-    $ret = array(); // Valor de retorno
-
     // Obtener los campos primarios de la tabla
-    $pks = $this->newQuery($this->sqlGetTablePrimaryKeys($t))->getResult("array");
-
-    // Agregar campos al retorn
-    foreach($pks as $pk)
-      $ret[] = $pk["name"];
-
-    return $ret;
+    return $this->newQuery($this->sqlGetTablePrimaryKeys($t))->getCol("name");
 
   }
 
   // Obtener un listado de las columnas de una tabla
-  public function getTableColumns(AmTable $t){
+  public function getNativeTableColumns(AmTable $t){
     return $this->newQuery($this->sqlGetTableColumns($t))->getResult("array");
+  }
+
+  // Obtener un listado de las columnas de una tabla
+  public function getTableColumns(AmTable $t){
+    return $this->newQuery($this->sqlGetTableColumns($t))
+      ->getResult("array", array($this, "sanitize"));
   }
 
   // Obtener un listado de las columnas de una tabla
@@ -702,7 +700,7 @@ abstract class AmSource extends AmObject{
   abstract public function getError();
 
   // Devuelve un tipo de datos en el gestor de BD
-  abstract public function getTypeOf($type);
+  abstract public function sanitize(array $column);
 
   // Obtener el siguiente registro de un resultado
   abstract public function getFetchAssoc($result);

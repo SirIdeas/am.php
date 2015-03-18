@@ -72,10 +72,10 @@ final class AmGenerator{
     // Agregar validators
     foreach($table->getFields() as $f){
 
-      if(!$f->getAutoIncrement()){
+      if(!$f->isAutoIncrement()){
 
         // Agregar validador de campo unico para los primary keys
-        if(count($table->getPks()) == 1 && $f->getPrimaryKey()){
+        if(count($table->getPks()) == 1 && $f->isPrimaryKey()){
           $uniqueValidators[] = "\$this->setValidator(\"{$f->getName()}\", \"unique\", \"unique\");";
         }
 
@@ -85,7 +85,7 @@ final class AmGenerator{
         switch ($type){
 
           case "string":
-            $len = $f->getCharLenght();
+            $len = $f->getLen();
             if(isset($len)){
               $strlenValidators[] = "\$this->setValidator(\"{$f->getName()}\", \"max_length\", \"max_length\", array(\"max\" => $len));";
             }
@@ -114,12 +114,14 @@ final class AmGenerator{
     //        break;
 
           default:
-            if($f->getNotNull()){
+            if(!$f->allowNull()){
               $nullValidators[] = "\$this->setValidator(\"{$f->getName()}\", \"null\", \"null\");";
             }
 
         }
       }
+
+      $len = $f->getLen();
 
     }
 
@@ -133,7 +135,7 @@ final class AmGenerator{
         $colName = array_keys($cols);
         $f = $table->getField($colName[0]);
 
-        if($f->getNotNull()){
+        if(!$f->allowNull()){
 
           $relationsValidators[] = "\$this->setValidator(\"{$f->getName()}\", \"fk_{$r->getTable()}\", \"in_query\", array(\"query\" => AmORM::table(\"{$r->getTable()}\", \"{$table->getSource()->getName()}\")->all(), \"field\" => \"{$cols[$colName[0]]}\"));";
 

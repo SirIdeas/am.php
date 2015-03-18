@@ -58,10 +58,9 @@ final class AmTable extends AmObject{
 
     // Describir tabla
     $this->describeTableInner(
-      isset($params["referencesTo"])? $params["referencesTo"] : array(),
-      isset($params["referencesBy"])? $params["referencesBy"] : array(),
-      isset($params["pks"])? $params["pks"] : array(),
-      isset($params["fields"])? $params["fields"] : array()
+      itemOr("fields", $params, array()),
+      itemOr("referencesTo", $params, array()),
+      itemOr("referencesBy", $params, array())
     );
 
   }
@@ -247,7 +246,7 @@ final class AmTable extends AmObject{
       $this->pks[] = $fieldName;
 
     // Marcar el campo como primario
-    $this->getField($fieldName)->getPrimaryKey(true);
+    $this->getField($fieldName)->isPrimaryKey(true);
 
   }
 
@@ -273,7 +272,7 @@ final class AmTable extends AmObject{
 
     // Si es campo primario se agrega a la
     // lista de campos primarios
-    if($f->getPrimaryKey())
+    if($f->isPrimaryKey())
       $this->addPk($name);
 
   }
@@ -316,45 +315,37 @@ final class AmTable extends AmObject{
   // Carga los columnas, referencias y PKs de la tabla desde la BD
   public function describeTable(){
 
+    // Parsear las columnas
+    foreach ($columns as $key => $value)
+      $columns[$key] = $value;
+
     // Realizar asignacion
     $this->describeTableInner(
+      $this->getTableColumns(),
       $this->getTableForeignKeys(),
-      $this->getTableReferences(),
-      $this->getTablePrimaryKey(),
-      $this->getTableColumns()
+      $this->getTableReferences()
     );
 
   }
 
   // Cargar columnas, referencias y PKs a la tabla
-  protected function describeTableInner(array $referencesTo = array(), array $referencesBy = array(), array $pks = array(), array $fields = array()){
-
-    // Preparar referencias
-    $this->referencesTo = new stdClass;
-    foreach ($referencesTo as $name => $values){
-      $this->referencesTo->$name = new AmRelation($values);
-    }
-
-    // Preparar referencias a
-    $this->referencesBy = new stdClass;
-    foreach ($referencesBy as $name => $values){
-      $this->referencesBy->$name = new AmRelation($values);
-    }
+  protected function describeTableInner(array $fields = array(), array $referencesTo = array(), array $referencesBy = array()){
 
     // Preparar campos
     $this->fields = new stdClass;
-    foreach($fields as $column){
-
-      // Determinar si es o no parte del primary key
-      $column["primaryKey"] = in_array(isset($column["name"])? $column["name"] : null, $pks);
-
-      // Obtener el tipo
-      $type = $this->getSource()->getTypeOf(isset($column["type"])? $column["type"] : null);
-
+    foreach($fields as $column)
       // Agregar instancia del campo
       $this->addField(new AmField($column));
 
-    }
+    // Preparar referencias
+    $this->referencesTo = new stdClass;
+    foreach ($referencesTo as $name => $values)
+      $this->referencesTo->$name = new AmRelation($values);
+
+    // Preparar referencias a
+    $this->referencesBy = new stdClass;
+    foreach ($referencesBy as $name => $values)
+      $this->referencesBy->$name = new AmRelation($values);
 
   }
 

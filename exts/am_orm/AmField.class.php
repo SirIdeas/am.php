@@ -38,75 +38,70 @@ class AmField extends AmObject{
   protected
     $name = null,             // Nombre
     $type = null,             // Tipo de datos
-    $charLenght = null,       // Tamanio máximo para campos tipo cadena
-    $floatPrecision = null,   // Presición para el caso de campos tipo punto flotantes
     $defaultValue = null,     // Valor por defecto
-    $notNull = false,         // Indica si se admite o no valores nulos
-    $autoIncrement = false,   // Indica si es un campo autoincrementable
-    $extra = null,            // Atributos extras
+    $primaryKey = false,      // Indica si es o no una clave primaria
+    $allowNull = true,        // Indica si se admite o no valores nulos
+
+    $len = null,              // Tamanio máximo para campos tipo cadena y tipos enteros
     $charset = null,          // Set de caracteres
     $collage = null,          // Coleccion de caracteres
-    $primaryKey = false;      // Indica si es o no una clave primaria
 
-    // Constructor de la calse
-    public function __construct($params = null) {
-      parent::__construct($params);
+    $unsigned = null,         // Indica si el campo admite valores negitos
+    $zerofill = null,         // Indica si se completa con zeros
 
-      $params = array_merge(array(
-        "notNull" => null,
-        "extra" => null,
-        "primaryKey" => null,
-      ), AmObject::parse($params));
-
-      // Verdadera asignación para la propiedad notNull
-      $this->notNull = in_array($params["notNull"], array(true, 1, "true", "1"));
-
-      // Verdadera asiignación para la propiedad autoIncrement
-      $this->autoIncrement = $this->getAutoIncrement() || preg_match("/auto_increment/", $params["extra"]) != 0;
-
-      $this->charLenght = isset($this->charLenght)? (int)$this->charLenght : null;
-      $this->floatPrecision = isset($this->floatPrecision)? (int)$this->floatPrecision : null;
-
-      // Verdadera asignación para la propiedad extra
-      $this->extra = str_replace("auto_increment", "", $params["extra"]);
-
-      // Verdadera asignación para la propiedad primaryKey
-      $this->setPrimaryKey($params["primaryKey"] === true || $params["primaryKey"] == 1 || $params["primaryKey"] == "true");
-
-    }
+    $scale = null,            // Numero de digitos decimales
+    $autoIncrement = false,   // Indica si es un campo autoincrementable
+    $extra = null;            // Atributos extras
 
     // Métodos get para las propiedades del campo
     public function getName(){ return $this->name;}
     public function getType(){ return $this->type; }
-    public function getCharLenght(){ return $this->charLenght; }
-    public function getFloatPrecision(){ return $this->floatPrecision; }
+    public function getLen(){ return $this->len; }
+    public function getScale(){ return $this->scale; }
     public function getDefaultValue(){ return $this->defaultValue; }
-    public function getNotNull(){ return $this->notNull; }
-    public function getAutoIncrement(){ return $this->autoIncrement; }
+    public function allowNull(){ return $this->allowNull; }
+    public function isAutoIncrement(){ return $this->autoIncrement; }
+    public function isUnsigned(){ return $this->unsigned; }
+    public function isZerofill(){ return $this->zerofill; }
     public function getExtra(){ return $this->extra; }
     public function getCharset(){ return $this->charset; }
     public function getCollage(){ return $this->collage; }
-    public function getPrimaryKey(){ return $this->primaryKey; }
+    public function isPrimaryKey(){ return $this->primaryKey; }
 
     // Métodos set para algunas propiedades
     public function setPrimaryKey($value){ $this->primaryKey = $value; return $this; }
 
     // Convertir campo en array
     public function toArray(){
-      
-      return array(
+
+      $ret = array(
         "name" => $this->getName(),
         "type" => $this->getType(),
-        "charLenght" => $this->getCharLenght(),
-        "floatPrecision" => $this->getFloatPrecision(),
-        "defaultValue" => $this->getDefaultValue(),
-        "notNull" => $this->getNotNull(),
-        "autoIncrement" => $this->getAutoIncrement(),
-        "extra" => $this->getExtra(),
-        "charset" => $this->getCharset(),
-        "collage" => $this->getCollage(),
-        "primaryKey" => $this->getPrimaryKey(),
+        "primaryKey" => $this->isPrimaryKey(),
+        "allowNull" => $this->allowNull(),
       );
+
+      if(in_array($this->type, array("integer", "decimal"))){
+        $ret["unsigned"] = $this->isUnsigned();
+        $ret["zerofill"] = $this->isZerofill();
+        $ret["autoIncrement"] = $this->isAutoIncrement();
+      }
+
+      // Eliminar campos vacios
+      foreach(array(
+        "defaultValue",
+        "collage",
+        "charset",
+        "extra",
+        "len",
+      ) as $attr)
+        if(isset($this->$attr) && trim($this->$attr)!=="")
+          $ret[$attr] = $this->$attr;
+
+      if($this->type == "decimal")
+        $ret["scale"] = $this->getScale();
+
+      return $ret;
 
     }
 

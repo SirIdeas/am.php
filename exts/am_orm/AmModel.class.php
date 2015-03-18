@@ -249,7 +249,7 @@ class AmModel extends AmObject{
     foreach($fields as $fieldName){
       $field = $table->getField($fieldName);  // Obtener el campos
       // Si exist el campo y es no es un campo autoincrementable
-      if((!$field || !$field->getAutoIncrement()) && isset($values[$fieldName]))
+      if((!$field || !$field->isAutoIncrement()) && isset($values[$fieldName]))
         // Se asigna el valor
         $this->$fieldName = $values[$fieldName];
     }
@@ -308,7 +308,7 @@ class AmModel extends AmObject{
     foreach($fields as $fieldName => $field){
       // Si se pidió incorporar los valores autoincrementados
       // o si el campo no es autoincrementado
-      if($withAI || !$field->getAutoIncrement())
+      if($withAI || !$field->isAutoIncrement())
         // Se agrega el campo al array de retorno
         $ret[$fieldName] = $this->$fieldName;
     }
@@ -439,7 +439,7 @@ class AmModel extends AmObject{
 
             // Agregar el valor que retorno el insert
             // si se trata de un campo autoincrementable
-            if($f->getAutoIncrement()){
+            if($f->isAutoIncrement()){
 
               // Obtener el nombre del método SET
               // para asigar el valor autoincrementado

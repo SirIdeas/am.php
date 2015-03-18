@@ -1,5 +1,11 @@
 <?php
 
+function parseBool($value){
+  if(in_array($value, array(true, 1, "true", "1"))) return true;
+  if(in_array($value, array(false, 0, "false", "0"))) return false;
+  return null;
+}
+
 // Devuelve la diferencia entre dos valores.
 // Si los elementos on array se compara recursivamente
 // Devuelve true si no hay diferencia. De lo contrario

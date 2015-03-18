@@ -14,30 +14,112 @@ class MysqlSource extends AmSource{
 
     $TYPES = array(
       // Enteros
-      "tinyint"    => "tinyint",     //                -128, 127
-      "smallint"   => "smallint",    //              -32768, 32767
-      "mediumint"  => "mediumint",   //            -8388608, 8388607
-      "int"        => "int",         //         -2147483648, 2147483647
-      "bigint"     => "bigint",      //-9223372036854775808, 9223372036854775807
+      "tinyint"    => "integer",
+      "smallint"   => "integer",
+      "mediumint"  => "integer",
+      "int"        => "integer",
+      "bigint"     => "integer",
+
       // Flotantes
       "decimal"    => "decimal",
-      "float"      => "float",
-      "double"     => "double",
-      "real"       => "double",
-      // Cadenas de caracteres
-      "char"       => "char",       // Longuitud exacta
-      "varchar"    => "varchar",    // Longuitud maxima parametrizada
-      "tinytext"   => "tinytext",   // Longuitud maxima 255
-      "text"       => "text",       // Longuitud maxima 65535
-      "mediumtext" => "mediumtext", // Longuitud maxima 16777215
-      "longtext"   => "longtext",   // Longuitud maxima 4294967295
+      "float"      => "decimal",
+      "double"     => "decimal",
+
+      "bit"        => "bit",      // Longuitud variable
+
       // Fechas
       "date"       => "date",
       "datetime"   => "datetime",
-      "timestamp"  => "timestamp",
+      "timestamp"  => "datetime",
       "time"       => "time",
       "year"       => "year",
+
+      // Cadenas de caracteres
+      "char"       => "char",     // Longuitud variable
+      "varchar"    => "varchar",  // Longuitud variable
+      "tinytext"   => "text",     // Longuitud maxima 255
+      "text"       => "text",     // Longuitud maxima 65535
+      "mediumtext" => "text",     // Longuitud maxima 16777215
+      "longtext"   => "text",     // Longuitud maxima 4294967295
+
+    ),
+
+    $INTEGER_BYTES = array(
+      "tinyint"     => 1,
+      "smallint"    => 2,
+      "mediumint"   => 3,
+      "int"         => 4,
+      "bigint"      => 8,
+    ),
+
+    $TEXT_BYTES = array(
+      "tinytext"    => 1,
+      "text"        => 2,
+      "mediumtext"  => 3,
+      "longtext"    => 4,
     );
+
+    // Devuelve el tipo de datos del gestor para un tipo de datos en el lenguaje
+    public function sanitize(array $column){
+      // Si no se encuentra el tipo se retorna el tipo recibido
+
+      $nativeType = $column["type"];
+      $column["type"] = itemOr($column["type"], self::$TYPES, $column["type"]);
+
+      // Parse bool values
+      $column["primaryKey"] = parseBool($column["primaryKey"]);
+      $column["allowNull"]  = parseBool($column["allowNull"]);
+
+      // Get len of field
+      // if is a bit, char or varchar take len
+      if(in_array($nativeType, array("bit", "char", "varchar")))
+        $len = itemOr("len", $column);
+
+      // if is a float take presicion as len
+      elseif($column["type"] == "decimal")
+        $len = $column["precision"];
+
+      // else look len into bytes used for native byte
+      else
+        $len  = itemOr($nativeType,
+              array_merge(self::$INTEGER_BYTES, self::$TEXT_BYTES));
+
+      // Set len
+      $column["len"] = $len;
+
+      if(in_array($column["type"], array("integer", "decimal"))){
+        $column["unsigned"]       = preg_match("/unsigned/", $column["columnType"]) != 0;
+        $column["zerofill"]       = preg_match("/unsigned zerofill/", $column["columnType"]) != 0;
+        $column["autoIncrement"]  = preg_match("/auto_increment/", $column["extra"]) != 0;
+      }
+
+      // Unset scale is not is a decimal
+      if($column["type"] != "decimal")
+        unset($column["scale"]);
+      else
+        $column["scale"] = itemOr("scale", $column, 0);
+
+      // Unset columnType an prescicion
+      unset($column["columnType"], $column["precision"]);
+
+      // Drop auto_increment of extra param
+      $column["extra"] = trim(str_replace("auto_increment", "", $column["extra"]));
+
+      // Eliminar campos vacios
+      foreach(array(
+        "defaultValue",
+        "collage",
+        "charset",
+        "len",
+        "extra"
+      ) as $attr)
+        if(!isset($column[$attr]) || trim($column[$attr])==="")
+          unset($column[$attr]);
+
+      var_dump($column);
+
+      return $column;
+    }
 
   // Propiedades propias para el Driver
   protected
@@ -77,12 +159,6 @@ class MysqlSource extends AmSource{
     if($this->handle)
       return mysql_error($this->handle);
     return false;
-  }
-
-  // Devuelve el tipo de datos del gestor para un tipo de datos en el lenguaje
-  public function getTypeOf($type){
-    // Si no se encuentra el tipo se retorna el tipo recibido
-    return isset(self::$TYPES[$type])? self::$TYPES[$type] : $type;
   }
 
   // Obtener el siguiente registro de un resultado
@@ -208,9 +284,9 @@ class MysqlSource extends AmSource{
   public function sqlGetTablePrimaryKeys(AmTable $t){
 
     $sql = $this
-      ->newQuery("information_schema.KEY_COLUMN_USAGE")
+      ->newQuery("information_schema.COLUMNS")
       ->selectAs("COLUMN_NAME", "name")
-      ->where("TABLE_SCHEMA='{$this->getDatabase()}'", "and", "TABLE_NAME='{$t->getTableName()}'", "and", "CONSTRAINT_NAME='PRIMARY'")
+      ->where("TABLE_SCHEMA='{$this->getDatabase()}'", "and", "TABLE_NAME='{$t->getTableName()}'")
       ->orderBy("ORDINAL_POSITION")
       ->sql();
 
@@ -223,17 +299,29 @@ class MysqlSource extends AmSource{
 
     $sql = $this
       ->newQuery("information_schema.COLUMNS")
-      ->selectAs("COLUMN_NAME", "name")
-      ->selectAs("DATA_TYPE", "type")
-      ->selectAs("CHARACTER_MAXIMUM_LENGTH", "charLenght")
-      ->selectAs("NUMERIC_PRECISION", "floatPrecision")
-      ->selectAs("IS_NULLABLE = 'NO'", "notNull")
-      ->selectAs("COLUMN_DEFAULT", "defaultValue")
-      ->selectAs("COLLATION_NAME", "collage")
-      ->selectAs("CHARACTER_SET_NAME", "charset")
-      ->selectAs("EXTRA", "extra")
       ->where("TABLE_SCHEMA='{$this->getDatabase()}'", "and", "TABLE_NAME='{$t->getTableName()}'")
       ->orderBy("ORDINAL_POSITION")
+
+      // Basic data
+      ->selectAs("COLUMN_NAME", "name")
+      ->selectAs("DATA_TYPE", "type")
+      ->selectAs("COLUMN_TYPE", "columnType")
+      ->selectAs("COLUMN_DEFAULT", "defaultValue")
+      ->selectAs("COLUMN_KEY='PRI'", "primaryKey")
+      ->selectAs("IS_NULLABLE='YES'", "allowNull")
+
+      // Strings
+      ->selectAs("CHARACTER_MAXIMUM_LENGTH", "len")
+      ->selectAs("COLLATION_NAME", "collage")
+      ->selectAs("CHARACTER_SET_NAME", "charset")
+
+      // Numerics
+      ->selectAs("NUMERIC_PRECISION", "precision")
+      ->selectAs("NUMERIC_SCALE", "scale")
+
+      // Others
+      ->selectAs("EXTRA", "extra")
+
       ->sql();
 
     return $sql;
@@ -673,18 +761,18 @@ class MysqlSource extends AmSource{
     $name = $this->getParseName($field->getName());
     $type = array_search($field->getType(), self::$TYPES);
     if(!$type) $type = $field->getType();
-    $lenght = $field->getCharLenght();
-    $lenght = !empty($lenght) ? "({$lenght})" : "";
-    $notNull = $field->getNotNull() ? " NOT NULL" : "";
+    $lenght = $field->getLen();
+    $lenght = !empty($lenght) && $type!=="mediumtext" ? "({$lenght})" : "";
+    $allowNull = $field->allowNull() ? "" : " NOT NULL";
     $charset = $this->sqlCharset($field->getCharset());
     $collage = $this->sqlCollage($field->getCollage());
 
     $default = $field->getDefaultValue();
     $default = $default === null ? "" : " DEFAULT '{$default}'";
 
-    $autoIncrement = $field->getAutoIncrement() ? " AUTO_INCREMENT" : "";
+    $autoIncrement = $field->isAutoIncrement() ? " AUTO_INCREMENT" : "";
 
-    return "$name$type$lenght$autoIncrement$charset$collage$notNull$default";
+    return "$name $type$lenght$autoIncrement$charset$collage$allowNull$default";
 
   }
 
