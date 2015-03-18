@@ -14,7 +14,7 @@ return array(
     "exts/am_mailer/",
     "exts/am_flash/",
     "exts/am_flash/",
-    "exts/am_tag/",
+    "exts/html/",
   ),
 
 

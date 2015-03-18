@@ -3,7 +3,7 @@
 return array(
 
   "files" => array(
-    "AmTag.class"
+    "HTML.class"
   )
 
 );

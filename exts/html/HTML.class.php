@@ -1,6 +1,6 @@
 <?php
 
-class Tag{
+class HTML{
 
   protected static
     $singlesTags = array("br", "input");
