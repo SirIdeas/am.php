@@ -43,22 +43,34 @@ final class AmGenerator{
     $lines[] = "";
 
     // Add references to this class
-    $lines[] = "  // REFERENCES BY";
+    $methodsAddeds = array();
     foreach(array_keys((array)$table->getReferencesBy()) as $relation){
       $prefix = in_array($relation, $existMethods)? "//" : "";
       $existMethods[] = $relation;
       $lines[] = "  {$prefix}public function $relation(){ return \$this->getTable()->getReferencesTo()->{$relation}->getQuery(\$this); }";
     }
-    $lines[] = "";
+
+    // Add validators if has any
+    if(!empty($methodsAddeds)){
+      $lines[] = "  // REFERENCES BY";
+      $lines = array_merge($lines, $methodsAddeds);
+      $lines[] = "";
+    }
 
     // Add references to other class
-    $lines[] = "  // REFERENCES TO";
+    $methodsAddeds = array();
     foreach(array_keys((array)$table->getReferencesTo()) as $relation){
       $prefix = in_array($relation, $existMethods)? "//" : "";
       $existMethods[] = $relation;
-      $lines[] = "  {$prefix}public function $relation(){ return \$this->getTable()->getReferencesTo()->{$relation}->getQuery(\$this)->getRow(); }";
+      $methodsAddeds[] = "  {$prefix}public function $relation(){ return \$this->getTable()->getReferencesTo()->{$relation}->getQuery(\$this)->getRow(); }";
     }
-    $lines[] = "";
+
+    // Add validators if has any
+    if(!empty($methodsAddeds)){
+      $lines[] = "  // REFERENCES TO";
+      $lines = array_merge($lines, $methodsAddeds);
+      $lines[] = "";
+    }
 
     // Method for customization model
     $lines[] = "  // METHOD FOR INIT MODEL";
