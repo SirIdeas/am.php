@@ -5,15 +5,15 @@
  */
 
 class RegexValidator extends AmValidator{
-  
+
   // Propiedades
   protected
-      $regex = null,      // Regex con la que se evaluará la validez
-      $canBlank = false;  // Si permite valores vacios
+    $regex = null,      // Regex con la que se evaluará la validez
+    $canBlank = false;  // Si permite valores vacios
 
   // Constructor
   public function __construct($options = array()){
-    
+
     // Obtner si permiterá valores blancos
     $blank = isset($options["blank"])? $options["blank"] : false;
     unset($options["blank"]);
@@ -21,7 +21,7 @@ class RegexValidator extends AmValidator{
 
     parent::__construct($options);
   }
-  
+
   // Condicion de validacion
   protected function validate(AmModel &$model){
     return (preg_match($this->getRegex(), $this->value($model)) ||
@@ -35,5 +35,5 @@ class RegexValidator extends AmValidator{
   // Can Blank
   public function getCanBlank(){  return $this->canBlank; }
   public function setCanBlank($value){ $this->canBlank = $value; return $this; }
-  
+
 }

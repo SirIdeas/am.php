@@ -134,7 +134,7 @@ abstract class AmSource extends AmObject{
   }
 
   // Crea el archivo de configuracion para una fuente
-  public function createFileConf($rw = false){
+  public function createFileConf($rw = true){
 
     // Obtener de el nombre del archivo destino
     $path = $this->getPathConf() . ".php";
@@ -173,8 +173,7 @@ abstract class AmSource extends AmObject{
       "tables" => array(),
     );
 
-    $tables = $this->newQuery($this->sqlGetTables())
-                   ->getCol("tableName");
+    $tables = $this->newQuery($this->sqlGetTables())->getCol("tableName");
 
     foreach ($tables as $t){
       // Obtener instancia de la tabla
@@ -340,21 +339,35 @@ abstract class AmSource extends AmObject{
 
   // Obtener un listado de los campos primarios de una tabla
   public function getTablePrimaryKey(AmTable $t){
-
-    // Obtener los campos primarios de la tabla
-    return $this->newQuery($this->sqlGetTablePrimaryKeys($t))->getCol("name");
-
+    return $this->newQuery($this->sqlGetTablePrimaryKeys($t))
+      ->getCol("name");
   }
 
   // Obtener un listado de las columnas de una tabla
   public function getNativeTableColumns(AmTable $t){
-    return $this->newQuery($this->sqlGetTableColumns($t))->getResult("array");
+    return $this->newQuery($this->sqlGetTableColumns($t))
+      ->getResult("array");
   }
 
   // Obtener un listado de las columnas de una tabla
   public function getTableColumns(AmTable $t){
     return $this->newQuery($this->sqlGetTableColumns($t))
       ->getResult("array", array($this, "sanitize"));
+  }
+
+  // Obtener un listado de las columnas de una tabla
+  public function getTableUniques(AmTable $t){
+    $uniques = $this->newQuery($this->sqlGetTableUniques($t))
+      ->getResult("array");
+
+    // Group fields of unique indices for name.
+    $realUniques = array();
+    foreach ($uniques as $value) {
+      $realUniques[$value["name"]] = itemOr($value["name"], $realUniques, array());
+      $realUniques[$value["name"]][] = $value["columnName"];
+    }
+    return $realUniques;
+
   }
 
   // Obtener un listado de las columnas de una tabla
@@ -730,6 +743,8 @@ abstract class AmSource extends AmObject{
   // Setear un valor a una variable de servidor
   abstract public function sqlSetServerVar($varName, $value);
 
+  abstract public function sqlGetInfo();
+
   // Devuelve un String con el SQL para crear la base de datos
   abstract public function sqlCreate();
 
@@ -738,6 +753,18 @@ abstract class AmSource extends AmObject{
 
   // SQL para obtener el listado de tablas
   abstract public function sqlGetTables();
+
+  abstract public function sqlCreateTable(AmTable $t);
+  abstract public function sqlDropTable(AmTable $t);
+  abstract public function sqlTruncate(AmTable $t);
+
+  abstract public function sqlGetTablePrimaryKeys(AmTable $t);
+  abstract public function sqlGetTableColumns(AmTable $t);
+  abstract public function sqlGetTableUniques(AmTable $t);
+  abstract public function sqlGetTableForeignKeys(AmTable $t);
+  abstract public function sqlGetTableReferences(AmTable $t);
+
+  abstract public function sqlInsertInto($table, $values, array $fields = array());
 
   /////////////////////////////////////////////////////////////////////////////
   // Metodos Abstractos que deben ser definidos en las implementaciones

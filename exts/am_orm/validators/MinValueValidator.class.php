@@ -7,9 +7,9 @@
 AmORM::validator("float");
 
 class MinValueValidator extends FloatValidator{
-  
+
   protected
-      $min = null;  // Limite inferior del campo
+    $min = null;  // Limite inferior del campo
 
   public function __construct($options = array()){
     $this->setSustitutions("min", "min");  // Agregar sustitucion

@@ -7,9 +7,9 @@
 AmORM::validator("float");
 
 class MaxValueValidator extends FloatValidator{
-  
+
   protected
-      $max = null;  // Limite superior del campo
+    $max = null;  // Limite superior del campo
 
   public function __construct($options = array()){
     $this->setSustitutions("max", "max");  // Agregar sustitucion

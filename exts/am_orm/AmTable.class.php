@@ -23,6 +23,7 @@ final class AmTable extends AmObject{
     $pks = array(),           // Array de nombres de campos que forman el PK
     $referencesTo = array(),  // Tablas a las que hace referencia
     $referencesBy = array(),  // Tablas que le hacen referencia
+    $uniques = array(),       // Array de indeces unicos
     $source = null;           // Fuente de datos
 
   // Constructor para la clase
@@ -60,7 +61,8 @@ final class AmTable extends AmObject{
     $this->describeTableInner(
       itemOr("fields", $params, array()),
       itemOr("referencesTo", $params, array()),
-      itemOr("referencesBy", $params, array())
+      itemOr("referencesBy", $params, array()),
+      itemOr("uniques", $params, array())
     );
 
   }
@@ -71,6 +73,7 @@ final class AmTable extends AmObject{
   public function getSource(){ return $this->source; }
   public function getReferencesTo(){ return $this->referencesTo; }
   public function getReferencesBy(){ return $this->referencesBy; }
+  public function getUniques(){ return $this->uniques; }
   public function getPks(){ return $this->pks; }
   public function getEngine(){ return $this->engine;}
   public function getCharset(){ return $this->charset;}
@@ -121,38 +124,6 @@ final class AmTable extends AmObject{
     }
     return false;
   }
-
-  // // Crea el archivo que contiene clase para la tabla
-  // public function createFileTableBase(){
-  //
-  //   // Incluir la clase para generar
-  //   AmORM::requireFile("AmGenerator.class");
-  //
-  //   // Obtener el nombre del archivo destino
-  //   $path = $this->getPathClassTableBase() . ".php";
-  //
-  //   // Generar el archivo
-  //   file_put_contents($path, "<?php\n\n" . AmGenerator::classTableBase($this));
-  //   return true;
-  //
-  // }
-  //
-  // // Crea el archivo que contiene clase para la tabla
-  // public function createFileTable(){
-  //
-  //   // Obtener el nombre del archivo destino
-  //   $path = $this->getPathClassTable() . ".php";
-  //
-  //   // Verificar que no exista
-  //   if(!is_file($path)){
-  //     // Crear la Carpeta
-  //     file_put_contents($path, "<?php\n\nclass {$this->getClassNameTable()} extends {$this->getClassNameTableBase()}{\n\n}\n");
-  //     return true;
-  //   }
-  //
-  //   return false;
-  //
-  // }
 
   // Crea el archivo que contiene clase para la tabla
   public function createFileModelBase(){
@@ -286,8 +257,12 @@ final class AmTable extends AmObject{
   public function getTableColumns(){    return $this->getSource()->getTableColumns($this); }
 
   // Obtener un listados de las referencias de la tabla
-  public function sqlGetTableForeignKeysSql(){ return $this->getSource()->sqlGetTableForeignKeysSql($this); }
-  public function getTableForeignKeys(){       return $this->getSource()->getTableForeignKeys($this); }
+  public function sqlGetTableUniques(){ return $this->getSource()->sqlGetTableUniques($this); }
+  public function getTableUniques(){    return $this->getSource()->getTableUniques($this); }
+
+  // Obtener un listados de las referencias de la tabla
+  public function sqlGetTableForeignKeys(){ return $this->getSource()->sqlGetTableForeignKeys($this); }
+  public function getTableForeignKeys(){    return $this->getSource()->getTableForeignKeys($this); }
 
   // Obtener un listado de las referencias a la tabla
   public function sqlGetTableReferences(){  return $this->getSource()->sqlGetTableReferences($this); }
@@ -319,19 +294,29 @@ final class AmTable extends AmObject{
     $this->describeTableInner(
       $this->getTableColumns(),
       $this->getTableForeignKeys(),
-      $this->getTableReferences()
+      $this->getTableReferences(),
+      $this->getTableUniques()
     );
 
   }
 
   // Cargar columnas, referencias y PKs a la tabla
-  protected function describeTableInner(array $fields = array(), array $referencesTo = array(), array $referencesBy = array()){
+  protected function describeTableInner(
+    array $fields = array(),
+    array $referencesTo = array(),
+    array $referencesBy = array(),
+    array $uniques = array()
+  ){
 
     // Preparar campos
+    $this->pks = array();
     $this->fields = new stdClass;
     foreach($fields as $column)
       // Agregar instancia del campo
       $this->addField(new AmField($column));
+
+    // Agregar campos unicos
+    $this->uniques = $uniques;
 
     // Preparar referencias
     $this->referencesTo = new stdClass;
@@ -375,6 +360,7 @@ final class AmTable extends AmObject{
       "collage" => $this->getCollage(),
       "fields" => $fields,
       "pks" => $this->getPks(),
+      "uniques" => $this->getUniques(),
       "referencesTo" => $referencesTo,
       "referencesBy" => $referencesBy,
     );

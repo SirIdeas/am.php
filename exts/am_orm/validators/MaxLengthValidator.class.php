@@ -5,15 +5,15 @@
  */
 
 class MaxLengthValidator extends AmValidator{
-  
+
   protected
-      $max = null;  // Tamanio maximo del campo
-  
+    $max = null;  // Tamanio maximo del campo
+
   public function __construct($options = array()){
     $this->setSustitutions("max", "max");
     parent::__construct($options);
   }
-  
+
   protected function validate(AmModel &$model){
     $max = $this->getMax();
     return $max != null && strlen(trim($this->value($model))) <= $max;

@@ -5,13 +5,13 @@
  */
 
 class UniqueValidator extends AmValidator{
-  
+
   protected
-      $fields = array(), // Campos de la clave unica
-      $conditions = array();  // Condiciones para los indixes
-    
+    $fields = array(), // Campos de la clave unica
+    $conditions = array();  // Condiciones para los indixes
+
   protected function validate(AmModel &$model){
-    
+
     // Obtener la tabla para el modelo
     $table = $model->getTable();
 
@@ -45,7 +45,7 @@ class UniqueValidator extends AmValidator{
 
     // Agregar condiciones para excluir el registro evaluado
     $query->andWhere("not", array_values($index));
-    
+
     // Si la consulta devuelve 0 registro entonces el modelo
     // tiene un valor unico
     return $query->count() == 0;
@@ -59,6 +59,6 @@ class UniqueValidator extends AmValidator{
   // Lista de condiciones extras a aplicar la llave unica
   public function getConditions(){ return $this->conditions; }
   public function setConditions($value){ $this->conditions = $value; return $this; }
-  
+
 
 }

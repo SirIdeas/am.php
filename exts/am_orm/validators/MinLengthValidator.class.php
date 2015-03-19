@@ -5,15 +5,15 @@
  */
 
 class MinLengthValidator extends AmValidator{
-  
+
   protected
-      $min = null;  // Tamanio minimo del campo
-  
+    $min = null;  // Tamanio minimo del campo
+
   public function __construct($options = array()){
     $this->setSustitutions("min", "min");
     parent::__construct($options);
   }
-  
+
   protected function validate(AmModel &$model){
     $min = $this->getMin();
     return $min != null && strlen(trim($this->value($model))) >= $min;

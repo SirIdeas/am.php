@@ -198,9 +198,9 @@ class MysqlSource extends AmSource{
 
     $sql = $this
       ->newQuery("information_schema.SCHEMATA", "s")
+      ->where("SCHEMA_NAME='{$this->getDatabase()}'")
       ->selectAs("s.DEFAULT_CHARACTER_SET_NAME", "charset")
       ->selectAS("s.DEFAULT_COLLATION_NAME", "collage")
-      ->where("SCHEMA_NAME='{$this->getDatabase()}'")
       ->sql();
 
     return $sql;
@@ -212,12 +212,16 @@ class MysqlSource extends AmSource{
 
     $sql = $this
       ->newQuery("information_schema.TABLES", "t")
-      ->innerJoin("information_schema.COLLATION_CHARACTER_SET_APPLICABILITY", "t.TABLE_COLLATION = c.COLLATION_NAME", "c")
+      ->innerJoin(
+        "information_schema.COLLATION_CHARACTER_SET_APPLICABILITY",
+        "t.TABLE_COLLATION = c.COLLATION_NAME", "c")
+      ->where(
+        "t.TABLE_SCHEMA='{$this->getDatabase()}'",
+        "and", "t.TABLE_TYPE='BASE TABLE'")
       ->selectAs("t.TABLE_NAME", "tableName")
       ->selectAS("t.ENGINE", "engine")
       ->selectAS("t.TABLE_COLLATION", "collage")
       ->selectAS("c.CHARACTER_SET_NAME ", "charset")
-      ->where("TABLE_SCHEMA='{$this->getDatabase()}'", "and", "TABLE_TYPE='BASE TABLE'")
       ->sql();
 
     return $sql;
@@ -229,8 +233,10 @@ class MysqlSource extends AmSource{
 
     $sql = $this
       ->newQuery("information_schema.COLUMNS")
+      ->where(
+        "TABLE_SCHEMA='{$this->getDatabase()}'",
+        "and", "TABLE_NAME='{$t->getTableName()}'")
       ->selectAs("COLUMN_NAME", "name")
-      ->where("TABLE_SCHEMA='{$this->getDatabase()}'", "and", "TABLE_NAME='{$t->getTableName()}'")
       ->orderBy("ORDINAL_POSITION")
       ->sql();
 
@@ -243,8 +249,9 @@ class MysqlSource extends AmSource{
 
     $sql = $this
       ->newQuery("information_schema.COLUMNS")
-      ->where("TABLE_SCHEMA='{$this->getDatabase()}'", "and", "TABLE_NAME='{$t->getTableName()}'")
-      ->orderBy("ORDINAL_POSITION")
+      ->where(
+        "TABLE_SCHEMA='{$this->getDatabase()}'",
+        "and", "TABLE_NAME='{$t->getTableName()}'")
 
       // Basic data
       ->selectAs("COLUMN_NAME", "name")
@@ -262,6 +269,7 @@ class MysqlSource extends AmSource{
       // Numerics
       ->selectAs("NUMERIC_PRECISION", "precision")
       ->selectAs("NUMERIC_SCALE", "scale")
+      ->orderBy("ORDINAL_POSITION")
 
       // Others
       ->selectAs("EXTRA", "extra")
@@ -272,7 +280,33 @@ class MysqlSource extends AmSource{
 
   }
 
-  // SQL para obtener el listade de foreign keys de una tabla
+  // SQL para obtener el lista campos unicos
+  public function sqlGetTableUniques(AmTable $t){
+
+    $sql = $this
+      ->newQuery("information_schema.KEY_COLUMN_USAGE", "k")
+      ->innerJoin(
+        "information_schema.COLUMNS",
+        "k.TABLE_SCHEMA = c.TABLE_SCHEMA AND ".
+        "k.TABLE_NAME   = c.TABLE_NAME AND ".
+        "k.COLUMN_NAME  = c.COLUMN_NAME",
+        "c")
+      ->where(
+        "k.TABLE_SCHEMA='{$this->getDatabase()}'",
+        "and", "k.TABLE_NAME='{$t->getTableName()}'",
+        "and", "k.CONSTRAINT_NAME<>'PRIMARY'",
+        "and", "k.REFERENCED_TABLE_NAME IS NULL",
+        "and", "c.COLUMN_KEY <> 'PRI'")
+      ->selectAs("k.CONSTRAINT_NAME", "name")
+      ->selectAs("k.COLUMN_NAME", "columnName")
+      ->orderBy("k.CONSTRAINT_NAME", "k.ORDINAL_POSITION")
+      ->sql();
+
+    return $sql;
+
+  }
+
+  // SQL para obtener el lista de foreign keys de una tabla
   public function sqlGetTableForeignKeys(AmTable $t){
 
     $sql = $this
@@ -281,7 +315,11 @@ class MysqlSource extends AmSource{
       ->selectAs("COLUMN_NAME", "columnName")
       ->selectAs("REFERENCED_TABLE_NAME", "toTable")
       ->selectAs("REFERENCED_COLUMN_NAME", "toColumn")
-      ->where("TABLE_SCHEMA='{$this->getDatabase()}'", "and", "TABLE_NAME='{$t->getTableName()}'", "and", "CONSTRAINT_NAME<>'PRIMARY'", "and", "REFERENCED_TABLE_SCHEMA=TABLE_SCHEMA")
+      ->where(
+        "TABLE_SCHEMA='{$this->getDatabase()}'",
+        "and", "TABLE_NAME='{$t->getTableName()}'",
+        "and", "NOT REFERENCED_TABLE_NAME IS NULL",
+        "and", "CONSTRAINT_NAME<>'PRIMARY'")
       ->orderBy("CONSTRAINT_NAME", "ORDINAL_POSITION")
       ->sql();
 
@@ -298,7 +336,11 @@ class MysqlSource extends AmSource{
       ->selectAs("COLUMN_NAME", "columnName")
       ->selectAs("TABLE_NAME", "fromTable")
       ->selectAs("REFERENCED_COLUMN_NAME", "toColumn")
-      ->where("TABLE_SCHEMA='{$this->getDatabase()}'", "and", "REFERENCED_TABLE_NAME='{$t->getTableName()}'", "and", "CONSTRAINT_NAME<>'PRIMARY'", "and", "REFERENCED_TABLE_SCHEMA=TABLE_SCHEMA")
+      ->where(
+        "TABLE_SCHEMA='{$this->getDatabase()}'",
+        "and", "REFERENCED_TABLE_NAME='{$t->getTableName()}'",
+        "and", "NOT REFERENCED_TABLE_NAME IS NULL",
+        "and", "CONSTRAINT_NAME<>'PRIMARY'")
       ->orderBy("CONSTRAINT_NAME", "ORDINAL_POSITION")
       ->sql();
 
@@ -627,7 +669,7 @@ class MysqlSource extends AmSource{
   }
 
   // Obtener el SQL para una consulta de insercon
-  public function sqlInsertInto($table = null, $values = array(), array $fields = array()){
+  public function sqlInsertInto($table, $values, array $fields = array()){
 
     // Si es una consulta
     if($values instanceof AmQuery){
@@ -848,7 +890,7 @@ class MysqlSource extends AmSource{
   }
 
   // Obtener el SQL para una consulta TRUNCATE: Vaciar una tabla
-  public function sqlTruncate($table = null){
+  public function sqlTruncate(AmTable $table){
 
     // Obtener nombre de la tabla
     $tableName = $this->getParseNameTable($table);
@@ -858,7 +900,7 @@ class MysqlSource extends AmSource{
   }
 
   // Obtener el SQL para eliminar una tabla
-  public function sqlDropTable($table){
+  public function sqlDropTable(AmTable $table){
 
     // Obtener nombre de la tabla
     $tableName = $this->getParseNameTable($table);
