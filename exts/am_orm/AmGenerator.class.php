@@ -87,7 +87,7 @@ final class AmGenerator{
       $fieldName  = $f->getName();
 
       // Integer validator, dates, times and Bit validator
-      if(in_array($type, array("integer", "bit", "date", "datetime", "time")))
+      if(in_array($type, array("integer", "bit", "date", "datetime", "timestamp", "time")))
         $validators[] = "    \$this->setValidator(\"{$fieldName}\", \"{$type}\");";
 
       // If have validate strlen of value.

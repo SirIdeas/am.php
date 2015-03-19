@@ -30,7 +30,7 @@ class MysqlSource extends AmSource{
       // Fechas
       "date"       => "date",
       "datetime"   => "datetime",
-      "timestamp"  => "datetime",
+      "timestamp"  => "timestamp",
       "time"       => "time",
       "year"       => "year",
 
@@ -812,6 +812,19 @@ class MysqlSource extends AmSource{
     $default = $field->getDefaultValue();
     $extra = $field->getExtra();
 
+    if(isset($default)){
+
+      $default = $field->parseValue($default);
+
+      if(in_array($type, array("text", "char", "varchar", "bit")) ||
+        (in_array($type, array("date", "datetime", "timestamp", "time")) &&
+          $default != "CURRENT_TIMESTAMP"
+        )
+      )
+        $default = "'{$default}'";
+
+    }
+
     $attrs = array();
 
     if($field->isUnsigned())      $attrs[] = "unsigned";
@@ -820,7 +833,7 @@ class MysqlSource extends AmSource{
     if(!empty($collage))          $attrs[] = $collage;
     if(!$field->allowNull())      $attrs[] = "NOT NULL";
     if($field->isAutoIncrement()) $attrs[] = "AUTO_INCREMENT";
-    if(isset($default))           $attrs[] = "DEFAULT '{$default}'";
+    if(isset($default))           $attrs[] = "DEFAULT {$default}";
     if(!empty($extra))            $attrs[] = $extra;
 
     $attrs = implode(" ", $attrs);
@@ -905,7 +918,7 @@ class MysqlSource extends AmSource{
     // Obtener nombre de la tabla
     $tableName = $this->getParseNameTable($table);
 
-    return "TRUNCATE $tableName";
+    return "DROP TABLE $tableName";
 
   }
 

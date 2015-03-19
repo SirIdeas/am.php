@@ -274,11 +274,11 @@ final class AmTable extends AmObject{
 
   // Elimina tabla de la Base de datos
   public function sqlDrop(){  return $this->getSource()->sqlDropTable($this); }
-  public function drop(){     return $this->getSource()->dropTable($this) !== false; }
+  public function drop(){     return $this->getSource()->dropTable($this); }
 
   // Vaciar una tabla
   public function sqlTruncate(){  return $this->getSource()->sqlTruncate($this); }
-  public function truncate($ignoreFK = false){     return $this->getSource()->truncate($this, $ignoreFK) !== false; }
+  public function truncate($ignoreFK = false){     return $this->getSource()->truncate($this, $ignoreFK); }
 
   // Insertar registros en la tabla
   public function sqlInsertInto($values, array $fields = array()){  return $this->getSource()->sqlInsertInto($this, $values, $fields); }
