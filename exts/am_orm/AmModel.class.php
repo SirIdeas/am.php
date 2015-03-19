@@ -113,7 +113,7 @@ class AmModel extends AmObject{
 
   // Agrega un validator a la tabla
   public function setValidator($name, $validatorName, $validator = null, $options = array()){
-
+    
     // Si el nombre es un array, entonces
     if(is_array($name)){
       // Agregar un  validator por cada elemento
@@ -127,10 +127,16 @@ class AmModel extends AmObject{
     if($validatorName instanceof AmValidator)
       return $this->setValidator($name, null, $validatorName);
 
+    // Si el segundo parámetro es un array entonces representa
+    // que se agregaran varios validators
+    if(is_array($validatorName))
+      foreach ($validatorName as $value)
+        return $this->setValidator($name, $value, $validator, $options);
+
     // Si el tercer parametro es un array, entonces este representa las opciones.
     // El nombre del parametro pasa a ser tambien el validator que se buscara.
     if(is_array($validator))
-      return $this->setValidator($name, $validatorName, null, $validator);
+      return $this->setValidator($name, $validatorName, null, array_merge($validator, $options));
 
     // Si no se indico el 3er parametros, entonces se tomara el nombre como validador
     if(!isset($validator))
@@ -364,7 +370,7 @@ class AmModel extends AmObject{
     $validators = $this->getValidators($field);
 
     // Sino se obtiene un array de validators retornar
-    // sine valuar 
+    // sine valuar
     if(!is_array($validators))
       return;
 
