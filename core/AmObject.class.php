@@ -4,8 +4,8 @@
  * Clase para objetos en Amathista
  */
 
-class AmObject implements Iterator, Countable, ArrayAccess{ //Reflector, 
-  
+class AmObject implements Iterator, Countable, ArrayAccess{ //Reflector,
+
   /**
    * Lista de propiedades creados dinamicamente
    **/
@@ -15,17 +15,24 @@ class AmObject implements Iterator, Countable, ArrayAccess{ //Reflector,
    * Llamada del constructor. Inicializa los atributos indicados en el array data
    **/
   public function __construct($data = null){
-    
+    $this->extend($data);
+  }
+
+  /**
+   * Llamada
+   **/
+  protected function extend($data = null){
+
     // Transformar atributos a array
     $data = self::parse($data);
-  
-    // Asignar atributos    
+
+    // Asignar atributos
     foreach($data as $attr => $value){
       $this->$attr = $value;
     }
-    
+
   }
-  
+
   /**
    * Funciones Get y Set. Si "value!=null" de retorna la propiedad "key",
    * sino se asignara "value" a la propiedad "key"
@@ -33,29 +40,29 @@ class AmObject implements Iterator, Countable, ArrayAccess{ //Reflector,
   protected function attr($key, $value = null){
 
     if(isset($value)){
-      
+
       // como set
       $this->$key = $value;
       return $this;
-      
+
     }
-    
+
     // como get
     return $this->$key;
-    
+
   }
-  
+
   /**
    * Llamada de la consulta a una propiedad del objeto
    * $this->name
    **/
   public function __get($name){
-    
+
     // Si existe entre los atributos no definidos devolver el valor
     if(in_array($name, $this->_f) && property_exists($this, $name)){
       return $this->$name;
     }
-    
+
     // Devolver nul si no existe
     return null;
 
@@ -66,18 +73,18 @@ class AmObject implements Iterator, Countable, ArrayAccess{ //Reflector,
    * $this->name = $value
    **/
   public function __set($name, $value){
-    
+
     // Si no existe una propiedad de clase en el objeto agregar
     // atributo a lista de atributos dinamicos
     if(!empty($name) && !property_exists($this, $name)){
       $this->_f[] = $name;
     }
-    
+
     // Si propiedad es un atributo dinamico asignar valor a atributo
     if(in_array($name, $this->_f)){
       $this->$name = $value;
     }
-    
+
   }
 
   /**
@@ -93,20 +100,20 @@ class AmObject implements Iterator, Countable, ArrayAccess{ //Reflector,
    * unset($this->name)
    **/
   public function __unset($name){
-    
+
     // Si es un atributo dinamico
     if(in_array($key, $this->_f)){
-      
+
       // Eliminar atributo dinamico
       $this->_f = array_diff($this->_f, array($key));
       unset($this->$key);
-      
+
     }
-    
+
     return $this;
-    
+
   }
-  
+
   /**
    * Llamada de la asignacion de valores en el objeto como un array
    * $this[$name] = $value
@@ -124,7 +131,7 @@ class AmObject implements Iterator, Countable, ArrayAccess{ //Reflector,
    * unset($this[$name])
    **/
   public function offsetUnset($name){ unset($this->$name); }
-  
+
   /**
    * Llamada de consulta del objeto como un array.
    * $this[$name]
@@ -139,7 +146,7 @@ class AmObject implements Iterator, Countable, ArrayAccess{ //Reflector,
     reset($this->_f);
     return $this;
   }
-  
+
   /**
    * Obtiene el valor actual de la coleccion
    * current($this)
@@ -200,7 +207,7 @@ class AmObject implements Iterator, Countable, ArrayAccess{ //Reflector,
   public function count() {
     return count($this->_f);
   }
-  
+
   /**
    * Devuelve un array asociativo con los valores de los atributos dinamicos
    */
@@ -213,7 +220,7 @@ class AmObject implements Iterator, Countable, ArrayAccess{ //Reflector,
     }
     return $ret;
   }
-  
+
   /**
    * Convierte un AmObject a un array
   */
@@ -226,13 +233,13 @@ class AmObject implements Iterator, Countable, ArrayAccess{ //Reflector,
     if($collection instanceof stdClass){
       return (array)$collection;
     }
-    
+
     if($collection instanceof AmObject){
       return $collection->toArray();
     }
-    
+
     return array();
-    
+
   }
-  
+
 }
