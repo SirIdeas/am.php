@@ -23,3 +23,5 @@
 <script type="text/javascript">
   $.cookieMsg('bottom', 'simposiumtos-web', '<?php Am::eUrl() ?>/politicas-de-privacidad');
 </script>
+
+<script src="<?php Am::eUrl() ?>/js/am.js"></script>

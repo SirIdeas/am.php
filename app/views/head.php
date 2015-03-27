@@ -10,7 +10,7 @@
 <link rel="shortcut icon" href="<?php Am::eUrl() ?>/favicon.ico"/>
 
 <link rel="stylesheet" href="<?php Am::eUrl() ?>/vendor/vendor.css">
-<link rel="stylesheet" href="<?php Am::eUrl() ?>/css/styles.css">
+<link rel="stylesheet" href="<?php Am::eUrl() ?>/css/am.css">
 
 <!--[if lt IE 9]>
   <link rel="stylesheet" href="<?php Am::eUrl() ?>/vendor/ie-fixs.css">

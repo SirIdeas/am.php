@@ -484,7 +484,7 @@ class AmControl extends AmObject{
 
       // Entorno
       $env,
-      
+
       // Asignar vista que se mostrará,
       array(
         "view" => self::getViewName($action),

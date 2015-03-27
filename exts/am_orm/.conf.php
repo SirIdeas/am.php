@@ -27,6 +27,7 @@ return array(
   ),
 
   "mergeFunctions" => array(
+    "models" => "array_merge_recursive",
     "sources" => "array_merge_recursive",
     "validators" => "array_merge_recursive",
   )

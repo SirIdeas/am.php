@@ -1,0 +1,24 @@
+// @import nib
+
+// global-reset()
+
+$vrt-align-childs($middle = false)
+  &:before
+  >*
+    display         inline-block
+    vertical-align  $middle if $middle != false
+  &:before
+    height     100%
+    content    ' '
+
+$include-vertical-align(prefix)
+  [class^="{prefix}-"],
+  [class*=" {prefix}-"]
+    $vrt-align-childs()
+
+  $aligns = top, middle, bottom
+  for $val in $aligns
+    .{prefix}-{$val}
+      &:before,
+      >*
+        vertical-align  $val

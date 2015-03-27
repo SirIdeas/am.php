@@ -27,7 +27,7 @@
       ].join('');
 
       $(function(){
-        
+
         var modal = $(view);      // convertir a jQuery
         $('body').append(modal);  // Agregar al cuerpo
 

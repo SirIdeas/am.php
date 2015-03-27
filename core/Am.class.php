@@ -44,6 +44,7 @@ final class Am{
       "normalSession" => "exts/am_normal_session/"
     ),
 
+    $loadedExts = array(),      // Array de extensiones cargadas
     $instances = array(),       // Instancias unicas de clases
     $paths = array(),           // Herarquia de carpetas
     $confsLoaded = array(),     // Archivos de configuración cargados.
@@ -285,17 +286,26 @@ final class Am{
   public static function load($file){
 
     // Si existe el archivo retornar el mismo
-    if(is_file($realFile = "{$file}.php")){
+    if(in_array($realFile = realpath("{$file}.php"), self::$loadedExts))
+      return true;
+
+    // Si existe el archivo retornar el mismo
+    if(is_file($realFile)){
+      self::$loadedExts[] = $realFile;
       require_once $realFile;
       return true;
     }
 
+    // Si existe el archivo retornar el mismo
+    if(in_array($realFileConf = realpath("{$file}.conf.php"), self::$loadedExts))
+      return true;
+
     // Si existe el archivo .conf para dicha ruta retornar se intentara
     // incluir como una extension
-    if(is_file($realFile = "{$file}.conf.php")){
+    if(is_file($realFile = $realFileConf)){
 
       // Obtener la configuracion de la extencion
-      $conf = require $realFile;
+      $conf = require_once $realFile;
 
       // Obtener las funciones para mezclar que s definirán
       $mergeFunctions = itemOr("mergeFunctions", $conf, array());
@@ -335,8 +345,10 @@ final class Am{
     }
 
     // Si esta definida la variable $conf, entonces retornar verdadero.
-    if(isset($conf))
+    if(isset($conf)){
+      self::$loadedExts[] = $realFileConf;
       return true;
+    }
 
     // De lo contrarion no se pudo cargar la extension
     return false;
@@ -527,6 +539,10 @@ final class Am{
     // Incluir extensiones para peticiones
     // Archivos requeridos
     self::requireExt(self::getAttribute("requires", array()));
+
+    // Include init file at app root if exists
+    if(is_file($initFilePath = ".init.php"))
+      require_once $initFilePath;
 
     // Llamado de accion para evaluar ruta
     self::call("route.evaluate", $request);

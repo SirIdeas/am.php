@@ -150,16 +150,19 @@ final class AmORM{
     if(!isset($model["name"]))
       return false;
 
+    // Configuración de valores po defecto
+    $defaults = itemOr("defaults", $models, array());
+    if(is_string($defaults))
+      $defaults = array("root" => $defaults);
+
+    // Configuración de valores del model
+    $modelConf = itemOr($model["name"], $models, array());
+    if(!is_string($defaults))
+      $modelConf = array("root" => $modelConf);
+
     // Combinar opciones recibidas en el constructor con las
     // establecidas en el archivo de configuracion
-    $model = array_merge(
-      // Configuración de valores po defecto
-      isset($models["defaults"])? $models["defaults"] : array(),
-      // Configuración de valores del mail
-      isset($models[$model["name"]])? $models[$model["name"]] : array(),
-      // Configuracion recibida
-      $model
-    );
+    $model = array_merge($defaults, $modelConf, $model);
 
     // Si ya fue incluido el model salir
     if(in_array($model["name"], self::$includedModels))
@@ -169,6 +172,12 @@ final class AmORM{
       // Guardar el nombre del modelo dentro de los modelos incluidos
       // para no generar bucles infinitos
       self::$includedModels[] = $model["name"];
+
+    // Incluir de configuracion local del modelo
+    if(is_file($modelConfFile = $model["root"] . ".model.php")){
+      $modelConf = require_once($modelConfFile);
+      $model = array_merge($model, $modelConf);
+    }
 
     // Incluir modelos requeridos por el modelo actual
     foreach($model["models"] as $require)

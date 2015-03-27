@@ -26,10 +26,10 @@ class AmCommand{
 
     // 2do: Comando a ejecutar
     $cmd = array_shift($argv);
-    
+
     // El comando puede ser indicado con un target especifico: $cmd="comando:target"
     // Dividir para obtener target
-    $params = explode(":", $cmd);    
+    $params = explode(":", $cmd);
     $cmd = array_shift($params);    // La primera parte es el comando real
     $target = array_shift($params); // El siguiente elemento es el target. Si no existe es null
                                     // $params queda con el resto de los parametros del argumento
@@ -38,10 +38,10 @@ class AmCommand{
     // Incluir el archivo si existe
     $functionFile = Am::findFileIn("{$cmd}.php", self::$paths);
     require_once $functionFile;
-    
+
     // Determinar el nombre de la funcion que ejecuta el comando
     $functionName = "am_command_{$cmd}";
-    
+
     // Si la funcion no existe mostrar error
     function_exists($functionName) or die("Am: command not found {$cmd}");
 
@@ -51,7 +51,7 @@ class AmCommand{
 
     // Si el target esta indicado
     if(isset($target)){
-      
+
       // Si el target esta definido pero no existe en la configuracion
       // mostrar error
       isset($targets[$cmd][$target]) or die("Am: target not found {$cmd}:{$target}");
@@ -74,7 +74,7 @@ class AmCommand{
 
     }else
 
-      // Llamado de la funcion 
+      // Llamado de la funcion
       $functionName(null, array(), array(), $file, $argv);
 
     echo "\n";

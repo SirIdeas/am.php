@@ -13,5 +13,5 @@
     (# child #)
     (# put:foot = foot.php #)
   </body>
-  
+
 </html>
