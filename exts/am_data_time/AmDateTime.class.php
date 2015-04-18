@@ -1,5 +1,28 @@
 <?php
-
+/**
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014-2015 Sir Ideas, C. A.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ **/
+ 
 /**
  * Clase para formato personalizado de fechas
  */
@@ -41,7 +64,7 @@ class AmDateTime extends DateTime{
       "D" => "w:weekDaysAbr",   // Nombre de días de semana abreviado
       "F" => "n:monthsName:-1", // Nombre de meses
       "M" => "n:monthsAbr:-1",  // Nombre de meses abreviados
-    ); 
+    );
 
   // Obtiene el valor truncado de para in indice y un $time determinado
   protected static function getTruncateValue($i, $time){
@@ -65,7 +88,7 @@ class AmDateTime extends DateTime{
 
   // Funcion sobreescrita de formato.
   public function format($format){
-    
+
     // Obtener el tiempo de la fecha actual
     $time   = $this->getTimestamp();
 
@@ -76,7 +99,7 @@ class AmDateTime extends DateTime{
       // en todas las posiciones donde exista el indice evaluado
       $format = str_replace($m[1], self::getTruncateValue($i, $time), $format);
     }
-    
+
     return $format;
 
   }
