@@ -40,7 +40,7 @@
   class="table records-list"
   id="dinamic-table"
   data-param-len="15"
-  data-param-data-url="data.json"
+  data-param-data-url="<?php echo $url ?>data.json"
   data-param-input-search-selector="#table-search"
   data-param-pagination-selector="#table-pagination"
   data-param-count-record="#dinamic-table-count-record"
