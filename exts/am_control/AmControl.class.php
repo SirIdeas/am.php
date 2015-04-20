@@ -493,7 +493,7 @@ class AmControl extends AmObject{
     }
 
     // Incluir como extension
-    Am::load($conf["root"]);
+    Am::load($conf["root"] . "/");
 
     // Retornar la configuracion obtenida
     return $conf;
