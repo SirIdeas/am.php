@@ -22,35 +22,79 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
- 
+
 return array(
 
   //////////////////////////////////////////////////////////////////////////////
   // Parametros del recursos
   "model" => null,
 
-  // ---------------------------------------------------------------------------
-  "columns" => array(),
+  //////////////////////////////////////////////////////////////////////////////
+  // Url del index del controlador
+  "url" => null,
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Campos para los formularios y para los detalles
   "fields" => array(),
+
+  // ---------------------------------------------------------------------------
   "fieldNames" => array(),
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Columnas dle lista del index
+  "columns" => array(),
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Campos a ocultar en el formulario
+  "hides" => array(),
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Configuracion del formulario
+  "formConf" => array(
+    "attrs" => array(
+      "role" => "form",
+    ),
+    "wrapper" => HTML::t("div", null, array(
+      "class" => "text-center"
+    )),
+    "defaults"  => array(
+      "class"   => "form-control",
+      "label"   => HTML::t("label"),
+      "wrapper" => HTML::t("div", null, array(
+        "class" => "form-group"
+      )),
+      "required" => ""
+    ),
+    "foot" => HTML::t("div",
+      HTML::t("button", "Enviar", array(
+          "type" => "submit",
+          "class" => "btn btn-lg btn-primary btn-block"
+        ),
+        array(
+          "class" => "text-center"
+        )
+      )
+    )
+  ),
 
   // Filtros
   "filters" => array(
     "before" => array(
       "loadRecord" => array(
         "scope" => "only",
-        "to" => array("detail", "edit", "remove")
+        "to" => array("detail", "edit", "delete")
       )
     )
   ),
 
+  //////////////////////////////////////////////////////////////////////////////
   // Acciones permitidas
   "allow" => array(
     "list"      => true,
     "new"       => true,
     "detail"    => true,
     "edit"      => true,
-    "remove"    => true,
+    "delete"    => true,
     "options"   => true,
   ),
 

@@ -23,21 +23,36 @@
  * SOFTWARE.
  **/
 
-return array(
+class AmAuthControl extends AmControl{
 
-  "errorReporting" => E_ALL,    // Indicar que errores se mostrarán
+  // Bandeja de la administracion
+  public function action_login(){}
+  public function get_login(){}
+  public function post_login(){
 
-  "sessionManager" => "normalSession", // MAnejador de session
+    // Obtener el nombre de la clase
+    $class = $this->authClass;
 
-  "requires" => array(
-    "exts/am_route/",
-    "exts/am_resource/",
-    "exts/am_auth/",
-    "exts/am_data_time/",
-    "exts/am_template/",
-    "exts/am_mailer/",
-    "exts/html/",
-  ),
+    // Busca el usuario por usernam y por password
+    $user = $class::auth(
+      $this->post->login["username"],
+      $this->post->login["password"]
+    );
 
+    if(isset($user)){
 
-);
+      // Usuario esta autenticado
+      Am::getCredentialsHandler()->setAuthenticated($user);
+      AmFlash::success($this->texts["welcome"]);
+      Am::gotoUrl($this->urls["index"]);  // Ir a index
+
+    }else{
+
+      // Usuario no autenticado
+      AmFlash::danger($this->texts["authFailed"]);
+
+    }
+
+  }
+
+}

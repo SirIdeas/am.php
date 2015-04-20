@@ -22,16 +22,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
- 
+
 return array(
 
   "files" => array(
     "AmCredentials.class",
     "AmCredentialsHandler.class"
-  ),
-
-  "requires" => array(
-    "core/am_session/",
   ),
 
   "mergeFunctions" => array(

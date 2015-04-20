@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
- 
+
 /**
  * Clase para las consultas SQL
  */
@@ -426,8 +426,7 @@ class AmQuery extends AmObject{
 
       // Se encontró el modelo
       if (false !== $className){
-        $r["isNew"] = false;      // Indica que no es un registr nuevo
-        $r = new $className($r);  // Crear instancia del modelo
+        $r = new $className($r, false);  // Crear instancia del modelo
       }else{
         // Devolver como objeto de Amathista
         $r = new AmObject($r);
@@ -436,15 +435,27 @@ class AmQuery extends AmObject{
     }elseif($as == "array"){
       // Retornar como erray
       // $r = $r;
+
     }elseif($as == "object"){
       // Retornar como objeto
       $r = (object)$r;
+
     }elseif($as == "am"){
       // Retornar como objeto de Amathista
       $r = new AmObject($r);
+
+    }elseif(class_exists($as)){
+      // Clase especifica
+
+      if(in_array("AmModel", class_parents($as)))
+        $r = new $as($r, false);
+      else
+        $r = new $as($r);
+
     }else{
       // Sino retornar null
       $r = null;
+
     }
 
     // Formatear el valor

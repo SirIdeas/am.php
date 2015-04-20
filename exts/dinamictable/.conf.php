@@ -24,20 +24,13 @@
  **/
 
 return array(
-
-  "errorReporting" => E_ALL,    // Indicar que errores se mostrarán
-
-  "sessionManager" => "normalSession", // MAnejador de session
-
-  "requires" => array(
-    "exts/am_route/",
-    "exts/am_resource/",
-    "exts/am_auth/",
-    "exts/am_data_time/",
-    "exts/am_template/",
-    "exts/am_mailer/",
-    "exts/html/",
+  
+  "files" => array(
+    "dinamicTableServer"
   ),
 
+  "requires" => array(
+    "exts/am_orm/",
+  ),
 
 );

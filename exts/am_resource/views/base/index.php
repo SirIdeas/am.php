@@ -24,11 +24,14 @@
  **/
 ?>
 <div>
+  <h3>Listado <strong><?php echo $classModel ?></strong></h3>
   <?php if ($allow["new"]): ?>
-    <a href="new" class="btn btn-default btn-xs">Nuevo</a>
+    <a href="<?php echo $url ?>new" class="btn btn-default btn-xs">Nuevo</a>
+    <br>
+    <br>
   <?php endif ?>
 </div>
-(# child #)
+
 <div>
   <input id="table-search" type="text" class="form-control" placeholder="Buscar">
 </div>
@@ -37,7 +40,7 @@
   class="table records-list"
   id="dinamic-table"
   data-param-len="15"
-  data-param-data-url="data"
+  data-param-data-url="data.json"
   data-param-input-search-selector="#table-search"
   data-param-pagination-selector="#table-pagination"
   data-param-count-record="#dinamic-table-count-record"
@@ -45,12 +48,15 @@
 >
   <thead>
     <tr>
-      <?php foreach ($columns as $field => $def): ?>
-        <th data-param-show="<?php echo (!isset($def["show"]) || $def["show"]==true)? "true" : "false" ?>">
-          <?php if(!isset($def["show"]) || $def["show"]==true): ?>
+      <?php foreach ($columns as $field => $def):
+        $show = !isset($def["show"]) || $def["show"]==true;
+        $sort = !isset($def["sort"]) || $def["sort"]==true;
+        ?>
+        <th data-param-show="<?php echo $show? "true" : "false" ?>">
+          <?php if($show): ?>
             <span><?php echo itemOr($field, $fieldNames, $field) ?></span>
           <?php endif ?>
-          <?php if(!isset($def["sort"]) || $def["sort"]==true): ?>
+          <?php if($sort): ?>
             <span class="btn-xs" data-param-sort-asc>
               <span class="glyphicon glyphicon-chevron-down"></span>
             </span>
@@ -60,6 +66,7 @@
           <?php endif ?>
         </th>
       <?php endforeach ?>
+
       <?php if ($allow["options"]): ?>
         <th data-param-show="false"></th>
         <th data-param-sort="false" data-param-class="text-center">
@@ -67,6 +74,7 @@
           <div class="with-200"></div>
         </th>
       <?php endif ?>
+
     </tr>
   </thead>
   <tfoot>
@@ -96,25 +104,25 @@
 <script id="template-options" type="text/x-tmpl">
   <small>
     <?php if ($allow["detail"]): ?>
-      <a href="<?php Am::eUrl("/admin/$menu/") ?>{%=o.id%}/detail">Detalle</a>&nbsp;|
+      <a href="<?php $url ?>{%=o.id%}/detail">Detalle</a>&nbsp;|
     <?php endif ?>
     <?php if ($allow["edit"]): ?>
-      <a href="<?php Am::eUrl("/admin/$menu/") ?>{%=o.id%}/edit">Editar</a>&nbsp;|
+      <a href="<?php $url ?>{%=o.id%}/edit">Editar</a>&nbsp;|
     <?php endif ?>
-    <?php if ($allow["remove"]): ?>
-      <a href="<?php Am::eUrl("/admin/$menu/") ?>{%=o.id%}/remove">Delete</a>
+    <?php if ($allow["delete"]): ?>
+      <a href="<?php $url ?>{%=o.id%}/delete">Eliminar</a>
     <?php endif ?>
     (# put:recordOptions #)
   </small>
 </script>
 
-(section:head+ #)
-  <link rel="stylesheet" href="<?php Am::eUrl() ?>/vendor/dinamictable/jquery.dinamictable.css">
-(endsection #)
+(# section:head+ #)
+  <link rel="stylesheet" href="<?php Am::eUrl() ?>/exts/dinamictable/jquery.dinamictable.css">
+(# endsection #)
 
-(section:foot+ #)
-  <script src="<?php Am::eUrl() ?>/vendor/tmpl.min.js"></script>
-  <script src="<?php Am::eUrl() ?>/vendor/dinamictable/jquery.dinamictable.js"></script>
+(# section:foot+ #)
+  <script src="<?php Am::eUrl() ?>/exts/dinamictable/tmpl.min.js"></script>
+  <script src="<?php Am::eUrl() ?>/exts/dinamictable/jquery.dinamictable.js"></script>
   <script>
     $(function(){
 
@@ -137,4 +145,4 @@
 
     });
   </script>
-(endsection #)
+(# endsection #)

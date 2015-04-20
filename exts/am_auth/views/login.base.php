@@ -22,19 +22,52 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
-
-return array(
-
-  "defaults" => array(
-    "prefixs" => array(
-      "actions"     => "action_",
-      "getActions"  => "get_",
-      "postActions" => "post_",
-      "filters"     => "filter_",
+?>
+<?php
+echo new HTMLForm(
+  array(
+    "attrs" => array(
+      "role" => "form",
+      "name" => "login",
+      "onsubmit" => "return amathista.submit(this)"
     ),
-    "paths" => array(     // Carpetas de vistas del controlador
-      realPath(dirname(__FILE__) . "/views"),
+    "wrapper" => HTML::t("div", null, array(
+      "class" => "text-center"
+    )),
+    "defaults"  => array(
+      "class"   => "form-control",
+      // "label"   => HTML::t("label"),
+      "wrapper" => HTML::t("div", null, array(
+        "class" => "form-group"
+      )),
+      "required" => ""
     ),
-  ),
-
+    "head" => HTML::t("h3", "Inicio de sesión"),
+    "fields" => array(
+      "username" => array(
+        "name"        => "username",
+        "label"       => "Username",
+        "type"        => "text",
+        "placeholder" => "Username",
+        "autofocus"   => ""
+      ),
+      "password" => array(
+        "name"        => "password",
+        "label"       => "Password",
+        "type"        => "password",
+        "placeholder" => "Password",
+      ),
+    ),
+    "foot" => HTML::t("div",
+      HTML::t("button", "Enviar", array(
+        "type" => "submit",
+        "class" => "btn btn-lg btn-primary btn-block"
+      ),
+      array(
+        "class" => "text-center"
+      )
+    ))
+  )
 );
+
+?>

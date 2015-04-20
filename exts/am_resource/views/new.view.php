@@ -23,4 +23,6 @@
  * SOFTWARE.
  **/
 ?>
-(# parent:new.base.php #)
+
+(# parent:base.php #)
+(# place:base/new.php #)

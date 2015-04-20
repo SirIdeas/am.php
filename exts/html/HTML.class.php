@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
- 
+
 class HTML extends AmObject{
 
   protected static
@@ -119,7 +119,7 @@ class HTML extends AmObject{
 class HTMLFormField extends HTML{
 
   protected
-    $form    = null,
+    $form       = null,
     $wrapper    = null,
     $label      = null,
     $fieldName  = null,
@@ -184,6 +184,8 @@ class HTMLForm extends HTML{
     $record   = array(),    // Objeto con los datos
     $fields   = array(),    // Campos del formulario
     $hides    = array(),    // Campos ocultos
+    $head     = null,        // Cabecera del formulario
+    $foot     = null,        // Footer del formulario
     $attrs    = array(
       "action"  => null,
       "method"  => "post",
@@ -192,6 +194,13 @@ class HTMLForm extends HTML{
     $defaults = array();    // Valores por defecto para los campos
 
   public function __construct($options, array $attrs = array()){
+
+    // Asignar valores por defecto que no se pueden inicializar en el atributo
+    $this->extend(array(
+      "foot" => HTML::t("button", "Enviar", array(
+        "type" => "submit"
+      ))
+    ));
 
     // If 1r param is a model take it table.
     if($options instanceof AmModel)
@@ -322,12 +331,20 @@ class HTMLForm extends HTML{
 
     $content = array();
 
+    // Agregar la cabecera
+    if(isset($this->head))
+      $content[] = $this->head;
+
     // Recorrer los campos
     foreach($this->fields as $k => $field){
       $this->fields[$k] = $this->parseField($field);
       if(!in_array($k, $this->hides))
         $content[] = $this->fields[$k];
     }
+
+    // Agregar el footer
+    if(isset($this->foot))
+      $content[] = $this->foot;
 
     $this->setContent($content);
 

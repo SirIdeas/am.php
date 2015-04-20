@@ -23,4 +23,6 @@
  * SOFTWARE.
  **/
 ?>
-(# parent:form.base.php #)
+
+(# parent:base.php #)
+(# place:base/detail.php #)

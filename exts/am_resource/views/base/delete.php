@@ -22,22 +22,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
+?>
+<div>
 
-return array(
+  <h3>Eliminar <strong><?php echo $classModel ?></strong></h3>
 
-  "errorReporting" => E_ALL,    // Indicar que errores se mostrarán
+  <div class="alert alert-warning" role="alert">
+    <p>¿Está seguro que desea elminar este registro?</p>
+    <br>
+    <form method="post">
+      <a href="<?php echo $url ?>" class="boton-inline">[Volver]</a>
+      <button type="submit" class="btn btn-warning">Eliminar</button>
+    </form>
+  </div>
 
-  "sessionManager" => "normalSession", // MAnejador de session
+  <?php foreach ($fields as $fieldName): ?>
+    <div class="form-group">
+      <label><?php echo $fieldName ?></label>
+      <div class="field-readonly">
+        <?php echo $r->$fieldName ?>
+      </div>
+    </div>
+  <?php endforeach ?>
 
-  "requires" => array(
-    "exts/am_route/",
-    "exts/am_resource/",
-    "exts/am_auth/",
-    "exts/am_data_time/",
-    "exts/am_template/",
-    "exts/am_mailer/",
-    "exts/html/",
-  ),
-
-
-);
+</div>

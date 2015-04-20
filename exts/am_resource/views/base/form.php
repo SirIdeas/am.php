@@ -22,22 +22,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
+?>
+(# set:formTitle="Formulario <strong>$classModel</strong>" #)
 
-return array(
+<?php if(count($errors = $r->getErrors())): ?>
+  <div class="row">
+    <div class="alert alert-danger" role="alert">
+      <?php foreach ($errors as $field => $msgs): ?>
+        <strong><?php echo itemOr($field, $fieldNames, $field) ?>:</strong><br>
+        <?php foreach ($msgs as $validator => $msg): ?>
+          &nbsp;<small><?php echo "- {$msg}" ?></small><br>
+        <?php endforeach ?>
+      <?php endforeach ?>
+    </div>
+  </div>
+<?php endif ?>
 
-  "errorReporting" => E_ALL,    // Indicar que errores se mostrarán
-
-  "sessionManager" => "normalSession", // MAnejador de session
-
-  "requires" => array(
-    "exts/am_route/",
-    "exts/am_resource/",
-    "exts/am_auth/",
-    "exts/am_data_time/",
-    "exts/am_template/",
-    "exts/am_mailer/",
-    "exts/html/",
-  ),
-
-
+<?php
+  echo new HTMLForm(array_merge_recursive(
+    array(
+      "record" => $r,
+      "hides" => $hides,
+      "head" => HTML::t("div", array(
+        HTML::t("h3", $formTitle),
+        HTML::t("a", "[Volver]", array("href"=>$url))
+      )),
+      "attrs" => array(
+        "name" => $classModel
+      ),
+    ),
+    $formConf
+  )
 );
+
+?>

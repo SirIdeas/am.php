@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
- 
+
 /**
  * Clase base para los modelos
  */
@@ -42,12 +42,14 @@ class AmModel extends AmObject{
     $errorsCount = 0;       // Cantidad de errores
 
   // El constructor se encarga de asignar la instancia de la tabla correspondiente al model
-  public function __construct($params = array()) {
+  final public function __construct($params = array(), $isNew = true) {
 
     // Inicializar la tabla si no ha sido inicializada
     $className = get_class($this);
     $sourceName = $className::$sourceName;
     $tableName  = $className::$tableName;
+
+    $this->setIsNew($isNew);
 
     // Inicializar los validators
     if(!isset(self::$allValidators[$className])){

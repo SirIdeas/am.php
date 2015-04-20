@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
- 
+
 /**
  * Clase para la evaluación de las rutas
  */
@@ -153,11 +153,12 @@ class AmRoute{
       $routes["routes"] = array_merge(
         itemOr("routes", $routes, array()),
         array(
-          "/"           => "control => @index",
+          ""            => "control => @index",
           "/new"        => "control => @new",
+          "/data.json"  => "control => @data",
           "/:id/detail" => "control => @detail",
           "/:id/edit"   => "control => @edit",
-          "/:id/remove" => "control => @remove",
+          "/:id/delete" => "control => @delete",
         )
       );
       // Se elimina el parametro resource para que no pueda vuelva a entrar en

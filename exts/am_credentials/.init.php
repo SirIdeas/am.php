@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
- 
+
 // Funcion para obtener una instancia de para manejar crendenciales
 Am::setCallback("credentials.handler", "AmCredentialsHandler::getInstance");
 

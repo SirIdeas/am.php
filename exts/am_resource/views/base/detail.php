@@ -22,22 +22,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
+?>
+<div>
 
-return array(
+  <div>
+    <h3>Detalle <strong><?php echo $classModel ?></strong></h3>
+    <?php if ($allow["edit"]): ?>
+      <a href="edit" class="boton-inline">[Editar]</a>
+    <?php endif ?>
+    <?php if ($allow["delete"]): ?>
+      <a href="delete" class="boton-inline">[Eliminar]</a>
+    <?php endif ?>
+    <a href="<?php echo $url ?>" class="boton-inline">[Volver]</a>
+  </div>
 
-  "errorReporting" => E_ALL,    // Indicar que errores se mostrarán
+  <?php foreach ($fields as $fieldName): ?>
+    <div class="form-group">
+      <label><?php echo $fieldName ?></label>
+      <div class="field-readonly">
+        <?php echo $r->$fieldName ?>
+      </div>
+    </div>
+  <?php endforeach ?>
 
-  "sessionManager" => "normalSession", // MAnejador de session
-
-  "requires" => array(
-    "exts/am_route/",
-    "exts/am_resource/",
-    "exts/am_auth/",
-    "exts/am_data_time/",
-    "exts/am_template/",
-    "exts/am_mailer/",
-    "exts/html/",
-  ),
-
-
-);
+</div>

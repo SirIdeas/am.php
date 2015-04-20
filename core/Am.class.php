@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
- 
+
 /**
  * Clase principal de Amathista
  */
@@ -420,6 +420,7 @@ final class Am{
 
     // Si ya esta cargada la clase AmSession es porque
     // ya se realizó la inicializacion.
+    
     if(class_exists("AmSession"))
       return;
 

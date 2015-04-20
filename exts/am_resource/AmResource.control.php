@@ -22,14 +22,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
- 
+
 class AmResourceControl extends AmControl{
 
   public function __construct($data = null){
     parent::__construct($data);
 
     // Obtener la instancida del modelo
-    $this->classModel = AmORM::model($this->model);
+    $this->classModel = $model = AmORM::model($this->model);
+    $this->table      = $model::me();
+
+    // Obtener las columnas si no se han indicado
+    if(empty($this->columns)){
+      $columns = array_keys((array)$this->table->getFields());
+      $this->columns = array_combine($columns, $columns);
+    }
+
+    // Los campos a setear son los campos de la tabla - los ocultos
+    if(empty($this->fields))
+      $this->fields = array_diff($this->columns, $this->hides);
 
   }
 
@@ -40,13 +51,14 @@ class AmResourceControl extends AmControl{
 
   protected function action_data(){
 
-    // $columns = array_keys($this->columns);
-    //
-    // $q = AmORM::table($this->model)
-    //   ->all()
-    //   ->setSelects(array_combine($columns, $columns));
-    //
-    // return dinamicTableServer($this->request, $q, array($this, "format_list"), false);
+    // Obtener el listado de elementos
+    $q = $this->table->all()
+        ->setSelects(array_combine($this->columns, $this->columns));
+
+    // Return el objeto para la tabla dinamica
+    return dinamicTableServer($this->request, $q,
+      array($this, "format_list"), false
+    );
 
   }
 
@@ -62,18 +74,55 @@ class AmResourceControl extends AmControl{
     $this->r = new $this->classModel;
   }
 
+  // Procesamiento del formulario new
   public function post_new(){
 
     // Obtener los datos recibidos por post del formulario
-    $data = $this->post->toArray();
-    $fields = $this->getFields();
+    $data = $this->post[$this->classModel];
 
-    $this->r->setValues($data, $fields);
+    $this->r->setValues($data, $this->fields);
     if($this->r->save()){
       AmFlash::success("Registro agregado satisfactoriamente");
-      Am::gotoUrl($this->getUrl());
+      $this->redirect();
     }else{
       AmFlash::danger("Errores al intentar agregar el registro");
+      $this->errors = $this->r->getErrors();
+    }
+
+  }
+
+  // Accion para modificar los datos del registro
+  public function action_edit($id){
+    if(method_exists($this, "format_edit"))
+      $this->r = $this->format_edit($this->r);
+  }
+  public function get_edit($id){}
+  public function post_edit($id){
+
+    // Obtener los datos recibidos por post del formulario
+    $data = $this->post[$this->classModel];
+
+    $this->r->setValues($data, $this->fields);
+    if($this->r->save()){
+      AmFlash::success("Registro actualizado satisfactoriamente");
+      $this->redirect();
+    }else{
+      AmFlash::danger("Errores al intentar actualizar el registro");
+      $this->errors = $this->r->getErrors();
+    }
+
+  }
+
+  // Accion para eliminar un registro
+  public function action_delete($id){}
+  public function get_delete($id){}
+  public function post_delete($id){
+
+    if($this->r->delete()){
+      AmFlash::success("Registro eliminado satisfactoriamente");
+      $this->redirect();
+    }else{
+      AmFlash::danger("Errores al intentar eliminar el registro");
       $this->errors = $this->r->getErrors();
     }
 
@@ -85,53 +134,7 @@ class AmResourceControl extends AmControl{
     if(method_exists($this, "format_detail"))
       $this->r = $this->format_detail($this->r);
   }
-  public function get_post($id){}
-
-  // Accion para modificar los datos del registro
-  public function action_edit($id){
-    if(method_exists($this, "format_edit"))
-      $this->r = $this->format_edit($this->r);
-  }
-  public function get_edit($id){}
-  public function post_edit($id){
-
-    // Obtener los datos recibidos por post del formulario
-    $data = $this->post->toArray();
-    $fields = $this->getFields();
-
-    $this->r->setValues($data, $fields);
-    if($this->r->save()){
-      AmFlash::success("Registro actualizado satisfactoriamente");
-      Am::gotoUrl($this->getUrl());
-    }else{
-      AmFlash::danger("Errores al intentar actualizar el registro");
-      $this->errors = $this->r->getErrors();
-    }
-
-  }
-
-  // Accion para eliminar un registro
-  public function action_remove($id){}
-  public function get_remove($id){}
-  public function post_remove($id){
-
-    if($this->r->delete()){
-      AmFlash::success("Registro eliminado satisfactoriamente");
-      Am::gotoUrl($this->getUrl());
-    }else{
-      AmFlash::danger("Errores al intentar eliminar el registro");
-      $this->errors = $this->r->getErrors();
-    }
-
-  }
-
-  // Devuelve los campos
-  public function getFields(){
-    $ret = array();
-    foreach ($this->fields as $key => $value)
-      $ret = array_merge($ret, array_keys($value));
-    return $ret;
-  }
+  public function post_detail($id){}
 
   public function filter_loadRecord($id){
 

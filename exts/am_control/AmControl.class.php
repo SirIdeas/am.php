@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
- 
+
 /**
  * Clase para controlador estandar. Basado en el objeto estandar de Amathista
  */
@@ -40,7 +40,6 @@ class AmControl extends AmObject{
     );
 
   protected
-    $url = "",                // URL base del controlador
     $root = null,             // Carpeta raiz del controlador
     $paths = array(),         // Carpetas donde se buscara las vistas
     $view = null,             // Nombre de la vista a renderizar
@@ -73,6 +72,10 @@ class AmControl extends AmObject{
     return $this->url;
   }
 
+  final public function redirect($url = ""){
+    Am::gotoUrl($this->url . $url);
+  }
+
   // Propiedad para get/set para render
   final protected function getView(){ return $this->view; }
   final protected function setView($value){ $this->view = $value; return $this; }
@@ -85,13 +88,13 @@ class AmControl extends AmObject{
     $ret = array_reverse($ret);         // Invertir array
 
     // Agregar carpeta raiz del controlador si existe si existe
-    if(isset($this->root))
-      array_unshift($ret, $this->root);
+    if(isset($this->root) && ($path = realPath($this->root)))
+      array_unshift($ret, $path);
 
     // Agregar carpeta raiz del controlador para vistas
     // si existe si existe
-    if(isset($this->views))
-      array_unshift($ret, $this->root . $this->views);
+    if(isset($this->views) && ($path = realPath($this->root . "/" . $this->views)))
+      array_unshift($ret, $path);
 
     // Invertir array,
     return $ret;
@@ -446,9 +449,12 @@ class AmControl extends AmObject{
     if(is_string($conf))
       $conf = array("root" => $conf);
 
+    // Obtener el path real del controlador
+    $conf["root"] = realPath($conf["root"]);
+
     // Mezclar con el archivo de configuracion en la raiz del
     // controlador.
-    if(is_file($realFile = "{$conf["root"]}.control.php"))
+    if(is_file($realFile = "{$conf["root"]}/.control.php"))
       $conf = self::mergeConf($conf, require($realFile));
 
     // Si tiene no tiene padre o si el padre esta vacío
@@ -469,7 +475,7 @@ class AmControl extends AmObject{
 
       // Agregar carpeta de vistas por defecto del padre.
       $confParent["paths"][] = $confParent["root"];
-      $confParent["paths"][] = $confParent["root"] . $confParent["views"];
+      $confParent["paths"][] = $confParent["root"] . "/" . $confParent["views"];
 
       // Obtener el nombre real del controlador antes de mezclar con el padre
       $controlName = itemOr("name", $conf, $control);
@@ -481,11 +487,10 @@ class AmControl extends AmObject{
 
     // Obtener la ruta del controlador
     // Incluir controlador si existe el archivo
-    if(is_file($controlFile = "{$conf["root"]}{$controlName}.control.php")){
+    if(is_file($controlFile = "{$conf["root"]}/{$controlName}.control.php")){
       $conf["name"] = $controlName;
       require_once $controlFile;
     }
-
 
     // Incluir como extension
     Am::load($conf["root"]);

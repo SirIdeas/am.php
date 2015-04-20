@@ -22,19 +22,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
- 
+
 return array(
 
   "extend" => array(
     "control" => array(
-      "AmResource" => dirname(__FILE__) . "/",
+      "AmResource" => dirname(__FILE__),
     ),
   ),
 
   "requires" => array(
     "exts/am_control/",
     "exts/am_orm/",
-    "exts/dinamic_table/",
+    "exts/dinamictable/",
+    "exts/html/",
   ),
 
 );

@@ -25,19 +25,39 @@
 
 return array(
 
-  "errorReporting" => E_ALL,    // Indicar que errores se mostrarán
+  //////////////////////////////////////////////////////////////////////////////
+  // Parametros del recursos
+  "authClass" => null,
 
-  "sessionManager" => "normalSession", // MAnejador de session
-
-  "requires" => array(
-    "exts/am_route/",
-    "exts/am_resource/",
-    "exts/am_auth/",
-    "exts/am_data_time/",
-    "exts/am_template/",
-    "exts/am_mailer/",
-    "exts/html/",
+  //////////////////////////////////////////////////////////////////////////////
+  // Textos a mostrar
+  "texts" => array(
+    "welcome" => "Bienvenido",
+    "authFailed" => "Usuario y/o contraseña incorrectos"
   ),
 
+  "urls" => array(
+    "index" => Am::serverUrl("/")
+  ),
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Acciones permitidas
+  "allow" => array(
+    "signin"    => true,
+    "login"     => true,
+    "logout"    => true,
+    "recovery"  => true,
+    "reset"     => true,
+  ),
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Asegurar los valores para los siguientes metodos
+  "views" => "views",
+  "prefixs" => array(
+    "actions"     => "action_",
+    "getActions"  => "get_",
+    "postActions" => "post_",
+    "filters"     => "filter_",
+  ),
 
 );

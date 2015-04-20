@@ -25,19 +25,17 @@
 
 return array(
 
-  "errorReporting" => E_ALL,    // Indicar que errores se mostrarán
-
-  "sessionManager" => "normalSession", // MAnejador de session
-
-  "requires" => array(
-    "exts/am_route/",
-    "exts/am_resource/",
-    "exts/am_auth/",
-    "exts/am_data_time/",
-    "exts/am_template/",
-    "exts/am_mailer/",
-    "exts/html/",
+  "extend" => array(
+    "control" => array(
+      "AmAuth" => dirname(__FILE__) . "/",
+    ),
   ),
 
+  "requires" => array(
+    "exts/am_control/",
+    "exts/am_credentials/",
+    "exts/am_flash/",
+    "exts/html/",
+  ),
 
 );
