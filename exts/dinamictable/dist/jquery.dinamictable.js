@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
- 
+
 (function($){
 
   var instances = [];
@@ -119,7 +119,7 @@
     oOptions.sMsgNoRecordsFiltered = oOptions.tMsgNoRecordsFiltered.html();
     oOptions.tMsgNoRecords = $(oOptions.sCountRecordSelector).find('[dinamic-table-msg="no-records"]');
 
-    $(oOptions.sInputSearchSelector).change(function(){
+    $(oOptions.sInputSearchSelector).keypress(function(){
       setSearch(oOptions, $(this).val());
     });
 
