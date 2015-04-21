@@ -25,4 +25,6 @@
 ?>
 
 (# parent:base.php #)
-(# place:base/new.php #)
+(# set:formTitle="Nuevo <strong>$classModel</strong>" #)
+(# place:am_resource/base/form.php #)
+(# put:resourceForm #)

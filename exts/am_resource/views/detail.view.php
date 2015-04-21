@@ -25,4 +25,8 @@
 ?>
 
 (# parent:base.php #)
-(# place:base/detail.php #)
+(# place:am_resource/base/detail.php #)
+<div>
+  (# put:resourceDetailHead #)
+  (# put:resourceDetailBody #)
+</div>

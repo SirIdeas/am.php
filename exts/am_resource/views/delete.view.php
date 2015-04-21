@@ -25,4 +25,10 @@
 ?>
 
 (# parent:base.php #)
-(# place:base/delete.php #)
+(# place:am_resource/base/delete.php #)
+<div>
+  (# put:resourceDeleteHead #)
+  (# put:resourceDeleteQuestion #)
+  (# put:resourceDeleteBody #)
+  (# put:resourceDeleteFoot #)
+</div>

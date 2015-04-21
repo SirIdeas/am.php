@@ -25,4 +25,7 @@
 ?>
 
 (# parent:base.php #)
-(# place:base/index.php #)
+(# place:am_resource/base/index.php #)
+(# put:resourceListHeader #)
+(# put:resourceListOptions #)
+(# put:resourceList #)
