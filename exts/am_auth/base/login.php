@@ -33,6 +33,7 @@ $loginForm = new HTMLForm(
       "onsubmit" => "return amathista.submit(this)"
     ),
     "defaults"  => array(
+      "label"   => HTML::t("label"),
       "wrapper" => HTML::t("div", null, array(
         "class" => "validate"
       )),
@@ -56,22 +57,12 @@ $loginForm = new HTMLForm(
     ),
     "foot" => HTML::t("div",
       array(
-        HTML::t("div",
-          HTML::t("button", "Enviar",
-            array(
-              "type" => "submit",
-              "class" => "btn waves-effect waves-light"
-            )
-          )
-        ),
-        HTML::t("div",
-          HTML::t("a","Registro", array("href" => $url."signin"))
-        ),
-        HTML::t("div",
-          HTML::t("a","¿Olvidó su contraseña?", array("href" => "recovery"))
-        )
+        HTML::t("a","Registro", array("href" => $url."signin")),
+        HTML::t("a","¿Olvidó su contraseña?", array("href" => "recovery")),
+        HTML::t("button", "Enviar", array("type" => "submit"))
       )
     )
   )
 );
+
 ?>
