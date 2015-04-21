@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
- 
+
 /**
  * Validacion de campo referencia de otra tabla
  */
@@ -46,21 +46,22 @@ class InQueryValidator extends AmValidator{
     parent::__construct($options);
 
     // Agregar el campo a la consulta por si no existe aun
-    $this->query()->select($this->field());
+    $this->getQuery()->select($this->getField());
 
   }
 
   protected function validate(AmModel &$model){
 
-    $field = $this->field();
+    $field = $this->getField();
     $value = $this->value($model);
-    $q = $this->query();
+    $q = $this->getQuery();
 
-    $qq = $q->source()->newQuery($q, "qq")
+    $qq = $q->getSource()->newQuery($q, "qq")
         ->select($field)
         ->where("$field = $value");
 
     return $qq->getRow('array') !== false;
+
   }
 
   // Consulta en la que se basará la referencia a validar

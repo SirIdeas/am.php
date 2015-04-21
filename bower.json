@@ -5,6 +5,6 @@
     "es5-shim": "~4.0.5",
     "json3": "~3.3",
     "jquery": "~1.11.0",
-    "bootstrap": "3.3.1"
+    "materialize": "~0.96.1"
   }
 }

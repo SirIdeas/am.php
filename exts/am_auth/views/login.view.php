@@ -26,3 +26,8 @@
 
 (# parent:base.php #)
 (# place:login.base.php #)
+
+<?php
+// $loginForm fué generado en login.base.php
+echo $loginForm;
+?>

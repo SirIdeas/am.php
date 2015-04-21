@@ -22,18 +22,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
- 
+
   $msgs = array(
-    "success" => "success",
-    "warning" => "warning",
-    "danger" => "danger",
-    "error" => "danger"
+    "success" => "green",
+    "warning" => "amber",
+    "danger" => "deep-orange",
+    "error" => "red"
   );
 ?>
 
 <?php foreach ($msgs as $key => $class):?>
   <?php $group = AmFlash::get($key); if(empty($group)) continue; ?>
-  <div class="alert alert-<?php echo $class ?>" role="alert">
+  <div class="card-panel <?php echo $class ?> lighten-3 <?php echo $class ?>-text text-darken-4" role="alert">
     <?php foreach ($group as $msg): ?>
       <div><?php echo $msg ?></div>
     <?php endforeach ?>

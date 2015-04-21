@@ -70,10 +70,12 @@ class HTML extends AmObject{
       $attrs = implode(" ", $attrs);
     }
 
-    if(is_array($this->content)){
-      $content = implode("", $this->content).$content;
-    }else{
-      $content = $this->content.$content;
+    if(!isset($content)){
+      if(is_array($this->content)){
+        $content = implode("", $this->content);
+      }else{
+        $content = $this->content;
+      }
     }
 
     if(in_array($tag, self::$singlesTags))
@@ -242,6 +244,48 @@ class HTMLForm extends HTML{
 
   }
 
+  // Devuelve la cabecera del formulario
+  public function getHead(){
+    return $this->head;
+  }
+
+  // Devuelve la cabecera del formulario
+  public function getFoot(){
+    return $this->foot;
+  }
+
+  // Devuelve la instancia HTMLFormFiel
+  // correspondiente a un campo
+  public function getField($name){
+
+    // Si el campo es oculto retornar null
+    if(in_array($name, $this->hides))
+      return null;
+
+    // Si el campo no existe retornar null
+    if(!isset($this->fields[$name]))
+      return null;
+
+    return $this->fields[$name] = $this->parseField(
+      $this->fields[$name]
+    );
+
+  }
+
+  // Devuelve la cabecera del formulario
+  public function getBody(){
+
+    // Recorrer los campos
+    foreach($this->fields as $k => $field){
+      if($field = $this->getField($k));
+      if(!in_array($k, $this->hides))
+        $content[] = $field;
+    }
+
+    return implode("", $content);
+
+  }
+
   // Agregar un campo a los campos ocultos
   public function hide($fieldName){
     $this->hide[] = $fieldName;
@@ -335,12 +379,8 @@ class HTMLForm extends HTML{
     if(isset($this->head))
       $content[] = $this->head;
 
-    // Recorrer los campos
-    foreach($this->fields as $k => $field){
-      $this->fields[$k] = $this->parseField($field);
-      if(!in_array($k, $this->hides))
-        $content[] = $this->fields[$k];
-    }
+    // Obtener el cuerpo
+    $content[] = $this->getBody();
 
     // Agregar el footer
     if(isset($this->foot))

@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
- 
+
 /**
  * Clase para atender peticiones para comandos
  */
@@ -39,7 +39,7 @@ class AmCommand{
   }
 
   // Ejecucion de un comando
-  public static function exec($argv){
+  public static function execArray(array $argv){
 
     // Obtener los targets del archivo de configuracion
     $targets = Am::getAttribute("commands", array());
@@ -105,24 +105,9 @@ class AmCommand{
 
   }
 
-  // Atender peticion por por terminar
-  public static function asTerminal(){
-
-    // se une los argumentos con "/"
-    $arguments = implode("/", func_get_args());
-
-    // Separar todos los argumentos
-    $arguments = explode("/", $arguments);
-
-    // Ejecutar comando
-    echo self::exec($arguments);
-
-  }
-
-  // PENDIENTE DESARROLLAR
-  public static function asRequest(){
-    header("content-type: text/plain");
-    call_user_func_array(array("AmCommand", "asTerminal"), func_get_args());
+  public static function exec(){
+    $arguments = func_get_args();
+    echo self::execArray($arguments);
   }
 
 }

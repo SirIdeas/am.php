@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
- 
+
 /**
  * Validacion del rango de un campo
  */
@@ -36,7 +36,7 @@ class RangeValidator extends AmValidator{
     $minValidator = null, // Instancia del validador inferior
     $maxValidator = null, // Instancia del validador superior
     $min = null,
-    $max = nulll;
+    $max = null;
 
   public function __construct($options = array()){
     $this->setSustitutions("max", "max");
@@ -51,8 +51,8 @@ class RangeValidator extends AmValidator{
     $this->minValidator = new MinValueValidator($options);
     $this->maxValidator =new MaxValueValidator($options);
 
-    $this->min($min);
-    $this->max($max);
+    $this->setMin($min);
+    $this->setMax($max);
 
     parent::__construct($options);
   }

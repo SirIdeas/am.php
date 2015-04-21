@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
- 
+
 $__DIR__ = dirname(__FILE__);
 
 return array(
@@ -30,17 +30,17 @@ return array(
   "concat" => array(
     // Target
     "public" => array(
-      "public/vendor/vendor.css" => array(
+      $__DIR__."/public/vendor/vendor.css" => array(
         // Archivos fisicos
-         $__DIR__."/../bower_components/bootstrap/dist/css/bootstrap.min.css"
+        $__DIR__."/../bower_components/materialize/dist/css/materialize.min.css"
       ),
-      "public/vendor/ie-fixs.js" => array(
-        "{$__DIR__}/../bower_components/es5-shim/es5-shim.js",
-        "{$__DIR__}/../bower_components/json3/lib/json3.min.js"
+      $__DIR__."/public/vendor/ie-fixs.js" => array(
+        $__DIR__."/../bower_components/es5-shim/es5-shim.min.js",
+        $__DIR__."/../bower_components/json3/lib/json3.min.js"
       ),
-      "public/vendor/vendor.js" => array(
+      $__DIR__."/public/vendor/vendor.js" => array(
         $__DIR__."/../bower_components/jquery/dist/jquery.min.js",
-        $__DIR__."/../bower_components/bootstrap/dist/js/bootstrap.min.js"
+        $__DIR__."/../bower_components/materialize/dist/js/materialize.min.js"
       )
     )
   ),

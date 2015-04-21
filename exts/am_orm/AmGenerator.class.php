@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
- 
+
 /**
  * Clase para generar clases de los modeles del ORM
  */
@@ -120,13 +120,13 @@ final class AmGenerator{
 
       // To integer fields add range validator
       if($type == "integer"){
-        $max = pow(256, $len);
-        $min = $f->isUnsigned() ? 0 : -($max>>1);
-        $max = $min + $max - 1;
-        $prefix = is_int($min) && is_int($max)? "" : "// ";
-        // if the max limit is integer yet then add validator
-        $validators[] = "    {$prefix}\$this->setValidator(\"{$fieldName}\", \"range\", ".
-                            " array(\"min\" => $min, \"max\" => $max));";
+        // $max = pow(256, $len);
+        // $min = $f->isUnsigned() ? 0 : -($max>>1);
+        // $max = $min + $max - 1;
+        // $prefix = is_int($min) && is_int($max)? "" : "// ";
+        // // if the max limit is integer yet then add validator
+        // $validators[] = "    {$prefix}\$this->setValidator(\"{$fieldName}\", \"range\", ".
+        //                     " array(\"min\" => $min, \"max\" => $max));";
 
       // To text fiels add strlen validator
       }elseif($type == "text"){

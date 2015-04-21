@@ -24,25 +24,21 @@
  **/
 ?>
 <?php
-echo new HTMLForm(
+
+$loginForm = new HTMLForm(
   array(
     "attrs" => array(
       "role" => "form",
       "name" => "login",
       "onsubmit" => "return amathista.submit(this)"
     ),
-    "wrapper" => HTML::t("div", null, array(
-      "class" => "text-center"
-    )),
     "defaults"  => array(
-      "class"   => "form-control",
-      // "label"   => HTML::t("label"),
       "wrapper" => HTML::t("div", null, array(
-        "class" => "form-group"
+        "class" => "validate"
       )),
       "required" => ""
     ),
-    "head" => HTML::t("h3", "Inicio de sesión"),
+    "head" => HTML::t("h5", "Inicio de sesión"),
     "fields" => array(
       "username" => array(
         "name"        => "username",
@@ -59,15 +55,23 @@ echo new HTMLForm(
       ),
     ),
     "foot" => HTML::t("div",
-      HTML::t("button", "Enviar", array(
-        "type" => "submit",
-        "class" => "btn btn-lg btn-primary btn-block"
-      ),
       array(
-        "class" => "text-center"
+        HTML::t("div",
+          HTML::t("button", "Enviar",
+            array(
+              "type" => "submit",
+              "class" => "btn waves-effect waves-light"
+            )
+          )
+        ),
+        HTML::t("div",
+          HTML::t("a","Registro", array("href" => $url."signin"))
+        ),
+        HTML::t("div",
+          HTML::t("a","¿Olvidó su contraseña?", array("href" => "recovery"))
+        )
       )
-    ))
+    )
   )
 );
-
 ?>

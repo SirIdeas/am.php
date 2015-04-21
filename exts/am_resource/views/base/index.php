@@ -104,13 +104,13 @@
 <script id="template-options" type="text/x-tmpl">
   <small>
     <?php if ($allow["detail"]): ?>
-      <a href="<?php $url ?>{%=o.id%}/detail">Detalle</a>&nbsp;|
+      <a href="<?php $url ?>{%=o.id%}/detail">[Detalle]</a>
     <?php endif ?>
     <?php if ($allow["edit"]): ?>
-      <a href="<?php $url ?>{%=o.id%}/edit">Editar</a>&nbsp;|
+      <a href="<?php $url ?>{%=o.id%}/edit">[Editar]</a>
     <?php endif ?>
     <?php if ($allow["delete"]): ?>
-      <a href="<?php $url ?>{%=o.id%}/delete">Eliminar</a>
+      <a href="<?php $url ?>{%=o.id%}/delete">[Eliminar]</a>
     <?php endif ?>
     (# put:recordOptions #)
   </small>

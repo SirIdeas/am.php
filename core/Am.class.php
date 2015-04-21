@@ -420,7 +420,7 @@ final class Am{
 
     // Si ya esta cargada la clase AmSession es porque
     // ya se realizó la inicializacion.
-    
+
     if(class_exists("AmSession"))
       return;
 
@@ -534,30 +534,6 @@ final class Am{
       if(empty($request) || $request[0] !== "/")
         $request = "/" . $request;
 
-    }else{  // Es una peticion desde la consola
-
-      // La URL Base es vacía
-      self::$urlBase = "";
-
-      // La peticion es la concatenacion de todos los parametros
-      $request = implode("/", $argv);
-
-      echo "Amathista ".AM_VERSION.". Command Line\n";
-
-      while(1){
-        try{
-          // Obtener el comando enviado
-          $line = trim(fgets(STDIN));
-          // Ejecutarlo
-          print_r(eval("return $line;"));
-
-        // Si se captura un error mostrarlo
-        }catch(Exception $e){
-          echo $e->getMessage() . "\n";
-        }
-        echo "\n";
-      }
-
     }
 
     // Incluir extensiones para peticiones
@@ -568,8 +544,45 @@ final class Am{
     if(is_file($initFilePath = ".init.php"))
       require_once $initFilePath;
 
-    // Llamado de accion para evaluar ruta
-    self::call("route.evaluate", $request);
+    // Es una peticion desde la consola
+    if(isset($argv)){
+
+      // La URL Base es vacía
+      self::$urlBase = "";
+
+      if(count($argv) == 1){
+
+        echo "Amathista ".AM_VERSION.". Command Line\n";
+
+        while(1){
+          try{
+            // Obtener el comando enviado
+            $line = trim(fgets(STDIN));
+            // Ejecutarlo
+            print_r(eval("return $line;"));
+
+          // Si se captura un error mostrarlo
+          }catch(Exception $e){
+            echo $e->getMessage() . "\n";
+          }
+          echo "\n";
+        }
+
+      }else{
+
+        // Incluir el comando
+        Am::requireExt("exts/am_command/");
+        echo AmCommand::execArray($argv);
+        exit;
+
+      }
+
+    }else{
+      
+      // Llamado de accion para evaluar ruta
+      self::call("route.evaluate", $request);
+
+    }
 
   }
 

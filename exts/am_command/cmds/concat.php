@@ -22,14 +22,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
- 
+
 // Concatenar: PENDIENTE ORGANIZAR
 function am_command_concat($target, $params, $config, $file, $argv){
 
   foreach ($config as $fileName => $assets) {
     // REVISAR: No se deberia usar AmAsset
-    $asset = new AmAsset($fileName, $assets);
-    file_put_contents($fileName, $asset->getContent());
+    $content = array();
+    foreach ($assets as $file) {
+      $content[] = file_get_contents($file);
+    }
+    file_put_contents($fileName, implode("\n", $content));
     echo "\nAm: Asset created $fileName";
   }
 
