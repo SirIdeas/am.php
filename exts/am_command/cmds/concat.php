@@ -30,10 +30,21 @@ function am_command_concat($target, $params, $config, $file, $argv){
     // REVISAR: No se deberia usar AmAsset
     $content = array();
     foreach ($assets as $file) {
-      $content[] = file_get_contents($file);
+      if(is_file($file)){
+        $content[] = file_get_contents($file);
+      }else{
+        echo("\nAm: Not Found $file");
+        return;
+      }
     }
+
+    // Crear carpeta si no existe
+    if(!is_dir($dir = dirname($fileName)))
+      mkdir($dir, 0775, true);
+
     file_put_contents($fileName, implode("\n", $content));
-    echo "\nAm: Asset created $fileName";
+    echo "\nAm: created $fileName";
+
   }
 
 }

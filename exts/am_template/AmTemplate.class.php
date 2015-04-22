@@ -287,8 +287,11 @@ final class AmTemplate extends AmObject{
     $this->result = $this->compile($this->child);
 
     // Guardar vista minificada
-    extract($this->getEnv());  // Crear variables
-    eval("?> {$this->result["content"]} <?");
+    $this->result["content"] = trim($this->result["content"]);
+    if(!empty($this->result["content"])){
+      extract($this->getEnv());  // Crear variables
+      eval("?> {$this->result["content"]} <?");
+    }
 
   }
 

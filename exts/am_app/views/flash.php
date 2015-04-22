@@ -22,8 +22,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
-?>
-<?php
 
 $msgs = array(
   "success" => "green",
@@ -32,7 +30,7 @@ $msgs = array(
   "error" => "red"
 );
 
-foreach ($msgs as $key => $class):?>
+foreach ($msgs as $key => $class): ?>
   <?php $group = AmFlash::get($key); if(empty($group)) continue; ?>
   <div class="card-panel <?php echo $class ?> lighten-3 <?php echo $class ?>-text text-darken-4" role="alert">
     <?php foreach ($group as $msg): ?>

@@ -26,8 +26,9 @@
 (# set:title="Amathista Template" #)
 <meta charset="utf-8">
 <title><?php echo $title ?></title>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-
+<!--[if IE]>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<![endif]-->
 <meta name="format-detection" content="telephone=no" />
 <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
 <meta name="msapplication-tap-highlight" content="no" />

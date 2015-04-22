@@ -22,14 +22,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
-?>
-<?php
 
-$loginForm = new HTMLForm(
+$signinForm = new HTMLForm(
   array(
     "attrs" => array(
       "role" => "form",
-      "name" => "login",
+      "name" => "signin",
       "onsubmit" => "return amathista.submit(this)"
     ),
     "defaults"  => array(

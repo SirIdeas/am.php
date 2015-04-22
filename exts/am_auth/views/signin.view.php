@@ -25,5 +25,5 @@
 ?>
 
 (# parent:base.php #)
-(# place:base/login.php #)
-<?php echo $loginForm; ?>
+(# place:base/signin.php #)
+<?php echo $signinForm; ?>

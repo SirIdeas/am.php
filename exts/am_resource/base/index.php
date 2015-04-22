@@ -115,12 +115,12 @@
 (# endsection #)
 
 (# section:head+ #)
-  <link rel="stylesheet" href="<?php Am::eUrl() ?>/exts/dinamictable/jquery.dinamictable.css">
+  <link rel="stylesheet" href="<?php Am::eUrl() ?>/vendor/dinamictable/jquery.dinamictable.css">
 (# endsection #)
 
 (# section:foot+ #)
-  <script src="<?php Am::eUrl() ?>/exts/dinamictable/tmpl.min.js"></script>
-  <script src="<?php Am::eUrl() ?>/exts/dinamictable/jquery.dinamictable.js"></script>
+  <script src="<?php Am::eUrl() ?>/vendor/tmpl/tmpl.js"></script>
+  <script src="<?php Am::eUrl() ?>/vendor/dinamictable/jquery.dinamictable.js"></script>
   <script>
     $(function(){
 

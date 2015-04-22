@@ -26,17 +26,17 @@
 class AmAuthControl extends AmControl{
 
   // Bandeja de la administracion
-  public function action_login(){}
-  public function get_login(){}
-  public function post_login(){
+  public function action_signin(){}
+  public function get_signin(){}
+  public function post_signin(){
 
     // Obtener el nombre de la clase
     $class = $this->authClass;
 
     // Busca el usuario por usernam y por password
     $user = $class::auth(
-      $this->post->login["username"],
-      $this->post->login["password"]
+      $this->post->signin["username"],
+      $this->post->signin["password"]
     );
 
     if(isset($user)){

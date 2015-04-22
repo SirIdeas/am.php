@@ -44,4 +44,15 @@ return array(
       )
     )
   ),
+  "copy" => array(
+    "public" => array(
+      array(
+        "cwd" => $__DIR__."/bower_components/materialize/",
+        "dest" => $__DIR__."/public/",
+        "src" => array(
+          "font/**/*"
+        )
+      )
+    )
+  )
 );

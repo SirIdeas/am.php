@@ -22,8 +22,60 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
- 
+
+// Does not support flag GLOB_BRACE
+function rglob($pattern, $flags = 0) {
+    $files = glob($pattern, $flags);
+    foreach (glob(dirname($pattern).'/*', GLOB_ONLYDIR|GLOB_NOSORT) as $dir) {
+        $files = array_merge($files, rglob($dir.'/'.basename($pattern), $flags));
+    }
+    return $files;
+}
+
 // Copiar archivos: PENDIENTE DESARROLLAR
 function am_command_copy($target, $params, $config, $file, $argv){
-  print_r($config["src"]);
+
+  // Si no se especificó el src entonces se buscará en cada elemento
+  if(!isset($config["src"])){
+    foreach ($config as $child)
+      am_command_copy($target, $params, $child, $file, $argv);
+    return;
+  }
+
+  // Asignar valores por defecto
+  $config = array_merge(array(
+    "cwd" => "",
+    "dest" => ""
+  ), $config);
+
+  // Obtener rutas reales
+  $cwd = realPath($config["cwd"]);
+  $dest = $config["dest"];
+
+  foreach($config["src"] as $src){
+    $result = rglob($cwd."/".$src);
+    foreach($result as $file){
+
+      // Obtener path destino
+      $fileNoCwd = substr_replace($file, "", 0, strlen($cwd)+1);
+      $destPath = $dest.$fileNoCwd;
+
+      // Si el archivo ya existe continuar
+      if(is_file($destPath) || is_dir($file))
+        continue;
+
+      // Crear carpeta si no existe
+      if(!is_dir($dir = dirname($destPath)))
+        mkdir($dir, 0775, true);
+
+      // Copiar archivos
+      if(copy($file, $destPath)){
+        echo "\nCopied: $destPath";
+      }else{
+        echo "\nError coping: $destPath";
+      }
+
+    }
+  }
+
 }

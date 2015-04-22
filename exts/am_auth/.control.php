@@ -43,8 +43,8 @@ return array(
   //////////////////////////////////////////////////////////////////////////////
   // Acciones permitidas
   "allow" => array(
+    "signup"    => true,
     "signin"    => true,
-    "login"     => true,
     "logout"    => true,
     "recovery"  => true,
     "reset"     => true,

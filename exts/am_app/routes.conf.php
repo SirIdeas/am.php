@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
- 
+
 return array(
 
   // Entorno global
@@ -39,7 +39,7 @@ return array(
       "robots\.txt",
       "vendor/.*",
       "images/.*",
-      "fonts/.*",
+      "font/.*",
       "css/.*",
       "js/.*"
     )).")"
