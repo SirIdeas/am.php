@@ -58,21 +58,14 @@ return array(
       "class" => "text-center"
     )),
     "defaults"  => array(
-      "class"   => "form-control",
       "label"   => HTML::t("label"),
-      "wrapper" => HTML::t("div", null, array(
-        "class" => "form-group"
-      )),
+      "wrapper" => HTML::t("div"),
       "required" => ""
     ),
     "foot" => HTML::t("div",
-      HTML::t("button", "Enviar", array(
-          "type" => "submit",
-          "class" => "btn btn-lg btn-primary btn-block"
-        ),
-        array(
-          "class" => "text-center"
-        )
+      HTML::t("button", "Enviar",
+        array("type" => "submit"),
+        array()
       )
     )
   ),
