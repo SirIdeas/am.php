@@ -217,8 +217,10 @@ final class AmTable extends AmObject{
         // la fecha del campo indicado
         if($values[$i] instanceof AmModel)
           $values[$i]->$set($now);
-        elseif($v instanceof AmObject || is_array($v))
+
+        elseif($values[$i] instanceof AmObject || is_array($values[$i]))
           $values[$i][$field] = $now;
+
       }
 
     }

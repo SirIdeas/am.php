@@ -38,9 +38,11 @@ class AmResourceControl extends AmControl{
       $this->columns = array_combine($columns, $columns);
     }
 
+    $this->columnsNames = array_keys($this->columns);
+
     // Los campos a setear son los campos de la tabla - los ocultos
     if(empty($this->fields))
-      $this->fields = array_diff($this->columns, $this->hides);
+      $this->fields = array_diff($this->columnsNames, $this->hides);
 
   }
 
@@ -53,7 +55,7 @@ class AmResourceControl extends AmControl{
 
     // Obtener el listado de elementos
     $q = $this->table->all()
-        ->setSelects(array_combine($this->columns, $this->columns));
+        ->setSelects(array_combine($this->columnsNames, $this->columnsNames));
 
     // Return el objeto para la tabla dinamica
     return dinamicTableServer($this->request, $q,

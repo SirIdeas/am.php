@@ -570,6 +570,7 @@ abstract class AmSource extends AmObject{
           // Si el registro es AmModel obtener sus valores como array
           // asociativo o simple
           $values[$i] = $v->dataToArray(!$mergeWithFields);
+
         elseif($v instanceof AmObject)
           // Si es una instancia de AmObjet se obtiene como array asociativo
           $values[$i] = $v->toArray();
