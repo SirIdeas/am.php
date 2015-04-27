@@ -27,7 +27,6 @@ SOFTWARE.
 (function() {
   (function() {
     var amathista;
-    console.log("Amathista.initialize");
     amathista = function() {};
     amathista.submit = function(form) {
       return console.log(form);

@@ -23,8 +23,6 @@ SOFTWARE.
 ###
 
 do ->
-  console.log "Amathista.initialize"
-
   # Funcion principal
   amathista = () ->
 
