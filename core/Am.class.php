@@ -491,19 +491,6 @@ final class Am{
   // Inicio del Amathista
   public static function task($appRoot = null){
 
-    // Cambiar directorio de trabajo si este fue asignado
-    if(isset($appRoot)){
-      self::addDir($appRoot);
-      chdir($appRoot);
-    }
-
-    // Obtener las configuraciones
-    self::mergePropertiesFromAllFiles();
-
-    // Obtener el valor
-    $errorReporting = self::getAttribute("errorReporting");
-    error_reporting($errorReporting);
-
     // Variable global de argumentos
     global $argv;
 
@@ -535,6 +522,19 @@ final class Am{
         $request = "/" . $request;
 
     }
+
+    // Cambiar directorio de trabajo si este fue asignado
+    if(isset($appRoot)){
+      self::addDir($appRoot);
+      chdir($appRoot);
+    }
+
+    // Obtener las configuraciones
+    self::mergePropertiesFromAllFiles();
+
+    // Obtener el valor
+    $errorReporting = self::getAttribute("errorReporting");
+    error_reporting($errorReporting);
 
     // Incluir extensiones para peticiones
     // Archivos requeridos
@@ -578,7 +578,7 @@ final class Am{
       }
 
     }else{
-      
+
       // Llamado de accion para evaluar ruta
       self::call("route.evaluate", $request);
 
