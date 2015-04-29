@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
- 
+
 /**
  * Clase que sirve de apoyo para el proceso de atutenticación
  * y aprobación de permisos con credenciales.
@@ -222,7 +222,7 @@ final class AmCredentialsHandler{
       return !in_array($action, $credential["except"]);
 
     // De lo contrario la accion no requiere dicha credencial
-    return false;
+    return true;
 
 
   }
