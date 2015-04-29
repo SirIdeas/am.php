@@ -55,4 +55,9 @@ class AmAuthControl extends AmControl{
 
   }
 
+  public function action_signout(){
+    Am::getCredentialsHandler()->setAuthenticated($user);
+    Am::gotoUrl($this->urls["index"]);  // Ir a index
+  }
+
 }
