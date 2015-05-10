@@ -46,11 +46,6 @@ class AmResourceControl extends AmControl{
 
   }
 
-  // Accion para mostrar el listado de un modelo
-  public function action_index(){}
-  public function get_index(){}
-  public function post_index(){}
-
   protected function action_data(){
 
     // Obtener el listado de elementos
@@ -71,72 +66,41 @@ class AmResourceControl extends AmControl{
     return $r;
   }
 
-  // Acción para agregar un nuevo usuario
-  public function action_new(){
-    $this->r = new $this->classModel;
-  }
-
   // Procesamiento del formulario new
   public function post_new(){
-
-    // Obtener los datos recibidos por post del formulario
-    $data = $this->post[$this->classModel];
-
-    $this->r->setValues($data, $this->fields);
-    if($this->r->save()){
-      AmFlash::success("Registro agregado satisfactoriamente");
-      $this->redirect();
-    }else{
-      AmFlash::danger("Errores al intentar agregar el registro");
-      $this->errors = $this->r->getErrors();
-    }
-
+    $this->r = new $this->classModel;
+    return $this->handleForm($this->r);
   }
 
-  // Accion para modificar los datos del registro
-  public function action_edit($id){
-    if(method_exists($this, "format_edit"))
-      $this->r = $this->format_edit($this->r);
-  }
-  public function get_edit($id){}
+  // Procesamiento dle formulario edit
   public function post_edit($id){
-
-    // Obtener los datos recibidos por post del formulario
-    $data = $this->post[$this->classModel];
-
-    $this->r->setValues($data, $this->fields);
-    if($this->r->save()){
-      AmFlash::success("Registro actualizado satisfactoriamente");
-      $this->redirect();
-    }else{
-      AmFlash::danger("Errores al intentar actualizar el registro");
-      $this->errors = $this->r->getErrors();
-    }
-
+    return $this->handleForm($this->r);
   }
 
   // Accion para eliminar un registro
-  public function action_delete($id){}
-  public function get_delete($id){}
   public function post_delete($id){
-
-    if($this->r->delete()){
-      AmFlash::success("Registro eliminado satisfactoriamente");
-      $this->redirect();
-    }else{
-      AmFlash::danger("Errores al intentar eliminar el registro");
-      $this->errors = $this->r->getErrors();
-    }
-
+    return self::handleAction($this->r, $this->r->delete());
   }
 
-  // Accion para mostrar el detalle de los registros
-  public function action_detail($id){}
-  public function get_detail($id){
-    if(method_exists($this, "format_detail"))
-      $this->r = $this->format_detail($this->r);
+  // Obtener los datos de un registro
+  public function post_detail($id){
+    return $this->r->getValues($this->fields);
   }
-  public function post_detail($id){}
+
+  // Procesamiento para guardar un formulario
+  private function handleForm(AmModel $r){
+    // Obtener los datos recibidos por post del formulario
+    $data = $this->post[$this->classModel];
+    $this->r->setValues($data, $this->fields);
+    return self::handleAction($r, $this->r->save());
+  }
+
+  private static function handleAction(AmModel $r, $actionResult){
+    $ret = array("success" => $actionResult);
+    if(!$actionResult)
+      $ret["errors"] = $r->getErrors();
+    return $ret;
+  }
 
   public function filter_loadRecord($id){
 

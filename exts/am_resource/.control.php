@@ -30,16 +30,8 @@ return array(
   "model" => null,
 
   //////////////////////////////////////////////////////////////////////////////
-  // Url del index del controlador
-  "url" => null,
-
-  //////////////////////////////////////////////////////////////////////////////
   // Campos para los formularios y para los detalles
   "fields" => array(),
-
-  // ---------------------------------------------------------------------------
-  "fieldNames" => array(),
-
   //////////////////////////////////////////////////////////////////////////////
   // Columnas dle lista del index
   "columns" => array(),
@@ -47,28 +39,6 @@ return array(
   //////////////////////////////////////////////////////////////////////////////
   // Campos a ocultar en el formulario
   "hides" => array(),
-
-  //////////////////////////////////////////////////////////////////////////////
-  // Configuracion del formulario
-  "formConf" => array(
-    "attrs" => array(
-      "role" => "form",
-    ),
-    "wrapper" => HTML::t("div", null, array(
-      "class" => "text-center"
-    )),
-    "defaults"  => array(
-      "label"   => HTML::t("label"),
-      "wrapper" => HTML::t("div"),
-      "required" => ""
-    ),
-    "foot" => HTML::t("div",
-      HTML::t("button", "Enviar",
-        array("type" => "submit"),
-        array()
-      )
-    )
-  ),
 
   // Filtros
   "filters" => array(
@@ -88,7 +58,6 @@ return array(
     "detail"    => true,
     "edit"      => true,
     "delete"    => true,
-    "options"   => true,
   ),
 
   //////////////////////////////////////////////////////////////////////////////

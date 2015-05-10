@@ -35,7 +35,6 @@ return array(
     "exts/am_control/",
     "exts/am_orm/",
     "exts/dinamictable/",
-    "exts/html/",
   ),
 
 );

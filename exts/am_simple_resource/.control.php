@@ -22,21 +22,46 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
+
 return array(
 
-  "errorReporting" => E_ALL,    // Indicar que errores se mostrarán
+  //////////////////////////////////////////////////////////////////////////////
+  // Url del index del controlador
+  "url" => null,
 
-  "sessionManager" => "normalSession", // MAnejador de session
+  //////////////////////////////////////////////////////////////////////////////
+  // Controlador base
+  "parent" => "AmResource",
 
-  "requires" => array(
-    "exts/am_route/",
-    "exts/am_simple_resource/",
-    "exts/am_auth/",
-    "exts/am_data_time/",
-    "exts/am_template/",
-    "exts/am_mailer/",
-    "exts/html/",
+  //////////////////////////////////////////////////////////////////////////////
+  "fieldNames" => array(),
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Configuracion del formulario
+  "formConf" => array(
+    "attrs" => array(
+      "role" => "form",
+    ),
+    "wrapper" => HTML::t("div", null, array(
+      "class" => "text-center"
+    )),
+    "defaults"  => array(
+      "label"   => HTML::t("label"),
+      "wrapper" => HTML::t("div"),
+      "required" => ""
+    ),
+    "foot" => HTML::t("div",
+      HTML::t("button", "Enviar",
+        array("type" => "submit"),
+        array()
+      )
+    )
   ),
 
+  //////////////////////////////////////////////////////////////////////////////
+  // Acciones permitidas
+  "allow" => array(
+    "options"   => true,
+  ),
 
 );

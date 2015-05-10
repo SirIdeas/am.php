@@ -348,6 +348,16 @@ class AmModel extends AmObject{
 
   }
 
+  // Obtener lo valores de un registro en forma de array
+  public function getValues($mask = false){
+    $ret = $this->toArray();
+    foreach($ret as $field){
+      if(is_array($mask) && !in_array($field, $mask)){
+        unset($ret[$field]);
+      }
+    }
+  }
+
   // Devuelve una consulta que selecciona el registro actual
   public function getQuerySelectItem(){
     return $this->getTable()->findById($this->index());

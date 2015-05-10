@@ -22,21 +22,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
+
 return array(
 
-  "errorReporting" => E_ALL,    // Indicar que errores se mostrarán
-
-  "sessionManager" => "normalSession", // MAnejador de session
-
-  "requires" => array(
-    "exts/am_route/",
-    "exts/am_simple_resource/",
-    "exts/am_auth/",
-    "exts/am_data_time/",
-    "exts/am_template/",
-    "exts/am_mailer/",
-    "exts/html/",
+  "extend" => array(
+    "control" => array(
+      "AmSimpleResource" => dirname(__FILE__),
+    ),
   ),
 
+  "requires" => array(
+    "exts/am_resource/",
+    "exts/html/",
+  ),
 
 );
