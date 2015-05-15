@@ -24,5 +24,5 @@
  **/
 
 return array(
-	"title" => "Amathista's Template"
+  "title" => "Amathista's Template"
 );
