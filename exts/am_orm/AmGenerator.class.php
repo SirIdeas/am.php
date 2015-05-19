@@ -208,6 +208,12 @@ final class AmGenerator{
     $lines[] = "    return AmORM::table(\"{$table->getTableName()}\", \"{$table->getSource()->getName()}\");";
     $lines[] = "  }\n";
 
+    // Method to get query to all records of model
+    $lines[] = "  // GET QUERY TO ALL RECORDS";
+    $lines[] = "  public static function all(){";
+    $lines[] = "    return self::me()->all();";
+    $lines[] = "  }\n";
+
     $lines[] = "}";
 
     // Preparacion de los metodos Get
