@@ -265,7 +265,9 @@ final class Am{
   // Devuelve una URL absoluta incluyendo el nombre del servidor
   // y el tipo de conexion
   public static function serverUrl($path = ""){
-    return "http://" . $_SERVER["SERVER_NAME"] . self::url($path);
+    if(isset($_SERVER["SERVER_NAME"]))
+      return "http://" . $_SERVER["SERVER_NAME"] . self::url($path);
+    return self::url($path);
   }
 
   public static function eServerUrl($path = ""){
