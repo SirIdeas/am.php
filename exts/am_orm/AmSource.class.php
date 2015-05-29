@@ -554,8 +554,10 @@ abstract class AmSource extends AmObject{
 
       // Si los campos recibidos estan vacíos se tomará
       // como campos los de la consulta
+      var_dump($values);
+      exit;
       if(count($fields) == 0)
-        $fields = array_keys($values->select());
+        $fields = array_keys($values->getSelects());
 
     // Si los valores es un array con al menos un registro
     }elseif(is_array($values) && count($values)>0){
