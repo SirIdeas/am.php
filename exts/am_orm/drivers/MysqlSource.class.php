@@ -727,10 +727,15 @@ class MysqlSource extends AmSource{
         $fields[$key] = $this->getParseName($field);
 
       // Unir campos
-      $fields = implode(",", $fields);
+      if(empty($fields))
+        $fields = '';
+
+      else
+        $fields = '(' . implode(',', $fields) . ')';
+      
 
       // Generar SQL
-      return "INSERT INTO $tableName($fields) $strValues";
+      return "INSERT INTO $tableName{$fields} $strValues";
 
     }
 
