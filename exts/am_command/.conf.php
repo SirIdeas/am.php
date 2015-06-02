@@ -27,6 +27,10 @@ return array(
 
   "files" => array(
     "AmCommand.class"
+  ),
+
+  "mergeFunctions" => array(
+    "commands" => "array_merge_recursive",
   )
 
 );
