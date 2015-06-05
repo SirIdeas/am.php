@@ -233,7 +233,7 @@ class AmObject implements Iterator, Countable, ArrayAccess{ //Reflector,
 
   /**
    * Devuelve un array asociativo con los valores de los atributos dinamicos
-   */
+   **/
   public function toArray(){
     $ret = array();
     foreach($this->_f as $field){
@@ -246,7 +246,7 @@ class AmObject implements Iterator, Countable, ArrayAccess{ //Reflector,
 
   /**
    * Convierte un AmObject a un array
-  */
+   **/
   public static function parse($collection){
 
     if(is_array($collection)){
@@ -263,6 +263,17 @@ class AmObject implements Iterator, Countable, ArrayAccess{ //Reflector,
 
     return array();
 
+  }
+
+  /**
+   * Devuelve los valores $arr con los keys $propertys
+   */
+  public static function mask(array $arr, array $properties){
+    $ret = array();
+    foreach ($properties as $value) {
+      $ret[$value] = itemOr($value, $arr);
+    }
+    return $ret;
   }
 
 }
