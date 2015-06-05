@@ -706,7 +706,7 @@ class MysqlSource extends AmSource{
       // Preparar registros para crear SQL
       foreach($values as $i => $v)
         // Unir todos los valores con una c
-        $values[$i] = "(" . implode(",", $values[$i]) . ")";
+        $values[$i] = "(" . implode(",", $v) . ")";
 
       // Unir todos los registros
       $values = implode(",", $values);

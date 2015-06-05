@@ -27,8 +27,6 @@
  * Validacion de valores enteros
  */
 
-AmORM::validator('regex');
-
 class DatetimeValidator extends AmValidator{
 
   // Condicion de validacion
