@@ -86,7 +86,7 @@ class AmResourceControl extends AmControl{
   public function post_cou(){
     $classModel = $this->classModel;
     $table = $classModel::me();
-    $pkValues = AmObject::mask($this->get[$this->classModel], $table->getPks());
+    $pkValues = AmObject::mask($this->request[$this->classModel], $table->getPks());
     $this->r = $table->find($pkValues);
     if(!$this->r)
       $this->r = new $classModel;
