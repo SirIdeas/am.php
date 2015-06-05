@@ -103,6 +103,12 @@ class AmQuery extends AmObject{
     return $this->getSource()->newQuery($this, $as);
   }
 
+  public function haveNextPage(){
+    return !!$this->getCopy()
+      ->offset($this->getLimit() + $this->getOffset())
+      ->getRow("array");
+  }
+
   // Método para asignar array de valores por un metodo
   // Destinado al metodo ->select y ->from
   private function setArrayAttribute($method, $args){
