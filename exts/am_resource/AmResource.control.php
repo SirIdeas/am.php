@@ -72,7 +72,7 @@ class AmResourceControl extends AmControl{
     return $this->handleForm($this->r);
   }
 
-  // Procesamiento dle formulario edit
+  // Procesamiento del formulario edit
   public function post_edit($id){
     return $this->handleForm($this->r);
   }
@@ -80,6 +80,17 @@ class AmResourceControl extends AmControl{
   // Accion para eliminar un registro
   public function post_delete($id){
     return self::handleAction($this->r, $this->r->delete());
+  }
+
+  // Procesamiento del formulario edit
+  public function post_cou(){
+    $classModel = $this->classModel;
+    $table = $classModel::me();
+    $pkValues = AmObject::mask($this->get[$this->classModel], $table->getPks());
+    $this->r = $table->find($pkValues);
+    if(!$this->r)
+      $this->r = new $classModel;
+    return $this->handleForm($this->r);
   }
 
   // Obtener los datos de un registro
@@ -90,9 +101,9 @@ class AmResourceControl extends AmControl{
   // Procesamiento para guardar un formulario
   private function handleForm(AmModel $r){
     // Obtener los datos recibidos por post del formulario
-    $data = $this->post[$this->classModel];
-    $this->r->setValues($data, $this->fields);
-    return self::handleAction($r, $this->r->save());
+    $data = $this->request[$this->classModel];
+    $r->setValues($data, $this->fields);
+    return self::handleAction($r, $r->save());
   }
 
   private static function handleAction(AmModel $r, $actionResult){

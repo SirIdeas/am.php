@@ -70,6 +70,17 @@ class AmSimpleResourceControl extends AmResourceControl{
     );
   }
 
+  // Crear o actualizar un registro
+  public function action_cou($id){}
+  public function get_cou($id){}
+  public function post_cou($id){
+    self::handleActionSimple(
+      parent::post_cou(),
+      "Registro creado/actualizado satisfactoriamente",
+      "Errores al intentar creado/actualizado el registro"
+    );
+  }
+
   // Accion para mostrar el detalle de los registros
   public function action_detail($id){}
   public function get_detail($id){
