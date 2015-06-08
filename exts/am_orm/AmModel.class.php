@@ -112,6 +112,10 @@ class AmModel extends AmObject{
   protected function initModel(){
   }
 
+  // Funcion para preparar los valores del model antes de guardar
+  public function prepare(){
+  }
+
   // Devuelve todos lo validators de la tabla o los de un campo
   public function getValidators($name = null){
     if(isset($name))
@@ -393,6 +397,9 @@ class AmModel extends AmObject{
 
     // Obtener nombre de validator definidos
     $validatorNames = array_keys((array)$this->getValidators());
+
+    // Preparar campos
+    $this->prepare();
 
     // Validar todos los campos
     foreach($validatorNames as $field)
