@@ -87,7 +87,7 @@ class AmResourceControl extends AmControl{
     $classModel = $this->classModel;
     $table = $classModel::me();
     $pkValues = AmObject::mask($this->request[$this->classModel], $table->getPks());
-    $this->r = $table->find($pkValues);
+    $this->r = $table->find($pkValues, $classModel);
     if(!$this->r)
       $this->r = new $classModel;
     return $this->handleForm($this->r);
