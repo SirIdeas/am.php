@@ -44,4 +44,8 @@ interface AmCredentials {
   // identificador unico.
   public static function getCredentialsInstance($crendentialId);
 
+  // Devuelve la instancia de un usuario apartir de su
+  // identificador unico.
+  public static function getCredentialsByLogin($login);
+
 }

@@ -33,7 +33,9 @@ return array(
   // Textos a mostrar
   "texts" => array(
     "welcome" => "Bienvenido",
-    "authFailed" => "Usuario y/o contraseña incorrectos"
+    "authFailed" => "Usuario y/o contraseña incorrectos",
+    "userNotFound" => "Usuario no encontrado",
+    "recoveryEmailSended" => "Se le ha enviado un correo con las instrucciones para recuperar su cuenta."
   ),
 
   "urls" => array(
@@ -43,8 +45,8 @@ return array(
   //////////////////////////////////////////////////////////////////////////////
   // Acciones permitidas
   "allow" => array(
+    "login"    => true,
     "signup"    => true,
-    "signin"    => true,
     "logout"    => true,
     "recovery"  => true,
     "reset"     => true,

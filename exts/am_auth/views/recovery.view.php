@@ -22,45 +22,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
-
-$signinForm = new HTMLForm(
-  array(
-    "attrs" => array(
-      "role" => "form",
-      "name" => "signin",
-      "onsubmit" => "return amathista.submit(this)"
-    ),
-    "defaults"  => array(
-      "label"   => HTML::t("label"),
-      "wrapper" => HTML::t("div", null, array(
-        "class" => "validate"
-      )),
-      "required" => ""
-    ),
-    "head" => HTML::t("h5", "Inicio de sesión"),
-    "fields" => array(
-      "username" => array(
-        "name"        => "username",
-        "label"       => "Username",
-        "type"        => "text",
-        "placeholder" => "Username",
-        "autofocus"   => ""
-      ),
-      "password" => array(
-        "name"        => "password",
-        "label"       => "Password",
-        "type"        => "password",
-        "placeholder" => "Password",
-      ),
-    ),
-    "foot" => HTML::t("div",
-      array(
-        HTML::t("a","Registro", array("href" => $url."signin")),
-        HTML::t("a","¿Olvidó su contraseña?", array("href" => "recovery")),
-        HTML::t("button", "Enviar", array("type" => "submit"))
-      )
-    )
-  )
-);
-
 ?>
+
+(# parent:base.php #)
+(# place:base/recovery.php #)
+<?php echo $recoveryForm; ?>

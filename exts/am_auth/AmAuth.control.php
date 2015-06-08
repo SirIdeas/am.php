@@ -26,17 +26,17 @@
 class AmAuthControl extends AmControl{
 
   // Bandeja de la administracion
-  public function action_signin(){}
-  public function get_signin(){}
-  public function post_signin(){
+  public function action_login(){}
+  public function get_login(){}
+  public function post_login(){
 
     // Obtener el nombre de la clase
     $class = $this->authClass;
 
     // Busca el usuario por usernam y por password
     $user = $class::auth(
-      $this->post->signin["username"],
-      $this->post->signin["password"]
+      $this->request->login["username"],
+      $this->request->login["password"]
     );
 
     if(isset($user)){
@@ -55,9 +55,22 @@ class AmAuthControl extends AmControl{
 
   }
 
-  public function action_signout(){
+  public function action_logout(){
     Am::getCredentialsHandler()->setAuthenticated($user);
     Am::gotoUrl($this->urls["index"]);  // Ir a index
+  }
+
+  public function post_recovery(){
+    $class = $this->authClass;
+    $record = $class::getCredentialsByLogin($this->request->recovery["username"]);
+
+    if($record)
+      AmFlash::success($this->texts["recoveryEmailSended"]);
+    else
+      AmFlash::danger($this->texts["userNotFound"]);
+    
+    Am::gotoUrl($this->urls["index"]."recovery");  // Ir a index
+    
   }
 
 }
