@@ -23,6 +23,8 @@
  * SOFTWARE.
  **/
 
+// Interfaz para clases que puedan enviar y recibir correso
+
 class AmAuthControl extends AmControl{
 
   // Bandeja de la administracion
@@ -60,17 +62,73 @@ class AmAuthControl extends AmControl{
     Am::gotoUrl($this->urls["index"]);  // Ir a index
   }
 
+  // Acción para solicitar las instrucciones para recuperar la sontraseña
+  public function action_recovery(){}
+  public function get_recovery(){}
   public function post_recovery(){
     $class = $this->authClass;
-    $record = $class::getCredentialsByLogin($this->request->recovery["username"]);
+    $login = $this->request->recovery["username"];
+    $r = $class::getByLogin($login);
 
-    if($record)
-      AmFlash::success($this->texts["recoveryEmailSended"]);
-    else
+    if($r){
+
+      // Enviar mensaje de registro de Ipn
+      $mail = AmMailer::get("recovery", array(
+        // Asignar variables
+        "dir" => dirname(__FILE__). "/mails/",
+        "subject" => "Recuperar contraseña",
+        "smtp" => false, 
+        "with" => array(
+          "url" => Am::serverUrl($r->getCredentialsResetUrl())
+        ),
+      ))
+
+      ->addAddress($r->getCredentialsEmail());
+
+      if($mail->send())
+        AmFlash::success($this->texts["recoveryEmailSended"]);
+
+      else
+        AmFlash::danger($this->texts["troublesSendingEmail"]);
+
+      header("content-type: text/plain");
+      echo $mail->getContent();
+      // var_dump($mail);
+      exit;
+
+    }else
       AmFlash::danger($this->texts["userNotFound"]);
     
     Am::gotoUrl($this->urls["index"]."recovery");  // Ir a index
-    
+
+  }
+
+  // Accion para restaurar la contraseña
+  public function action_reset(){}
+  public function get_reset(){}
+  public function post_reset($token){
+    $class = $this->authClass;
+    $r = $class::getByToken($token);
+    $pass = $this->request->reset["password"];
+
+    if($r){
+
+      if (strlen($pass)<4)
+        AmFlash::danger($this->texts["passwordInvalid"]);
+
+      else if($pass != $this->request->reset["confirm_password"])
+        AmFlash::danger($this->texts["passwordDiff"]);
+
+      else if(!$r->resetPasword($pass))
+        AmFlash::danger($this->texts["troublesResetingPassword"]);
+
+      else{
+        AmFlash::success($this->texts["passwordResetSuccess"]);
+        Am::gotoUrl($this->urls["index"]);  // Ir a index
+      }
+      
+    }else
+      AmFlash::danger($this->texts["userNotFound"]);
   }
 
 }

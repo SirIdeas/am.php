@@ -36,6 +36,7 @@ return array(
     "exts/am_credentials/",
     "exts/am_flash/",
     "exts/html/",
+    "exts/am_mailer/",
   ),
 
 );

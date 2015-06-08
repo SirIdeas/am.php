@@ -118,8 +118,9 @@ class AmMailer extends PHPMailer{
   }
 
   // Asignacion de la configuracion SMTP
-  public function smtpConf(array $smtp){
-
+  public function smtpConf($smtp){
+    if(!$smtp) return;
+    
     // SMTP Configuration
     $this->isSMTP();
     $this->SMTPAuth = true;
@@ -304,8 +305,9 @@ class AmMailer extends PHPMailer{
       if($options["smtp"] === true)
         $options["smtp"] = "default";
 
-      // Asignar configuraio
-      $options["smtp"] = $smtpConfs[$options["smtp"]];
+      // Asignar configuracion
+      if($options["smtp"])
+        $options["smtp"] = $smtpConfs[$options["smtp"]];
 
     }
 

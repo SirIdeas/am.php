@@ -40,17 +40,15 @@ $loginForm = new HTMLForm(
     "head" => HTML::t("h5", "Login"),
     "fields" => array(
       "username" => array(
-        "name"        => "username",
-        "label"       => "Username",
-        "type"        => "text",
-        "placeholder" => "Username",
-        "autofocus"   => ""
+        "name"      => "username",
+        "label"     => "Username",
+        "type"      => "text",
+        "autofocus" => ""
       ),
       "password" => array(
-        "name"        => "password",
-        "label"       => "Password",
-        "type"        => "password",
-        "placeholder" => "Password",
+        "name"      => "password",
+        "label"     => "Password",
+        "type"      => "password",
       ),
     ),
     "foot" => HTML::t("div",

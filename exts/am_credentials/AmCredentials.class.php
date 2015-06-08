@@ -37,15 +37,26 @@ interface AmCredentials {
   // una determinada credencial.
   public function hasCredential($credential);
 
-  // Devuelve el identidicador únicodel usuario
+  // Devuelve el identidicador único del usuario
   public function getCredentialsId();
+
+  // Devuelve el login único del usuario
+  public function getCredentialsEmail();
+
+  // Devuelve la url del registro para recuperar la contraseña
+  public function getCredentialsResetUrl();
+
+  // Resetea la contraseña
+  public function resetPasword($pass);
 
   // Devuelve la instancia de un usuario apartir de su
   // identificador unico.
   public static function getCredentialsInstance($crendentialId);
 
-  // Devuelve la instancia de un usuario apartir de su
-  // identificador unico.
-  public static function getCredentialsByLogin($login);
+  // Devuelve un registro a partir de su login
+  public static function getByLogin($login);
+
+  // Devuelve un registro a partir de su token
+  public static function getByToken($token);
 
 }

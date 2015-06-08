@@ -23,11 +23,11 @@
  * SOFTWARE.
  **/
 
-$recoveryForm = new HTMLForm(
+$resetForm = new HTMLForm(
   array(
     "attrs" => array(
       "role" => "form",
-      "name" => "recovery",
+      "name" => "reset",
       "onsubmit" => "return amathista.submit(this)"
     ),
     "defaults"  => array(
@@ -37,18 +37,21 @@ $recoveryForm = new HTMLForm(
       )),
       "required" => ""
     ),
-    "head" => HTML::t("h5", "Recuperar contraseña"),
+    "head" => HTML::t("h5", "Restaurar contraseña"),
     "fields" => array(
-      "username" => array(
-        "name"        => "username",
-        "label"       => "Username",
-        "type"        => "text",
-        "autofocus"   => ""
+      "password" => array(
+        "name"      => "password",
+        "label"     => "Nueva password",
+        "type"      => "password",
       ),
-    ),    "foot" => HTML::t("div",
+      "confirm_password" => array(
+        "name"      => "confirm_password",
+        "label"     => "Confirme password",
+        "type"      => "password",
+      ),
+    ),
+    "foot" => HTML::t("div",
       array(
-        HTML::t("a","Iniciar sesión", array("href" => $url."login")),
-        HTML::t("a","Registro", array("href" => $url."signup")),
         HTML::t("button", "Enviar", array("type" => "submit"))
       )
     )
