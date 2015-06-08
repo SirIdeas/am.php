@@ -117,7 +117,7 @@ class AmResourceControl extends AmControl{
 
     // Obtener le model con que trabaja el controlador
     $className = $this->classModel;
-    $this->r = $className::me()->find($id);
+    $this->r = $className::me()->find($id, $className);
 
     // Si no se encontró el registro mostrar un mensaje
     if(!$this->r){
