@@ -180,7 +180,7 @@ final class AmORM{
 
     // Configuración de valores del model
     $modelConf = itemOr($model["name"], $models, array());
-    if(!is_string($defaults))
+    if(is_string($modelConf))
       $modelConf = array("root" => $modelConf);
 
     // Combinar opciones recibidas en el constructor con las
@@ -205,6 +205,7 @@ final class AmORM{
     // Incluir modelos requeridos por el modelo actual
     foreach($model["models"] as $require)
       self::model($require);
+
 
     // Incluir archivo del modelo
     if(is_file($modelFile = $model["root"] . $model["name"] . ".model.php"))
