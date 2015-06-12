@@ -23,7 +23,7 @@
  * SOFTWARE.
  **/
 
- if (!empty($googleAnalitics)): ?>
+ if(!empty($googleAnalitics) && $googleAnalitics): ?>
   <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -32,21 +32,24 @@
     ga('create', '<?php echo $googleAnalitics ?>', 'auto');
     ga('send', 'pageview');
   </script>
-<?php endif ?>
+<?php
 
-<!--[if lt IE 9]>
-  <script src="<?php Am::eUrl() ?>/vendor/ie-fixs.js"></script>
-<![endif]-->
+endif;
 
-<script src="<?php Am::eUrl() ?>/vendor/vendor.js"></script>
+if (!empty($privacyPolicies) && $privacyPolicies && !empty($jsLocalStoreKey) && $jsLocalStoreKey):
 
-<!--[if lt IE 9]>
-  <script src="<?php Am::eUrl() ?>/vendor/nav-dep.js"></script>
-<![endif]-->
+  eScriptTag('/vendor/cookie-msg.js'); ?>
+  <script type="text/javascript">
+    __cookieMsg('bottom',
+      '<?php echo $jsLocalStoreKey ?>',
+      '<?php echo $privacyPolicies ?>');
+  </script>
+<?php
+endif;
 
-<script src="<?php Am::eUrl() ?>/vendor/cookie-msg.js"></script>
-<script type="text/javascript">
-  $.cookieMsg('bottom', 'simposiumtos-web', '<?php Am::eUrl() ?>/politicas-de-privacidad');
-</script>
+eScriptTagIfIsAllow('/vendor/ie-fixs.js', 'lt IE 9');
+eScriptTagIfIsAllow('/vendor/vendor.js'); 
+eScriptTagIfIsAllow('/vendor/nav-dep.js', 'lt IE 9'); 
+eScriptTagIfIsAllow('/js/am.js');
 
-<script src="<?php Am::eUrl() ?>/js/am.js"></script>
+?>
