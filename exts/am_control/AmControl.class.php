@@ -452,6 +452,9 @@ class AmControl extends AmObject{
     // Obtener el path real del controlador
     $conf["root"] = realPath($conf["root"]);
 
+    if(is_file($realFile = "{$conf["root"]}/.init.php"))
+      require_once $realFile;
+
     // Mezclar con el archivo de configuracion en la raiz del
     // controlador.
     if(is_file($realFile = "{$conf["root"]}/.control.php"))

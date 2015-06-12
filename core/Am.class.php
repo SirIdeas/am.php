@@ -59,7 +59,8 @@ final class Am{
 
     // Callbacks para mezclar atributos
     $mergeFunctions = array(
-      "requires" => "merge_if_snd_first_not_false"
+      "requires" => "merge_if_snd_first_not_false",
+      "env" => "merge_if_both_are_array"
     ),
 
     // Exteciones manejadoras de session
@@ -206,7 +207,6 @@ final class Am{
   // Cargar propiedades de todos los archivos de coniguracion en las carpetas
   // del ambito
   public static function mergePropertiesFromAllFiles($filename = "", $property = null, $extend = false){
-
     // Recorrer cada uno de las carpetas en el path
     foreach (self::$paths as $path)
       // Si el archivo cargar la configuracion en la posicion path/property
@@ -348,6 +348,7 @@ final class Am{
 
       // Obtener archivos a agregar de la extencion
       $files = itemOr("files", $conf, array());
+
       // Llamar archivo de iniciacion en la carpeta si existe.
       foreach ($files as $item)
         if(is_file($realFile = "{$file}{$item}.php"))
@@ -541,6 +542,13 @@ final class Am{
     // Incluir extensiones para peticiones
     // Archivos requeridos
     self::requireExt(self::getAttribute("requires", array()));
+    $files = self::getAttribute("files", array());
+
+    foreach ($files as $item)
+      if(is_file($realFile = self::findFile("$item.php")))
+        require_once $realFile;
+      else
+        die("Am: Not fount Exts file: '{$realFile}'");
 
     // Include init file at app root if exists
     if(is_file($initFilePath = ".init.php"))

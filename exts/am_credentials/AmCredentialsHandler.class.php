@@ -60,6 +60,11 @@ final class AmCredentialsHandler{
 
   }
 
+  // Retorna el nombre de la clase utilizada para las credenciales
+  public function getCredentialsClass(){
+    return $this->credentialsClass;
+  }
+
   // Asignar la clases que se utilizara para las credenciales
   public function setCredentialsClass($credentialClass, $credentialsId) {
 

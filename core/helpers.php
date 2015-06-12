@@ -122,6 +122,28 @@ function merge_if_are_array($arr1, $arr2){
   return $arr2;
 }
 
+// 
+function merge_if_both_are_array(array $arr1, array $arr2){
+  
+  if(!isAssocArray($arr1) && !isAssocArray($arr2))
+    return array_merge($arr1, $arr2);
+
+  $ret = array();
+  foreach ($arr1 as $key => $value) {
+    $value2 = itemOr($key, $arr2);
+
+    if(is_array($value) && is_array($value2))
+      $value = merge_if_are_array($value, $value2);
+    elseif(isset($value2))
+      $value = $value2;
+
+    $ret[$key] = $value;
+  }
+
+  return $ret;
+
+}
+
 // Mezvla dos array recursivamente si ambos parametros son arrays
 // De lo contrario se conservará el segundo elemento
 function merge_r_if_are_array($arr1, $arr2){
