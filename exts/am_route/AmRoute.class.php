@@ -144,8 +144,7 @@ class AmRoute{
   }
 
   // Metodo busca la ruta con la que conincide la peticion actual.
-  private static final function evalMatch($request, $routes,
-  array $env = array(), array $prev = array()){
+  private static final function evalMatch($request, $routes, array $env = array(), array $prev = array()){
 
     // Si se indicó la ruta como un recurso
     if(isset($routes["resource"])){
