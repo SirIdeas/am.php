@@ -25,7 +25,8 @@
  
 return array(
   "files" => array(
-    "HTML.class"
+    "HTML.class",
+    "helpers",
   ),
   "require" => array(
     "AmORM"
