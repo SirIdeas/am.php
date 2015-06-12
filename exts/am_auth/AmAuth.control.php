@@ -27,6 +27,12 @@
 
 class AmAuthControl extends AmControl{
 
+  public function action(){
+    $this->credentialsHanlder = Am::getCredentialsHandler();
+    if(!$this->authClass)
+      $this->authClass = $this->credentialsHanlder->getCredentialsClass();
+  }
+
   // Bandeja de la administracion
   public function action_login(){}
   public function get_login(){}
@@ -44,7 +50,7 @@ class AmAuthControl extends AmControl{
     if(isset($user)){
 
       // Usuario esta autenticado
-      Am::getCredentialsHandler()->setAuthenticated($user);
+      $this->credentialsHanlder->setAuthenticated($user);
       AmFlash::success($this->texts["welcome"]);
       Am::gotoUrl($this->urls["index"]);  // Ir a index
 
