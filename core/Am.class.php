@@ -529,7 +529,7 @@ final class Am{
     // Cambiar directorio de trabajo si este fue asignado
     if(isset($appRoot)){
       self::addDir($appRoot);
-      chdir($appRoot);
+      if(!empty($appRoot)) chdir($appRoot);
     }
 
     // Obtener las configuraciones
