@@ -31,7 +31,7 @@ return array(
   "requires" => array(
     "exts/am_route/",
     "exts/am_simple_resource/",
-    "exts/am_auth/",
+    "exts/am_simple_auth/",
     "exts/am_data_time/",
     "exts/am_template/",
     "exts/am_mailer/",

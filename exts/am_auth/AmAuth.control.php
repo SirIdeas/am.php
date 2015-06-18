@@ -27,59 +27,59 @@
 
 class AmAuthControl extends AmControl{
 
-  public function action(){
-    $this->credentialsHanlder = Am::getCredentialsHandler();
-    if(!$this->authClass)
-      $this->authClass = $this->credentialsHanlder->getCredentialsClass();
-  }
-
   // Bandeja de la administracion
-  public function action_login(){}
-  public function get_login(){}
   public function post_login(){
 
     // Obtener el nombre de la clase
     $class = $this->authClass;
+    $username = itemOr("username", $this->request->login);
+    $password = itemOr("password", $this->request->login);
+
+    $username = $this->sslDecrypt($username);
+    $password = $this->sslDecrypt($password);
 
     // Busca el usuario por usernam y por password
-    $user = $class::auth(
-      $this->request->login["username"],
-      $this->request->login["password"]
+    $user = $class::auth($username, $password);
+
+    $ret = array(
+      'success' => isset($user),
+      '$username' => $username,
+      '$password' => $password,
     );
 
-    if(isset($user)){
-
-      // Usuario esta autenticado
-      $this->credentialsHanlder->setAuthenticated($user);
-      AmFlash::success($this->texts["welcome"]);
-      Am::gotoUrl($this->urls["index"]);  // Ir a index
-
-    }else{
-
-      // Usuario no autenticado
-      AmFlash::danger($this->texts["authFailed"]);
-
+    // Usuario esta autenticado
+    if($ret['success']){
+      $token = $this->in($user);
+      if(!empty($token))
+        $ret['token'] = $token;
     }
+
+    return $ret;
 
   }
 
   public function action_logout(){
-    Am::getCredentialsHandler()->setAuthenticated($user);
-    Am::gotoUrl($this->urls["index"]);  // Ir a index
+    $this->out($this->request->token);
+    return array(
+      'success' => true
+    );
   }
 
   // Acción para solicitar las instrucciones para recuperar la sontraseña
-  public function action_recovery(){}
-  public function get_recovery(){}
   public function post_recovery(){
     $class = $this->authClass;
     $login = $this->request->recovery["username"];
     $r = $class::getByLogin($login);
 
-    if($r){
+    $ret = array();
+
+    if(!$r)
+      $ret['error'] = 'userNotFound';
+
+    else{
 
       // Enviar mensaje de registro de Ipn
-      $mail = AmMailer::get("recovery", array(
+      $this->mail = AmMailer::get("recovery", array(
         // Asignar variables
         "dir" => dirname(__FILE__). "/mails/",
         "subject" => "Recuperar contraseña",
@@ -91,50 +91,80 @@ class AmAuthControl extends AmControl{
 
       ->addAddress($r->getCredentialsEmail());
 
-      if($mail->send())
-        AmFlash::success($this->texts["recoveryEmailSended"]);
+      if(!$this->mail->send())
+        $ret['error'] = 'troublesSendingEmail';
 
-      else
-        AmFlash::danger($this->texts["troublesSendingEmail"]);
+    }
 
-      header("content-type: text/plain");
-      echo $mail->getContent();
-      // var_dump($mail);
-      exit;
-
-    }else
-      AmFlash::danger($this->texts["userNotFound"]);
+    $ret['success'] = !!$r && !isset($ret['error']);
     
-    Am::gotoUrl($this->urls["index"]."recovery");  // Ir a index
+    return $ret;
 
   }
 
   // Accion para restaurar la contraseña
-  public function action_reset(){}
-  public function get_reset(){}
   public function post_reset($token){
     $class = $this->authClass;
     $r = $class::getByToken($token);
     $pass = $this->request->reset["password"];
 
-    if($r){
+    $ret = array();
 
-      if (strlen($pass)<4)
-        AmFlash::danger($this->texts["passwordInvalid"]);
+    if(!$r)
+      $ret['error'] = 'userNotFound';
 
-      else if($pass != $this->request->reset["confirm_password"])
-        AmFlash::danger($this->texts["passwordDiff"]);
+    if (!$this->isValidPassword($pass))
+      $ret['error'] = 'passwordInvalid';
 
-      else if(!$r->resetPasword($pass))
-        AmFlash::danger($this->texts["troublesResetingPassword"]);
+    else if($pass != $this->request->reset["confirm_password"])
+      $ret['error'] = 'passwordDiff';
 
-      else{
-        AmFlash::success($this->texts["passwordResetSuccess"]);
-        Am::gotoUrl($this->urls["index"]);  // Ir a index
-      }
-      
-    }else
-      AmFlash::danger($this->texts["userNotFound"]);
+    else if(!$r->resetPasword($pass))
+      $ret['error'] = 'troublesResetingPassword';
+
+    $ret['success'] = !!$r && !isset($ret['error']);
+    
+    return $ret;
+
+  }
+
+  protected function in(AmCredentials $user){
+
+    $token = AmToken::create();
+    $token->setContent($user->getCredentialsId());
+    $token->save();
+    return $token->getName();
+
+  }
+
+  protected function out($token){
+    $token = AmToken::load($token);
+  }
+
+  public function sslDecrypt($str){
+    $str = base64_decode($str);
+    if(!isset($this->keyPrivate) || !isset($this->keyPassPhrase))
+      return $str;
+    if(!openssl_private_decrypt($str, $str, openssl_pkey_get_private($this->keyPrivate, $this->keyPassPhrase)))
+      return false;
+    return $str;
+  }
+
+  public function sslEncrypt($str){
+    if(!isset($this->keyPublic))
+      return $str;
+    openssl_public_encrypt($str, $encrypted, $this->keyPublic);
+    $str = base64_encode($str);
+    return $str;
+  }
+
+  public function isValidPassword($pass){
+
+    if(strlen($pass)<4)
+      return false;
+
+    return true;
+
   }
 
 }
