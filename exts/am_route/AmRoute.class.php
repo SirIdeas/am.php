@@ -159,6 +159,7 @@ class AmRoute{
           "/:id/edit"   => "control => @edit",
           "/:id/delete" => "control => @delete",
           "/cou"        => "control => @cou",
+          "/search"     => "control => @search",
         )
       );
       // Se elimina el parametro resource para que no pueda vuelva a entrar en

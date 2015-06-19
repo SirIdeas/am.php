@@ -28,8 +28,8 @@ class AmToken extends AmObject{
   // Valore por defecto para el token
   static protected
     $ROOT_FOLDER = 'tokens/',
-    $TIME_EXPIRATION_DEF = 60*60*24,
-    $MAX_TIME_NO_USE_DEF = 60*60;
+    $TIME_EXPIRATION_DEF = 90000,
+    $MAX_TIME_NO_USE_DEF = 3600;
 
   // Propiedades del token
   protected

@@ -46,7 +46,7 @@ class AmResourceControl extends AmControl{
 
   }
 
-  protected function action_data(){
+  public function action_data(){
 
     // Obtener el listado de elementos
     $q = $this->table->all()
@@ -55,6 +55,24 @@ class AmResourceControl extends AmControl{
     // Return el objeto para la tabla dinamica
     return dinamicTableServer($this->request, $q,
       array($this, "format_list"), false
+    );
+
+  }
+
+  public function action_search(){
+    $classModel = $this->classModel;
+
+    // Obtener el texto a buscar
+    $txtSearch = strtolower($this->request->search);
+
+    // Obtener la posicion a cargar
+    $offset = $this->request->offset * $this->request->searchLimit;
+    $q = $classModel::qSearch($txtSearch, $this->request->searchLimit, $offset);
+    $haveNext = $q->haveNextPage();
+
+    return array(
+      "items"     => $q->getResult('array'),
+      "haveNext"  => $haveNext,
     );
 
   }
