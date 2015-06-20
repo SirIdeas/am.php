@@ -57,8 +57,8 @@ class AmObject implements Iterator, Countable, ArrayAccess{ //Reflector,
   }
 
   /**
-   * Funciones Get y Set. Si "value!=null" de retorna la propiedad "key",
-   * sino se asignara "value" a la propiedad "key"
+   * Funciones Get y Set. Si 'value!=null' de retorna la propiedad 'key',
+   * sino se asignara 'value' a la propiedad 'key'
    **/
   protected function attr($key, $value = null){
 
@@ -111,7 +111,7 @@ class AmObject implements Iterator, Countable, ArrayAccess{ //Reflector,
   }
 
   /**
-   * Llamda de "isset" a una propiedad
+   * Llamda de 'isset' a una propiedad
    * isset($this->name)
    **/
   public function __isset($name){
@@ -119,7 +119,7 @@ class AmObject implements Iterator, Countable, ArrayAccess{ //Reflector,
   }
 
   /**
-   * Llamada de "unset" a una propiedad
+   * Llamada de 'unset' a una propiedad
    * unset($this->name)
    **/
   public function __unset($name){

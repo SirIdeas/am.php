@@ -31,8 +31,8 @@ function am_error_handler($code, $message, $file, $line){
 }
 
 function am_exception_handler(Exception $e){
-  echo "Excepción no capturada: " , $e->getMessage(), "\n";
+  echo 'Excepción no capturada: ' , $e->getMessage(), "\n";
 }
 
-set_error_handler("am_error_handler");
-set_exception_handler("am_exception_handler");
+set_error_handler('am_error_handler');
+set_exception_handler('am_exception_handler');

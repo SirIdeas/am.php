@@ -59,13 +59,13 @@ final class Am{
 
     // Callbacks para mezclar atributos
     $mergeFunctions = array(
-      "requires" => "merge_if_snd_first_not_false",
-      "env" => "merge_if_both_are_array"
+      'requires' => 'merge_if_snd_first_not_false',
+      'env' => 'merge_if_both_are_array'
     ),
 
     // Exteciones manejadoras de session
     $aliasExts = array(
-      "normalSession" => "exts/am_normal_session/"
+      'normalSession' => 'exts/am_normal_session/'
     ),
 
     $loadedExts = array(),      // Array de extensiones cargadas
@@ -73,7 +73,7 @@ final class Am{
     $paths = array(),           // Herarquia de carpetas
     $confsLoaded = array(),     // Archivos de configuración cargados.
     $confs = array(),           // Configuraciones cargadas
-    $urlBase = "";              // URL base para el sitio
+    $urlBase = '';              // URL base para el sitio
 
   // Devuelve la instancia de una clase existente. Sino existe la instancia se crea una nueva
   public final static function getInstance($className, array $params = array()){
@@ -206,7 +206,7 @@ final class Am{
 
   // Cargar propiedades de todos los archivos de coniguracion en las carpetas
   // del ambito
-  public static function mergePropertiesFromAllFiles($filename = "", $property = null, $extend = false){
+  public static function mergePropertiesFromAllFiles($filename = '', $property = null, $extend = false){
     // Recorrer cada uno de las carpetas en el path
     foreach (self::$paths as $path)
       // Si el archivo cargar la configuracion en la posicion path/property
@@ -223,17 +223,17 @@ final class Am{
   // Agregar una ruta a la lista de rutas
   public static function setRoute($route, $to){
     // Agregar nueva ruta
-    self::$confs["routes"]["routes"][$route] = $to;
+    self::$confs['routes']['routes'][$route] = $to;
   }
 
   // Obtener la contenido de un archivo de configuración
   public static function getConfig($file){
-    return require self::findFileIn("$file.conf.php", self::$paths);
+    return require self::findFileIn("{$file}.conf.php", self::$paths);
   }
 
   // Obtener un atributo de la confiuguracion
   public static function getAttribute($property, $default = null){
-    self::mergePropertiesFromAllFiles("{$property}", $property);
+    self::mergePropertiesFromAllFiles($property, $property);
     return itemOr($property, self::$confs, $default);
   }
 
@@ -258,31 +258,31 @@ final class Am{
   }
 
   // Devuelve una URL concatenando la url base al inicio
-  public static function url($path = ""){
+  public static function url($path = ''){
     return self::$urlBase.$path;
   }
 
   // Devuelve una URL absoluta incluyendo el nombre del servidor
   // y el tipo de conexion
-  public static function serverUrl($path = ""){
-    if(isset($_SERVER["SERVER_NAME"]))
-      return "http://" . $_SERVER["SERVER_NAME"] . self::url($path);
+  public static function serverUrl($path = ''){
+    if(isset($_SERVER['SERVER_NAME']))
+      return 'http://' . $_SERVER['SERVER_NAME'] . self::url($path);
     return self::url($path);
   }
 
-  public static function eServerUrl($path = ""){
+  public static function eServerUrl($path = ''){
     echo self::serverUrl($path);
   }
 
   // Imprime una URL
-  public static function eUrl($path = ""){
+  public static function eUrl($path = ''){
     echo self::url($path);
   }
 
   // Redirigir a una URL
   public static function gotoUrl($url){
     if(!empty($url)){
-      header("location: ". $url);
+      header('location: '. $url);
       exit();
     }
   }
@@ -333,21 +333,21 @@ final class Am{
       $conf = require_once $realFile;
 
       // Obtener las funciones para mezclar que s definirán
-      $mergeFunctions = itemOr("mergeFunctions", $conf, array());
+      $mergeFunctions = itemOr('mergeFunctions', $conf, array());
       // Los items nuevos no sobreescriben los anteriores
       self::$mergeFunctions = array_merge($mergeFunctions, self::$mergeFunctions);
 
       // Obtener dependencias
-      $requires = itemOr("requires", $conf, array());
+      $requires = itemOr('requires', $conf, array());
       // Incluir las dependencias
       self::requireExt($requires);
 
       // Extender propiedades por defecto
-      $extend = itemOr("extend", $conf, array());
+      $extend = itemOr('extend', $conf, array());
       self::mergeProperties($extend, true);
 
       // Obtener archivos a agregar de la extencion
-      $files = itemOr("files", $conf, array());
+      $files = itemOr('files', $conf, array());
 
       // Llamar archivo de iniciacion en la carpeta si existe.
       foreach ($files as $item)
@@ -406,7 +406,7 @@ final class Am{
 
     // Buscar un archivo dentro de las carpetas
     foreach(self::$paths as $path)
-      if(self::load("$path/$file"))
+      if(self::load("{$path}/{$file}"))
         return true;
 
     // No se agregó la extension
@@ -424,14 +424,14 @@ final class Am{
     // Si ya esta cargada la clase AmSession es porque
     // ya se realizó la inicializacion.
 
-    if(class_exists("AmSession"))
+    if(class_exists('AmSession'))
       return;
 
     self::requireExt(array(
       // Incluir extension desde el aclias
-      self::$confs["sessionManager"],
+      self::$confs['sessionManager'],
       // Incluir manejador principal de session
-      "core/am_session/"
+      'core/am_session/'
     ));
 
   }
@@ -442,14 +442,14 @@ final class Am{
 
   // Obtener manejador de credencailes
   public static function getCredentialsHandler(){
-    return self::call("credentials.handler");
+    return self::call('credentials.handler');
   }
 
   // Devuelve las credenciales del usuario logeado
   public static function getCredentials(){
 
     // Si no existe la instancai del manejador de credenciales
-    if(!($credentialsManager = self::call("credentials.handler")))
+    if(!($credentialsManager = self::call('credentials.handler')))
       return null;
 
     // Devuelve la instancia del usuario actual
@@ -466,7 +466,7 @@ final class Am{
   public static function hasCredentials($credential){
 
     // Si no existe la instancai del manejador de credenciales
-    if(!($credentialsManager = self::call("credentials.handler")))
+    if(!($credentialsManager = self::call('credentials.handler')))
       return false;
 
     // Verificar si el usuario logeado tiene las credenciales
@@ -477,7 +477,7 @@ final class Am{
   ///////////////////////////////////////////////////////////////////////////////////
   // Responder con error 404
   ///////////////////////////////////////////////////////////////////////////////////
-  public static function e404($msg = "not found"){
+  public static function e404($msg = 'not found'){
     header("HTTP/1.0 404 {$msg}");
     header("Status: 404 {$msg}");
   }
@@ -498,31 +498,31 @@ final class Am{
     global $argv;
 
     // Peticion
-    $request = "";
+    $request = '';
 
     // determinar peticion
     if(!isset($argv)){ // Es una peticion HTTP
 
       // Definicion de la URL Base
-      self::$urlBase = dirname($_SERVER["PHP_SELF"]);
+      self::$urlBase = dirname($_SERVER['PHP_SELF']);
 
       // Validacion para cuando este en el root
-      if(self::$urlBase === "/")
-        self::$urlBase = "";
+      if(self::$urlBase === '/')
+        self::$urlBase = '';
 
       // Obtener peticion
-      // $request = substr_replace($_SERVER["REDIRECT_URL"], "", 0, strlen(self::$urlBase));
-      $request = substr_replace($_SERVER["REQUEST_URI"], "", 0, strlen(self::$urlBase));
+      // $request = substr_replace($_SERVER['REDIRECT_URL'], '', 0, strlen(self::$urlBase));
+      $request = substr_replace($_SERVER['REQUEST_URI'], '', 0, strlen(self::$urlBase));
 
       // Quitar los parametros
-      if(!empty($_SERVER["QUERY_STRING"]))
-        $request = substr_replace($request, "",
-          strlen($request) - strlen($_SERVER["QUERY_STRING"]) - 1,
-          strlen($_SERVER["QUERY_STRING"]) + 1);
+      if(!empty($_SERVER['QUERY_STRING']))
+        $request = substr_replace($request, '',
+          strlen($request) - strlen($_SERVER['QUERY_STRING']) - 1,
+          strlen($_SERVER['QUERY_STRING']) + 1);
 
-      // Validacion para cuando este en la peticion no comienze con "/"
-      if(empty($request) || $request[0] !== "/")
-        $request = "/" . $request;
+      // Validacion para cuando este en la peticion no comienze con '/'
+      if(empty($request) || $request[0] !== '/')
+        $request = '/' . $request;
 
     }
 
@@ -536,40 +536,40 @@ final class Am{
     self::mergePropertiesFromAllFiles();
 
     // Obtener el valor
-    $errorReporting = self::getAttribute("errorReporting");
+    $errorReporting = self::getAttribute('errorReporting');
     error_reporting($errorReporting);
 
     // Incluir extensiones para peticiones
     // Archivos requeridos
-    self::requireExt(self::getAttribute("requires", array()));
-    $files = self::getAttribute("files", array());
+    self::requireExt(self::getAttribute('requires', array()));
+    $files = self::getAttribute('files', array());
 
     foreach ($files as $item)
-      if(is_file($realFile = self::findFile("$item.php")))
+      if(is_file($realFile = self::findFile("{$item}.php")))
         require_once $realFile;
       else
         die("Am: Not fount Exts file: '{$realFile}'");
 
     // Include init file at app root if exists
-    if(is_file($initFilePath = ".init.php"))
+    if(is_file($initFilePath = '.init.php'))
       require_once $initFilePath;
 
     // Es una peticion desde la consola
     if(isset($argv)){
 
       // La URL Base es vacía
-      self::$urlBase = "";
+      self::$urlBase = '';
 
       if(count($argv) == 1){
 
-        echo "Amathista ".AM_VERSION.". Command Line\n";
+        echo 'Amathista '.AM_VERSION.". Command Line\n";
 
         while(1){
           try{
             // Obtener el comando enviado
             $line = trim(fgets(STDIN));
             // Ejecutarlo
-            print_r(eval("return $line;"));
+            print_r(eval("return {$line};"));
 
           // Si se captura un error mostrarlo
           }catch(Exception $e){
@@ -581,7 +581,7 @@ final class Am{
       }else{
 
         // Incluir el comando
-        Am::requireExt("exts/am_command/");
+        Am::requireExt('exts/am_command/');
         echo AmCommand::execArray($argv);
         exit;
 
@@ -590,7 +590,7 @@ final class Am{
     }else{
 
       // Llamado de accion para evaluar ruta
-      self::call("route.evaluate", $request);
+      self::call('route.evaluate', $request);
 
     }
 
@@ -620,14 +620,14 @@ final class Am{
 
   // Obtienen tipo mime de un determinado archivo.
   public final static function mimeType($filename) {
-    $mimePath = self::findFileIn("resources/mime.types", self::$paths);
-    $fileext = substr(strrchr($filename, "."), 1);
+    $mimePath = self::findFileIn('resources/mime.types', self::$paths);
+    $fileext = substr(strrchr($filename, '.'), 1);
     if (empty($fileext)) return (false);
-    $regex = "/^([\w\+\-\.\/]+)\s+(\w+\s)*($fileext\s)/i";
+    $regex = '/^([\w\+\-\.\/]+)\s+(\w+\s)*($fileext\s)/i';
     $lines = file($mimePath);
     foreach($lines as $line) {
-      if (substr($line, 0, 1) == "#") continue; // skip comments
-      $line = rtrim($line) . " ";
+      if (substr($line, 0, 1) == '#') continue; // skip comments
+      $line = rtrim($line) . ' ';
       if (!preg_match($regex, $line, $matches)) continue; // no match to the extension
       return ($matches[1]);
     }
@@ -644,16 +644,16 @@ final class Am{
     if(!isset($mimeType)) $mimeType = self::mimeType($file);
     if(!isset($name)) $name = basename($file);
 
-    $attachment = $attachment ? "attachment;" : "";
+    $attachment = $attachment ? 'attachment;' : '';
 
     // Colocar cabeceras
     header("content-type: {$mimeType}");
-    header("Content-Disposition: $attachment filename=\"$name\"");
-    header("Content-Transfer-Encoding: binary");
-    header("Expires: 0");
-    header("Cache-Control: must-revalidate");
-    header("Pragma: public");
-    header("Content-Length: " . filesize($file));
+    header("Content-Disposition: {$attachment} filename=\"{$name}\"");
+    header('Content-Transfer-Encoding: binary');
+    header('Expires: 0');
+    header('Cache-Control: must-revalidate');
+    header('Pragma: public');
+    header('Content-Length: ' . filesize($file));
 
     // Leer archivo
     readfile($file);
@@ -665,5 +665,5 @@ final class Am{
 }
 
 // Callbacks por defecto
-Am::setCallback("response.file",   "Am::respondeFile");
-Am::setCallback("response.download",   "Am::downloadFile");
+Am::setCallback('response.file',   'Am::respondeFile');
+Am::setCallback('response.download',   'Am::downloadFile');

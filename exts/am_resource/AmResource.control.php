@@ -75,7 +75,6 @@ class AmResourceControl extends AmControl{
     return array(
       'items'     => $q->getResult('array'),
       'haveNext'  => $haveNext,
-      'sql' => $q->sql()
     );
 
   }

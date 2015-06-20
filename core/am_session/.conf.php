@@ -25,8 +25,8 @@
 
 return array(
 
-  "files" => array(
-    "AmSession.class"
+  'files' => array(
+    'AmSession.class'
   ),
 
 );

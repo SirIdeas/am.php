@@ -25,14 +25,14 @@
 
 // Convierte un valor a booleano
 function parseBool($value){
-  if(in_array($value, array(true, 1, "true", "1"))) return true;
-  if(in_array($value, array(false, 0, "false", "0"))) return false;
+  if(in_array($value, array(true, 1, 'true', '1'))) return true;
+  if(in_array($value, array(false, 0, 'false', '0'))) return false;
   return null;
 }
 
 // Verifica si una fecha tiempo es valida.
 function checkTimestamp($date){
-  if (preg_match("/^(\d{4})-(\d{2})-(\d{2}) ([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/", $date, $matches))
+  if (preg_match('/^(\d{4})-(\d{2})-(\d{2}) ([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/', $date, $matches))
     if (checkdate($matches[2], $matches[3], $matches[1]))
       return true;
   return false;
@@ -65,7 +65,7 @@ function diff($v1, $v2){
 function isValidCallback($callback){
   // Si es un array evaluar como metodo
   if(is_array($callback))
-    return call_user_func_array("method_exists", $callback);
+    return call_user_func_array('method_exists', $callback);
   // Si es string evaluar como function
   if(is_string($callback))
     return function_exists($callback);
