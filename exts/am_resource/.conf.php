@@ -25,16 +25,16 @@
 
 return array(
 
-  "extend" => array(
-    "control" => array(
-      "AmResource" => dirname(__FILE__),
+  'extend' => array(
+    'control' => array(
+      'AmResource' => dirname(__FILE__),
     ),
   ),
 
-  "requires" => array(
-    "exts/am_control/",
-    "exts/am_orm/",
-    "exts/dinamictable/",
+  'requires' => array(
+    'exts/am_control/',
+    'exts/am_orm/',
+    'exts/dinamictable/',
   ),
 
 );

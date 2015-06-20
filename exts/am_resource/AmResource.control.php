@@ -66,13 +66,16 @@ class AmResourceControl extends AmControl{
     $txtSearch = strtolower($this->request->search);
 
     // Obtener la posicion a cargar
-    $offset = $this->request->offset * $this->request->searchLimit;
-    $q = $classModel::qSearch($txtSearch, $this->request->searchLimit, $offset);
+    $offset = $this->request->offset * $this->request->limit;
+    $q = $classModel::qSearch($txtSearch, $this->request->limit, $offset);
+    if(!$q)
+      $q = $classModel::q($this->request->limit, $offset);
     $haveNext = $q->haveNextPage();
 
     return array(
-      "items"     => $q->getResult('array'),
-      "haveNext"  => $haveNext,
+      'items'     => $q->getResult('array'),
+      'haveNext'  => $haveNext,
+      'sql' => $q->sql()
     );
 
   }
@@ -80,7 +83,7 @@ class AmResourceControl extends AmControl{
   // El formateador agregará una clase al registro dependiendo
   // del estado de la inscripcion
   public function format_list($r){
-    $r["cls"] = "";
+    $r['cls'] = '';
     return $r;
   }
 
@@ -125,9 +128,9 @@ class AmResourceControl extends AmControl{
   }
 
   private static function handleAction(AmModel $r, $actionResult){
-    $ret = array("success" => $actionResult);
+    $ret = array('success' => $actionResult);
     if(!$actionResult)
-      $ret["errors"] = $r->getErrors();
+      $ret['errors'] = $r->getErrors();
     return $ret;
   }
 
@@ -139,7 +142,7 @@ class AmResourceControl extends AmControl{
 
     // Si no se encontró el registro mostrar un mensaje
     if(!$this->r){
-      AmFlash::danger("No se encontró el registro");
+      AmFlash::danger('No se encontró el registro');
       return false;
     }
     return true;

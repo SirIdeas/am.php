@@ -424,12 +424,6 @@ final class AmTable extends AmObject{
 
   }
 
-  public static function qSearch($txt, $limit, $offset){
-    return $this
-        ->q($limit, $offset)
-        ->where("LOWER(nombre) LIKE '%".strtolower($txt)."%'");
-  }
-
   // Obtener consulta para buscar por un campos
   public function findBy($field, $value){
     return $this->all()->where("$field='$value'");

@@ -27,49 +27,49 @@ return array(
 
   //////////////////////////////////////////////////////////////////////////////
   // Parametros del recursos
-  "model" => null,
+  'model' => null,
 
   //////////////////////////////////////////////////////////////////////////////
   // Campos para los formularios y para los detalles
-  "fields" => array(),
+  'fields' => array(),
 
   //////////////////////////////////////////////////////////////////////////////
   // Columnas dle lista del index
-  "columns" => array(),
+  'columns' => array(),
 
   //////////////////////////////////////////////////////////////////////////////
   // Campos a ocultar en el formulario
-  "hides" => array(),
+  'hides' => array(),
 
   // Filtros
-  "filters" => array(
-    "before" => array(
-      "loadRecord" => array(
-        "scope" => "only",
-        "to" => array("detail", "edit", "delete")
+  'filters' => array(
+    'before' => array(
+      'loadRecord' => array(
+        'scope' => 'only',
+        'to' => array('detail', 'edit', 'delete')
       )
     )
   ),
 
   //////////////////////////////////////////////////////////////////////////////
   // Acciones permitidas
-  "allow" => array(
-    "list"      => true,
-    "new"       => true,
-    "detail"    => true,
-    "edit"      => true,
-    "delete"    => true,
-    "cou"       => true,
+  'allow' => array(
+    'list'      => true,
+    'new'       => true,
+    'detail'    => true,
+    'edit'      => true,
+    'delete'    => true,
+    'cou'       => true,
   ),
 
   //////////////////////////////////////////////////////////////////////////////
   // Asegurar los valores para los siguientes metodos
-  "views" => "views",
-  "prefixs" => array(
-    "actions"     => "action_",
-    "getActions"  => "get_",
-    "postActions" => "post_",
-    "filters"     => "filter_",
+  'views' => 'views',
+  'prefixs' => array(
+    'actions'     => 'action_',
+    'getActions'  => 'get_',
+    'postActions' => 'post_',
+    'filters'     => 'filter_',
   ),
 
 );
