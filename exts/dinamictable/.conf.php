@@ -25,12 +25,12 @@
 
 return array(
   
-  "files" => array(
-    "dinamicTableServer"
+  'files' => array(
+    'dinamicTableServer'
   ),
 
-  "requires" => array(
-    "exts/am_orm/",
+  'requires' => array(
+    'exts/am_orm/',
   ),
 
 );

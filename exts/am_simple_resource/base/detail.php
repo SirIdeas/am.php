@@ -27,10 +27,10 @@
 (# section:resourceDetailHead #)
   <div>
     <h3>Detalle <strong><?php echo $classModel ?></strong></h3>
-    <?php if ($allow["edit"]): ?>
+    <?php if ($allow['edit']): ?>
       <a href="edit" class="boton-inline">[Editar]</a>
     <?php endif ?>
-    <?php if ($allow["delete"]): ?>
+    <?php if ($allow['delete']): ?>
       <a href="delete" class="boton-inline">[Eliminar]</a>
     <?php endif ?>
     <a href="<?php echo $url ?>" class="boton-inline">[Volver]</a>

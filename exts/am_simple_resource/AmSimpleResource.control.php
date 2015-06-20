@@ -39,14 +39,14 @@ class AmSimpleResourceControl extends AmResourceControl{
   public function post_new(){
     self::handleActionSimple(
       parent::post_new(),
-      "Registro agregado satisfactoriamente",
-      "Errores al intentar agregar el registro"
+      'Registro agregado satisfactoriamente',
+      'Errores al intentar agregar el registro'
     );
   }
 
   // Accion para modificar los datos del registro
   public function action_edit($id){
-    if(method_exists($this, "format_edit"))
+    if(method_exists($this, 'format_edit'))
       $this->r = $this->format_edit($this->r);
   }
   public function get_edit($id){}
@@ -54,8 +54,8 @@ class AmSimpleResourceControl extends AmResourceControl{
     $ret = parent::post_edit();
     self::handleActionSimple(
       parent::post_edit(),
-      "Registro actualizado satisfactoriamente",
-      "Errores al intentar actualizar el registro"
+      'Registro actualizado satisfactoriamente',
+      'Errores al intentar actualizar el registro'
     );
   }
 
@@ -65,8 +65,8 @@ class AmSimpleResourceControl extends AmResourceControl{
   public function post_delete($id){
     self::handleActionSimple(
       parent::post_new(),
-      "Registro eliminado satisfactoriamente",
-      "Errores al intentar eliminar el registro"
+      'Registro eliminado satisfactoriamente',
+      'Errores al intentar eliminar el registro'
     );
   }
 
@@ -76,25 +76,25 @@ class AmSimpleResourceControl extends AmResourceControl{
   public function post_cou($id){
     self::handleActionSimple(
       parent::post_cou(),
-      "Registro creado/actualizado satisfactoriamente",
-      "Errores al intentar creado/actualizado el registro"
+      'Registro creado/actualizado satisfactoriamente',
+      'Errores al intentar creado/actualizado el registro'
     );
   }
 
   // Accion para mostrar el detalle de los registros
   public function action_detail($id){}
   public function get_detail($id){
-    if(method_exists($this, "format_detail"))
+    if(method_exists($this, 'format_detail'))
       $this->r = $this->format_detail($this->r);
   }
 
   private function handleActionSimple(array $ret, $msgSuccess, $msgFail){
-    if($ret["success"]){
+    if($ret['success']){
       AmFlash::success($msgSuccess);
       $this->redirect();
     }else{
       AmFlash::danger($msgFail);
-      $this->errors = $ret["errors"];
+      $this->errors = $ret['errors'];
     }
   }
 

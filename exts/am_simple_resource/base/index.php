@@ -45,10 +45,10 @@
     <thead>
       <tr>
         <?php foreach ($columns as $field => $def):
-          $show = !isset($def["show"]) || $def["show"]==true;
-          $sort = !isset($def["sort"]) || $def["sort"]==true;
+          $show = !isset($def['show']) || $def['show']==true;
+          $sort = !isset($def['sort']) || $def['sort']==true;
           ?>
-          <th data-param-show="<?php echo $show? "true" : "false" ?>">
+          <th data-param-show="<?php echo $show? 'true' : 'false' ?>">
             <?php if($show): ?>
               <span><?php echo itemOr($field, $fieldNames, $field) ?></span>
             <?php endif ?>
@@ -63,7 +63,7 @@
           </th>
         <?php endforeach ?>
 
-        <?php if ($allow["options"]): ?>
+        <?php if ($allow['options']): ?>
           <th data-param-show="false"></th>
           <th data-param-sort="false" data-param-class="text-center">
             <div>Opciones</div>
@@ -75,7 +75,7 @@
     </thead>
     <tfoot>
       <tr>
-        <td colspan="<?php echo count($columns)+($allow["options"]? 1:0) ?>">
+        <td colspan="<?php echo count($columns)+($allow['options']? 1:0) ?>">
           <p id="dinamic-table-count-record" class="text-muted pull-left table-count-record">
             <i>
               <small dinamic-table-msg="showing">Mostrando registros del {$rf} - {$rt} de {$fc} encontrados de un total {$co} en la tabla</small>
@@ -101,13 +101,13 @@
   <!-- The template to display files available for upload -->
   <script id="template-options" type="text/x-tmpl">
     <small>
-      <?php if ($allow["detail"]): ?>
+      <?php if ($allow['detail']): ?>
         <a href="<?php echo $url ?>{%=o.id%}/detail">[Detalle]</a>
       <?php endif ?>
-      <?php if ($allow["edit"]): ?>
+      <?php if ($allow['edit']): ?>
         <a href="<?php echo $url ?>{%=o.id%}/edit">[Editar]</a>
       <?php endif ?>
-      <?php if ($allow["delete"]): ?>
+      <?php if ($allow['delete']): ?>
         <a href="<?php echo $url ?>{%=o.id%}/delete">[Eliminar]</a>
       <?php endif ?>
     </small>

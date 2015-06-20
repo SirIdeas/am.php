@@ -39,7 +39,7 @@ function dinamicTableServer(AmObject $params, AmQuery $query, $formater = null, 
   if(isset($params->oSorts))
     foreach($params->oSorts as $dir)
       if(!empty($dir))
-        $query->orders($dir["dir"], array($fields[$dir["pos"]]));
+        $query->orders($dir['dir'], array($fields[$dir['pos']]));
 
   if(!empty($params->sSearch))
     foreach($fields as $f)
@@ -56,16 +56,16 @@ function dinamicTableServer(AmObject $params, AmQuery $query, $formater = null, 
       ->limit($params->iLen)
       ->offset($params->iPage * $params->iLen);
 
-  $records = $query->getResult("array", $formater);
+  $records = $query->getResult('array', $formater);
 
   if($toArray === true)
     foreach($records as $i => $value)
       $records[$i] = array_values($value);
 
   return array(
-    "aoData" => $records,
-    "iRecordCount" => $count,
-    "iRecordFilteredCount" => $countResult
+    'aoData' => $records,
+    'iRecordCount' => $count,
+    'iRecordFilteredCount' => $countResult
   );
 
 }

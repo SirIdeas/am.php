@@ -31,7 +31,7 @@ final class AmTemplate extends AmObject{
 
   protected
     $file = null,             // Vista a buscar
-    $content = "",            // Contenido del archivo
+    $content = '',            // Contenido del archivo
     $env = array(),           // Entorno
     $parent = null,           // Vista padre
     $openSections = array(),  // Lista de secciones abiertas
@@ -60,17 +60,17 @@ final class AmTemplate extends AmObject{
       $this->content = file_get_contents($this->realFile);
 
     // Obtener padre
-    preg_match_all("/\(# parent:(.*) #\)/", $this->content, $parents);
+    preg_match_all('/\(# parent:(.*) #\)/', $this->content, $parents);
     $this->parent = array_pop($parents[1]);
 
     // Quitar sentencias de padres
-    $this->content = implode("",
-      preg_split("/\(# parent:(.*) #\)/",
+    $this->content = implode('',
+      preg_split('/\(# parent:(.*) #\)/',
       $this->content)
     );
 
     // Obtener lista de hijos en comandos place
-    preg_match_all("/\(# (place:(.*)|put:.* = (.*)) #\)/",
+    preg_match_all('/\(# (place:(.*)|put:.* = (.*)) #\)/',
       $this->content, $dependences1);
 
     // Obtener lista de hijos en comandos put
@@ -100,7 +100,7 @@ final class AmTemplate extends AmObject{
     // Si no existe la vista mostrar error
     if(false === ($fileRet = Am::findFileIn($file, $this->paths))){
       $this->errors[] = "Am: No existe view '{$file}.'";
-      $this->ignore or die(implode(",", $this->errors));
+      $this->ignore or die(implode(',', $this->errors));
     }
     return $fileRet;
   }
@@ -113,10 +113,10 @@ final class AmTemplate extends AmObject{
     $this->child = $child;  // Contenido de un vista hija
 
     // Dividir por comandos
-    $parts = preg_split("/\(# (.*) #\)/", $this->content);
+    $parts = preg_split('/\(# (.*) #\)/', $this->content);
 
     // Obtener comando
-    preg_match_all("/\(# (.*) #\)/", $this->content, $cmds);
+    preg_match_all('/\(# (.*) #\)/', $this->content, $cmds);
     $cmds = $cmds[1];
 
     ob_start(); // Para optener todo lo que se imprima durante el compilad
@@ -127,15 +127,15 @@ final class AmTemplate extends AmObject{
       if(isset($cmds[$i])){ // Si existe un comando en la misma posicion
 
         // Obtener parametros del comando
-        list($method, $param) = array_merge(explode(":", $cmds[$i]), array("", null));
+        list($method, $param) = array_merge(explode(':', $cmds[$i]), array('', null));
 
         // Si no existe un metodo con el mismo nombre del comando mostrar error
-        method_exists($this, $method) or die("Am: unknow method AmTemplate->$method");
+        method_exists($this, $method) or die("Am: unknow method AmTemplate->{$method}");
 
         // Si el metodo es set
-        if($method == "set")
+        if($method == 'set')
           // Se divide el argumento en dos parametros
-          $param = explode("=", $param);
+          $param = explode('=', $param);
         else
           $param = array($param);
 
@@ -157,16 +157,16 @@ final class AmTemplate extends AmObject{
         ->compile($content, $this->sections);
 
       // Mezclar generadas en el padre con las definidas en la vista acutal
-      $this->env = $parentView["env"] = array_merge($parentView["env"], $this->env);
-      $this->errors = array_merge($this->errors, $parentView["errors"]);
+      $this->env = $parentView['env'] = array_merge($parentView['env'], $this->env);
+      $this->errors = array_merge($this->errors, $parentView['errors']);
       return $parentView;
     }
 
     return array(
-      "content"   => $content,        // Todo lo impreso
-      "sections"  => $this->sections, // Devolver secciones definidas
-      "env"       => $this->getEnv(), // Variables definidas
-      "errors"    => $this->errors    // Indica si se generó un error
+      'content'   => $content,        // Todo lo impreso
+      'sections'  => $this->sections, // Devolver secciones definidas
+      'env'       => $this->getEnv(), // Variables definidas
+      'errors'    => $this->errors    // Indica si se generó un error
     );
 
   }
@@ -186,24 +186,24 @@ final class AmTemplate extends AmObject{
 
   // Inserta una vista anidada
   public function place($view){
-    $view = $this->getSubView($view)->compile("", $this->sections);
-    echo $view["content"];
-    $this->sections = array_merge($view["sections"], $this->sections);
-    $this->env = array_merge($view["env"], $this->env);
-    $this->errors  = array_merge($this->errors, $view["errors"]);
+    $view = $this->getSubView($view)->compile('', $this->sections);
+    echo $view['content'];
+    $this->sections = array_merge($view['sections'], $this->sections);
+    $this->env = array_merge($view['env'], $this->env);
+    $this->errors  = array_merge($this->errors, $view['errors']);
   }
 
   // Imprimir una seccion
   public function put($name){
 
     // Si tiene una vista por defecto se carga
-    if(preg_match("/(.*) = (.*)/", $name, $m)){
+    if(preg_match('/(.*) = (.*)/', $name, $m)){
       array_shift($m);
       list($name, $path) = $m;
       $this->place($path);
     }
 
-    $section = isset($this->sections[$name])? $this->sections[$name] : "";
+    $section = isset($this->sections[$name])? $this->sections[$name] : '';
     echo $section;
 
   }
@@ -217,7 +217,7 @@ final class AmTemplate extends AmObject{
   // Cerrar seccion
   public function endSection(){
     // Si no existen secciones abiertas entonces mostrar error
-    !empty($this->openSections) or die("Am: closing section unopened");
+    !empty($this->openSections) or die('Am: closing section unopened');
 
     // Obtener lo impreso hasta hora
     $content = ob_get_clean();
@@ -227,24 +227,24 @@ final class AmTemplate extends AmObject{
 
     // Agregar seccion si no existe
     // Obtener directivas del nombre de la seccion
-    preg_match("/^([+]?)(.*[^+])([+]?)$/", $name, $m);
+    preg_match('/^([+]?)(.*[^+])([+]?)$/', $name, $m);
     array_shift($m);
     list($start, $name, $end) = $m;
 
     // Crear seccion si no existe
     if(!isset($this->sections[$name]))
-      $this->sections[$name] = "";
+      $this->sections[$name] = '';
 
     // No se recibió comandos
     if(empty($start) && empty($end))
       $this->sections[$name] = $content;
 
     // Agregar al principio
-    if($start === "+")
+    if($start === '+')
       $this->sections[$name] = $content . $this->sections[$name];
 
     // Agregar al final
-    if($end === "+")
+    if($end === '+')
       $this->sections[$name] = $this->sections[$name] . $content;
 
   }
@@ -257,7 +257,7 @@ final class AmTemplate extends AmObject{
   // Agregar variable
   public function set(){
     extract($this->getEnv());
-    eval("\$this->env['".func_get_arg(0)."'] = ".func_get_arg(1).";");
+    eval('\$this->env[''.func_get_arg(0).''] = '.func_get_arg(1).';');
   }
 
   // Obtener variables de la vista. Cinluye el entorno + las variables definidas en la vista
@@ -287,10 +287,10 @@ final class AmTemplate extends AmObject{
     $this->result = $this->compile($this->child);
 
     // Guardar vista minificada
-    $this->result["content"] = trim($this->result["content"]);
-    if(!empty($this->result["content"])){
+    $this->result['content'] = trim($this->result['content']);
+    if(!empty($this->result['content'])){
       extract($this->getEnv());  // Crear variables
-      eval("?> {$this->result["content"]} <?");
+      eval("?> {$this->result['content']} <?");
     }
 
   }
@@ -304,10 +304,10 @@ final class AmTemplate extends AmObject{
   public static function renderize($file, $options = array()){
 
     // Obtener configuraciones del controlador
-    $confs = Am::getAttribute("views", array());
+    $confs = Am::getAttribute('views', array());
 
     // Obtener valores por defecto
-    $defaults = itemOr("defaults", $confs, array());
+    $defaults = itemOr('defaults', $confs, array());
 
     // Si no existe configuracion para la vista
     $conf = isset($confs[$file])? $confs[$file] : array();

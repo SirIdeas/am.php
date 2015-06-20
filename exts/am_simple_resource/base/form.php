@@ -23,7 +23,7 @@
  * SOFTWARE.
  **/
 ?>
-(# set:formTitle="" #)
+(# set:formTitle='' #)
 
 (# section:resourceErrors #)
   <?php if(count($resourceErrors = $r->getErrors())): ?>
@@ -43,14 +43,14 @@
 <?php
   $resourceForm = new HTMLForm(array_merge_recursive(
     array(
-      "record" => $r,
-      "hides" => $hides,
-      "head" => HTML::t("div", array(
-        HTML::t("h3", $formTitle),
-        HTML::t("a", "[Volver]", array("href"=>$url))
+      'record' => $r,
+      'hides' => $hides,
+      'head' => HTML::t('div', array(
+        HTML::t('h3', $formTitle),
+        HTML::t('a', '[Volver]', array('href'=>$url))
       )),
-      "attrs" => array(
-        "name" => $classModel
+      'attrs' => array(
+        'name' => $classModel
       ),
     ),
     $formConf

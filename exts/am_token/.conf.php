@@ -25,8 +25,8 @@
 
 return array(
 
-  "files" => array(
-    "AmToken.class"
+  'files' => array(
+    'AmToken.class'
   )
   
 );

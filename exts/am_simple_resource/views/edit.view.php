@@ -25,6 +25,6 @@
 ?>
 
 (# parent:base.php #)
-(# set:formTitle="Editar <strong>$classModel</strong>" #)
+(# set:formTitle='Editar <strong>$classModel</strong>' #)
 (# place:am_simple_resource/base/form.php #)
 (# put:resourceForm #)

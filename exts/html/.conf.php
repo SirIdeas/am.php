@@ -24,12 +24,12 @@
  **/
  
 return array(
-  "files" => array(
-    "HTML.class",
-    "helpers",
+  'files' => array(
+    'HTML.class',
+    'helpers',
   ),
-  "require" => array(
-    "AmORM"
+  'require' => array(
+    'AmORM'
   )
 
 );
