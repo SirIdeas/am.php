@@ -25,34 +25,34 @@
 
 $resetForm = new HTMLForm(
   array(
-    "attrs" => array(
-      "role" => "form",
-      "name" => "reset",
-      "onsubmit" => "return amathista.submit(this)"
+    'attrs' => array(
+      'role' => 'form',
+      'name' => 'reset',
+      'onsubmit' => 'return amathista.submit(this)'
     ),
-    "defaults"  => array(
-      "label"   => HTML::t("label"),
-      "wrapper" => HTML::t("div", null, array(
-        "class" => "validate"
+    'defaults'  => array(
+      'label'   => HTML::t('label'),
+      'wrapper' => HTML::t('div', null, array(
+        'class' => 'validate'
       )),
-      "required" => ""
+      'required' => ''
     ),
-    "head" => HTML::t("h5", "Restaurar contraseña"),
-    "fields" => array(
-      "password" => array(
-        "name"      => "password",
-        "label"     => "Nueva password",
-        "type"      => "password",
+    'head' => HTML::t('h5', 'Restaurar contraseña'),
+    'fields' => array(
+      'password' => array(
+        'name'      => 'password',
+        'label'     => 'Nueva password',
+        'type'      => 'password',
       ),
-      "confirm_password" => array(
-        "name"      => "confirm_password",
-        "label"     => "Confirme password",
-        "type"      => "password",
+      'confirm_password' => array(
+        'name'      => 'confirm_password',
+        'label'     => 'Confirme password',
+        'type'      => 'password',
       ),
     ),
-    "foot" => HTML::t("div",
+    'foot' => HTML::t('div',
       array(
-        HTML::t("button", "Enviar", array("type" => "submit"))
+        HTML::t('button', 'Enviar', array('type' => 'submit'))
       )
     )
   )

@@ -27,24 +27,24 @@ return array(
 
   //////////////////////////////////////////////////////////////////////////////
   // Controlador base
-  "parent" => "AmAuth",
+  'parent' => 'AmAuth',
 
   //////////////////////////////////////////////////////////////////////////////
   // Textos a mostrar
-  "texts" => array(
-    "welcome" => "Bienvenido",
-    "authFailed" => "Usuario y/o contraseña incorrectos",
-    "userNotFound" => "Usuario no encontrado",
-    "recoveryEmailSended" => "Se le ha enviado un correo con las instrucciones para recuperar su cuenta.",
-    "troublesSendingEmail" => "Hemos tenido problemas al enviar su correo. Por favor intente mas tarde.",
-    "passwordResetSuccess" => "Su password ha sido resetado satisfactoriamente.",
-    "passwordInvalid" => "El password es inválido",
-    "passwordDiff" => "La confirmación del password no coincide",
-    "troublesResetingPassword" => "Hemos tenido problemas reseteando su password. Por favor intente mas tarde.",
+  'texts' => array(
+    'welcome' => 'Bienvenido',
+    'authFailed' => 'Usuario y/o contraseña incorrectos',
+    'userNotFound' => 'Usuario no encontrado',
+    'recoveryEmailSended' => 'Se le ha enviado un correo con las instrucciones para recuperar su cuenta.',
+    'troublesSendingEmail' => 'Hemos tenido problemas al enviar su correo. Por favor intente mas tarde.',
+    'passwordResetSuccess' => 'Su password ha sido resetado satisfactoriamente.',
+    'passwordInvalid' => 'El password es inválido',
+    'passwordDiff' => 'La confirmación del password no coincide',
+    'troublesResetingPassword' => 'Hemos tenido problemas reseteando su password. Por favor intente mas tarde.',
   ),
 
-  "urls" => array(
-    "index" => Am::serverUrl("/")
+  'urls' => array(
+    'index' => Am::serverUrl('/')
   ),
 
   'showMailContentIfFail' => false

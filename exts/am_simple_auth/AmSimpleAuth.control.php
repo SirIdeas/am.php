@@ -52,13 +52,13 @@ class AmSimpleAuthControl extends AmAuthControl{
     if(isset($ret['success'])){
 
       // Usuario esta autenticado
-      AmFlash::success($this->texts["welcome"]);
-      Am::gotoUrl($this->urls["index"]);  // Ir a index
+      AmFlash::success($this->texts['welcome']);
+      Am::gotoUrl($this->urls['index']);  // Ir a index
 
     }else{
 
       // Usuario no autenticado
-      AmFlash::danger($this->texts["authFailed"]);
+      AmFlash::danger($this->texts['authFailed']);
 
     }
 
@@ -66,7 +66,7 @@ class AmSimpleAuthControl extends AmAuthControl{
 
   public function action_logout(){
     $ret = parent::action_logout();
-    Am::gotoUrl($this->urls["index"]);  // Ir a index
+    Am::gotoUrl($this->urls['index']);  // Ir a index
   }
 
   // Acción para solicitar las instrucciones para recuperar la sontraseña
@@ -76,13 +76,13 @@ class AmSimpleAuthControl extends AmAuthControl{
     $ret = parent::post_recovery();
 
     if(isset($ret['success']))
-      AmFlash::success($this->texts["recoveryEmailSended"]);
+      AmFlash::success($this->texts['recoveryEmailSended']);
 
     elseif($ret['error'] == 'userNotFound')
-      AmFlash::danger($this->texts["userNotFound"]);
+      AmFlash::danger($this->texts['userNotFound']);
 
     else{
-      AmFlash::danger($this->texts["troublesSendingEmail"]);
+      AmFlash::danger($this->texts['troublesSendingEmail']);
       AmFlash::danger($this->mail->errorInfo());
 
       if($this->showMailContentIfFail){
@@ -92,7 +92,7 @@ class AmSimpleAuthControl extends AmAuthControl{
 
     }
     
-    Am::gotoUrl($this->urls["index"]."recovery");  // Ir a index
+    Am::gotoUrl($this->urls['index'].'recovery');  // Ir a index
 
   }
 
@@ -103,8 +103,8 @@ class AmSimpleAuthControl extends AmAuthControl{
     $ret = parent::post_reset();
 
     if(isset($ret['success'])){
-      AmFlash::success($this->texts["passwordResetSuccess"]);
-      Am::gotoUrl($this->urls["index"]);  // Ir a index
+      AmFlash::success($this->texts['passwordResetSuccess']);
+      Am::gotoUrl($this->urls['index']);  // Ir a index
     }else
       AmFlash::danger($this->texts[$ret['error']]);
       

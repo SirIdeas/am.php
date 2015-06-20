@@ -25,31 +25,31 @@
 
 $recoveryForm = new HTMLForm(
   array(
-    "attrs" => array(
-      "role" => "form",
-      "name" => "recovery",
-      "onsubmit" => "return amathista.submit(this)"
+    'attrs' => array(
+      'role' => 'form',
+      'name' => 'recovery',
+      'onsubmit' => 'return amathista.submit(this)'
     ),
-    "defaults"  => array(
-      "label"   => HTML::t("label"),
-      "wrapper" => HTML::t("div", null, array(
-        "class" => "validate"
+    'defaults'  => array(
+      'label'   => HTML::t('label'),
+      'wrapper' => HTML::t('div', null, array(
+        'class' => 'validate'
       )),
-      "required" => ""
+      'required' => '
     ),
-    "head" => HTML::t("h5", "Recuperar contraseña"),
-    "fields" => array(
-      "username" => array(
-        "name"        => "username",
-        "label"       => "Username",
-        "type"        => "text",
-        "autofocus"   => ""
+    'head' => HTML::t('h5', 'Recuperar contraseña'),
+    'fields' => array(
+      'username' => array(
+        'name'        => 'username',
+        'label'       => 'Username',
+        'type'        => 'text',
+        'autofocus'   => '
       ),
-    ),    "foot" => HTML::t("div",
+    ),    'foot' => HTML::t('div',
       array(
-        HTML::t("a","Iniciar sesión", array("href" => $url."login")),
-        HTML::t("a","Registro", array("href" => $url."signup")),
-        HTML::t("button", "Enviar", array("type" => "submit"))
+        HTML::t('a','Iniciar sesión', array('href' => "{$url}login")),
+        HTML::t('a','Registro', array('href' => "{$url}signup")),
+        HTML::t('button', 'Enviar', array('type' => 'submit'))
       )
     )
   )

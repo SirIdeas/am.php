@@ -25,37 +25,37 @@
 
 $loginForm = new HTMLForm(
   array(
-    "attrs" => array(
-      "role" => "form",
-      "name" => "login",
-      "onsubmit" => "return amathista.submit(this)"
+    'attrs' => array(
+      'role' => 'form',
+      'name' => 'login',
+      'onsubmit' => 'return amathista.submit(this)'
     ),
-    "defaults"  => array(
-      "label"   => HTML::t("label"),
-      "wrapper" => HTML::t("div", null, array(
-        "class" => "validate"
+    'defaults'  => array(
+      'label'   => HTML::t('label'),
+      'wrapper' => HTML::t('div', null, array(
+        'class' => 'validate'
       )),
-      "required" => ""
+      'required' => ''
     ),
-    "head" => HTML::t("h5", "Login"),
-    "fields" => array(
-      "username" => array(
-        "name"      => "username",
-        "label"     => "Username",
-        "type"      => "text",
-        "autofocus" => ""
+    'head' => HTML::t('h5', 'Login'),
+    'fields' => array(
+      'username' => array(
+        'name'      => 'username',
+        'label'     => 'Username',
+        'type'      => 'text',
+        'autofocus' => ''
       ),
-      "password" => array(
-        "name"      => "password",
-        "label"     => "Password",
-        "type"      => "password",
+      'password' => array(
+        'name'      => 'password',
+        'label'     => 'Password',
+        'type'      => 'password',
       ),
     ),
-    "foot" => HTML::t("div",
+    'foot' => HTML::t('div',
       array(
-        HTML::t("a","Registro", array("href" => $url."signup")),
-        HTML::t("a","Recuperar", array("href" => "recovery")),
-        HTML::t("button", "Enviar", array("type" => "submit"))
+        HTML::t('a','Registro', array('href' => $url.'signup')),
+        HTML::t('a','Recuperar', array('href' => 'recovery')),
+        HTML::t('button', 'Enviar', array('type' => 'submit'))
       )
     )
   )

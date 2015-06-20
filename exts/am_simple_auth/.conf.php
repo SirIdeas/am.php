@@ -25,15 +25,15 @@
 
 return array(
 
-  "extend" => array(
-    "control" => array(
-      "AmSimpleAuth" => dirname(__FILE__) . "/",
+  'extend' => array(
+    'control' => array(
+      'AmSimpleAuth' => dirname(__FILE__) . '/',
     ),
   ),
 
-  "requires" => array(
-    "exts/am_auth/",
-    "exts/html/",
+  'requires' => array(
+    'exts/am_auth/',
+    'exts/html/',
   ),
 
 );
