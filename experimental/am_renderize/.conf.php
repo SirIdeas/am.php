@@ -25,9 +25,9 @@
  
 return array(
 
-  "files" => array(
-    "filters",
-    "AmRenderize.class"
+  'files' => array(
+    'filters',
+    'AmRenderize.class'
   )
 
 );

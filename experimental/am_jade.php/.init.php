@@ -24,4 +24,4 @@
  **/
  
 // Atender el llamado a renderizaa vistas
-Am::setCallback("render.template", "AmJade::renderize");
+Am::setCallback('render.template', 'AmJade::renderize');

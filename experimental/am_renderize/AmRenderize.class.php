@@ -97,7 +97,7 @@ final class AmRenderize extends AmObject{
 
       $line = array_shift($in);
 
-      preg_match("/^([ ]*)(.*)/", $line, $matches);
+      preg_match('/^([ ]*)(.*)/', $line, $matches);
 
       $filter = null;
 
@@ -114,7 +114,7 @@ final class AmRenderize extends AmObject{
 
     }
 
-    header("content-type: text/plain");
+    header('content-type: text/plain');
     print_r($arr);
 
   }
@@ -125,11 +125,11 @@ final class AmRenderize extends AmObject{
     $ret = array();
     while(!empty($arr)){
       $item = array_shift($arr);
-      if($last===false || $last["ident"]===$item["ident"]){
+      if($last===false || $last['ident']===$item['ident']){
         $ret[] = $last = $item;
-      }else if($last["ident"] < $item["ident"]){
+      }else if($last['ident'] < $item['ident']){
         array_unshift($arr, $item);
-        $ret[count($ret)-1]["childs"] = $this->anidation($arr);
+        $ret[count($ret)-1]['childs'] = $this->anidation($arr);
       }else{
         array_unshift($arr, $item);
         break;
@@ -148,10 +148,10 @@ final class AmRenderize extends AmObject{
   public static function renderize($file, $paths, $options = array()){
 
     // Obtener configuraciones del controlador
-    $confs = Am::getAttribute("views", array());
+    $confs = Am::getAttribute('views', array());
 
     // Obtener valores por defecto
-    $defaults = itemOr("defaults", $confs, array());
+    $defaults = itemOr('defaults', $confs, array());
 
     // Si no existe configuracion para la vista
     $conf = isset($confs[$file])? $confs[$file] : array();

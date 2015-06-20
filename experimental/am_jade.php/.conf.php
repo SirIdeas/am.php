@@ -25,9 +25,9 @@
  
 return array(
 
-  "files" => array(
-    "jade.php/autoload",
-    "AmJade.class"
+  'files' => array(
+    'jade.php/autoload',
+    'AmJade.class'
   )
 
 );
