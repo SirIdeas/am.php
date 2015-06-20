@@ -34,7 +34,7 @@ class AmCommand{
 
   // Agregar un carpeta a la lista de carpetas de comandos
   public static function addPath($path){
-    self::$paths[] = realpath($path) . "/";
+    self::$paths[] = realpath($path) . '/';
     self::$paths = array_unique(self::$paths);
   }
 
@@ -42,7 +42,7 @@ class AmCommand{
   public static function execArray(array $argv){
 
     // Obtener los targets del archivo de configuracion
-    $targets = Am::getAttribute("commands", array());
+    $targets = Am::getAttribute('commands', array());
 
     // 1er: origen de la peticion: HTTP/consola
     $file = array_shift($argv);
@@ -50,9 +50,9 @@ class AmCommand{
     // 2do: Comando a ejecutar
     $cmd = array_shift($argv);
 
-    // El comando puede ser indicado con un target especifico: $cmd="comando:target"
+    // El comando puede ser indicado con un target especifico: $cmd='comando:target'
     // Dividir para obtener target
-    $params = explode(":", $cmd);
+    $params = explode(':', $cmd);
     $cmd = array_shift($params);    // La primera parte es el comando real
     $target = array_shift($params); // El siguiente elemento es el target. Si no existe es null
                                     // $params queda con el resto de los parametros del argumento
@@ -70,7 +70,7 @@ class AmCommand{
 
     ob_start();
     // Imprimir el comando que se ejecutará
-    echo "Amathista commands\n\n-- $cmd:";
+    echo "Amathista commands\n\n-- {$cmd}:";
 
     // Si el target esta indicado
     if(isset($target)){

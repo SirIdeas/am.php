@@ -25,30 +25,30 @@
 
 return array(
 
-  "extend" => array(
+  'extend' => array(
 
-    "control" => array(
-      "defaults" => array(
-        "root" => "control", // Carpeta raiz del controlador
-        "views" => "views",  // Carpeta por defecto para las vistas
-        "paths" => array(    // Carpetas de vistas del controlador
-          realPath("../am/exts")
+    'control' => array(
+      'defaults' => array(
+        'root' => 'control', // Carpeta raiz del controlador
+        'views' => 'views',  // Carpeta por defecto para las vistas
+        'paths' => array(    // Carpetas de vistas del controlador
+          realPath('../am/exts')
         ),
       ),
     ),
 
   ),
 
-  "files" => array(
-    "AmControl.class"
+  'files' => array(
+    'AmControl.class'
   ),
 
-  "mergeFunctions" => array(
-    "control" => "array_merge_recursive",
+  'mergeFunctions' => array(
+    'control' => 'array_merge_recursive',
   ),
 
-  "requires" => array(
-    "exts/am_credentials/",
+  'requires' => array(
+    'exts/am_credentials/',
   )
 
 );

@@ -33,7 +33,7 @@ function am_command_concat($target, $params, $config, $file, $argv){
       if(is_file($file)){
         $content[] = file_get_contents($file);
       }else{
-        echo("\nAm: Not Found $file");
+        echo("\nAm: Not Found {$file}");
         return;
       }
     }
@@ -43,7 +43,7 @@ function am_command_concat($target, $params, $config, $file, $argv){
       mkdir($dir, 0775, true);
 
     file_put_contents($fileName, implode("\n", $content));
-    echo "\nAm: created $fileName";
+    echo "\nAm: created {$fileName}";
 
   }
 

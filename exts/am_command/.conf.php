@@ -25,12 +25,12 @@
  
 return array(
 
-  "files" => array(
-    "AmCommand.class"
+  'files' => array(
+    'AmCommand.class'
   ),
 
-  "mergeFunctions" => array(
-    "commands" => "array_merge_recursive",
+  'mergeFunctions' => array(
+    'commands' => 'array_merge_recursive',
   )
 
 );

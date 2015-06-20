@@ -33,11 +33,11 @@ function am_command_createTables($target, $params, $config, $file, $argv){
 
   // Si no se recibió el model se buscará el modelo por defecto
   if(!$source)
-    $source = "default";
+    $source = 'default';
 
   // Si no existe la configuración para la fuente
   if(null === AmORM::getSourceConf($source)){
-    echo "Fuente de datos inválida";
+    echo 'Fuente de datos inválida';
     return;
   }
 
@@ -60,10 +60,10 @@ function am_command_createTables($target, $params, $config, $file, $argv){
 
   function echoResult($table, $created){
     echo "\n table '{$table}': ". (
-      $created===0? "model not found" : (
-      $created===1? "already exists" : (
-      $created===true? "created" : (
-      "error creating: " . $created
+      $created===0? 'model not found' : (
+      $created===1? 'already exists' : (
+      $created===true? 'created' : (
+      'error creating: ' . $created
       ))));
   }
   // Si no se indico el modelo entonces se creará todas las tablas

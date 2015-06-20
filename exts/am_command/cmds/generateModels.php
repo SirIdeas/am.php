@@ -33,11 +33,11 @@ function am_command_generateModels($target = null, $params = null, $config = nul
 
   // Si no se recibió el model se buscará el modelo por defecto
   if(!$source)
-    $source = "default";
+    $source = 'default';
 
   // Si no existe la configuración para la fuente
   if(null === AmORM::getSourceConf($source)){
-    echo "Fuente de datos inválida";
+    echo 'Fuente de datos inválida';
     return;
   }
 
@@ -47,9 +47,9 @@ function am_command_generateModels($target = null, $params = null, $config = nul
   function echoResult($table, $result){
     echo
       "\n  {$table}:".
-      "\n    folders              : " . ($result["folder"]?    "createds" : "").
-      "\n    configuration file   : " . ($result["conf"]?       "created" : "already exists").
-      "\n    class for model      : " . ($result["model"]?      "created" : "already exists").
+      "\n    folders              : " . ($result['folder']? 'createds' : '').
+      "\n    configuration file   : " . ($result['conf']?   'created' : 'already exists').
+      "\n    class for model      : " . ($result['model']?  'created' : 'already exists').
       "\n";
   }
 
@@ -64,13 +64,13 @@ function am_command_generateModels($target = null, $params = null, $config = nul
     // de configuracion de la fuente
     echo "\nsource {$source}:";
     echo "\n";
-    echo "\n  configuration file     : " . ($ret["source"]? "created" : "already exists");
+    echo "\n  configuration file     : " . ($ret['source']? 'created' : 'already exists');
     echo "\n";
 
     // Mostrar el resultado
     // El resultado esta agrupado por tabla
-    foreach ($ret["tables"] as $table => $result) {
-      echoResult("table ".$table, $result);
+    foreach ($ret['tables'] as $table => $result) {
+      echoResult('table '.$table, $result);
     }
 
   }else{

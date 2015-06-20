@@ -36,7 +36,7 @@ function rglob($pattern, $flags = 0) {
 function am_command_copy($target, $params, $config, $file, $argv){
 
   // Si no se especificó el src entonces se buscará en cada elemento
-  if(!isset($config["src"])){
+  if(!isset($config['src'])){
     foreach ($config as $child)
       am_command_copy($target, $params, $child, $file, $argv);
     return;
@@ -44,20 +44,20 @@ function am_command_copy($target, $params, $config, $file, $argv){
 
   // Asignar valores por defecto
   $config = array_merge(array(
-    "cwd" => "",
-    "dest" => ""
+    'cwd' => '',
+    'dest' => ''
   ), $config);
 
   // Obtener rutas reales
-  $cwd = realPath($config["cwd"]);
-  $dest = $config["dest"];
+  $cwd = realPath($config['cwd']);
+  $dest = $config['dest'];
 
-  foreach($config["src"] as $src){
-    $result = rglob($cwd."/".$src);
+  foreach($config['src'] as $src){
+    $result = rglob($cwd.'/'.$src);
     foreach($result as $file){
 
       // Obtener path destino
-      $fileNoCwd = substr_replace($file, "", 0, strlen($cwd)+1);
+      $fileNoCwd = substr_replace($file, '', 0, strlen($cwd)+1);
       $destPath = $dest.$fileNoCwd;
 
       // Si el archivo ya existe continuar
@@ -70,9 +70,9 @@ function am_command_copy($target, $params, $config, $file, $argv){
 
       // Copiar archivos
       if(copy($file, $destPath)){
-        echo "\nCopied: $destPath";
+        echo "\nCopied: {$destPath}";
       }else{
-        echo "\nError coping: $destPath";
+        echo "\nError coping: {$destPath}";
       }
 
     }

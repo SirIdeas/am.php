@@ -24,7 +24,7 @@
  **/
 
 // Agregar callback de agregar carpetas
-Am::setCallback("command.addPath", "AmCommand::addPath");
+Am::setCallback('command.addPath', 'AmCommand::addPath');
 
 // Agregar carpeta principal
-AmCommand::addPath(dirname(__FILE__) . "/cmds/");
+AmCommand::addPath(dirname(__FILE__) . '/cmds/');
