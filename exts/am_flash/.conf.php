@@ -25,8 +25,8 @@
 
 return array(
 
-  "files" => array(
-    "AmFlash.class"
+  'files' => array(
+    'AmFlash.class'
   ),
 
 );

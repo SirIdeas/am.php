@@ -38,7 +38,7 @@ class AmMailer extends PHPMailer{
   // Nombre del SMTP
   protected
     $isHTML = false,  // Indica si el contenido es o no HTML
-    $dir = "mails/",  // Directorio donde se buscara la vista a renderizar
+    $dir = 'mails/',  // Directorio donde se buscara la vista a renderizar
     $template = null, // Configuracion STMP. Si es null entonces no se enviará por smtp
     $with = array();  // Variables a utilizar en las vistas
 
@@ -46,29 +46,29 @@ class AmMailer extends PHPMailer{
   public function __construct($name = null, $options = array()) {
     parent::__construct();
 
-    if(isset($name)) $this->template("$name.mail.php");
+    if(isset($name)) $this->template("{$name}.mail.php");
 
     // Asignar configuracion de cada parametros
-    if(isset($options["smtp"]))       $this->smtpConf($options["smtp"]);
-    if(isset($options["charset"])){   $this->charset($options["charset"]); }
-    if(isset($options["template"])){  $this->template($options["template"]); }
-    if(isset($options["wordWrap"])){  $this->wordWrap($options["wordWrap"]); }
-    if(isset($options["altBody"])){   $this->altBody($options["altBody"]); }
-    if(isset($options["subject"])){   $this->subject($options["subject"]); }
-    if(isset($options["isHtml"])){    $this->isHTML($options["isHtml"]); }
-    if(isset($options["body"])){      $this->body($options["body"]); }
-    if(isset($options["with"])){      $this->with($options["with"]); }
-    if(isset($options["dir"])){       $this->dir($options["dir"]); }
+    if(isset($options['smtp']))       $this->smtpConf($options['smtp']);
+    if(isset($options['charset'])){   $this->charset($options['charset']); }
+    if(isset($options['template'])){  $this->template($options['template']); }
+    if(isset($options['wordWrap'])){  $this->wordWrap($options['wordWrap']); }
+    if(isset($options['altBody'])){   $this->altBody($options['altBody']); }
+    if(isset($options['subject'])){   $this->subject($options['subject']); }
+    if(isset($options['isHtml'])){    $this->isHTML($options['isHtml']); }
+    if(isset($options['body'])){      $this->body($options['body']); }
+    if(isset($options['with'])){      $this->with($options['with']); }
+    if(isset($options['dir'])){       $this->dir($options['dir']); }
 
     // Asignación de remitente del correo
-    if(isset($options["from"])){
-      $address = $options["from"];
+    if(isset($options['from'])){
+      $address = $options['from'];
       if($address instanceof AmAddress){
         $from = $address->getMail();
         $fromName = $address->getName();
       }elseif(is_array($address)){
-        $from = isset($address["user"])? $address["user"] : null;
-        $fromName = isset($address["as"])? $address["as"] : null;
+        $from = isset($address['user'])? $address['user'] : null;
+        $fromName = isset($address['as'])? $address['as'] : null;
       }else{
         $from = $fromName = $address;
       }
@@ -77,10 +77,10 @@ class AmMailer extends PHPMailer{
 
     // Recorrer cada uno de los tipos de destinatarios
     foreach(array(
-      "replyTo" => "addReplyTo",
-      "address" => "addAddress",
-      "cc" => "addCC",
-      "bcc" => "addBCC",
+      'replyTo' => 'addReplyTo',
+      'address' => 'addAddress',
+      'cc' => 'addCC',
+      'bcc' => 'addBCC',
     ) as $key => $fn){
 
       // Si las opciones tienen nombrado elemento
@@ -99,13 +99,13 @@ class AmMailer extends PHPMailer{
 
   // Para agregar un destinatario con un determinado método
   public function parseAndAdd($addMethod, $addresses){
-    // Si es un array y tiene un elemento "user"
+    // Si es un array y tiene un elemento 'user'
     if($addresses instanceof AmAddress){
       $this->$addMethod($addresses->getMail(), $addresses->getName());
-    }elseif(isset($addresses["user"])){
+    }elseif(isset($addresses['user'])){
       // El parametro es un array con la direccion a enviar y el nombre
-      $to = $addresses["user"];
-      $toName = isset($addresses["as"])? $addresses["as"] : $to;
+      $to = $addresses['user'];
+      $toName = isset($addresses['as'])? $addresses['as'] : $to;
       $this->$addMethod($to, $toName);
       return true;
     }elseif(is_string($addresses)){
@@ -124,16 +124,16 @@ class AmMailer extends PHPMailer{
     // SMTP Configuration
     $this->isSMTP();
     $this->SMTPAuth = true;
-    $this->Host = isset($smtp["host"])? $smtp["host"] : null;
-    $this->Username = isset($smtp["user"])? $smtp["user"] : null;
-    $this->Password = isset($smtp["pass"])? $smtp["pass"] : null;
-    $this->SMTPSecure = isset($smtp["secure"])? $smtp["secure"] : null;
+    $this->Host = isset($smtp['host'])? $smtp['host'] : null;
+    $this->Username = isset($smtp['user'])? $smtp['user'] : null;
+    $this->Password = isset($smtp['pass'])? $smtp['pass'] : null;
+    $this->SMTPSecure = isset($smtp['secure'])? $smtp['secure'] : null;
 
     // Asignar puerto si esta definido
-    if(isset($smtp["port"])) $this->Port = $smtp["port"];
+    if(isset($smtp['port'])) $this->Port = $smtp['port'];
 
     // Asignar remitente
-    $this->from($this->Username, isset($smtp["as"])? $smtp["as"] : null);
+    $this->from($this->Username, isset($smtp['as'])? $smtp['as'] : null);
 
   }
 
@@ -203,25 +203,25 @@ class AmMailer extends PHPMailer{
   }
 
   // Metodo para agregar direccion destinataria
-  public function addAddress($address, $name = "") {
+  public function addAddress($address, $name = '') {
     parent::addAddress($address, $name);
     return $this;
   }
 
   // Metodo para agregar direccion de respuesta
-  public function addReplyTo($address, $name = "") {
+  public function addReplyTo($address, $name = '') {
     parent::addReplyTo($address, $name);
     return $this;
   }
 
   // Metodo para agregar direccion con copia
-  public function addCC($address, $name = "") {
+  public function addCC($address, $name = '') {
     parent::addCC($address, $name);
     return $this;
   }
 
   // Metodo para agregar direccion con copia oculta
-  public function addBCC($address, $name = "") {
+  public function addBCC($address, $name = '') {
     parent::addBCC($address, $name);
     return $this;
   }
@@ -238,17 +238,17 @@ class AmMailer extends PHPMailer{
       $this->with($with);
 
     // Agregar body alas variables de entorno para el renderizado
-    $env = array_merge(array("body" => $this->Body), $this->with);
+    $env = array_merge(array('body' => $this->Body), $this->with);
 
     ob_start();
 
     // Renderizar vista mediante un callback
-    $ret = Am::call("render.template",
+    $ret = Am::call('render.template',
       $this->template,
       array(
-        "paths" => array($this->dir),
-        "ignore" => true,
-        "env" => $env
+        'paths' => array($this->dir),
+        'ignore' => true,
+        'env' => $env
       )
     );
 
@@ -281,13 +281,13 @@ class AmMailer extends PHPMailer{
   public static function get($name, array $options = array()){
 
     // Obtener configuraciones de mails
-    $mails = Am::getAttribute("mails");
+    $mails = Am::getAttribute('mails');
 
     // Combinar opciones recibidas en el constructor con las
     // establecidas en el archivo de configuracion
     $options = array_merge(
       // Configuración de valores po defecto
-      isset($mails["defaults"])? $mails["defaults"] : array(),
+      isset($mails['defaults'])? $mails['defaults'] : array(),
       // Configuración de valores del mail
       isset($mails[$name])? $mails[$name] : array(),
       // Parametros locales
@@ -296,18 +296,18 @@ class AmMailer extends PHPMailer{
 
     // Si no es un array se buscará la configuracion en
     // el archivo de configuracion SMTP
-    if(!is_array($options["smtp"])){
+    if(!is_array($options['smtp'])){
 
       // Obtener configuraciones STMP
-      $smtpConfs = Am::getAttribute("smtp", array());
+      $smtpConfs = Am::getAttribute('smtp', array());
 
       // Si se debe tomar la configuracion por defecto
-      if($options["smtp"] === true)
-        $options["smtp"] = "default";
+      if($options['smtp'] === true)
+        $options['smtp'] = 'default';
 
       // Asignar configuracion
-      if($options["smtp"])
-        $options["smtp"] = $smtpConfs[$options["smtp"]];
+      if($options['smtp'])
+        $options['smtp'] = $smtpConfs[$options['smtp']];
 
     }
 

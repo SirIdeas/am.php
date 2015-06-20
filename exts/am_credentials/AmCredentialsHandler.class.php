@@ -47,15 +47,15 @@ final class AmCredentialsHandler{
   public function __construct(){
 
     // Obtener la configuracion
-    $conf = Am::getAttribute("credentials", array());
+    $conf = Am::getAttribute('credentials', array());
 
     // Inicializar parametros
-    $this->authUrl = itemOr("authUrl", $conf);
+    $this->authUrl = itemOr('authUrl', $conf);
 
     // Aignar clase que se utilizará para las credenciales
     $this->setCredentialsClass(
-      itemOr("class", $conf),             // Clase
-      AmSession::get("credentials_id") // Identificador
+      itemOr('class', $conf),             // Clase
+      AmSession::get('credentials_id') // Identificador
     );
 
   }
@@ -81,7 +81,7 @@ final class AmCredentialsHandler{
 
     // Sino se obtivieron credenciales se destruye el ID guardado
     if(!$this->isAuth()){
-      AmSession::delete("credentials_id");
+      AmSession::delete('credentials_id');
       $this->credentialsId = null;
     }
 
@@ -118,11 +118,11 @@ final class AmCredentialsHandler{
     // Si son unas credenciales válidas
     // Guardar el ID de las credenciales
     if($this->isAuth())
-      AmSession::set("credentials_id", $credentials->getCredentialsId());
+      AmSession::set('credentials_id', $credentials->getCredentialsId());
 
     // De lo contrario borrar el ID de la session
     else
-      AmSession::delete("credentials_id");
+      AmSession::delete('credentials_id');
 
   }
 
@@ -193,9 +193,9 @@ final class AmCredentialsHandler{
       // Convertir la credencia en array si no lo es.
       if(!is_array($credential))
         $credential = array($credential);
-      // Si es un arrahy asociativo se debe obtener el item "roles"
+      // Si es un arrahy asociativo se debe obtener el item 'roles'
       elseif(isAssocArray($credential))
-        $credential = itemOr("roles", $credential, array());
+        $credential = itemOr('roles', $credential, array());
 
       // Si no posee dichas credenciales rediriguir a la pantalla de logueo.
       if(!$this->hasCredentials($credential))
@@ -217,14 +217,14 @@ final class AmCredentialsHandler{
     // Si esta definido el parametro only se chequea
     // que la accion este dentro de las acciones que necesitan
     // esta credencial.
-    if(isset($credential["only"]) && is_array($credential["only"]))
-      return in_array($action, $credential["only"]);
+    if(isset($credential['only']) && is_array($credential['only']))
+      return in_array($action, $credential['only']);
 
     // Si esta definido el parametro except se chequea
     // que la accion este dentro de las acciones que no
     // necesitan esta credencial.
-    if(isset($credential["except"]) && is_array($credential["except"]))
-      return !in_array($action, $credential["except"]);
+    if(isset($credential['except']) && is_array($credential['except']))
+      return !in_array($action, $credential['except']);
 
     // De lo contrario la accion no requiere dicha credencial
     return true;
@@ -235,7 +235,7 @@ final class AmCredentialsHandler{
   // Devuelve una instancia para del manejador de credenciales.
   // Destinada a un callback.
   public static function getInstance(){
-    return Am::getInstance("AmCredentialsHandler");
+    return Am::getInstance('AmCredentialsHandler');
   }
 
 }

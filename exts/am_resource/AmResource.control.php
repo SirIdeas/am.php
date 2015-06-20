@@ -54,7 +54,7 @@ class AmResourceControl extends AmControl{
 
     // Return el objeto para la tabla dinamica
     return dinamicTableServer($this->request, $q,
-      array($this, "format_list"), false
+      array($this, 'format_list'), false
     );
 
   }

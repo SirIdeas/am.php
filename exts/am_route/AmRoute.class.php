@@ -31,18 +31,18 @@ class AmRoute{
 
   // Diferentes tipos de datos aceptados
   protected static $TYPES = array(
-    "id"            => "[a-zA-Z_][a-zA-Z0-9_-]*", // Identificador
-    "any"           => ".*",                      // Cualquier valor
-    "numeric"       => "[0-9]*",                  // Numeros
-    "alphabetic"    => "[a-zA-Z]*",               // Alfabetico
-    "alphanumeric"  => "[a-zA-Z0-9]*",            // Alfanumerico
+    'id'            => '[a-zA-Z_][a-zA-Z0-9_-]*', // Identificador
+    'any'           => '.*',                      // Cualquier valor
+    'numeric'       => '[0-9]*',                  // Numeros
+    'alphabetic'    => '[a-zA-Z]*',               // Alfabetico
+    'alphanumeric'  => '[a-zA-Z0-9]*',            // Alfanumerico
   );
 
   protected static $callbacks = array(
-    "template"  => "render.template",
-    "file"      => "response.file",
-    "download"  => "response.download",
-    "assets"    => "response.assets",
+    'template'  => 'render.template',
+    'file'      => 'response.file',
+    'download'  => 'response.download',
+    'assets'    => 'response.assets',
   );
 
   // Ruta
@@ -87,10 +87,10 @@ class AmRoute{
     $regex = self::__compileRoute($route, $params, self::$TYPES);
 
     // Transformar / en  \/
-    $regex = str_replace("/", "\\/", $regex);
+    $regex = str_replace('/', "\\/", $regex);
 
     // Si no termina en barra entonces agregarla
-    if(!preg_match("/\/$/", $regex)) $regex = "{$regex}[\/]{0,1}";
+    if(!preg_match('/\/$/', $regex)) $regex = "{$regex}[\/]{0,1}";
 
     // Colocar inicio y final para formar regex
     $regex = "/^{$regex}$/";
@@ -103,11 +103,11 @@ class AmRoute{
   // y obteniendo el tipo para cada uno.
   private static function __compileRoute($route, array &$params, $types){
     // Obtener el ultimo parámetro
-    if(preg_match("/^(.*):({$types["id"]})(.*)$/", $route, $a)){
+    if(preg_match("/^(.*):({$types['id']})(.*)$/", $route, $a)){
       array_unshift($params, $a[2]);
       // Determina si el parámetro tiene un tipo asignado (numero, alfanumerico,
       // entre otros)
-      if(preg_match("/^\((.*)\)(.*)$/", $a[3], $b)){
+      if(preg_match('/^\((.*)\)(.*)$/', $a[3], $b)){
         if(isset($types[$b[1]])){
           $type = $types[$b[1]];
         }else{
@@ -117,7 +117,7 @@ class AmRoute{
 
       // Si no tiene un tipo definido entonces admitir cualquier tipo
       }else{
-        $type = $types["any"];
+        $type = $types['any'];
       }
       // Realizar llamado para el reto de la ruta.
       return self::__compileRoute($a[1], $params, $types)."({$type}){$a[3]}";
@@ -132,8 +132,8 @@ class AmRoute{
   public static final function evaluate($request){
 
     if(true === ($lastError = self::evalMatch($request,
-      Am::getAttribute("routes", array()),
-      Am::getAttribute("env", array())
+      Am::getAttribute('routes', array()),
+      Am::getAttribute('env', array())
     )))
         return true;
 
@@ -147,53 +147,53 @@ class AmRoute{
   private static final function evalMatch($request, $routes, array $env = array(), array $prev = array()){
 
     // Si se indicó la ruta como un recurso
-    if(isset($routes["resource"])){
-      $routes["control"] = $routes["resource"];
-      $routes["routes"] = array_merge(
-        itemOr("routes", $routes, array()),
+    if(isset($routes['resource'])){
+      $routes['control'] = $routes['resource'];
+      $routes['routes'] = array_merge(
+        itemOr('routes', $routes, array()),
         array(
-          ""            => "control => @index",
-          "/new"        => "control => @new",
-          "/data.json"  => "control => @data",
-          "/:id/detail" => "control => @detail",
-          "/:id/edit"   => "control => @edit",
-          "/:id/delete" => "control => @delete",
-          "/cou"        => "control => @cou",
-          "/search"     => "control => @search",
+          ''            => 'control => @index',
+          '/new'        => 'control => @new',
+          '/data.json'  => 'control => @data',
+          '/:id/detail' => 'control => @detail',
+          '/:id/edit'   => 'control => @edit',
+          '/:id/delete' => 'control => @delete',
+          '/cou'        => 'control => @cou',
+          '/search'     => 'control => @search',
         )
       );
       // Se elimina el parametro resource para que no pueda vuelva a entrar en
       // esta condicion
-      unset($routes["resource"]);
+      unset($routes['resource']);
     }
 
     $lastError = false;
 
     $methods = array(
-      "template", "file", "download", "assets", "redirect",
-      "goto", "control", "app", "resource"
+      'template', 'file', 'download', 'assets', 'redirect',
+      'goto', 'control', 'app', 'resource'
     );
 
     // Si tiene rutas internas
-    if(isset($routes["routes"])){
-      foreach($routes["routes"] as $key => $route){
+    if(isset($routes['routes'])){
+      foreach($routes['routes'] as $key => $route){
 
         // Si la ruta es una cadena de caracteres
         // Se parte la cadena con el caracter # el primer paremtro es un key y
         // el segundo el valor
         if(is_string($route)){
-          list($prop, $value) = explode(" => ", $route);
+          list($prop, $value) = explode(' => ', $route);
           $route = array($prop => $value);
         }
 
         // Asignar key como ruta si no tiene ruta asignada
-        $route["route"] = itemOr("route", $route, $key);
+        $route['route'] = itemOr('route', $route, $key);
 
         // Concatenar los parametros de la ruta parametro con los de la ruta
         // hija
         foreach($routes as $key => $value)
           if(in_array($key, $methods))
-            $route[$key] = $value . itemOr($key, $route, "");
+            $route[$key] = $value . itemOr($key, $route, '');
 
         // Llamar para la ruta interna
         $newError = self::evalMatch($request, $route, $env, $routes);
@@ -212,11 +212,11 @@ class AmRoute{
     // No tiene rutas hijas o ninguna de las rutas hijas atendió la pentición
 
     // Si no esta indicada la ruta se toma el indice de la ruta como indice
-    $routes["route"] = itemOr("route", $prev, "") .
-                       itemOr("route", $routes, "");
+    $routes['route'] = itemOr('route', $prev, '') .
+                       itemOr('route', $routes, '');
 
     // Crear instancia de la ruta.
-    $r = new self($routes["route"]);
+    $r = new self($routes['route']);
 
     // Si hace match con la peticion
     if(false !== ($params = $r->match($request))){
@@ -248,17 +248,17 @@ class AmRoute{
             $lastError = "not fount {$method} : $destiny";
 
           // Redireccion de URL
-          }else if($method === "redirect" || $method === "goto"){
+          }else if($method === 'redirect' || $method === 'goto'){
 
             $method = itemOr($method, array(
-              "redirect" => "redirect",
-              "goto" => "gotoUrl",
+              'redirect' => 'redirect',
+              'goto' => 'gotoUrl',
             ));
             Am::$method($destiny);
             return true;
 
           // controller
-        }else if($method === "control"){
+        }else if($method === 'control'){
 
             // Responder como una función
             if(function_exists($destiny)){
@@ -270,23 +270,23 @@ class AmRoute{
 
               // Respuesta como template, file o assets
 
-            }elseif(preg_match("/^(.*)::(.*)$/", $destiny, $a)){
+            }elseif(preg_match('/^(.*)::(.*)$/', $destiny, $a)){
               array_shift($a);
 
-              if(call_user_func_array("method_exists", $a)){
+              if(call_user_func_array('method_exists', $a)){
                 $params[] = $env;
                 call_user_func_array($a, $params);
                 return true;
               }
 
               // El callback no existe
-              $lastError = "not fount callback {$a[0]}::$a[1]";
+              $lastError = "not fount callback {$a[0]}::{$a[1]}";
 
-            }elseif(preg_match("/^(.*)@(.*)$/", $destiny, $a)){
+            }elseif(preg_match('/^(.*)@(.*)$/', $destiny, $a)){
               array_shift($a);
 
               // Despachar con controlador
-              if(Am::call("response.control", $a[0], $a[1], $params, $env)
+              if(Am::call('response.control', $a[0], $a[1], $params, $env)
                 === true)
                   return true;
 

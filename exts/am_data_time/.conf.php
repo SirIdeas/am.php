@@ -25,8 +25,8 @@
  
 return array(
 
-  "files" => array(
-    "AmDateTime.class"
+  'files' => array(
+    'AmDateTime.class'
   )
 
 );

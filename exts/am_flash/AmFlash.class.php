@@ -35,9 +35,9 @@ final class AmFlash{
   // Obtener todos los mensajes
   public final static function all(){
     // Obtener todos los mensajes
-    $ret = AmSession::get("flash");
+    $ret = AmSession::get('flash');
     // Eliminar los mensajes de session
-    AmSession::delete("flash");
+    AmSession::delete('flash');
     // Retornar los mensajes
     return $ret? $ret : array();
   }
@@ -46,7 +46,7 @@ final class AmFlash{
   public final static function get($index){
 
     // Obtener todos los mensajes flash
-    $flash = AmSession::get("flash");
+    $flash = AmSession::get('flash');
 
     // Si esta definida la lista de mensajes solicitada
     if(isset($flash[$index])){
@@ -56,7 +56,7 @@ final class AmFlash{
 
       // Eliminarlos se sesion
       unset($flash[$index]);
-      AmSession::set("flash", $flash);
+      AmSession::set('flash', $flash);
 
       // Retornar los obtenido
       return $ret;
@@ -68,7 +68,7 @@ final class AmFlash{
 
   // Agrega un mensaje a los Flash
   public final static function add($index, $message){
-    $flash = AmSession::get("flash");
+    $flash = AmSession::get('flash');
 
     // Si no ha sido iniciada se inicializa
     if(!$flash)
@@ -83,7 +83,7 @@ final class AmFlash{
     $flash[$index][] = $message;
 
     // Guardar arra modificado en en sesion
-    AmSession::set("flash", $flash);
+    AmSession::set('flash', $flash);
 
   }
 
@@ -95,9 +95,9 @@ final class AmFlash{
   }
 
   // Funciones obtener/agregar para cada tipo de mensaje
-  public final static function success($msg = null){ return self::_getAdd("success", $msg); }
-  public final static function info($msg = null){    return self::_getAdd("info", $msg); }
-  public final static function warning($msg = null){ return self::_getAdd("warning", $msg); }
-  public final static function danger($msg = null){  return self::_getAdd("danger", $msg); }
+  public final static function success($msg = null){ return self::_getAdd('success', $msg); }
+  public final static function info($msg = null){    return self::_getAdd('info', $msg); }
+  public final static function warning($msg = null){ return self::_getAdd('warning', $msg); }
+  public final static function danger($msg = null){  return self::_getAdd('danger', $msg); }
 
 }

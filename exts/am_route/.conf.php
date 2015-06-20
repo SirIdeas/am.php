@@ -25,19 +25,19 @@
 
 return array(
 
-  "extend" => array(
-    "routes" => array(
-      "env" => array(),
-      "routes" => array()
+  'extend' => array(
+    'routes' => array(
+      'env' => array(),
+      'routes' => array()
     ),
   ),
 
-  "files" => array(
-    "AmRoute.class"
+  'files' => array(
+    'AmRoute.class'
   ),
 
-  "mergeFunctions" => array(
-    "routes" => "array_merge_recursive",
+  'mergeFunctions' => array(
+    'routes' => 'array_merge_recursive',
   )
 
 );
