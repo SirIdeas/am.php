@@ -32,7 +32,7 @@ final class AmGenerator{
   // Generar clase base para un model
   public final static function classModelBase(AmTable $table){
 
-    $existMethods = get_class_methods("AmModel");
+    $existMethods = get_class_methods('AmModel');
     $fields = array_keys((array)$table->getFields());
     $newMethods = array();
     $lines = array();
@@ -41,63 +41,63 @@ final class AmGenerator{
 
     $lines[] = "class {$table->getClassNameModelBase()} extends AmModel{\n";
 
-    $lines[] = "  protected static";
-    $lines[] = "    \$sourceName = \"{$table->getSource()->getName()}\",";
-    $lines[] = "    \$tableName  = \"{$table->getTableName()}\";\n";
+    $lines[] = '  protected static';
+    $lines[] = "    \$sourceName = '{$table->getSource()->getName()}',";
+    $lines[] = "    \$tableName  = '{$table->getTableName()}';\n";
 
     // Add getters methods
-    $lines[] = "  // GETTERS";
+    $lines[] = '  // GETTERS';
     foreach($fields as $attr){
       $methodName = "get_{$attr}";
-      $prefix = in_array($methodName, $existMethods)? "//" : "";
+      $prefix = in_array($methodName, $existMethods)? '//' : '';
       $existMethods[] = $methodName;
       $lines[] = "  {$prefix}public function {$methodName}(){ return \$this->{$attr}; }";
     }
-    $lines[] = "";
+    $lines[] = '';
 
     // Add setters methods
-    $lines[] = "  // SETTERS";
+    $lines[] = '  // SETTERS';
     foreach($fields as $attr){
       $methodName = "set_{$attr}";
-      $prefix = in_array($methodName, $existMethods)? "//" : "";
+      $prefix = in_array($methodName, $existMethods)? '//' : '';
       $existMethods[] = $methodName;
       $lines[] = "  {$prefix}public function {$methodName}(\$value){ \$this->$attr = \$value; return \$this; }";
     }
-    $lines[] = "";
+    $lines[] = '';
 
     // Add references to this class
     $methodsAddeds = array();
     foreach(array_keys((array)$table->getReferencesBy()) as $relation){
-      $prefix = in_array($relation, $existMethods)? "//" : "";
+      $prefix = in_array($relation, $existMethods)? '//' : '';
       $existMethods[] = $relation;
       $lines[] = "  {$prefix}public function $relation(){ return \$this->getTable()->getReferencesTo()->{$relation}->getQuery(\$this); }";
     }
 
     // Add validators if has any
     if(!empty($methodsAddeds)){
-      $lines[] = "  // REFERENCES BY";
+      $lines[] = '  // REFERENCES BY';
       $lines = array_merge($lines, $methodsAddeds);
-      $lines[] = "";
+      $lines[] = '';
     }
 
     // Add references to other class
     $methodsAddeds = array();
     foreach(array_keys((array)$table->getReferencesTo()) as $relation){
-      $prefix = in_array($relation, $existMethods)? "//" : "";
+      $prefix = in_array($relation, $existMethods)? '//' : '';
       $existMethods[] = $relation;
       $methodsAddeds[] = "  {$prefix}public function $relation(){ return \$this->getTable()->getReferencesTo()->{$relation}->getQuery(\$this)->getRow(); }";
     }
 
     // Add validators if has any
     if(!empty($methodsAddeds)){
-      $lines[] = "  // REFERENCES TO";
+      $lines[] = '  // REFERENCES TO';
       $lines = array_merge($lines, $methodsAddeds);
-      $lines[] = "";
+      $lines[] = '';
     }
 
     // Method for customization model
-    $lines[] = "  // METHOD FOR INIT MODEL";
-    $lines[] = "  protected function initModel(){";
+    $lines[] = '  // METHOD FOR INIT MODEL';
+    $lines[] = '  protected function initModel(){';
     $lines[] = "    parent::initModel();\n";
 
     // Add vaidators for fields
@@ -110,55 +110,55 @@ final class AmGenerator{
       $fieldName  = $f->getName();
 
       // Integer validator, dates, times and Bit validator
-      if(in_array($type, array("integer", "bit", "date", "datetime", "timestamp", "time")))
-        $validators[] = "    \$this->setValidator(\"{$fieldName}\", \"{$type}\");";
+      if(in_array($type, array('integer', 'bit', 'date', 'datetime', 'timestamp', 'time')))
+        $validators[] = "    \$this->setValidator('{$fieldName}', '{$type}');";
 
       // If have validate strlen of value.
-      if(in_array($type, array("char", "varchar", "bit")))
-        $validators[] = "    \$this->setValidator(\"{$fieldName}\", \"max_length\",".
-                              "array(\"max\" => $len));";
+      if(in_array($type, array('char', 'varchar', 'bit')))
+        $validators[] = "    \$this->setValidator('{$fieldName}', 'max_length',".
+                              "array('max' => $len));";
 
       // To integer fields add range validator
-      if($type == "integer"){
+      if($type == 'integer'){
         // $max = pow(256, $len);
         // $min = $f->isUnsigned() ? 0 : -($max>>1);
         // $max = $min + $max - 1;
-        // $prefix = is_int($min) && is_int($max)? "" : "// ";
+        // $prefix = is_int($min) && is_int($max)? '' : '// ';
         // // if the max limit is integer yet then add validator
-        // $validators[] = "    {$prefix}\$this->setValidator(\"{$fieldName}\", \"range\", ".
-        //                     " array(\"min\" => $min, \"max\" => $max));";
+        // $validators[] = "    {$prefix}\$this->setValidator('{$fieldName}', 'range', ".
+        //                     " array('min' => {$min}, 'max' => {$max}));";
 
       // To text fiels add strlen validator
-      }elseif($type == "text"){
+      }elseif($type == 'text'){
         $len = pow(256, $len) - 1;
-        $validators[] = "    \$this->setValidator(\"{$fieldName}\", \"max_length\", ".
-                              "array(\"max\" => $len));";
+        $validators[] = "    \$this->setValidator('{$fieldName}', 'max_length', ".
+                              "array('max' => $len));";
 
       // To decimal fiels add float validator
-      }elseif($type == "decimal"){
+      }elseif($type == 'decimal'){
         $precision = $f->getPrecision();
         $decimals = $f->getScale();
-        $validators[] = "    \$this->setValidator(\"{$fieldName}\", \"float\", ".
-                              "array(\"precision\" => $precision, \"decimals\" => $decimals));";
+        $validators[] = "    \$this->setValidator('{$fieldName}', 'float', ".
+                              "array('precision' => {$precision}, 'decimals' => {$decimals}));";
       }
 
       // If is a PK not auto increment adde unique validator
       if($f->isPrimaryKey() && count($table->getPks()) == 1)
-        $validators[] = "    \$this->setValidator(\"{$fieldName}\", \"unique\");";
+        $validators[] = "    \$this->setValidator('{$fieldName}', 'unique');";
 
       // Add notnull validator if no added any validators
       if(empty($validators) && !$f->allowNull())
-        $validators[] = "    \$this->setValidator(\"{$fieldName}\", \"null\");";
+        $validators[] = "    \$this->setValidator('{$fieldName}', 'null');";
 
       // Add validators if has any
       if(!empty($validators)){
         $lines[] = "    // {$fieldName}";
         $lines = array_merge($lines, $validators);
-        $lines[] = "";
+        $lines[] = '';
       }
 
       switch ($type){
-        case "year":
+        case 'year':
         break;
       }
 
@@ -172,61 +172,61 @@ final class AmGenerator{
         $colName = array_keys($cols);
         $f = $table->getField($colName[0]);
         if(!$f->allowNull())
-          $validators[] = "    \$this->setValidator(\"{$f->getName()}\", \"in_query\", array(\"query\" => AmORM::table(\"{$r->getTable()}\", \"{$table->getSource()->getName()}\")->all(), \"field\" => \"{$cols[$colName[0]]}\"));";
+          $validators[] = "    \$this->setValidator('{$f->getName()}', 'in_query', array('query' => AmORM::table('{$r->getTable()}', '{$table->getSource()->getName()}')->all(), 'field' => '{$cols[$colName[0]]}'));";
       }
     }
 
     // Add validators if has any
     if(!empty($validators)){
-      $lines[] = "    // RELATIONS";
+      $lines[] = '    // RELATIONS';
       $lines = array_merge($lines, $validators);
-      $lines[] = "";
+      $lines[] = '';
     }
 
     // Add validator of uniques group values
     $validators = array();
     foreach($table->getUniques() as $constraint => $cols){
       if(count($cols) > 1){
-        $cols = implode("\", \"", $cols);
-        $validators[] = "    \$this->setValidator(\"{$constraint}\", \"unique\", ".
-                              "array(\"fields\" => array(\"$cols\")));";
+        $cols = implode('", "', $cols);
+        $validators[] = "    \$this->setValidator('{$constraint}', 'unique', ".
+                              "array('fields' => array('{$cols}')));";
       }
     }
 
     // Add validators if has any
     if(!empty($validators)){
-      $lines[] = "    // UNIQUE";
+      $lines[] = '    // UNIQUE';
       $lines = array_merge($lines, $validators);
-      $lines[] = "";
+      $lines[] = '';
     }
 
     $lines[] = "  }\n";
 
     // Method to get table of model
-    $lines[] = "  // GET TABLE OF MODEL";
-    $lines[] = "  public static function me(){";
-    $lines[] = "    return AmORM::table(\"{$table->getTableName()}\", \"{$table->getSource()->getName()}\");";
+    $lines[] = '  // GET TABLE OF MODEL';
+    $lines[] = '  public static function me(){';
+    $lines[] = "    return AmORM::table('{$table->getTableName()}', '{$table->getSource()->getName()}');";
     $lines[] = "  }\n";
 
     // Method to get query to all records of model
-    $lines[] = "  // GET QUERY TO ALL RECORDS";
-    $lines[] = "  public static function all(){";
-    $lines[] = "    return self::me()->all();";
+    $lines[] = '  // GET QUERY TO ALL RECORDS';
+    $lines[] = '  public static function all(){';
+    $lines[] = '    return self::me()->all();';
     $lines[] = "  }\n";
 
     // Method to get query to all records of model
-    $lines[] = "  // GET QUERY TO SELECT";
+    $lines[] = '  // GET QUERY TO SELECT';
     $lines[] = "  public static function q(\$limit, \$offset){";
     $lines[] = "    return self::me()->q(\$limit, \$offset);";
     $lines[] = "  }\n";
 
     // Method to get query to all records of model
-    $lines[] = "  // GET QUERY TO SEARCH";
-    $lines[] = "  public static function qSearch(\$txt, \$limit, \$offset){";
-    $lines[] = "    return false;";
+    $lines[] = '  // GET QUERY TO SEARCH';
+    $lines[] = '  public static function qSearch($txt, $limit, $offset){';
+    $lines[] = '    return false;';
     $lines[] = "  }\n";
 
-    $lines[] = "}";
+    $lines[] = '}';
 
     // Preparacion de los metodos Get
     return implode("\n", $lines);

@@ -30,7 +30,7 @@
 abstract class AmSource extends AmObject{
 
   protected static
-    $ORM_FOLDER = "model";
+    $ORM_FOLDER = 'model';
 
   // Propiedades
   protected
@@ -56,14 +56,14 @@ abstract class AmSource extends AmObject{
 
     // Asignar solo el nombre
     parent::__construct(array(
-      "name" => $params["name"]
+      'name' => $params['name']
     ));
 
     // Mezclar con los valores particulares de la fuente
     $params = array_merge($this->getConf(), $params);
 
     // Eliminar el nombre porque ya se asignó
-    unset($params["name"]);
+    unset($params['name']);
 
     // Llamar al constructor con los nuevos argumentos
     parent::__construct($params);
@@ -111,56 +111,56 @@ abstract class AmSource extends AmObject{
 
   // Obtener la ruta de la carpeta para las clases del ORM de la BD actual
   public function getFolder(){
-    return self::getFolderOrm() . "/" . $this->getName();
+    return self::getFolderOrm() . '/' . $this->getName();
   }
 
   // Retorna donde se guarda la configuración de la fuente
   public function getPathConf(){
-    return $this->getFolder() . "/" . AmORM::underscor($this->getName()) . ".conf";
+    return $this->getFolder() . '/' . AmORM::underscor($this->getName()) . '.conf';
   }
 
   // Devuelve la configuracion particular de la fuente
   public function getConf(){
-    $path = $this->getPathConf() . ".php";
+    $path = $this->getPathConf() . '.php';
     return AmCoder::read($path);
   }
 
   // Obtener la carpeta de archivos bases para un tabla
   public function getFolderModelBase($model){
-    return $this->getFolder() . "/" . AmORM::underscor($model);
+    return $this->getFolder() . '/' . AmORM::underscor($model);
   }
 
   // // Nombre de las clases relacionadas a una tabla
   public function getClassNameModelBase($model){
-    return $this->getPrefix() . AmORM::camelCase($model, true)."Base";
+    return $this->getPrefix() . AmORM::camelCase($model, true).'Base';
   }
 
   // Devuelve la direccion del archivo de configuracion
   public function getPathConfModelBase($model){
-    return $this->getFolderModelBase($model) . "/". AmORM::underscor($model) .".conf";
+    return $this->getFolderModelBase($model) . '/'. AmORM::underscor($model) .'.conf';
   }
 
   // Devuelve la dirección de la clase del model Base
   public function getPathClassModelBase($model){
-    return $this->getFolderModelBase($model) . "/". $this->getClassNameModelBase($model) .".class";
+    return $this->getFolderModelBase($model) . '/'. $this->getClassNameModelBase($model) .'.class';
   }
 
   // Inidic si todas las clases y archivos de un model existes
   public function existsModel($model){
-    return is_file($this->getPathConfModelBase($model) . ".php")
-        && is_file($this->getPathClassModelBase($model) . ".php");
+    return is_file($this->getPathConfModelBase($model) . '.php')
+        && is_file($this->getPathClassModelBase($model) . '.php');
   }
 
   // Obtener la configuracion del archivo de configuracion propio de un model
   public function getTableConf($model){
-    return AmCoder::decode($this->getPathConfModelBase($model).".php");
+    return AmCoder::decode($this->getPathConfModelBase($model).'.php');
   }
 
   // Crea el archivo de configuracion para una fuente
   public function createFileConf($rw = true){
 
     // Obtener de el nombre del archivo destino
-    $path = $this->getPathConf() . ".php";
+    $path = $this->getPathConf() . '.php';
     if(!is_file($path) || $rw){
       AmCoder::write($path, $this->toArray());
       return true;
@@ -174,7 +174,7 @@ abstract class AmSource extends AmObject{
     $ret = array(); // Para retorno
 
     $tables = $this->newQuery($this->sqlGetTables())
-                   ->getCol("tableName");
+                   ->getCol('tableName');
 
     foreach ($tables as $t){
       // Obtener instancia de la tabla
@@ -192,17 +192,17 @@ abstract class AmSource extends AmObject{
 
      // Para retorno
     $ret = array(
-      "source" => $this->createFileConf(),
-      "tables" => array(),
+      'source' => $this->createFileConf(),
+      'tables' => array(),
     );
 
-    $tables = $this->newQuery($this->sqlGetTables())->getCol("tableName");
+    $tables = $this->newQuery($this->sqlGetTables())->getCol('tableName');
 
     foreach ($tables as $t){
       // Obtener instancia de la tabla
       $table = $this->describeTable($t);
       // Crear modelo
-      $ret["tables"][$t] = $table->createClassModels();
+      $ret['tables'][$t] = $table->createClassModels();
     }
 
     return $ret;
@@ -238,9 +238,9 @@ abstract class AmSource extends AmObject{
 
     // Cambiar la condificacion con la que se trabajará
     if($ret){
-      $this->setServerVar("character_set_server", $this->realScapeString($this->getCharset()));
+      $this->setServerVar('character_set_server', $this->realScapeString($this->getCharset()));
       // REVISAR
-      $this->execute("set names 'utf8'");
+      $this->execute('set names \'utf8\'');
     }
 
     return $ret;
@@ -258,7 +258,7 @@ abstract class AmSource extends AmObject{
     $port = $this->getPort();
     $defPort = $this->getDefaultPort();
 
-    return $this->getServer() . ":" . (!empty($port) ? $port : $defPort);
+    return $this->getServer() . ':' . (!empty($port) ? $port : $defPort);
 
   }
 
@@ -289,7 +289,7 @@ abstract class AmSource extends AmObject{
       return $table;
 
     // Retornar el nombre de la tabla con la BD
-    return $this->getParseNameDatabase().".".$table;
+    return $this->getParseNameDatabase().'.'.$table;
 
   }
 
@@ -300,7 +300,7 @@ abstract class AmSource extends AmObject{
   }
 
   // Crea una instancia de un query
-  public function newQuery($from = null, $as = "q"){
+  public function newQuery($from = null, $as = 'q'){
     $q = new AmQuery(); // Crear instancia
     $q->setSource($this);  // Asignar fuente
     if(!empty($from)) $q->fromAs($from, $as);  // Asignar el from de la consulta
@@ -319,21 +319,21 @@ abstract class AmSource extends AmObject{
         // Si no convetir a string
         $sqls[] = (string)$q;
 
-    return $this->execute(implode(";", $sqls));
+    return $this->execute(implode(';', $sqls));
 
   }
 
   // Devuelve un array con el listado de tablas de la BD
   public function getTablesFromSchema(){
     return $this->newQuery($this->sqlGetTables())
-                ->getResult("array");
+                ->getResult('array');
   }
 
   // Devuelve un array con el listado de tablas
   public function getTableDescription($table){
     return $this->newQuery($this->sqlGetTables())
-                ->where("tableName = '$table'")
-                ->getRow("array");
+                ->where("tableName = '{$table}'")
+                ->getRow('array');
   }
 
   // Devuelve la descripcion completa de una tabla
@@ -348,7 +348,7 @@ abstract class AmSource extends AmObject{
       return false;
 
     // Asignar fuente
-    $table["source"] = $this;
+    $table['source'] = $this;
 
     // Crear instancia anonima de la tabla
     $table = new AmTable($table);
@@ -363,31 +363,31 @@ abstract class AmSource extends AmObject{
   // Obtener un listado de los campos primarios de una tabla
   public function getTablePrimaryKey(AmTable $t){
     return $this->newQuery($this->sqlGetTablePrimaryKeys($t))
-      ->getCol("name");
+      ->getCol('name');
   }
 
   // Obtener un listado de las columnas de una tabla
   public function getNativeTableColumns(AmTable $t){
     return $this->newQuery($this->sqlGetTableColumns($t))
-      ->getResult("array");
+      ->getResult('array');
   }
 
   // Obtener un listado de las columnas de una tabla
   public function getTableColumns(AmTable $t){
     return $this->newQuery($this->sqlGetTableColumns($t))
-      ->getResult("array", array($this, "sanitize"));
+      ->getResult('array', array($this, 'sanitize'));
   }
 
   // Obtener un listado de las columnas de una tabla
   public function getTableUniques(AmTable $t){
     $uniques = $this->newQuery($this->sqlGetTableUniques($t))
-      ->getResult("array");
+      ->getResult('array');
 
     // Group fields of unique indices for name.
     $realUniques = array();
     foreach ($uniques as $value) {
-      $realUniques[$value["name"]] = itemOr($value["name"], $realUniques, array());
-      $realUniques[$value["name"]][] = $value["columnName"];
+      $realUniques[$value['name']] = itemOr($value['name'], $realUniques, array());
+      $realUniques[$value['name']][] = $value['columnName'];
     }
     return $realUniques;
 
@@ -402,12 +402,12 @@ abstract class AmSource extends AmObject{
     $sourceName = $this->getName();
 
     // Obtener los ForeignKeys
-    $fks = $this->newQuery($this->sqlGetTableForeignKeys($t))->getResult("array");
+    $fks = $this->newQuery($this->sqlGetTableForeignKeys($t))->getResult('array');
 
     foreach($fks as $fk){
 
       // Dividir el nombre del FK
-      $name = explode(".", $fk["name"]);
+      $name = explode('.', $fk['name']);
 
       // Obtener el ultimo elemento
       $name = array_pop($name);
@@ -415,14 +415,14 @@ abstract class AmSource extends AmObject{
       // Si no existe el elmento en el array se crea
       if(!isset($ret[$name])){
         $ret[$name] = array(
-          "source" => $sourceName,
-          "table" => $fk["toTable"],
-          "columns" => array()
+          'source' => $sourceName,
+          'table' => $fk['toTable'],
+          'columns' => array()
         );
       }
 
       // Agregar la columna a la lista de columnas
-      $ret[$name]["columns"][$fk["columnName"]] = $fk["toColumn"];
+      $ret[$name]['columns'][$fk['columnName']] = $fk['toColumn'];
 
     }
 
@@ -439,13 +439,13 @@ abstract class AmSource extends AmObject{
     $sourceName = $this->getName();
 
     // Obtener las referencias a una tabla
-    $fks = $this->newQuery($this->sqlGetTableReferences($t))->getResult("array");
+    $fks = $this->newQuery($this->sqlGetTableReferences($t))->getResult('array');
 
     // Recorrer los FKs
     foreach($fks as $fk){
 
       // Dividir el nombre del FK
-      $name = explode(".", $fk["name"]);
+      $name = explode('.', $fk['name']);
 
       // Obtener el ultimo elemento
       $name = array_shift($name);
@@ -453,14 +453,14 @@ abstract class AmSource extends AmObject{
       // Si no existe el elmento en el array se crea
       if(!isset($ret[$name])){
         $ret[$name] = array(
-          "source" => $sourceName,
-          "table" => $fk["fromTable"],
-          "columns" => array()
+          'source' => $sourceName,
+          'table' => $fk['fromTable'],
+          'columns' => array()
         );
       }
 
       // Agregar la columna a la lista de columnas
-      $ret[$name]["columns"][$fk["toColumn"]] = $fk["columnName"];
+      $ret[$name]['columns'][$fk['toColumn']] = $fk['columnName'];
 
     }
 
@@ -485,7 +485,7 @@ abstract class AmSource extends AmObject{
 
   // Obtener la información de la BD
   public function getInfo(){
-    return $this->newQuery($this->sqlGetInfo())->getRow("array");
+    return $this->newQuery($this->sqlGetInfo())->getRow('array');
   }
 
   // Crear tabla
@@ -508,7 +508,7 @@ abstract class AmSource extends AmObject{
           return true;
 
         // Retornar error de MSYL
-        return $this->getErrNo() . ": " . $this->getError();
+        return $this->getErrNo() . ': ' . $this->getError();
 
       }
 
@@ -526,12 +526,12 @@ abstract class AmSource extends AmObject{
 
   // Vaciar tabla
   public function truncate(AmTable $t, $ignoreFK = false){
-    $sql = "";
+    $sql = '';
     if($ignoreFK === true)
-      $sql .= $this->setServerVar("FOREIGN_KEY_CHECKS", 0);
+      $sql .= $this->setServerVar('FOREIGN_KEY_CHECKS', 0);
     $ret = $this->execute($this->sqlTruncate($t));
     if($ignoreFK === true)
-      $sql .= $this->setServerVar("FOREIGN_KEY_CHECKS", 1);
+      $sql .= $this->setServerVar('FOREIGN_KEY_CHECKS', 1);
     return false !== $ret;
   }
 
@@ -606,7 +606,7 @@ abstract class AmSource extends AmObject{
 
     // Si el SQL está vacío o si se genera un error en la insercion
     // se devuelve falso
-    if(trim($sql) == "" || $this->execute($sql) === false)
+    if(trim($sql) == '' || $this->execute($sql) === false)
       return false;
 
     // Obtener el ultimo ID insertado
@@ -625,8 +625,8 @@ abstract class AmSource extends AmObject{
     // Obtener atributos de la BD locales
     $conf = $this->getConf();
     $conf = array(
-      "charset" => itemOr("charset", $conf),
-      "collage" => itemOr("collage", $conf),
+      'charset' => itemOr('charset', $conf),
+      'collage' => itemOr('collage', $conf),
     );
 
     // Obtener atributos del esquema en la BD
@@ -641,7 +641,7 @@ abstract class AmSource extends AmObject{
     $tables = array_unique(array_merge(
       $this->getTableNames(),
       $this->newQuery($this->sqlGetTables())
-            ->getCol("tableName")
+            ->getCol('tableName')
     ));
 
     foreach($tables as $t)
@@ -650,9 +650,9 @@ abstract class AmSource extends AmObject{
 
     if(count($tablesDiff)>0)
       if($diff === true)
-        $diff = array("tables" => $tablesDiff);
+        $diff = array('tables' => $tablesDiff);
       else
-        $diff["tables"] = $tablesDiff;
+        $diff['tables'] = $tablesDiff;
 
     print_r($diff);
 
@@ -692,28 +692,28 @@ abstract class AmSource extends AmObject{
     $tablesNames = array();
     $tables = $this->getTablesFromSchema();
     foreach ($tables as $table) {
-      $tablesNames[] = $table["tableName"];
+      $tablesNames[] = $table['tableName'];
     }
 
     // Obtener la informacion de la BD en los esquemas
     $info = $this->getInfo();
 
     // Mezclar el Charset y el Collage
-    $info["charset"] = ($charset = $this->getCharset())===null? $info["charset"] : $charset;
-    $info["collage"] = ($collage = $this->getCollage())===null? $info["collage"] : $collage;
+    $info['charset'] = ($charset = $this->getCharset())===null? $info['charset'] : $charset;
+    $info['collage'] = ($collage = $this->getCollage())===null? $info['collage'] : $collage;
 
     return array(
-      "name" => $this->getName(),
-      "prefix" => $this->getPrefix(),
-      "driver" => $this->getDriver(),
-      "database" => $this->getDatabase(),
-      "server" => $this->getServer(),
-      "port" => $this->getPort(),
-      "user" => $this->getUser(),
-      "pass" => $this->getPass(),
-      "charset" => $info["charset"],
-      "collage" => $info["collage"],
-      "tableNames" => $tablesNames,
+      'name' => $this->getName(),
+      'prefix' => $this->getPrefix(),
+      'driver' => $this->getDriver(),
+      'database' => $this->getDatabase(),
+      'server' => $this->getServer(),
+      'port' => $this->getPort(),
+      'user' => $this->getUser(),
+      'pass' => $this->getPass(),
+      'charset' => $info['charset'],
+      'collage' => $info['collage'],
+      'tableNames' => $tablesNames,
     );
   }
 

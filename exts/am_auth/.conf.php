@@ -25,18 +25,18 @@
 
 return array(
 
-  "extend" => array(
-    "control" => array(
-      "AmAuth" => dirname(__FILE__) . "/",
+  'extend' => array(
+    'control' => array(
+      'AmAuth' => dirname(__FILE__) . '/',
     ),
   ),
 
-  "requires" => array(
-    "exts/am_control/",
-    "exts/am_credentials/",
-    "exts/am_flash/",
-    "exts/am_mailer/",
-    "exts/am_token/",
+  'requires' => array(
+    'exts/am_control/',
+    'exts/am_credentials/',
+    'exts/am_flash/',
+    'exts/am_mailer/',
+    'exts/am_token/',
   ),
 
 );

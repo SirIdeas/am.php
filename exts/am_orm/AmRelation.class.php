@@ -26,7 +26,7 @@
 class AmRelation extends AmObject{
 
   protected
-    $source = "default",
+    $source = 'default',
     $table = null,
     $columns = array();
 
@@ -42,7 +42,7 @@ class AmRelation extends AmObject{
     $q = AmORM::table($this->getTable(), $this->getSource())->all();
 
     foreach($this->getColumns() as $from => $to){
-      $q->where("$to='{$model->$from}'");
+      $q->where("{$to}='{$model->$from}'");
     }
 
     return $q;
@@ -53,9 +53,9 @@ class AmRelation extends AmObject{
   public function toArray(){
 
     return array(
-      "source" => $this->getSource(),
-      "table" => $this->getTable(),
-      "columns" => $this->getColumns()
+      'source' => $this->getSource(),
+      'table' => $this->getTable(),
+      'columns' => $this->getColumns()
     );
 
   }

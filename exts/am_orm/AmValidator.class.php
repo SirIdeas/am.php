@@ -40,23 +40,23 @@ class AmValidator extends AmObject{
     $force = false,   // Forzar
 
     // Sustituciones de atributos
-    $sustitutions = array("value" => "value", "fieldname" => "name");
+    $sustitutions = array('value' => 'value', 'fieldname' => 'name');
 
   // Constructor de validador
   public function __construct($data = null) {
 
-    if(!isset($data["message"])){
+    if(!isset($data['message'])){
 
       // Obtener la configuraciones de los validators
       if(!isset(self::$conf))
-        self::$conf = Am::getAttribute("validators", array());
+        self::$conf = Am::getAttribute('validators', array());
 
       // Obtener el nombre del validator
       $validatorName = strtolower($this->getValidatorName());
 
       // Obtener el mensaje de la configuracion
-      if(isset(self::$conf["message"][$validatorName]))
-        $data["message"] = self::$conf["message"][$validatorName];
+      if(isset(self::$conf['message'][$validatorName]))
+        $data['message'] = self::$conf['message'][$validatorName];
 
     }
 
@@ -111,9 +111,9 @@ class AmValidator extends AmObject{
     foreach($substitutions as $substr => $for){
       $value = $this->$for;
       if(is_array($value)){
-        $value = implode(",", $value);
+        $value = implode(',', $value);
       }
-      $ret = str_replace("[$substr]", $value, $ret);
+      $ret = str_replace("[{$substr}]", $value, $ret);
     }
 
     return $ret;

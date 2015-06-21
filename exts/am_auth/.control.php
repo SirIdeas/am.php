@@ -27,31 +27,31 @@ return array(
 
   //////////////////////////////////////////////////////////////////////////////
   // Parametros del recursos
-  "authClass" => null,
+  'authClass' => null,
 
   //////////////////////////////////////////////////////////////////////////////
   // RSA Params
-  "keyPrivate" => null,
-  "keyPublic" => null,
-  "keyPassPhrase" => null,
+  'keyPrivate' => null,
+  'keyPublic' => null,
+  'keyPassPhrase' => null,
 
   //////////////////////////////////////////////////////////////////////////////
   // Acciones permitidas
-  "allow" => array(
-    "login"    => true,
-    "signup"    => true,
-    "logout"    => true,
-    "recovery"  => true,
-    "reset"     => true,
+  'allow' => array(
+    'login'    => true,
+    'signup'    => true,
+    'logout'    => true,
+    'recovery'  => true,
+    'reset'     => true,
   ),
 
   //////////////////////////////////////////////////////////////////////////////
   // Asegurar los valores para los siguientes metodos
-  "prefixs" => array(
-    "actions"     => "action_",
-    "getActions"  => "get_",
-    "postActions" => "post_",
-    "filters"     => "filter_",
+  'prefixs' => array(
+    'actions'     => 'action_',
+    'getActions'  => 'get_',
+    'postActions' => 'post_',
+    'filters'     => 'filter_',
   ),
 
 );

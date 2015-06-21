@@ -79,7 +79,7 @@ class AmCoder{
 
     $ret = array();
     foreach($data as  $key => $value){
-      $key = explode("_", $key);
+      $key = explode('_', $key);
       self::prepareInner($ret, $key, $value);
     }
 
@@ -93,7 +93,7 @@ class AmCoder{
     if(empty($path)){
       if(count($data)>1)
         return 1;
-      if(isset($data["_"]) || empty($data))
+      if(isset($data['_']) || empty($data))
         return 2;
     }
 
@@ -104,14 +104,14 @@ class AmCoder{
     }else{
       if(!is_array($data[$key])){
         $data[$key] = array(
-          "_" => $data[$key]
+          '_' => $data[$key]
         );
       }
     }
 
     switch (self::prepareInner($data[$key], $path, $value)){
       case 1:
-        $data[$key]["_"] = $value;
+        $data[$key]['_'] = $value;
         break;
       case 2:
         $data[$key] = $value;
@@ -124,22 +124,22 @@ class AmCoder{
 
   // Método que codifica la data
   public static function encode($data){
-    return "<?php\n\nreturn " . self::_encode($data, "", ";") . "\n";
+    return "<?php\n\nreturn " . self::_encode($data, '', ';') . "\n";
   }
 
   // Algoritmo para codificar la data.
-  public static function _encode($data, $prefix = "", $subfix = ",") {
+  public static function _encode($data, $prefix = '', $subfix = ',') {
 
     if (!isset($data)) {
-      return "null$subfix";
+      return 'null$subfix';
     }elseif(is_numeric($data)){
-      return "$data$subfix";
+      return "{$data}{$subfix}";
     }elseif(is_string($data)){
-      return "\"$data\"$subfix";
+      return "\"{$data}\"{$subfix}";
     }elseif($data === true){
-      return "true$subfix";
+      return "true{$subfix}";
     }elseif($data === false){
-      return "false$subfix";
+      return "false{$subfix}";
     }elseif(is_array($data) || is_object($data)){
 
       $data = (array)$data;
@@ -155,13 +155,13 @@ class AmCoder{
           if(is_array($v) || is_object($v)){
             $haveArray = true;
           }else{
-            $dataFormated[] = self::_encode($v, "", "");
+            $dataFormated[] = self::_encode($v, '', '');
           }
         }
 
         if(!$haveArray){
 
-          $str = "array(" . implode(",", $dataFormated) . ")$subfix";
+          $str = 'array(' . implode(',', $dataFormated) . "){$subfix}";
 
           return $str;
 
@@ -170,25 +170,25 @@ class AmCoder{
       }
 
       $str = "array(\n";
-      $prefixI = "  $prefix";
+      $prefixI = "  {$prefix}";
 
       foreach($data as $i => $v){
         $encode = self::_encode($v, $prefixI);
         if($isAssocArray){
-          $str .= "$prefixI\"$i\" => $encode\n";
+          $str .= "{$prefixI}\"{$i}\" => {$encode}\n";
         }else{
           $str .= "{$prefixI}{$encode}\n";
         }
 
       }
 
-      $str .= "$prefix)$subfix";
+      $str .= "{$prefix}){$subfix}";
 
       return $str;
 
     }
 
-    return "$data$subfix";
+    return "{$data}{$subfix}";
 
   }
 

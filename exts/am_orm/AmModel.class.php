@@ -73,7 +73,7 @@ class AmModel extends AmObject{
       $fieldNameBD = $field->getName();
 
       // Obtener nombre del metodo set para el campo en el model
-      $methodFieldName = "set_$fieldName";
+      $methodFieldName = "set_{$fieldName}";
 
       $value = null;
 
@@ -273,7 +273,7 @@ class AmModel extends AmObject{
       foreach($cols as $from){
 
         // Las referencias si es un valor vacío se debe setear a null
-        $value = trim(isset($values[$from])? $values[$from] : "");
+        $value = trim(isset($values[$from])? $values[$from] : '');
         $values[$from] = empty($value) ? null : $value;
 
       }
@@ -326,8 +326,8 @@ class AmModel extends AmObject{
       // Si el campo cambió se agrega al listado de cambios
       if($this->hasChanged($name)){
         $changes[$name] = array(
-          "from" => $value,
-          "to" => $this->$name,
+          'from' => $value,
+          'to' => $this->$name,
         );
       }
     }
@@ -491,7 +491,7 @@ class AmModel extends AmObject{
 
               // Obtener el nombre del método SET
               // para asigar el valor autoincrementado
-              $method = "set_" . $f->getName();
+              $method = "set_{$f->getName()}";
               $this->$method($ret);
 
             }
@@ -535,7 +535,7 @@ class AmModel extends AmObject{
       // Si se llega a este punto es porque se generó un error
       // en la insercion o actualizacion, por lo que se agrega un
       // error global con el ultimo error generado en  el Gestor
-      $this->addError("__global__",
+      $this->addError('__global__',
         $this->getTable()->getSource()->getErrNo(),
         $this->getTable()->getSource()->getError());
 
@@ -546,12 +546,12 @@ class AmModel extends AmObject{
   }
 
   // // Convirte el ID del registro en un string con cada uno de sus valores
-  // // separados por "/"
+  // // separados por '/'
   // public function pkToString($encode = false){
   //   $ret = array();
   //   foreach($this->index() as $index)
   //     $ret[] = ($encode===true)? urlencode($index) : $index;
-  //   return implode("/", $ret);
+  //   return implode('/', $ret);
   // }
 
   // // Convertir el registro en string implica obtener una cadena de su ID

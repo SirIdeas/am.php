@@ -23,4 +23,4 @@
  * SOFTWARE.
  **/
  
-Am::setCallback("response.assets", "AmAsset::response");
+Am::setCallback('response.assets', 'AmAsset::response');

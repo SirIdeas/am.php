@@ -25,8 +25,8 @@
  
 return array(
 
-  "files" => array(
-    "AmCoder.class"
+  'files' => array(
+    'AmCoder.class'
   )
 
 );

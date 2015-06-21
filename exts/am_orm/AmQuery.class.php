@@ -99,14 +99,14 @@ class AmQuery extends AmObject{
   }
 
   // Devuelve una copia aislada de la consulta actual
-  public function getAlone($as = "q"){
+  public function getAlone($as = 'q'){
     return $this->getSource()->newQuery($this, $as);
   }
 
   public function haveNextPage(){
     return !!$this->getCopy()
       ->offset($this->getLimit() + $this->getOffset())
-      ->getRow("array");
+      ->getRow('array');
   }
 
   // Método para asignar array de valores por un metodo
@@ -132,7 +132,7 @@ class AmQuery extends AmObject{
 
   // Asignar los selects
   public function select(){
-    return $this->setArrayAttribute("selectAs", func_get_args());
+    return $this->setArrayAttribute('selectAs', func_get_args());
   }
 
   // Método para agregar clausula SELECT
@@ -161,7 +161,7 @@ class AmQuery extends AmObject{
 
   // Asignar los selects
   public function from(){
-    return $this->setArrayAttribute("fromAs", func_get_args());
+    return $this->setArrayAttribute('fromAs', func_get_args());
   }
 
   // Método para agregar clausula FROM
@@ -232,8 +232,8 @@ class AmQuery extends AmObject{
     if(!is_array($conditions)) return $conditions;
 
     $ret = array();
-    $nextPrefijo = "";  // Operador booleano de prefijo
-    $nextUnion = "AND"; // Operador booleano de enlace
+    $nextPrefijo = '';  // Operador booleano de prefijo
+    $nextUnion = 'AND'; // Operador booleano de enlace
 
     // Por cada condicione
     foreach($conditions as $condition){
@@ -241,31 +241,31 @@ class AmQuery extends AmObject{
       // Obtiene la condicion de union y la vuelve mayuscula
       if(!is_array($condition)){
         $upperCondition = strtoupper($condition);
-      }elseif(count($condition)==3 && strtoupper($condition[1]) == "IN"){
+      }elseif(count($condition)==3 && strtoupper($condition[1]) == 'IN'){
         // Eliminar condicion dle medio
         $condition = array($condition[0], $condition[2]);
-        $upperCondition = "IN";
+        $upperCondition = 'IN';
       }else{
-        $upperCondition = "";
+        $upperCondition = '';
       }
 
-      if($upperCondition == "AND" || $upperCondition == "OR"){
+      if($upperCondition == 'AND' || $upperCondition == 'OR'){
         // Si la primera condicion es un operador boolean doble
         $nextUnion = $upperCondition;
-      }elseif($upperCondition == "NOT"){
+      }elseif($upperCondition == 'NOT'){
         // Si es el operator booleano de negacion agregar para la siguiente condicion
         $nextPrefijo = $upperCondition;
       }else{
 
         // Sino es un operador booleano se agrega al listado de condiciones de retorno
         $ret[] = array(
-          "union" => $nextUnion,
-          "prefix" => $nextPrefijo,
-          "condition" => $upperCondition == "IN"? $condition : $this->parseWhere($condition),
-          "isIn" => $upperCondition == "IN"
+          'union' => $nextUnion,
+          'prefix' => $nextPrefijo,
+          'condition' => $upperCondition == 'IN'? $condition : $this->parseWhere($condition),
+          'isIn' => $upperCondition == 'IN'
         );
 
-        $nextPrefijo = "";
+        $nextPrefijo = '';
 
       }
 
@@ -290,8 +290,8 @@ class AmQuery extends AmObject{
   }
 
   // Agregar condiciones con AND y OR
-  public function andWhere(){ return $this->where("and", func_get_args()); }
-  public function orWhere(){ return $this->where("or", func_get_args());}
+  public function andWhere(){ return $this->where('and', func_get_args()); }
+  public function orWhere(){ return $this->where('or', func_get_args());}
 
   // Eliminar todas las condiciones
   public function clearWhere(){
@@ -310,16 +310,16 @@ class AmQuery extends AmObject{
       $this->joins[$type] = array();
 
     // Agregar los joins
-    $this->joins[$type][] = array("table" => $table, "on" => $on, "as" => $as);
+    $this->joins[$type][] = array('table' => $table, 'on' => $on, 'as' => $as);
 
     return $this;
 
   }
 
   // INNER, LEFT y RIGHT Join
-  public function innerJoin($table, $on = null, $as = null){ return $this->joins("inner", $table, $on, $as); }
-  public function leftJoin($table, $on = null, $as = null){ return $this->joins("left", $table, $on, $as);}
-  public function rigthJoin($table, $on = null, $as = null){ return $this->joins("right", $table, $on, $as); }
+  public function innerJoin($table, $on = null, $as = null){ return $this->joins('inner', $table, $on, $as); }
+  public function leftJoin($table, $on = null, $as = null){ return $this->joins('left', $table, $on, $as);}
+  public function rigthJoin($table, $on = null, $as = null){ return $this->joins('right', $table, $on, $as); }
 
   // Agregar campos para ordenar por en un sentido determinado
   public function orders($dir, array $orders){
@@ -339,12 +339,12 @@ class AmQuery extends AmObject{
 
   // Agregar campos de orden Ascendiente
   public function orderBy(){
-    return $this->orders("ASC", func_get_args());
+    return $this->orders('ASC', func_get_args());
   }
 
   // Agregar campos de orden Descendiente
   public function orderByDesc(){
-    return $this->orders("DESC", func_get_args());
+    return $this->orders('DESC', func_get_args());
   }
 
   // Agregar campos para agrupar
@@ -381,20 +381,20 @@ class AmQuery extends AmObject{
   // Agregar un SET a la consulta. Es tomado en cuenta cuando se realiza una
   // actualizacio sobre la consulta
   public function set($field, $value, $const = true){
-    $this->sets[] = array("field" => $field, "value" => $value, "const" => $const);
+    $this->sets[] = array('field' => $field, 'value' => $value, 'const' => $const);
     return $this;
   }
 
   // Obtener una consulta para contar los registros de la consulta actual
   public function countQuery(){
-    return $this->getCopy()->setSelects(array("count" => "count(*)"));
+    return $this->getCopy()->setSelects(array('count' => 'count(*)'));
   }
 
   // Obtener la cantidad de registros que devolverá la consulta
   public function count(){
 
     // Crear la consulta para contar
-    $ret = $this->countQuery()->getRow("object");
+    $ret = $this->countQuery()->getRow('object');
 
     // Si se generó un error devolver cero, de lo contrari
     // devolver el valor obtenido
@@ -438,22 +438,22 @@ class AmQuery extends AmObject{
         $r = new AmObject($r);
       }
 
-    }elseif($as == "array"){
+    }elseif($as == 'array'){
       // Retornar como erray
       // $r = $r;
 
-    }elseif($as == "object"){
+    }elseif($as == 'object'){
       // Retornar como objeto
       $r = (object)$r;
 
-    }elseif($as == "am"){
+    }elseif($as == 'am'){
       // Retornar como objeto de Amathista
       $r = new AmObject($r);
 
     }elseif(class_exists($as)){
       // Clase especifica
 
-      if(in_array("AmModel", class_parents($as)))
+      if(in_array('AmModel', class_parents($as)))
         $r = new $as($r, false);
       else
         $r = new $as($r);
@@ -482,7 +482,7 @@ class AmQuery extends AmObject{
     $ret = array();
 
     // Mientras exista resgistros en cola
-    while(false !== ($row = $q->getRow("array"))){
+    while(false !== ($row = $q->getRow('array'))){
       $ret[] = $row[$field]; // Agregar registros al array
     }
 
@@ -527,7 +527,7 @@ class AmQuery extends AmObject{
 
       // Agregar fechas de creacion y modificacion si existen en la tabla
       if($table->hasUpdatedAtField())
-        $this->set($table->getUpdatedAtField(), date("c"), true);
+        $this->set($table->getUpdatedAtField(), date('c'), true);
 
       return false !== $source->execute($this->sqlUpdate());
     }

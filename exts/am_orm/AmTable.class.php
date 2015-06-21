@@ -30,8 +30,8 @@
 final class AmTable extends AmObject{
 
   protected static
-    $defCreatedAtFieldName = "created_at",
-    $defUpdatedAtFieldName = "updated_at";
+    $defCreatedAtFieldName = 'created_at',
+    $defUpdatedAtFieldName = 'updated_at';
 
   // Propiedades de la tabla
   protected
@@ -56,21 +56,21 @@ final class AmTable extends AmObject{
     $params = AmObject::parse($params);
 
     // Obtener la instancia del source
-    $source = is_string($params["source"]) ? AmORM::source($params["source"]) : $params["source"];
+    $source = is_string($params['source']) ? AmORM::source($params['source']) : $params['source'];
 
     // Obtener configuracion del modelo
-    if(isset($params["tableName"]))
+    if(isset($params['tableName']))
       $params = array_merge(
         $params,
-        $source->getTableConf($params["tableName"])
+        $source->getTableConf($params['tableName'])
       );
 
     // Aaignar modelo
-    $params["source"] = $source;
+    $params['source'] = $source;
 
     $params = array_merge(array(
-      "createdAtField" => self::$defCreatedAtFieldName,
-      "updatedAtField" => self::$defUpdatedAtFieldName,
+      'createdAtField' => self::$defCreatedAtFieldName,
+      'updatedAtField' => self::$defUpdatedAtFieldName,
     ), $params);
 
     // Llamar al constructor heredado
@@ -82,10 +82,10 @@ final class AmTable extends AmObject{
 
     // Describir tabla
     $this->describeTableInner(
-      itemOr("fields", $params, array()),
-      itemOr("referencesTo", $params, array()),
-      itemOr("referencesBy", $params, array()),
-      itemOr("uniques", $params, array())
+      itemOr('fields', $params, array()),
+      itemOr('referencesTo', $params, array()),
+      itemOr('referencesBy', $params, array()),
+      itemOr('uniques', $params, array())
     );
 
   }
@@ -140,7 +140,7 @@ final class AmTable extends AmObject{
   public function createFileConf($rw = true){
 
     // Obtener de el nombre del archivo destino
-    $path = $this->getPathConf() . ".php";
+    $path = $this->getPathConf() . '.php';
     if(!is_file($path) || $rw){
       AmCoder::write($path, $this->toArray());
       return true;
@@ -152,10 +152,10 @@ final class AmTable extends AmObject{
   public function createFileModelBase(){
 
     // Incluir la clase para generar
-    AmORM::requireFile("AmGenerator.class");
+    AmORM::requireFile('AmGenerator.class');
 
     // Obtener el nombre del archivo destino
-    $path = $this->getPathClassModelBase() . ".php";
+    $path = $this->getPathClassModelBase() . '.php';
 
     // Generar el archivo
     file_put_contents($path, "<?php\n\n" . AmGenerator::classModelBase($this));
@@ -166,9 +166,9 @@ final class AmTable extends AmObject{
   // Crear los archivos para las clases del modelo
   public function createClassModels(){
     return array(
-      "folder"  => $this->createFolder(),
-      "conf"    => $this->createFileConf(),
-      "model"   => $this->createFileModelBase()
+      'folder'  => $this->createFolder(),
+      'conf'    => $this->createFileConf(),
+      'model'   => $this->createFileModelBase()
     );
   }
 
@@ -183,7 +183,7 @@ final class AmTable extends AmObject{
   // Agregar fecha al campo de fecha de creacion
   public function setAutoCreatedAt($values){
 
-    // Si la tabla tiene un campo llamado "created_at"
+    // Si la tabla tiene un campo llamado 'created_at'
     // Se asigna a todos los valores la fecha now
     if($this->hasCreatedAtField())
       self::setNowDateValueToAllRecordsInField($values, $this->getCreatedAtField());
@@ -192,7 +192,7 @@ final class AmTable extends AmObject{
   // Agregar fecha al campo de fecha de mpdificacion
   public function setAutoUpdatedAt($values){
 
-    // Si la tabla tiene un campo llamado "updated_at"
+    // Si la tabla tiene un campo llamado 'updated_at'
     // Se asigna a todos los valores la fecha now
     if($this->hasUpdatedAtField())
       self::setNowDateValueToAllRecordsInField($values, $this->getUpdatedAtField());
@@ -200,7 +200,7 @@ final class AmTable extends AmObject{
 
   private static function setNowDateValueToAllRecordsInField($values, $field){
 
-    $now = date("c");
+    $now = date('c');
 
     if($values instanceof AmQuery){
       // Agregar campo a la consulta
@@ -209,7 +209,7 @@ final class AmTable extends AmObject{
     }elseif(is_array($values)){
 
       // Nombre del metodo a buscar para los modelos
-      $set = "set_" . $field;
+      $set = 'set_' . $field;
 
       // Agregar created_ad a cada registro
       foreach (array_keys($values) as $i) {
@@ -378,27 +378,27 @@ final class AmTable extends AmObject{
 
     // Unir todas las partes
     return array(
-      "tableName" => $this->getTableName(),
-      "modelName" => $this->getModelName(),
-      "engine" => $this->getEngine(),
-      "charset" => $this->getCharset(),
-      "collage" => $this->getCollage(),
-      "fields" => $fields,
-      "pks" => $this->getPks(),
-      "uniques" => $this->getUniques(),
-      "referencesTo" => $referencesTo,
-      "referencesBy" => $referencesBy,
+      'tableName' => $this->getTableName(),
+      'modelName' => $this->getModelName(),
+      'engine' => $this->getEngine(),
+      'charset' => $this->getCharset(),
+      'collage' => $this->getCollage(),
+      'fields' => $fields,
+      'pks' => $this->getPks(),
+      'uniques' => $this->getUniques(),
+      'referencesTo' => $referencesTo,
+      'referencesBy' => $referencesBy,
     );
 
   }
 
   // Devuelve un Query que devuelve todos los registros de la Tabla
-  public function all($as = "q", $withFields = false){
+  public function all($as = 'q', $withFields = false){
 
     // por si se obvio el primer parametro
     if(is_bool($as)){
       $withFields = $as;
-      $as = "q";
+      $as = 'q';
     }
 
     // Crear consultar
@@ -426,7 +426,7 @@ final class AmTable extends AmObject{
 
   // Obtener consulta para buscar por un campos
   public function findBy($field, $value){
-    return $this->all()->where("$field='$value'");
+    return $this->all()->where("{$field}='{$value}'");
   }
 
   // Obtener todos los registros de buscar por un campos

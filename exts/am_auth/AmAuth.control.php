@@ -32,8 +32,8 @@ class AmAuthControl extends AmControl{
 
     // Obtener el nombre de la clase
     $class = $this->authClass;
-    $username = itemOr("username", $this->request->login);
-    $password = itemOr("password", $this->request->login);
+    $username = itemOr('username', $this->request->login);
+    $password = itemOr('password', $this->request->login);
 
     $username = $this->sslDecrypt($username);
     $password = $this->sslDecrypt($password);
@@ -68,7 +68,7 @@ class AmAuthControl extends AmControl{
   // Acción para solicitar las instrucciones para recuperar la sontraseña
   public function post_recovery(){
     $class = $this->authClass;
-    $login = $this->request->recovery["username"];
+    $login = $this->request->recovery['username'];
     $r = $class::getByLogin($login);
 
     $ret = array();
@@ -79,13 +79,13 @@ class AmAuthControl extends AmControl{
     else{
 
       // Enviar mensaje de registro de Ipn
-      $this->mail = AmMailer::get("recovery", array(
+      $this->mail = AmMailer::get('recovery', array(
         // Asignar variables
-        "dir" => dirname(__FILE__). "/mails/",
-        "subject" => "Recuperar contraseña",
-        "smtp" => false, 
-        "with" => array(
-          "url" => Am::serverUrl($r->getCredentialsResetUrl())
+        'dir' => dirname(__FILE__). '/mails/',
+        'subject' => 'Recuperar contraseña',
+        'smtp' => false, 
+        'with' => array(
+          'url' => Am::serverUrl($r->getCredentialsResetUrl())
         ),
       ))
 
@@ -106,7 +106,7 @@ class AmAuthControl extends AmControl{
   public function post_reset($token){
     $class = $this->authClass;
     $r = $class::getByToken($token);
-    $pass = $this->request->reset["password"];
+    $pass = $this->request->reset['password'];
 
     $ret = array();
 
@@ -116,7 +116,7 @@ class AmAuthControl extends AmControl{
     if (!$this->isValidPassword($pass))
       $ret['error'] = 'passwordInvalid';
 
-    else if($pass != $this->request->reset["confirm_password"])
+    else if($pass != $this->request->reset['confirm_password'])
       $ret['error'] = 'passwordDiff';
 
     else if(!$r->resetPasword($pass))

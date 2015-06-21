@@ -43,7 +43,7 @@ class AmAsset{
   public function getContent(){
 
     // Concatenar el contenido de los archivos configurados
-    $content = "";
+    $content = '';
     foreach($this->assets as $asset){
 
       // Si el archivo existe entonces concatenar
@@ -72,7 +72,7 @@ class AmAsset{
   public static function response($file){
 
     // Obtener los recursos configurados
-    $assets = Am::getAttribute("assets", array());
+    $assets = Am::getAttribute('assets', array());
 
     // Si no exite un recurso con el nombre del solicitado retornar falso
     if(!isset($assets[$file]))

@@ -32,20 +32,20 @@ class AmField extends AmObject{
   protected static
     $PARSE_FUNCS = array(
       // Enteros
-      "integer"     => "intval",
-      "bit"         => "strval",
+      'integer'     => 'intval',
+      'bit'         => 'strval',
       // Flotantes
-      "decimal"     => "floatval",
+      'decimal'     => 'floatval',
       // Cadenas de caracteres
-      "char"        => "strval",
-      "varchar"     => "strval",
-      "text"        => "strval",
+      'char'        => 'strval',
+      'varchar'     => 'strval',
+      'text'        => 'strval',
       // Fechas
-      "date"        => "strval",
-      "datetime"    => "strval",
-      "timestamp"   => "strval",
-      "time"        => "strval",
-      "year"        => "strval",
+      'date'        => 'strval',
+      'datetime'    => 'strval',
+      'timestamp'   => 'strval',
+      'time'        => 'strval',
+      'year'        => 'strval',
     );
 
   // Propiedades del campo
@@ -91,32 +91,32 @@ class AmField extends AmObject{
     public function toArray(){
 
       $ret = array(
-        "name" => $this->getName(),
-        "type" => $this->getType(),
-        "primaryKey" => $this->isPrimaryKey(),
-        "allowNull" => $this->allowNull(),
+        'name' => $this->getName(),
+        'type' => $this->getType(),
+        'primaryKey' => $this->isPrimaryKey(),
+        'allowNull' => $this->allowNull(),
       );
 
-      if(in_array($this->type, array("integer", "decimal"))){
-        $ret["unsigned"] = $this->isUnsigned();
-        $ret["zerofill"] = $this->isZerofill();
-        $ret["autoIncrement"] = $this->isAutoIncrement();
+      if(in_array($this->type, array('integer', 'decimal'))){
+        $ret['unsigned'] = $this->isUnsigned();
+        $ret['zerofill'] = $this->isZerofill();
+        $ret['autoIncrement'] = $this->isAutoIncrement();
       }
 
       // Eliminar campos vacios
       foreach(array(
-        "defaultValue",
-        "collage",
-        "charset",
-        "extra",
-        "len",
+        'defaultValue',
+        'collage',
+        'charset',
+        'extra',
+        'len',
       ) as $attr)
-        if(isset($this->$attr) && trim($this->$attr)!=="")
+        if(isset($this->$attr) && trim($this->$attr)!=='')
           $ret[$attr] = $this->$attr;
 
-      if($this->type == "decimal"){
-        $ret["precision"] = $this->getPrecision();
-        $ret["scale"] = $this->getScale();
+      if($this->type == 'decimal'){
+        $ret['precision'] = $this->getPrecision();
+        $ret['scale'] = $this->getScale();
       }
 
       return $ret;
