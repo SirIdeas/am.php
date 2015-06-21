@@ -23,7 +23,7 @@
  * SOFTWARE.
  **/
 ?>
-(# set:title="Amathista Template" #)
+(# set:title='Amathista Template' #)
 <meta charset="utf-8">
 <!--[if IE]>
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -31,11 +31,11 @@
 <?php
 
 eTitleTag($title);
-eMetaTag("format-detection", "telephone=no");
-eMetaTag("viewport", "user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height");
-// eMetaTag("viewport", "user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi");
-eMetaTag("msapplication-tap-highlight", "no");
-eLinkTag("/favicon.ico", "shortcut icon");
+eMetaTag('format-detection', 'telephone=no');
+eMetaTag('viewport', 'user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height');
+// eMetaTag('viewport', 'user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi');
+eMetaTag('msapplication-tap-highlight', 'no');
+eLinkTag('/favicon.ico', 'shortcut icon');
 eStyleTagIfIsAllow('/vendor/vendor.css');
 eStyleTagIfIsAllow('/css/am.css');
 

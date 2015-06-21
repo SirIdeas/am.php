@@ -24,9 +24,9 @@
  **/
 
 return array(
-  "title" => "Amathista's Template",
-  "googleAnalitics" => false,
-  "privacyPolicies" => false,
-  "jsLocalStoreKey" => null,
-  "resourcesNotAllow" => array()
+  'title' => 'Amathista\'s Template',
+  'googleAnalitics' => false,
+  'privacyPolicies' => false,
+  'jsLocalStoreKey' => null,
+  'resourcesNotAllow' => array()
 );

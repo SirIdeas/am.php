@@ -25,15 +25,15 @@
 
 return array(
 
-  "defaults" => array(
-    "prefixs" => array(
-      "actions"     => "action_",
-      "getActions"  => "get_",
-      "postActions" => "post_",
-      "filters"     => "filter_",
+  'defaults' => array(
+    'prefixs' => array(
+      'actions'     => 'action_',
+      'getActions'  => 'get_',
+      'postActions' => 'post_',
+      'filters'     => 'filter_',
     ),
-    "paths" => array(     // Carpetas de vistas del controlador
-      realPath(dirname(__FILE__) . "/views"),
+    'paths' => array(     // Carpetas de vistas del controlador
+      realPath(dirname(__FILE__) . '/views'),
     ),
   ),
 

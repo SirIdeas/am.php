@@ -26,24 +26,24 @@
 return array(
 
   // Entorno global
-  "env" => array(
-    "title" => "Amathista Template"
+  'env' => array(
+    'title' => 'Amathista Template'
   ),
 
-  "routes" => array(
+  'routes' => array(
 
     // Carpeta publica
-    "/:file(".implode("|", array(
-      "sitemap\.xml",
-      "favicon\.ico",
-      "robots\.txt",
-      "vendor/.*",
-      "images/.*",
-      "font/.*",
-      "css/.*",
-      "js/.*"
-    )).")"
-    => "file => public/:file",
+    '/:file('.implode('|', array(
+      'sitemap\.xml',
+      'favicon\.ico',
+      'robots\.txt',
+      'vendor/.*',
+      'images/.*',
+      'font/.*',
+      'css/.*',
+      'js/.*'
+    )).')'
+    => 'file => public/:file',
 
   )
 

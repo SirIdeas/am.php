@@ -24,10 +24,10 @@
  **/
 
 $msgs = array(
-  "success" => "green",
-  "warning" => "amber",
-  "danger" => "deep-orange",
-  "error" => "red"
+  'success' => 'green',
+  'warning' => 'amber',
+  'danger' => 'deep-orange',
+  'error' => 'red'
 );
 
 foreach ($msgs as $key => $class): ?>
