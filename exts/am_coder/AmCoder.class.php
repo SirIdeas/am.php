@@ -135,7 +135,7 @@ class AmCoder{
     }elseif(is_numeric($data)){
       return "{$data}{$subfix}";
     }elseif(is_string($data)){
-      return "\"{$data}\"{$subfix}";
+      return "'{$data}'{$subfix}";
     }elseif($data === true){
       return "true{$subfix}";
     }elseif($data === false){
@@ -175,7 +175,7 @@ class AmCoder{
       foreach($data as $i => $v){
         $encode = self::_encode($v, $prefixI);
         if($isAssocArray){
-          $str .= "{$prefixI}\"{$i}\" => {$encode}\n";
+          $str .= "{$prefixI}'{$i}' => {$encode}\n";
         }else{
           $str .= "{$prefixI}{$encode}\n";
         }
