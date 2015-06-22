@@ -61,11 +61,15 @@ class AmToken extends AmObject{
   }
 
   public function isExpired(){
-    return (isset($this->createdAt) && time()>=($this->createdAt + $this->timeExpiration)) ||
-           (isset($this->updatedAt) && time()>=($this->updatedAt + $this->maxTimeNoUse));
+    return !isset($this->createdAt) ||
+           !isset($this->updatedAt) ||
+            time()>=($this->createdAt + $this->timeExpiration) ||
+            time()>=($this->updatedAt + $this->maxTimeNoUse);
   }
 
-  public function exists(){ return file_exists($this->fileName); }
+  public function exists(){
+    return is_file($this->fileName);
+  }
 
   // PAra obtener ciertos atributos
   public function getName(){ return $this->name; }
@@ -79,6 +83,16 @@ class AmToken extends AmObject{
   public function setTimeExpiration($time){ $this->timeExpiration = $time; return $this; }
   public function setContent($content){ $this->content = $content; return $this; }
 
+  public function toArray(){
+    return array(
+      'createdAt' => $this->createdAt,
+      'updatedAt' => $this->updatedAt,
+      'timeExpiration' => $this->timeExpiration,
+      'maxTimeNoUse' => $this->maxTimeNoUse,
+      'content' => $this->content,
+    );
+  }
+
   public function save(){
 
     $this->updatedAt = time();
@@ -87,13 +101,7 @@ class AmToken extends AmObject{
       $this->createdAt = $this->updatedAt;
 
     // Determinar data a guardar
-    $data = array(
-      'createdAt' => $this->createdAt,
-      'updatedAt' => $this->updatedAt,
-      'timeExpiration' => $this->timeExpiration,
-      'maxTimeNoUse' => $this->maxTimeNoUse,
-      'content' => $this->content,
-    );
+    $data = $this->toArray();
 
     // Crear el directorio si no existe
     $dir = dirname($this->fileName);
@@ -131,7 +139,9 @@ class AmToken extends AmObject{
   }
 
   public function delete(){
-    unlink($token->getFileName());
+    if($this->exists())
+      return unlink($token->getFileName());
+    return false;
   }
 
 } 
