@@ -48,6 +48,7 @@ class AmControl extends AmObject{
     $prefixs = array(),       // Prefijos para diferentes elementos en el controlador
     $actionAllows = array(),  // Acciones permitidas
 
+    $response = null,    // Respesta de la peticion
     $server = null,     // Variables de SERVER
     $get = null,        // Variables recibidas por GET
     $post = null,       // Variables recibidas por POST
@@ -144,9 +145,12 @@ class AmControl extends AmObject{
 
     // Si no se logra renderizar la vista se imprime
     // se imprime lo que viene en $child
-    if($ret === false)
-      echo $child;
+    return $ret !== false;
 
+  }
+
+  final protected function setResponse($response){
+    $this->response = $response;
   }
 
   // Responder como servicio
@@ -215,9 +219,20 @@ class AmControl extends AmObject{
     if(is_array($ret) || is_object($ret))
       $this->renderService($ret);
 
-    else
-    // Renderizar la vista
+    else if(isset($this->response)){
+
+      if(is_array($this->response) || is_object($this->response))
+        $this->renderService($this->response);
+      
+      else
+        echo $this->response;
+
+    }else if($ret != false)
+      // Renderizar la vista
       $this->renderView($params, $buffer);
+
+    else
+      echo $buffer;
 
   }
 
