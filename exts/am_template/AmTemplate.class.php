@@ -257,7 +257,7 @@ final class AmTemplate extends AmObject{
   // Agregar variable
   public function set(){
     extract($this->getEnv());
-    eval('\$this->env[''.func_get_arg(0).''] = '.func_get_arg(1).';');
+    eval('$this->env[\''.func_get_arg(0).'\'] = '.func_get_arg(1).';');
   }
 
   // Obtener variables de la vista. Cinluye el entorno + las variables definidas en la vista
