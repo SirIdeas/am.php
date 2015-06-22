@@ -227,7 +227,7 @@ class AmControl extends AmObject{
       else
         echo $this->response;
 
-    }else if($ret != false)
+    }else if($ret !== false)
       // Renderizar la vista
       $this->renderView($params, $buffer);
 
