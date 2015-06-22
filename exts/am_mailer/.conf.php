@@ -25,6 +25,14 @@
  
 return array(
 
+  'extend' => array(
+    'mails' => array(
+      'defaults' => array(
+        'smtp' => false
+      )
+    )
+  ),
+
   'files' => array(
     'php_mailer/PHPMailerAutoload',
     'AmMailer.class',
