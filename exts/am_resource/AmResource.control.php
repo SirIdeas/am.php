@@ -73,6 +73,7 @@ class AmResourceControl extends AmControl{
     $haveNext = $q->haveNextPage();
 
     return array(
+      'success'   => true,
       'items'     => $q->getResult('array'),
       'haveNext'  => $haveNext,
     );
