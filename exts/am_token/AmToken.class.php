@@ -140,7 +140,7 @@ class AmToken extends AmObject{
 
   public function delete(){
     if($this->exists())
-      return unlink($token->getFileName());
+      return unlink($this->getFileName());
     return false;
   }
 
