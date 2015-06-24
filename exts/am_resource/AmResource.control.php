@@ -70,6 +70,8 @@ class AmResourceControl extends AmControl{
     $q = $classModel::qSearch($txtSearch, $this->request->limit, $offset);
     if(!$q)
       $q = $classModel::q($this->request->limit, $offset);
+    
+    $this->qSearchSetup($q);
     $haveNext = $q->haveNextPage();
 
     return array(
@@ -78,6 +80,9 @@ class AmResourceControl extends AmControl{
       'haveNext'  => $haveNext,
     );
 
+  }
+
+  public function qSearchSetup(AmQuery $q){
   }
 
   // El formateador agregará una clase al registro dependiendo
