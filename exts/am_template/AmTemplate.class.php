@@ -290,7 +290,12 @@ final class AmTemplate extends AmObject{
     $this->result['content'] = trim($this->result['content']);
     if(!empty($this->result['content'])){
       extract($this->getEnv());  // Crear variables
-      eval("?> {$this->result['content']} <?");
+      // ob_start();
+      eval("?> {$this->result['content']}");
+      // $ret = trim(ob_get_clean());
+      // $end = substr($ret, strlen($ret)-2);
+      // $ret = substr($ret, 0, strlen($ret)-2);
+      // echo $ret;
     }
 
   }
