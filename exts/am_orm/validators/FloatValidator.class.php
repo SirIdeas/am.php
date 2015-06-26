@@ -43,7 +43,7 @@ class FloatValidator extends RegexValidator{
 
   protected function validate(AmModel &$model){
     $this->setRegex($this->buildRegex());
-    parent::validate($model);
+    return parent::validate($model);
   }
 
   // Amount of digits
@@ -59,9 +59,9 @@ class FloatValidator extends RegexValidator{
     $s = $this->scale;
     $p = $this->precision;
     $p = !empty($p) && !empty($s)? $p - $s : $p;
-    $s = empty($s)? "*" : "\.?[0-9]{{$s}}";
-    $p = empty($p)? "*" : "{{$p}}";
-    $regex = "/^-?[0-9]".$p.$s."$/";
+    $s = empty($s)? "" : "\.?[0-9]{0,{$s}}";
+    $p = empty($p)? ".*" : "{0,{$p}}";
+    $regex = "/^[0-9]".$p.$s."$/";
     return $regex;
   }
 
