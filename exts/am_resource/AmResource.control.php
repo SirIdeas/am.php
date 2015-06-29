@@ -30,10 +30,11 @@ class AmResourceControl extends AmControl{
 
     // Obtener la instancida del modelo
     $this->classModel = $model = AmORM::model($this->model);
-    $this->table      = $model::me();
+    if($model)
+      $this->table = $model::me();
 
     // Obtener las columnas si no se han indicado
-    if(empty($this->columns)){
+    if(empty($this->columns) && $this->table){
       $columns = array_keys((array)$this->table->getFields());
       $this->columns = array_combine($columns, $columns);
     }
