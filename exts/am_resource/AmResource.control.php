@@ -77,7 +77,7 @@ class AmResourceControl extends AmControl{
 
     return array(
       'success'   => true,
-      'items'     => $q->getResult('array'),
+      'items'     => $q->getResult('array', array($this, 'format_search')),
       'haveNext'  => $haveNext,
     );
 
@@ -90,6 +90,12 @@ class AmResourceControl extends AmControl{
   // del estado de la inscripcion
   public function format_list($r){
     $r['cls'] = '';
+    return $r;
+  }
+
+  // El formateador agregará una clase al registro dependiendo
+  // del estado de la inscripcion
+  public function format_search($r){
     return $r;
   }
 
