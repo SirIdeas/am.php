@@ -59,9 +59,8 @@ class AmAuthControl extends AmControl{
   }
 
   public function action_logout(){
-    $this->out($this->request->token);
     return array(
-      'success' => true
+      'success' => $this->out($this->request->token)
     );
   }
 
@@ -139,6 +138,9 @@ class AmAuthControl extends AmControl{
 
   protected function out($token){
     $token = AmToken::load($token);
+    if($token)
+      return $token->delete();
+    return true;
   }
 
   public function sslDecrypt($str){
