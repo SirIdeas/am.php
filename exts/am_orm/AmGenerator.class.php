@@ -220,11 +220,11 @@ final class AmGenerator{
     $lines[] = "    return self::me()->q(\$limit, \$offset);";
     $lines[] = "  }\n";
 
-    // Method to get query to all records of model
-    $lines[] = '  // GET QUERY TO SEARCH';
-    $lines[] = '  public static function qSearch($txt, $limit, $offset){';
-    $lines[] = '    return false;';
-    $lines[] = "  }\n";
+    // // Method to get query to all records of model
+    // $lines[] = '  // GET QUERY TO SEARCH';
+    // $lines[] = '  public static function qSearch($txt, $limit, $offset){';
+    // $lines[] = '    return false;';
+    // $lines[] = "  }\n";
 
     $lines[] = '}';
 

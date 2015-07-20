@@ -545,6 +545,10 @@ class AmModel extends AmObject{
 
   }
 
+  public static function qSearch($txt, $limit, $offset){
+    return false;
+  }
+
   // // Convirte el ID del registro en un string con cada uno de sus valores
   // // separados por '/'
   // public function pkToString($encode = false){
