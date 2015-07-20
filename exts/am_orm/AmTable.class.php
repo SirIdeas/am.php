@@ -417,10 +417,14 @@ final class AmTable extends AmObject{
   
   public function q($limit, $offset){
 
-    return $this
-        ->all()
-        ->limit($limit)
-        ->offset($offset);
+    $q = $this->all();
+
+    if($limit && $offset){
+      $q->limit($limit);
+      $q->offset($offset);
+    }
+
+    return $q;
 
   }
 
