@@ -27,6 +27,28 @@
 
 class AmAuthControl extends AmControl{
 
+  public function post_signup(){
+
+    // Obtener el nombre de la clase
+    $class = $this->authClass;
+    
+    $attrs = array_merge(array(
+      'username' => '',
+      'password' => '',
+      'confirm_password' => '',
+    ), $this->request->signup);
+
+    $attrs['username'] = $this->sslDecrypt($attrs['username']);
+    $attrs['password'] = $this->sslDecrypt($attrs['password']);
+    $attrs['confirm_password'] = $this->sslDecrypt($attrs['confirm_password']);
+
+    // Intenta crear el usuario
+    $ret = $class::register($attrs);
+
+    return $ret;
+
+  }
+
   // Bandeja de la administracion
   public function post_login(){
 
@@ -43,8 +65,6 @@ class AmAuthControl extends AmControl{
 
     $ret = array(
       'success' => isset($user),
-      '$username' => $username,
-      '$password' => $password,
     );
 
     // Usuario esta autenticado
@@ -104,22 +124,30 @@ class AmAuthControl extends AmControl{
   // Accion para restaurar la contraseña
   public function post_reset($token){
     $class = $this->authClass;
-    $r = $class::getByToken($token);
+    $token = AmToken::load($token);
+    $ret = array();
     $pass = $this->request->reset['password'];
 
-    $ret = array();
-
-    if(!$r)
+    
+    if(!$token)
       $ret['error'] = 'userNotFound';
 
-    if (!$this->isValidPassword($pass))
-      $ret['error'] = 'passwordInvalid';
+    else{
+      $r = $class::getCredentialsInstance($token->getContent());
 
-    else if($pass != $this->request->reset['confirm_password'])
-      $ret['error'] = 'passwordDiff';
+      if(!$r)
+        $ret['error'] = 'userNotFound';
 
-    else if(!$r->resetPasword($pass))
-      $ret['error'] = 'troublesResetingPassword';
+      if (!$this->isValidPassword($pass))
+        $ret['error'] = 'passwordInvalid';
+
+      else if($pass != $this->request->reset['confirm_password'])
+        $ret['error'] = 'passwordDiff';
+
+      else if(!$r->resetPasword($pass))
+        $ret['error'] = 'troublesResetingPassword';
+
+    }
 
     $ret['success'] = !!$r && !isset($ret['error']);
     
@@ -127,7 +155,7 @@ class AmAuthControl extends AmControl{
 
   }
 
-  protected function in(AmCredentials $user){
+  private function in(AmCredentials $user){
 
     $token = AmToken::create();
     $token->setContent($user->getCredentialsId());
@@ -136,7 +164,7 @@ class AmAuthControl extends AmControl{
 
   }
 
-  protected function out($token){
+  private function out($token){
     $token = AmToken::load($token);
     if($token)
       return $token->delete();
