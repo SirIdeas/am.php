@@ -38,6 +38,7 @@ class AmModel extends AmObject{
     $isNew = true,          // Indica si es un registro nuevo
     $errors = array(),      // Listados de errores
     $realValues = array(),  // Valores reales
+    $rawValues = array(),   // Raw values
     $validators = null,     // Validators del modelo
     $errorsCount = 0;       // Cantidad de errores
 
@@ -114,6 +115,11 @@ class AmModel extends AmObject{
 
   // Funcion para preparar los valores del model antes de guardar
   public function prepare(){
+  }
+
+  // Devuelve raw values
+  public function getRawValues(){
+    return $this->rawValues;
   }
 
   // Devuelve todos lo validators de la tabla o los de un campo
@@ -257,6 +263,12 @@ class AmModel extends AmObject{
 
   // Método get para asignar si es o no un registro nuevo
   public function setIsNew($value){ return $this->isNew = $value; }
+
+  // Asignar valores a un campo por modelo
+  public function setValue($field, $value, $isRaw = false){
+    $this->$field = $value;
+    $this->rawValues[$field] = $isRaw;
+  }
 
   // Funcion para signar valores a los atributos en lote
   public function setValues($values, array $fields = array()){

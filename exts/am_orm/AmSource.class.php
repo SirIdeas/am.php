@@ -563,15 +563,18 @@ abstract class AmSource extends AmObject{
       // Indica si
       $mergeWithFields = count($fields) == 0;
 
+      $rawValues = array();
+
       // Recorrer cada registro en $values par obtener los valores a insertar
       foreach($values as $i => $v){
 
-        if($v instanceof AmModel)
+        if($v instanceof AmModel){
           // Si el registro es AmModel obtener sus valores como array
           // asociativo o simple
           $values[$i] = $v->dataToArray(!$mergeWithFields);
+          $rawValues[$i] = $v->getRawValues();
 
-        elseif($v instanceof AmObject)
+        }elseif($v instanceof AmObject)
           // Si es una instancia de AmObjet se obtiene como array asociativo
           $values[$i] = $v->toArray();
 
@@ -590,9 +593,15 @@ abstract class AmSource extends AmObject{
         $resultValues[$i] = array();
 
         // Agregar un valor por cada campo de la consulta
-        foreach($fields as $f)
+        foreach($fields as $f){
+          $val = isset($v[$f])? $v[$f] : null;
           // Obtener el valor del registro actual en el campo actual
-          $resultValues[$i][] = $this->realScapeString(isset($v[$f])? $v[$f] : null);
+          if(isset($rawValues[$i][$f]) && $rawValues[$i][$f] === true){
+            $resultValues[$i][] = $val;
+          }else{
+            $resultValues[$i][] = $this->realScapeString($val);
+          }
+        }
 
       }
 

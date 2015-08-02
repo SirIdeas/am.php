@@ -30,12 +30,6 @@
 
 interface AmCredentials {
 
-  // Autentica un usuario por nombre y passsword
-  public static function auth($nick, $password);
-
-  // Registra un usuario
-  public static function register(array $attrs);
-
   // Pregunta si el usuario autenteicado tiene
   // una determinada credencial.
   public function hasCredential($credential);
@@ -58,8 +52,11 @@ interface AmCredentials {
 
   // Devuelve un registro a partir de su login
   public static function getByLogin($login);
-  
-  // Devuelve un registro a partir de su token
-  // public static function getByToken($token);
 
+  // Autentica un usuario por nombre y passsword
+  public static function auth($nick, $password);
+
+  // Registra un usuario
+  public static function register(array $attrs);
+  
 }

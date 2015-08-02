@@ -61,7 +61,7 @@ final class AmGenerator{
       $methodName = "set_{$attr}";
       $prefix = in_array($methodName, $existMethods)? '//' : '';
       $existMethods[] = $methodName;
-      $lines[] = "  {$prefix}public function {$methodName}(\$value){ \$this->$attr = \$value; return \$this; }";
+      $lines[] = "  {$prefix}public function {$methodName}(\$value, \$isRaw = false){ \$this->setValue('$attr', \$value, \$isRaw); return \$this; }";
     }
     $lines[] = '';
 
