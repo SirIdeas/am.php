@@ -84,10 +84,14 @@ class AmAuthControl extends AmControl{
     );
   }
 
+  public function newRecoveryCode(){
+    return sprintf("%06d", mt_rand(0,1000000));
+  }
+
   // Acción para solicitar las instrucciones para recuperar la sontraseña
   public function post_recovery(){
     $class = $this->authClass;
-    $login = $this->request->recovery['username'];
+    $login = $this->sslDecrypt($this->request->username);
     $r = $class::getByLogin($login);
 
     $ret = array();
@@ -97,21 +101,30 @@ class AmAuthControl extends AmControl{
 
     else{
 
-      // Enviar mensaje de registro de Ipn
-      $this->mail = AmMailer::get('recovery', array(
-        // Asignar variables
-        'dir' => dirname(__FILE__). '/mails/',
-        'subject' => 'Recuperar contraseña',
-        'smtp' => false, 
-        'with' => array(
-          'url' => Am::serverUrl($r->getCredentialsResetUrl())
-        ),
-      ))
+      // Generate code
+      $code = $this->newRecoveryCode();
 
-      ->addAddress($r->getCredentialsEmail());
+      // Create token
+      $token = AmToken::create();
+      $token->setContent(array(
+        'id' => $r->getCredentialsId(),
+        'code' => $code
+      ));
+      $token->save();
 
-      if(!$this->mail->send())
+      // Prepare mailer`
+      $mail = AmMailer::get('amAuth_recovery', array(
+        'with' => array('r' => $r->toArray(), 'code' => $code),
+        'address' => array($r->getCredentialsEmail())
+      ));
+
+      // Send code to user for email
+      if($mail->send()){
+        $ret['recoveryToken'] = $token->getID();
+      }else{
         $ret['error'] = 'troublesSendingEmail';
+        $ret['errorTxt'] = $mail->errorInfo();
+      }
 
     }
 
@@ -121,35 +134,54 @@ class AmAuthControl extends AmControl{
 
   }
 
-  // Accion para restaurar la contraseña
-  public function post_reset($token){
-    $class = $this->authClass;
-    $token = AmToken::load($token);
-    $ret = array();
-    $pass = $this->request->reset['password'];
-
-    
-    if(!$token)
-      $ret['error'] = 'userNotFound';
-
-    else{
-      $r = $class::getCredentialsInstance($token->getContent());
-
-      if(!$r)
-        $ret['error'] = 'userNotFound';
-
-      if (!$this->isValidPassword($pass))
-        $ret['error'] = 'passwordInvalid';
-
-      else if($pass != $this->request->reset['confirm_password'])
-        $ret['error'] = 'passwordDiff';
-
-      else if(!$r->resetPasword($pass))
-        $ret['error'] = 'troublesResetingPassword';
-
+  // Acción para solicitar las instrucciones para recuperar la sontraseña
+  public function post_checkCode(){
+    $token = AmToken::load($this->request->token);
+    $code = $this->sslDecrypt($this->request->code);
+    $ret =array();
+  
+    // Validations
+    if(!$token){
+      $ret['error'] = 'tokenNotFound';
+    }else{
+      $data = $token->getContent();
+      if($data['code'] != $code){
+        $ret['error'] = 'invalidCode';
+      }else{
+        $class = $this->authClass;
+        $this->r = $class::getCredentialsInstance($data['id']);
+        if(!$this->r){
+          $ret['error'] = 'userNotFound';
+        }
+      }
     }
 
-    $ret['success'] = !!$r && !isset($ret['error']);
+    $ret['success'] = !isset($ret['error']);
+
+    return $ret;
+
+  }
+
+  // Accion para restaurar la contraseña
+  public function post_reset(){
+    $ret = $this->post_checkCode();
+
+    $pass = $this->sslDecrypt($this->request->password);
+    $passConfirm = $this->sslDecrypt($this->request->confirm_password);
+    
+    // Validations
+    if($ret['success']){
+      if (!$this->isValidPassword($pass))
+        $ret['error'] = 'passwordInvalid';
+      else if($pass != $passConfirm)
+        $ret['error'] = 'passwordDiff';
+
+      // Password change
+      else if(!$this->r->resetPasword($pass))
+        $ret['error'] = 'troublesResetingPassword';
+
+      $ret['success'] = !isset($ret['error']);
+    }
     
     return $ret;
 
@@ -158,9 +190,11 @@ class AmAuthControl extends AmControl{
   private function in(AmCredentials $user){
 
     $token = AmToken::create();
-    $token->setContent($user->getCredentialsId());
+    $token->setContent(array(
+      'id' => $user->getCredentialsId()
+    ));
     $token->save();
-    return $token->getName();
+    return $token->getID();
 
   }
 
@@ -182,7 +216,8 @@ class AmAuthControl extends AmControl{
 
   public function sslEncrypt($str){
     if(!isset($this->keyPublic))
-      return $str;
+      return $str;  
+      // Validations
     openssl_public_encrypt($str, $encrypted, $this->keyPublic);
     $str = base64_encode($str);
     return $str;
@@ -192,7 +227,6 @@ class AmAuthControl extends AmControl{
 
     if(strlen($pass)<4)
       return false;
-
     return true;
 
   }

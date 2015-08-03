@@ -124,10 +124,11 @@ class AmMailer extends PHPMailer{
     // SMTP Configuration
     $this->isSMTP();
     $this->SMTPAuth = true;
+    if(isset($smtp['debug'])) $this->SMTPDebug = $smtp['debug'];
+    $this->SMTPSecure = isset($smtp['secure'])? $smtp['secure'] : null;
     $this->Host = isset($smtp['host'])? $smtp['host'] : null;
     $this->Username = isset($smtp['user'])? $smtp['user'] : null;
     $this->Password = isset($smtp['pass'])? $smtp['pass'] : null;
-    $this->SMTPSecure = isset($smtp['secure'])? $smtp['secure'] : null;
 
     // Asignar puerto si esta definido
     if(isset($smtp['port'])) $this->Port = $smtp['port'];

@@ -40,9 +40,6 @@ interface AmCredentials {
   // Devuelve el login único del usuario
   public function getCredentialsEmail();
 
-  // Devuelve la url del registro para recuperar la contraseña
-  public function getCredentialsResetUrl();
-
   // Resetea la contraseña
   public function resetPasword($pass);
 

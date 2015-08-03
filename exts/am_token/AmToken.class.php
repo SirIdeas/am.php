@@ -33,7 +33,7 @@ class AmToken extends AmObject{
 
   // Propiedades del token
   protected
-    $name = null,
+    $id = null,
     $fileName = null,
     $createdAt = null,
     $updatedAt = null,
@@ -41,10 +41,10 @@ class AmToken extends AmObject{
     $maxTimeNoUse = null,
     $content = null;
 
-  public function __construct($name, $timeExpiration = null, $maxTimeNoUse = null){
+  public function __construct($id, $timeExpiration = null, $maxTimeNoUse = null){
 
-    $this->name = $name;
-    $this->fileName = self::$ROOT_FOLDER . $name;
+    $this->id = $id;
+    $this->fileName = self::$ROOT_FOLDER . $id;
     $this->timeExpiration = isset($timeExpiration)? $timeExpiration : self::$TIME_EXPIRATION_DEF;
     $this->maxTimeNoUse = isset($maxTimeNoUse)? $maxTimeNoUse : self::$MAX_TIME_NO_USE_DEF;
 
@@ -72,7 +72,7 @@ class AmToken extends AmObject{
   }
 
   // PAra obtener ciertos atributos
-  public function getName(){ return $this->name; }
+  public function getID(){ return $this->id; }
   public function getFileName(){ return $this->fileName; }
   public function getCreatedFile(){ return $this->createdFile; }
   public function getUpdateFile(){ return $this->updatedFile; }
@@ -113,12 +113,12 @@ class AmToken extends AmObject{
 
   }
 
-  public static function getNewName(){
-    return md5(mt_rand()).md5(mt_rand());
+  public static function getNewID(){
+    return md5(mt_rand());
   }
 
-  public static function load($name){
-    $token = new self($name);
+  public static function load($id){
+    $token = new self($id);
     if($token->isExpired())
       $token->delete();
     return $token->exists() ? $token : null;
@@ -127,11 +127,11 @@ class AmToken extends AmObject{
   public static function create(){
 
     do{
-      $name = self::getNewName();
-      $token = self::load($name);
+      $id = self::getNewID();
+      $token = self::load($id);
     }while(isset($token));
 
-    $token = new self($name);
+    $token = new self($id);
     $token->save();
 
     return $token;
