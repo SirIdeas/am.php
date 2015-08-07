@@ -36,19 +36,21 @@ class AmControl extends AmObject{
       'paths'         => 'array_merge',
       'prefix'        => 'array_merge',
       'actionAllows'  => 'array_merge',
+      'headers'       => 'merge_unique',
       'filters'       => 'merge_r_if_snd_first_not_false',
     );
 
   protected
     $root = null,             // Carpeta raiz del controlador
     $paths = array(),         // Carpetas donde se buscara las vistas
+    $headers = array(),       //
     $view = null,             // Nombre de la vista a renderizar
     $filters = array(),       // Filtros agregados
     $credentials = false,     // Credenciales para el controlador
     $prefixs = array(),       // Prefijos para diferentes elementos en el controlador
     $actionAllows = array(),  // Acciones permitidas
 
-    $response = null,    // Respesta de la peticion
+    $response = null,   // Respesta de la peticion
     $server = null,     // Variables de SERVER
     $get = null,        // Variables recibidas por GET
     $post = null,       // Variables recibidas por POST
@@ -66,6 +68,12 @@ class AmControl extends AmObject{
     $this->request = new AmObject($_REQUEST);
     $this->env = new AmObject($_ENV);
 
+  }
+
+  final public function includeHeaders(){
+    foreach($this->headers as $value) {
+      header($value);
+    }
   }
 
   // Devuelve la URL de base del controlador
@@ -215,6 +223,7 @@ class AmControl extends AmObject{
     // la salida como un servicio. De lo contrario se renderizará
     // la vista correspondiente.
 
+    $this->includeHeaders();
     // Responder como un sericio
     if(is_array($ret) || is_object($ret))
       $this->renderService($ret);

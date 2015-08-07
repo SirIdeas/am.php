@@ -90,6 +90,11 @@ function isAssocArray(array $array){
   return false;
 }
 
+
+function merge_unique(array $arr1, array $arr2){
+  return array_unique(array_merge($arr1, $arr2));
+}
+
 // Mezclar dos array si la primera posicion del segundo array
 // es diferentes de falso, sino retornar el segundo array
 function merge_if_snd_first_not_false(array $arr1, array $arr2){
