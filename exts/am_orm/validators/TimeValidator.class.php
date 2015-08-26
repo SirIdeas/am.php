@@ -32,7 +32,7 @@ AmORM::validator("regex");
 class TimeValidator extends RegexValidator{
 
   public function __construct($options = array()){
-    $options["regex"] = "/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/";
+    $options["regex"] = "/^([01]?[0-9]|2[0-3]):[0-5][0-9](|:[0-5][0-9])$/";
     parent::__construct($options);
   }
 
