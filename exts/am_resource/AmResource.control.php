@@ -45,6 +45,8 @@ class AmResourceControl extends AmControl{
     if(empty($this->fields))
       $this->fields = array_diff($this->columnsNames, $this->hides);
 
+    if(empty($this->formName))
+      $this->formName = $this->classModel;
   }
 
   public function action_data(){
@@ -119,7 +121,7 @@ class AmResourceControl extends AmControl{
   public function post_cou(){
     $classModel = $this->classModel;
     $table = $classModel::me();
-    $pkValues = AmObject::mask($this->request[$this->classModel], $table->getPks());
+    $pkValues = AmObject::mask($this->request[$this->formName], $table->getPks());
     $this->r = $table->find($pkValues, $classModel);
     if(!$this->r)
       $this->r = new $classModel;
@@ -128,18 +130,21 @@ class AmResourceControl extends AmControl{
 
   // Obtener los datos de un registro
   public function post_detail($id){
-    return $this->r->getValues($this->fields);
+    return array(
+      'success' => true,
+      'data' => $this->r->getValues($this->fields)
+    );
   }
 
   // Procesamiento para guardar un formulario
   private function handleForm(AmModel $r){
     // Obtener los datos recibidos por post del formulario
-    $data = $this->request[$this->classModel];
+    $data = $this->request[$this->formName];
     $r->setValues($data, $this->fields);
     return self::handleAction($r, $r->save());
   }
 
-  private static function handleAction(AmModel $r, $actionResult){
+  private static function handleAction(AmModel $r, $actionResult = true){
     $ret = array('success' => $actionResult);
     if(!$actionResult)
       $ret['errors'] = $r->getErrors();

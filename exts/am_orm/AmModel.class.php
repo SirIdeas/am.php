@@ -372,6 +372,7 @@ class AmModel extends AmObject{
         unset($ret[$field]);
       }
     }
+    return $ret;
   }
 
   // Devuelve una consulta que selecciona el registro actual
