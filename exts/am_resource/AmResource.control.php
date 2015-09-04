@@ -57,7 +57,7 @@ class AmResourceControl extends AmControl{
 
     // Return el objeto para la tabla dinamica
     return dinamicTableServer($this->request, $q,
-      array($this, 'format_list'), false
+      array($this, 'callback_formatList'), false
     );
 
   }
@@ -74,36 +74,41 @@ class AmResourceControl extends AmControl{
     if(!$q)
       $q = $classModel::q($this->request->limit, $offset);
     
-    $this->qSearchSetup($q);
+    $this->callback_querySearchSetup($q);
     $haveNext = $q->haveNextPage();
 
     return array(
       'success'   => true,
-      'items'     => $q->getResult('array', array($this, 'format_search')),
+      'items'     => $q->getResult('array', array($this, 'callback_formatSearch')),
       'haveNext'  => $haveNext,
     );
 
   }
 
-  public function qSearchSetup(AmQuery $q){
-  }
+  public function callback_querySearchSetup(AmQuery $q){}
+
+  public function callback_newRecord(AmModel &$r){}
+
+  public function callback_setValuesRecord(AmModel &$r){}
 
   // El formateador agregará una clase al registro dependiendo
   // del estado de la inscripcion
-  public function format_list($r){
+  public function callback_formatList($r){
     $r['cls'] = '';
     return $r;
   }
 
   // El formateador agregará una clase al registro dependiendo
   // del estado de la inscripcion
-  public function format_search($r){
+  public function callback_formatSearch($r){
     return $r;
   }
 
   // Procesamiento del formulario new
   public function post_new(){
-    $this->r = new $this->classModel;
+    $r = new $this->classModel;
+    $this->callback_newRecord($r);
+    $this->r = $r;
     return $this->handleForm($this->r);
   }
 
@@ -123,8 +128,11 @@ class AmResourceControl extends AmControl{
     $table = $classModel::me();
     $pkValues = AmObject::mask($this->request[$this->formName], $table->getPks());
     $this->r = $table->find($pkValues, $classModel);
-    if(!$this->r)
-      $this->r = new $classModel;
+    if(!$this->r){
+      $r = new $classModel;
+      $this->callback_newRecord($r);
+      $this->r = $r;
+    }
     return $this->handleForm($this->r);
   }
 
@@ -141,6 +149,7 @@ class AmResourceControl extends AmControl{
     // Obtener los datos recibidos por post del formulario
     $data = $this->request[$this->formName];
     $r->setValues($data, $this->fields);
+    $this->callback_setValuesRecord($r);
     return self::handleAction($r, $r->save());
   }
 
