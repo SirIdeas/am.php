@@ -376,8 +376,8 @@ class AmModel extends AmObject{
   }
 
   // Devuelve una consulta que selecciona el registro actual
-  public function getQuerySelectItem(){
-    return $this->getTable()->findById($this->index());
+  public function getQuerySelectItem($as = 'q', $withFields = false){
+    return $this->getTable()->findById($this->index(), $as, $withFields);
   }
 
   // Devuelve una consulta para realizar los campos realizados en el modelo

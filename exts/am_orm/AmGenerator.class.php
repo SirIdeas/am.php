@@ -210,14 +210,14 @@ final class AmGenerator{
 
     // Method to get query to all records of model
     $lines[] = '  // GET QUERY TO ALL RECORDS';
-    $lines[] = '  public static function all(){';
-    $lines[] = '    return self::me()->all();';
+    $lines[] = "  public static function all(\$as = 'q', \$withFields = false){";
+    $lines[] = '    return self::me()->all($as, $withFields);';
     $lines[] = "  }\n";
 
     // Method to get query to all records of model
     $lines[] = '  // GET QUERY TO SELECT';
-    $lines[] = "  public static function q(\$limit, \$offset){";
-    $lines[] = "    return self::me()->q(\$limit, \$offset);";
+    $lines[] = "  public static function q(\$limit, \$offset, \$as = 'q', \$withFields = false){";
+    $lines[] = "    return self::me()->q(\$limit, \$offset, \$as, \$withFields);";
     $lines[] = "  }\n";
 
     // Method to get query to all records of model

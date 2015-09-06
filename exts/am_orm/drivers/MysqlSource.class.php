@@ -626,9 +626,10 @@ class MysqlSource extends AmSource{
 
     // Obtener punto de partida
     $offset = $q->getOffset();
+    $limit = $q->getLimit();
 
     // Agregar OFFSET
-    return trim(!isset($offset) ? "" : (($with ? "OFFSET " : "").$offset));
+    return trim(!isset($offset) || !isset($limit) ? "" : (($with ? "OFFSET " : "").$offset));
 
   }
 

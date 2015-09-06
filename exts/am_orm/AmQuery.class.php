@@ -98,6 +98,10 @@ class AmQuery extends AmObject{
     return clone($this);
   }
 
+  public function encapsulate($as = 'q'){
+    return $this->getSource()->newQuery($this, $as);
+  }
+
   // Devuelve una copia aislada de la consulta actual
   public function getAlone($as = 'q'){
     return $this->getSource()->newQuery($this, $as);

@@ -415,22 +415,20 @@ final class AmTable extends AmObject{
 
   }
   
-  public function q($limit, $offset){
+  public function q($limit = null, $offset = null, $as = 'q', $withFields = false){
 
-    $q = $this->all();
+    $q = $this->all($as, $withFields);
 
-    if($limit && $offset){
-      $q->limit($limit);
-      $q->offset($offset);
-    }
+    if($limit) $q->limit($limit);
+    if($limit && $offset) $q->offset($offset);
 
     return $q;
 
   }
 
   // Obtener consulta para buscar por un campos
-  public function findBy($field, $value){
-    return $this->all()->where("{$field}='{$value}'");
+  public function findBy($field, $value, $as = 'q', $withFields = false){
+    return $this->all($as, $withFields)->where("{$field}='{$value}'");
   }
 
   // Obtener todos los registros de buscar por un campos
@@ -444,9 +442,10 @@ final class AmTable extends AmObject{
   }
 
   // Obtener la consulta para encontrar el registro con un determinado ID
-  public function findById($id){
+  public function findById($id, $as = 'q', $withFields = false){
 
-    $q = $this->all();   // Obtener consultar para obtener todos los registros
+    // Obtener consultar para obtener todos los registros
+    $q = $this->all($as, $withFields);
     $pks = $this->getPks();  // Obtener el primary keys
 
     // Si es un array no asociativo
