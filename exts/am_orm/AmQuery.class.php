@@ -98,12 +98,8 @@ class AmQuery extends AmObject{
     return clone($this);
   }
 
-  public function encapsulate($as = 'q'){
-    return $this->getSource()->newQuery($this, $as);
-  }
-
   // Devuelve una copia aislada de la consulta actual
-  public function getAlone($as = 'q'){
+  public function encapsulate($as = 'q'){
     return $this->getSource()->newQuery($this, $as);
   }
 
@@ -480,7 +476,7 @@ class AmQuery extends AmObject{
   public function getCol($field){
 
     // Crear la consulta
-    $q = $this->getSource()->newQuery($this)->selectAs($field);
+    $q = $this->getCopy()->selectAs($field);
 
     // Array para retorno
     $ret = array();
@@ -503,7 +499,7 @@ class AmQuery extends AmObject{
       $formater = null;
 
     // Crear consulta
-    $q = $this->getSource()->newQuery($this);
+    $q = $this->getCopy();
 
     // Array para retorno
     $ret = array();
