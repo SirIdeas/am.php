@@ -164,9 +164,11 @@ class AmModel extends AmObject{
 
     // Si el segundo parámetro es un array entonces representa
     // que se agregaran varios validators
-    if(is_array($validatorName))
+    if(is_array($validatorName)){
       foreach ($validatorName as $value)
-        return $this->setValidator($name, $value, $validator, $options);
+        $this->setValidator($name, $value, $validator, $options);
+      return;
+    }
 
     // Si el tercer parametro es un array, entonces este representa las opciones.
     // El nombre del parametro pasa a ser tambien el validator que se buscara.
