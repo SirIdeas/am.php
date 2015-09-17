@@ -33,7 +33,6 @@ return array(
       'amAuth_recovery' => array(
         'dir' => dirname(__FILE__) . '/mails/',
         'charset' =>  'utf-8',
-        'smtp' => true,
         'subject' => 'Recuperar contraseña',
       )
     )
