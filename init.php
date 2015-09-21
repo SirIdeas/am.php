@@ -26,6 +26,9 @@
 // Version de Amathista
 define('AM_VERSION', '0.1.0-beta');
 
+// Start random num generator
+mt_srand((double)microtime() * 1000000);
+
 // Incluir núcleo de framework
 // require dirname(__FILE__) . '/core/errors.php';
 require dirname(__FILE__) . '/core/helpers.php';
