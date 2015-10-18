@@ -3,7 +3,7 @@
 return array(
 
   'env' => array(
-    'siteName' => 'Amathista Base'
+    'siteName' => 'Amathista Framework'
   ),
 
   'requires' => array(
