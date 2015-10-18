@@ -1,0 +1,187 @@
+@import nib
+
+// -----------------------------------------------------------------------------
+// mixins
+// -----------------------------------------------------------------------------
+$setBackground($color)
+  background-color          $color
+  color                     white if dark($color)
+  color                     black if !dark($color)
+
+
+// -----------------------------------------------------------------------------
+// Vertical align
+// -----------------------------------------------------------------------------
+$verticalAlignChilds($pos)
+  &:before
+    content                 ' '
+    height                  100%
+  &:before
+  >*
+    display                 inline-block
+    vertical-align          $pos
+    
+// -----------------------------------------------------------------------------
+// Principales
+// -----------------------------------------------------------------------------
+$clear()
+  *
+    box-sizing              border-box
+    color                   inherit
+
+  html
+  body
+    position                relative
+    font-size               14px
+    font-family             Roboto, 'Helvetica Neue', sans-serif;
+    margin                  0
+    padding                 0
+    
+  a
+    text-decoration         none
+
+  .text-center
+    text-align              center
+    
+  .text-left
+    text-align              left
+    
+  .text-right
+    text-align              right
+    
+  .pull-right
+    float                   right
+    
+  .pull-left
+    float                   left
+    
+  .scrollable
+    overflow                auto
+    
+  .content
+    max-width               850px
+    margin                  0 auto
+    
+  .inner
+    padding                 10px
+
+// -----------------------------------------------------------------------------
+// Grid
+// -----------------------------------------------------------------------------
+$generateGrid($rowSelector = '.row', $colSelector = '.col', $numSections = 12)
+  {$rowSelector}
+    &:after
+    &:before
+      content               " "
+      display               table
+    &:after
+      clear                 both
+
+  {$colSelector}
+    float                   left
+    box-sizing              border-box
+    for $i in (1..$numSections)
+      &.s{$i}
+        display             inline-block
+        width               $i*(100 / $numSections)*1%
+
+// -----------------------------------------------------------------------------
+// Colores
+// -----------------------------------------------------------------------------
+$generatePallete($selector, $colors)
+
+  if($colors[''])
+    {$selector}
+      $setBackground        $colors['']
+    
+  for $name, $color in $colors
+    {$selector}.bg{$name}
+      $setBackground        $color
+
+// -----------------------------------------------------------------------------
+// Sombras
+// -----------------------------------------------------------------------------
+$generateShadows()
+  .box-shadow-1 {box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12); }
+  .box-shadow-2 {box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.12); }
+  .box-shadow-3 {box-shadow: 0px 1px 8px 0px rgba(0, 0, 0, 0.2), 0px 3px 4px 0px rgba(0, 0, 0, 0.14), 0px 3px 3px -2px rgba(0, 0, 0, 0.12); }
+  .box-shadow-4 {box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12); }
+  .box-shadow-5 {box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 5px 8px 0px rgba(0, 0, 0, 0.14), 0px 1px 14px 0px rgba(0, 0, 0, 0.12); }
+  .box-shadow-6 {box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 6px 10px 0px rgba(0, 0, 0, 0.14), 0px 1px 18px 0px rgba(0, 0, 0, 0.12); }
+  .box-shadow-7 {box-shadow: 0px 4px 5px -2px rgba(0, 0, 0, 0.2), 0px 7px 10px 1px rgba(0, 0, 0, 0.14), 0px 2px 16px 1px rgba(0, 0, 0, 0.12); }
+  .box-shadow-8 {box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12); }
+  .box-shadow-9 {box-shadow: 0px 5px 6px -3px rgba(0, 0, 0, 0.2), 0px 9px 12px 1px rgba(0, 0, 0, 0.14), 0px 3px 16px 2px rgba(0, 0, 0, 0.12); }
+  .box-shadow-10 {box-shadow: 0px 6px 6px -3px rgba(0, 0, 0, 0.2), 0px 10px 14px 1px rgba(0, 0, 0, 0.14), 0px 4px 18px 3px rgba(0, 0, 0, 0.12); }
+  .box-shadow-11 {box-shadow: 0px 6px 7px -4px rgba(0, 0, 0, 0.2), 0px 11px 15px 1px rgba(0, 0, 0, 0.14), 0px 4px 20px 3px rgba(0, 0, 0, 0.12); }
+  .box-shadow-12 {box-shadow: 0px 7px 8px -4px rgba(0, 0, 0, 0.2), 0px 12px 17px 2px rgba(0, 0, 0, 0.14), 0px 5px 22px 4px rgba(0, 0, 0, 0.12); }
+  .box-shadow-13 {box-shadow: 0px 7px 8px -4px rgba(0, 0, 0, 0.2), 0px 13px 19px 2px rgba(0, 0, 0, 0.14), 0px 5px 24px 4px rgba(0, 0, 0, 0.12); }
+  .box-shadow-14 {box-shadow: 0px 7px 9px -4px rgba(0, 0, 0, 0.2), 0px 14px 21px 2px rgba(0, 0, 0, 0.14), 0px 5px 26px 4px rgba(0, 0, 0, 0.12); }
+  .box-shadow-15 {box-shadow: 0px 8px 9px -5px rgba(0, 0, 0, 0.2), 0px 15px 22px 2px rgba(0, 0, 0, 0.14), 0px 6px 28px 5px rgba(0, 0, 0, 0.12); }
+  .box-shadow-16 {box-shadow: 0px 8px 10px -5px rgba(0, 0, 0, 0.2), 0px 16px 24px 2px rgba(0, 0, 0, 0.14), 0px 6px 30px 5px rgba(0, 0, 0, 0.12); }
+  .box-shadow-17 {box-shadow: 0px 8px 11px -5px rgba(0, 0, 0, 0.2), 0px 17px 26px 2px rgba(0, 0, 0, 0.14), 0px 6px 32px 5px rgba(0, 0, 0, 0.12); }
+  .box-shadow-18 {box-shadow: 0px 9px 11px -5px rgba(0, 0, 0, 0.2), 0px 18px 28px 2px rgba(0, 0, 0, 0.14), 0px 7px 34px 6px rgba(0, 0, 0, 0.12); }
+  .box-shadow-19 {box-shadow: 0px 9px 12px -6px rgba(0, 0, 0, 0.2), 0px 19px 29px 2px rgba(0, 0, 0, 0.14), 0px 7px 36px 6px rgba(0, 0, 0, 0.12); }
+  .box-shadow-20 {box-shadow: 0px 10px 13px -6px rgba(0, 0, 0, 0.2), 0px 20px 31px 3px rgba(0, 0, 0, 0.14), 0px 8px 38px 7px rgba(0, 0, 0, 0.12); }
+  .box-shadow-21 {box-shadow: 0px 10px 13px -6px rgba(0, 0, 0, 0.2), 0px 21px 33px 3px rgba(0, 0, 0, 0.14), 0px 8px 40px 7px rgba(0, 0, 0, 0.12); }
+  .box-shadow-22 {box-shadow: 0px 10px 14px -6px rgba(0, 0, 0, 0.2), 0px 22px 35px 3px rgba(0, 0, 0, 0.14), 0px 8px 42px 7px rgba(0, 0, 0, 0.12); }
+  .box-shadow-23 {box-shadow: 0px 11px 14px -7px rgba(0, 0, 0, 0.2), 0px 23px 36px 3px rgba(0, 0, 0, 0.14), 0px 9px 44px 8px rgba(0, 0, 0, 0.12); }
+  .box-shadow-24 {box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.2), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 9px 46px 8px rgba(0, 0, 0, 0.12); }
+
+// -----------------------------------------------------------------------------
+// Botones
+// -----------------------------------------------------------------------------
+$generateButton(
+  $buttonSelector = '.btn',
+  $raisedSelector = '.btn-raised',
+  $fabSelector = '.btn-fab',
+  $miniSelector = '.btn-mini',
+  $iconSelector = '.btn-icon')
+  {$buttonSelector}
+    border-radius           3px
+    user-select             none
+    position                relative
+    outline                 0
+    border                  0
+    display                 inline-block
+    align-items             center
+    padding                 0 6px
+    line-height             36px
+    min-height              36px
+    min-width               88px
+    background              0 0
+    white-space             nowrap
+    letter-spacing          .01em
+    text-align              center
+    text-transform          uppercase
+    font-weight             500
+    text-decoration         none
+    cursor                  pointer
+    overflow                hidden
+    &:not([disabled]):hover
+      background-color      rgba(158,158,158,0.2)
+    &[disabled]
+      cursor                not-allowed
+      background-color      rgba(0,0,0,0)
+      color                 rgba(0,0,0,0.26)
+    &{$fabSelector}
+      width                 48px
+      height                48px
+      line-height           48px
+      border-radius         50%
+      min-width             0
+      padding               0
+      {$iconSelector}
+        max-height          100%
+        max-width           100%
+        padding             20%
+      &{$miniSelector}
+        line-height         40px
+        width               40px
+        height              40px
+    &{$raisedSelector}
+      &:not([disabled])
+        box-shadow          0 2px 5px 0 rgba(0,0,0,.26)
+        &:active
+          box-shadow        0 4px 8px 0 rgba(0,0,0,.4)
+      &[disabled]
+        background-color    rgba(0,0,0,0.12)

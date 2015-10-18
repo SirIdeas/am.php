@@ -1,0 +1,160 @@
+@import nib
+
+@import 'basics.styl'
+
+// -----------------------------------------------------------------------------
+// Llamadas
+// -----------------------------------------------------------------------------
+$primaryColor           = #673AB7
+
+$clear()
+$generateShadows()
+$generateGrid()
+$generateButton()
+
+$generatePallete('.primary', {
+  '-l5':   #EDE7F6,
+  '-l4':   #D1C4E9,
+  '-l3':   #B39DDB,
+  '-l2':   #9575CD,
+  '-l1':   #7E57C2,
+  '':      $primaryColor,
+  '-d1':   #5E35B1,
+  '-d2':   #512DA8,
+  '-d3':   #4527A0,
+  '-d4':   #311B92,
+  '-A100': #B388FF,
+  '-A200': #7C4DFF,
+  '-A400': #651FFF,
+  '-A700': #6200EA
+})
+
+$generatePallete('.secondary', {
+  '-l5':  #fafafa,
+  '-l4':  #f5f5f5,
+  '-l3':  #eeeeee,
+  '-l2':  #e0e0e0,
+  '-l1':  #bdbdbd,
+  '':     #9e9e9e,
+  '-d1':  #757575,
+  '-d2':  #616161,
+  '-d3':  #424242,
+  '-d4':  #212121
+})
+
+.full-height
+  height                100%
+  
+.valign-middle
+  $verticalAlignChilds  middle
+
+.link
+  font-weight           bold
+  color                 $primaryColor
+
+.def-img
+  max-width             100%
+  display               block
+  margin                auto
+  
+// -----------------------------------------------------------------------------
+$toolbarHeight          = 60px
+$siteHeaderHeight       = $toolbarHeight
+$siteFooterHeight       = 35px
+$sidebarLeftWidth       = 250px
+$logoHeight             = 100px
+$pageTitlePaddingTop    = 200px
+
+#sidebarLeft
+  z-index               1
+  fixed                 top left bottom
+  width                 $sidebarLeftWidth
+
+.logo-parent
+  img
+    max-height          $logoHeight
+    display             block
+    margin              0 auto
+    
+.sidebar-left-footer
+  absolute              left right bottom
+  h4
+    margin              10px 0 0 0
+  p
+    margin              5px 0 5px 0
+
+#siteHeader
+#siteFooter
+  fixed                 left $sidebarLeftWidth right
+  
+#siteHeader
+  top                   0
+  height                $siteHeaderHeight
+  .content
+    height              $siteHeaderHeight
+    padding             0 10px
+    font-size           130%
+    
+    // Effecto ocultar 
+    transition          opacity linear 0.1s
+    opacity             1
+    &.dispel
+      opacity           0
+    
+
+#siteFooter
+  height                $siteFooterHeight
+  bottom                0
+  color                 #555
+  .content
+    padding             0 10px
+  .col
+    height              $siteFooterHeight
+  a
+    color               inherit
+
+ul.nav
+  margin                0
+  padding               20px 0  
+  li
+    margin              0
+    list-style-type     none
+    a
+      text-decoration   none
+      display           block
+      padding           0 15px
+      &:hover
+        background-color rgba(158,158,158,0.2)
+  >li
+  >li>a
+    line-height         36px
+  >li
+    >.sub-nav
+      display             none
+    &.nav-li-opened>.sub-nav
+      display             block
+      
+.nav-item
+  line-height           40px
+  display               inline-block
+  vertical-align        top
+  padding-left          10px
+  
+#pageTitle
+  .content
+    // Effecto ocultar 
+    transition          opacity linear 0.1s
+    opacity             1
+    &.dispel
+      opacity           0
+
+#wrapper
+  margin                $siteHeaderHeight 0 $siteFooterHeight $sidebarLeftWidth
+
+.home-page-title
+  h1
+    margin              0
+    font-size           300%
+  img
+    max-height          300px
+  
