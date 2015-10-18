@@ -13,7 +13,7 @@
  * helpers escenciales, manejo de errores personalizado.
  * 
  */
-include '../am/start.php';
+include '../../am/start.php';
 
 /**
  * -----------------------------------------------------------------------------
