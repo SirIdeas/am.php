@@ -45,17 +45,17 @@ final class AmTpl extends AmObject{
       $this->content = file_get_contents($this->realFile);
 
     // Obtener padre
-    preg_match_all('/\(#: parent:(.*) #\)/', $this->content, $parents);
+    preg_match_all('/\(:: parent:(.*) :\)/', $this->content, $parents);
     $this->parent = array_pop($parents[1]);
 
     // Quitar sentencias de padres
     $this->content = implode('',
-      preg_split('/\(#: parent:(.*) #\)/',
+      preg_split('/\(:: parent:(.*) :\)/',
       $this->content)
     );
 
     // Obtener lista de hijos en comandos place
-    preg_match_all('/\(#: (place:(.*)|put:.* = (.*)) #\)/',
+    preg_match_all('/\(:: (place:(.*)|put:.* = (.*)) :\)/',
       $this->content, $dependences1);
 
     // Obtener lista de hijos en comandos put
@@ -98,10 +98,10 @@ final class AmTpl extends AmObject{
     $this->child = $child;  // Contenido de un vista hija
 
     // Dividir por comandos
-    $parts = preg_split('/\(#: (.*) #\)/', $this->content);
+    $parts = preg_split('/\(:: (.*) :\)/', $this->content);
 
     // Obtener comando
-    preg_match_all('/\(#: (.*) #\)/', $this->content, $cmds);
+    preg_match_all('/\(:: (.*) :\)/', $this->content, $cmds);
     $cmds = $cmds[1];
 
     ob_start(); // Para optener todo lo que se imprima durante el compilad
@@ -134,9 +134,9 @@ final class AmTpl extends AmObject{
     // Obtener el contenido
     $content = ob_get_clean();
 
-    $content = preg_replace('/\(#\/#\)/', '<?php echo Am::url() ?>', $content);
-    $content = preg_replace('/\(# (.*) #\)/', '<?php ${1} ?>', $content);
-    $content = preg_replace('/\(#= (.*) #\)/', '<?php echo ${1} ?>', $content);
+    $content = preg_replace('/\(:\/:\)/', '<?php echo Am::url() ?>', $content);
+    $content = preg_replace('/\(: (.*) :\)/', '<?php ${1} ?>', $content);
+    $content = preg_replace('/\(:= (.*) :\)/', '<?php echo ${1} ?>', $content);
 
     // Si la vista tiene un padre
     if(null !== $this->parent){
