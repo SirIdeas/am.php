@@ -1,6 +1,6 @@
 <section id="sidebarLeft" class="primary bg-l5 scrollable box-shadow-3">
   <div class="logo-parent inner primary bg-l3">
-    <img src="(:/:)/images/amathistaw.png" alt="Logo Amathista"/>
+    <img src="(:/:)/images/am_hlogo_w.png" alt="Logo Amathista"/>
   </div>
   <ul class="nav">
     <li><a href="(:/:)">Inicio</a></li>
