@@ -19,7 +19,7 @@
     <h2>Descarga</h2>
 
     <p>
-      La descarga de Amathista se realiza desde GitHub ya se com un archivo comprimido, o clonando el repositorio.
+      La descarga de Amathista se realiza desde GitHub ya sea como un archivo comprimido, o clonando el repositorio.
     </p>
     <ul>
       <li>
@@ -43,26 +43,23 @@
     </p>
     <ul>
       <li>
-        <div><code><strong>/am/</strong></code></div>
         <p>
-          Directorio contenedor de Amathista. Representa la carpeta donde se encuentra el código fuente de Amathista.
+          <code><strong>/am/</strong></code>: Directorio contenedor de Amathista. Representa la carpeta donde se encuentra el código fuente de Amathista.
         </p>
       </li>
       <li>
-        <div><code><strong>/app/</strong></code></div>
         <p>
-          Directorio contenedor de código fuente de la applicación como lo son los controladores, vistas y modelos entre otros). Su estrucutra interna es definida a conveniencia.
+          <code><strong>/app/</strong></code>: Directorio contenedor de código fuente de la applicación como lo son los controladores, vistas y modelos entre otros). Su estrucutra interna es definida a conveniencia.
         </p>
       </li>
       <li>
-        <div><code><strong>/public/</strong></code></div>
         <p>
-          Directorio raíz de la aplicación en el servidor. Contiene el archivo de arranque y los recursos públicos como los son archivos javascript, hoja de estilos, imágenes y fuentes entre otros. Su estructura interna es definida a conveniencia.
+          <code><strong>/public/</strong></code>: Directorio raíz de la aplicación en el servidor. Contiene el archivo de arranque y los recursos públicos como los son archivos javascript, hoja de estilos, imágenes y fuentes entre otros. Su estructura interna es definida a conveniencia.
         </p>
       </li>
     </ul>
     <p>
-      Estas carpetas pueden tener el nombre que convenga e inclusive pueden estar ubicadas en lugares que se desee. Así mismo, estos pueden ser un único directorio, sin embargo, siempre es recomendable mantenerlos por separado.
+      Estas carpetas pueden tener el nombre que convenga e inclusive pueden estar ubicadas en lugares que se desee.
     </p>
     <p>
       Para efectos de la documentación estos directorios estarán ubicados al mismo nivel.
@@ -139,7 +136,7 @@
   <div>
     <h2>¿Qué sigue?</h2>
     <p>
-      Con esto ya tenemos una apicación con amathista sobre la cual podemos empezar a trabajar. A partir ahora, se irán explicando cada uno de los módulos de Amathista Framework. El siguiente paso es estudiar los elementos básicos de una aplicación en Amathista.
+      Con esto ya tenemos una apicación con Amathista sobre la cual podemos empezar a trabajar. A partir ahora, se irán explicando cada uno de los módulos de Amathista Framework. El siguiente paso es estudiar los elementos básicos de una aplicación en Amathista.
     </p>
   </div>
 
