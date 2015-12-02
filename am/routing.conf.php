@@ -72,22 +72,22 @@ return array(
     // Respuesta con una funcion controlador
     // -------------------------------------------------------------------------
 
-    '/ruta' => 'control => home', // 'hola' es el nombre de la función
+    '/ruta' => 'call => home', // 'hola' es el nombre de la función
 
     array(
       'route' => '/function',
-      'control' => 'hola'
+      'call' => 'hola'
     ),
 
     // -------------------------------------------------------------------------
     // Respuesta con un método estático controlador
     // -------------------------------------------------------------------------
 
-    '/ruta' => 'control => A::hola',
+    '/ruta' => 'call => A::hola',
 
     array(
       'route' => '/ruta',
-      'control' => 'A::hola'
+      'call' => 'A::hola'
     ),
 
     // -------------------------------------------------------------------------

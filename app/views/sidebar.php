@@ -16,14 +16,6 @@
     </li>
     <li>
       <a href="(:/:)/basics-elements">Elementos básicos</a>
-      <ul>
-        <li><a href="(:/:)/basics-elements#exts">Extensiones</a></li>
-        <li><a href="(:/:)/basics-elements#modeTasking">Modo <i>tasking</i></a></li>
-        <li><a href="(:/:)/basics-elements#modeRouting">Modo <i>routing</i></a></li>
-        <li><a href="(:/:)/basics-elements#confFile">Archivo de configuración</a></li>
-        <li><a href="(:/:)/basics-elements#initFile">Archivo de inicio</a></li>
-        <li><a href="(:/:)/basics-elements#AmClass">Clase <code><strong>Am</strong></code></a></li>
-      </ul>
     </li>
     <li>
       <a href="(:/:)/exts">Extensiones</a>
