@@ -513,9 +513,15 @@ final class Am{
    *                          correspondiente.
    */
   public static function responseCall($destiny, array $env, array $params){
-
+    
     // Responder como una función como controlador
-    if(function_exists($destiny)){
+    if (is_array($destiny) && call_user_func_array('method_exists', $destiny)){
+      
+      $params[] = $env;
+      call_user_func_array($destiny, $params);
+      return true;
+
+    }else if(function_exists($destiny)){
 
       // Llamar funcion
       $params[] = $env;
