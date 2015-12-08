@@ -62,8 +62,10 @@ $toolbarHeight          = 60px
 $siteHeaderHeight       = $toolbarHeight
 $siteFooterHeight       = 35px
 $sidebarLeftWidth       = 250px
-$logoHeight             = 100px
 $pageTitlePaddingTop    = 200px
+$pageTitleH1Hmargin     = 18px
+$pageTitleH1Height      = 34px
+$logoHeight             = $pageTitleH1Hmargin*2 + $pageTitleH1Height + $toolbarHeight
 
 #sidebarLeft
   z-index               1
@@ -112,34 +114,13 @@ $pageTitlePaddingTop    = 200px
     height              $siteFooterHeight
   a
     color               inherit
-
-ul.nav
-  margin                0
-  padding               20px 0  
-  li
-    margin              0
-    list-style-type     none
-    a
-      text-decoration   none
-      display           block
-      padding           0 15px
-      &:hover
-        background-color rgba(158,158,158,0.2)
-  >li
-  >li>a
-    line-height         36px
-  >li
-    >.sub-nav
-      display             none
-    &.nav-li-opened>.sub-nav
-      display             block
       
 .nav-item
   line-height           40px
   display               inline-block
   vertical-align        top
   padding-left          10px
-  
+
 #pageTitle
   .content
     // Effecto ocultar 
@@ -147,6 +128,9 @@ ul.nav
     opacity             1
     &.dispel
       opacity           0
+  h1
+    margin              $pageTitleH1Hmargin 0
+    line-height         $pageTitleH1Height
 
 #wrapper
   margin                $siteHeaderHeight 0 $siteFooterHeight $sidebarLeftWidth
@@ -157,4 +141,28 @@ ul.nav
     font-size           300%
   img
     max-height          300px
+
+ul.nav
+  margin                0
+  padding               20px 0  
+  ul
+    padding             0 10px
+  li
+    margin              0
+    list-style-type     none
+    font-size           95%
+    >a
+    >span
+      text-decoration   none
+      display           block
+      padding           0 15px
+      &:hover
+        background-color rgba(158,158,158,0.2)
+  >li
+    padding-bottom      5px
+    >a
+    >span
+      padding           5px 15px
+      font-size         100%
+      font-weight       bold
   

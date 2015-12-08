@@ -20,7 +20,7 @@ include '../am/start.php';
  * Inicialización de la aplicación.
  * -----------------------------------------------------------------------------
  * Para inicializar la aplicación debe indicar la carpeta donde esta ubicada
- * en el filesystem, ya sea relativa o absolutamente. Desde esta ruta se
+ * en el filesystem, ya sea de forma relativa o absoluta. Desde esta ruta se
  * ejecutará toda la aplicación.
  * 
  */

@@ -189,9 +189,12 @@ final class AmRoute{
    * @param   callback  $callback  Callback a agregar
    * 
    */
-  public static final function addPreCallback($callback){
+  public static final function addPreCallback($key, $callback){
 
-    self::$preCallbacks[] = $callback;
+    if(!isset(self::$preCallbacks[$key]))
+      self::$preCallbacks[$key] = array();
+
+    self::$preCallbacks[$key][] = $callback;
 
   }
 
@@ -219,8 +222,12 @@ final class AmRoute{
    */
   public static function callPreCallbacks($routes){
 
-    foreach (self::$preCallbacks as $callback)
-      $routes = call_user_func_array($callback, array($routes));
+    foreach (self::$preCallbacks as $key => $callbacks)
+      if(isset($routes[$key])){
+        foreach ($callbacks as $callback)
+          $routes = call_user_func_array($callback, array($routes));
+        unset($routes[$key]);
+      }
 
     return $routes;
 

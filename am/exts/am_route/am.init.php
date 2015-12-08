@@ -31,31 +31,25 @@ AmRoute::addAttendCallback('call',     'Am::responseCall');
 AmRoute::addAttendCallback('template', 'Am::renderTemplate');
 
 // PENDIENTE Esto debe pasar a la extensión AmResource
-function resourcePrecall($routes){
+function resourcePrecall($route){
 
-  // Si se indicó la ruta como un recurso
-  if(isset($routes['resource'])){
-    $routes['control'] = $routes['resource'];
-    $routes['routes'] = array_merge(
-      itemOr('routes', $routes, array()),
-      array(
-        ''            => 'control => @index',
-        '/new'        => 'control => @new',
-        '/data.json'  => 'control => @data',
-        '/:id/detail' => 'control => @detail',
-        '/:id/edit'   => 'control => @edit',
-        '/:id/delete' => 'control => @delete',
-        '/cou'        => 'control => @cou',
-        '/search'     => 'control => @search',
-      )
-    );
-    // Se elimina el parametro resource para que no pueda vuelva a entrar en
-    // esta condicion
-    unset($routes['resource']);
-  }
+  $route['control'] = $route['resource'];
+  $route['routes'] = array_merge(
+    itemOr('routes', $route, array()),
+    array(
+      ''            => 'control => @index',
+      '/new'        => 'control => @new',
+      '/data.json'  => 'control => @data',
+      '/:id/detail' => 'control => @detail',
+      '/:id/edit'   => 'control => @edit',
+      '/:id/delete' => 'control => @delete',
+      '/cou'        => 'control => @cou',
+      '/search'     => 'control => @search',
+    )
+  );
 
-  return $routes;
+  return $route;
 
 }
 
-Am::call('route.addPreCallback', 'resourcePrecall');
+Am::call('route.addPreCallback', 'resource', 'resourcePrecall');

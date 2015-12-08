@@ -27,7 +27,7 @@ final class Am{
       'route.evaluate' => null, // $request
 
       // Agregar un pre procesador de rutas
-      'route.addPreCallback' => null, // $callback
+      'route.addPreCallback' => null, // $kewy, $callback
 
       // Agregar un despachador de ruta en base su key
       'route.addAttendCallback' => null, // $key, $callback
@@ -1260,7 +1260,7 @@ final class Am{
     // Obtener el valor
     $errorReporting = self::getProperty('errorReporting');
     @error_reporting($errorReporting);
-
+    
     // Incluir extensiones para peticiones archivos requeridos
     self::requireExt(self::getProperty('requires', array()));
     $files = self::getProperty('files', array());

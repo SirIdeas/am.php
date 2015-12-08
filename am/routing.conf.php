@@ -106,12 +106,12 @@ return array(
     // -------------------------------------------------------------------------
     
     '/admin' => array(
-      'control' => 'Admin@',
+      'call' => 'Admin::',
       'routes' => array(
-        '/action1' => 'control => action1',
+        '/action1' => 'call => action1',
         array(
           'route' => '/action2',
-          'control' => 'action2'
+          'call' => 'action2'
         )
       )
     ),
@@ -120,20 +120,20 @@ return array(
     
     array(
       'route' => '/admin',
-      'control' => 'Admin@',
+      'call' => 'Admin::',
       'routes' => array(
-        '/action1' => 'control => action1',
+        '/action1' => 'call => action1',
         array(
           'route' => '/action2',
-          'control' => 'action2'
+          'call' => 'action2'
         )
       )
     ),
 
     // y es lo mismo que
 
-    '/admin/action1' => 'control => Admin@action1',
-    '/admin/action2' => 'control => Admin@action2',
+    '/admin/action1' => 'call => Admin::action1',
+    '/admin/action2' => 'call => Admin::action2',
 
   */),
  
