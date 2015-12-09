@@ -38,11 +38,11 @@
           <td></td>
         </tr>
         <tr>
-          <td><code><strong>route.addPreCallback</strong></code></td>
+          <td><code><strong>route.addPreProcessor</strong></code></td>
           <td>Agregar un Pre-callback</td>
         </tr>
         <tr>
-          <td><code><strong>route.addAttendCallback</strong></code></td>
+          <td><code><strong>route.addDispatcher</strong></code></td>
           <td>Agregar un despachador de ruta</td>
         </tr>
         <tr>
