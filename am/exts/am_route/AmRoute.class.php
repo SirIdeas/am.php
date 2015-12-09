@@ -34,14 +34,14 @@ final class AmRoute{
      * Callbacks de preprocesamiento
      * -------------------------------------------------------------------------
      */
-    $preCallbacks = array(),
+    $preProcessors = array(),
 
     /**
      * -------------------------------------------------------------------------
      * Callbacks de atención
      * -------------------------------------------------------------------------
      */
-    $attendCallbacks = array();
+    $dispatchers = array();
 
   protected
 
@@ -189,12 +189,12 @@ final class AmRoute{
    * @param   callback  $callback  Callback a agregar
    * 
    */
-  public static final function addPreCallback($key, $callback){
+  public static final function addPreProcessor($key, $callback){
 
-    if(!isset(self::$preCallbacks[$key]))
-      self::$preCallbacks[$key] = array();
+    if(!isset(self::$preProcessors[$key]))
+      self::$preProcessors[$key] = array();
 
-    self::$preCallbacks[$key][] = $callback;
+    self::$preProcessors[$key][] = $callback;
 
   }
 
@@ -208,9 +208,9 @@ final class AmRoute{
    * @param   callback  $callback   Callback a agregar
    * 
    */
-  public static final function addAttendCallback($to, $callback){
+  public static final function addDispatcher($to, $callback){
 
-    self::$attendCallbacks[$to] = $callback;
+    self::$dispatchers[$to] = $callback;
 
   }
 
@@ -220,15 +220,16 @@ final class AmRoute{
    * ---------------------------------------------------------------------------
    * @param  &array &$routes Array con las rutas a evaluar
    */
-  public static function callPreCallbacks($routes){
+  public static function callPreProcessors($routes){
 
-    foreach (self::$preCallbacks as $key => $callbacks)
-      if(isset($routes[$key])){
-        foreach ($callbacks as $callback)
+    foreach ($routes as $type => $value) {
+      $callbacks = itemOr($type, self::$preProcessors, array());
+      if(!empty($callbacks)){
+        foreach (self::$preProcessors[$type] as $callback)
           $routes = call_user_func_array($callback, array($routes));
         unset($routes[$key]);
       }
-
+    }
     return $routes;
 
   }
@@ -245,7 +246,7 @@ final class AmRoute{
   public static final function evaluate($request){
     
     if(true === ($lastError = self::evalMatch($request,
-      Am::getProperty('routing', array()),
+      array('routes' => Am::getProperty('routing', array())),
       Am::getProperty('env', array())
     )))
         return true;
@@ -272,10 +273,10 @@ final class AmRoute{
    */
   private static final function evalMatch($request, array $routes, array $env = array(), array $parent = array()){
 
-    $routes = self::callPreCallbacks($routes);
+    $routes = self::callPreProcessors($routes);
     $lastError = false;
 
-    $attendCallbacksKeys = array_keys(self::$attendCallbacks);
+    $dispatchers = array_keys(self::$dispatchers);
 
     // Si tiene rutas internas
     if(isset($routes['routes'])){
@@ -295,7 +296,7 @@ final class AmRoute{
         // Concatenar los parametros de la ruta parametro con los de la ruta
         // hija
         foreach($routes as $key => $value)
-          if(in_array($key, $attendCallbacksKeys))
+          if(in_array($key, $dispatchers))
             $route[$key] = $value . itemOr($key, $route, '');
 
         // Llamar para la ruta interna
@@ -322,15 +323,14 @@ final class AmRoute{
     $r = new self($routes['route']);
 
     // Si hace match con la peticion
-    if(false !== ($params = $r->match($request))){
+    if(false !== ($originalParams = $r->match($request))){
 
-      foreach (self::$attendCallbacks as $attend => $attendCallback) {
+      $params = $originalParams;
 
-        // Renderizar una vista
-        if(isset($routes[$attend])){
-
-          // Obtener el destino base
-          $destiny = $routes[$attend];
+      foreach ($routes as $type => $destiny) {
+        if(isset(self::$dispatchers[$type])){
+          
+          $dispatchers = self::$dispatchers[$type];
 
           // Reemplazar cada parámetro en el destino de la peticion
           // Los parámetros que no esten el destino de la peticion serán
@@ -343,8 +343,8 @@ final class AmRoute{
           }
 
           // Buscar el callback de atención para determinado metodo si existe
-          if(isValidCallback($attendCallback))
-            $newError = call_user_func_array($attendCallback, array($destiny, $env, $params));
+          if(isValidCallback($dispatchers))
+            $newError = call_user_func_array($dispatchers, array($destiny, $env, $params));
 
           // Si respondio la pentición retornar verdadero para indicar el exito
           // de la operación
@@ -357,7 +357,7 @@ final class AmRoute{
 
           // De lo contrario se toma un error y se toma el valor por defecto
           else
-            $lastError = Am::t('NOT_FOUND_ATTEND', $attend, $request);
+            $lastError = Am::t('NOT_FOUND_ATTEND', $type, $request);
 
         }
 

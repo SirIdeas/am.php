@@ -15,4 +15,4 @@
 Am::on('render.template', 'AmTpl::renderize');
 
 // Ruta atendida por el callback indicado
-Am::call('route.addAttendCallback', 'template', 'AmTpl::renderize');
+Am::call('route.addDispatcher', 'template', 'AmTpl::renderize');

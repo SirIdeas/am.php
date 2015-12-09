@@ -14,21 +14,21 @@
 // Despachar rutas.
 Am::on('route.evaluate', 'AmRoute::evaluate');
 // Agregar precallbakcs.
-Am::on('route.addPreCallback', 'AmRoute::addPreCallback');
+Am::on('route.addPreProcessor', 'AmRoute::addPreProcessor');
 // Agregar métodos de atención a tipos de rutas.
-Am::on('route.addAttendCallback', 'AmRoute::addAttendCallback');
+Am::on('route.addDispatcher', 'AmRoute::addDispatcher');
 
 /**
  * -----------------------------------------------------------------------------
  * Agregar algunos de los métodos que atenderán cierto tipo de rutas.
  * -----------------------------------------------------------------------------
  */
-AmRoute::addAttendCallback('file',     'Am::respondeFile');
-AmRoute::addAttendCallback('download', 'Am::downloadFile');
-AmRoute::addAttendCallback('redirect', 'Am::redirect');
-AmRoute::addAttendCallback('goto',     'Am::gotoUrl');
-AmRoute::addAttendCallback('call',     'Am::responseCall');
-AmRoute::addAttendCallback('template', 'Am::renderTemplate');
+Am::call('route.addDispatcher', 'file',     'Am::respondeFile');
+Am::call('route.addDispatcher', 'download', 'Am::downloadFile');
+Am::call('route.addDispatcher', 'redirect', 'Am::redirect');
+Am::call('route.addDispatcher', 'goto',     'Am::gotoUrl');
+Am::call('route.addDispatcher', 'call',     'Am::responseCall');
+Am::call('route.addDispatcher', 'template', 'Am::renderTemplate');
 
 // PENDIENTE Esto debe pasar a la extensión AmResource
 function resourcePrecall($route){
@@ -52,4 +52,4 @@ function resourcePrecall($route){
 
 }
 
-Am::call('route.addPreCallback', 'resource', 'resourcePrecall');
+Am::call('route.addPreProcessor', 'resource', 'resourcePrecall');

@@ -27,10 +27,10 @@ final class Am{
       'route.evaluate' => null, // $request
 
       // Agregar un pre procesador de rutas
-      'route.addPreCallback' => null, // $kewy, $callback
+      'route.addPreProcessor' => null, // $kewy, $callback
 
       // Agregar un despachador de ruta en base su key
-      'route.addAttendCallback' => null, // $key, $callback
+      'route.addDispatcher' => null, // $key, $callback
       
       // Responder con archivo
       'response.file' => null, // $file
