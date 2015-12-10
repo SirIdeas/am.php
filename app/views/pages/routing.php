@@ -52,38 +52,16 @@
 
     <div>
       <h4>Reponder con un archivo: <code>file</code></h4>
-      <p>
-        Devuelve el archivo <code><strong>/app/pdf/documento.pdf</strong></code>
-      </p>
       <pre><code class="language-php">(:= getCodeFile('routing/file.php') :)</code></pre>
     </div>
 
     <div>
       <h4>Responder con la descarga de un archivo: <code>download</code></h4>
-      <p>
-        Descarga el archivo <code><strong>/app/zips/documento.zip</strong></code> 
-      </p>
       <pre><code class="language-php">(:= getCodeFile('routing/download.php') :)</code></pre>
     </div>
 
     <div>
-      <h4>Redirigir a otra URL de la aplicación: <code>redirect</code></h4>
-      <p>
-        Redirigue a la ruta interna <code><strong>/otraRuta</strong></code>.
-      </p>
-      <pre><code class="language-php">(:= getCodeFile('routing/redirect.php') :)</code></pre>
-    </div>
-
-    <div>
-      <h4>Rediriguir a una URL externa: <code>goto</code></h4>
-      <pre><code class="language-php">(:= getCodeFile('routing/goto.php') :)</code></pre>
-    </div>
-
-    <div>
       <h4>Renderizar un template: <code>template</code></h4>
-      <p>
-        Renderiza el template <code><strong>/app/views/index.php</strong></code>
-      </p>
       <pre><code class="language-php">(:= getCodeFile('routing/template.php') :)</code></pre>
     </div>
 
@@ -92,20 +70,34 @@
       <pre><code class="language-php">(:= getCodeFile('routing/call.php') :)</code></pre>
     </div>
 
+    <div>
+      <h4>Redirigir a otra URL de la aplicación: <code>redirect</code></h4>
+      <pre><code class="language-php">(:= getCodeFile('routing/redirect.php') :)</code></pre>
+    </div>
+
+    <div>
+      <h4>Rediriguir a una URL externa: <code>goto</code></h4>
+      <pre><code class="language-php">(:= getCodeFile('routing/goto.php') :)</code></pre>
+    </div>
+
   </div>
 
   <div>
     <h3>Rutas Anidadas</h3>
-    <p>
-      De igual forma se pueden anidar rutas haciendo uso de la forma explicita mediante el índice <code><strong>routes</strong></code>. Por ejemplo:
-    </p>
     <pre><code class="language-php">(:= getCodeFile('routing/nested.php') :)</code></pre>
   </div>
 
   <div>
-    <h3>Personalización de los tipos de rutas</h3>
+    <h3>Parámetros de ruta</h3>
     <p>
-      Además de los tipos de rutas que puedes despachar inicialmente, se puede agregar nuevos tipos o modificar los existentes mediante el evento <code><strong>route.addDispatcher</strong></code>.
+      
+    </p>
+  </div>
+
+  <div>
+    <h3>Despachadores de rutas</h3>
+    <p>
+      Los despachadores son callbacks que se encargan de atender las peticiones HTTP según el tipo de ruta con el que coincidan.
     </p>
     <p>
       El despachador recive 3 argumentos:
@@ -122,25 +114,24 @@
       </li>
     </ul>
     <p>
-      El despachador retorna <code><strong>true</strong></code> si logra despachar satisfactoriamente la petición, de lo contrario debe retornar <code><strong>false</strong></code> para indicar que se debe seguir intentando con otros despachadores.
+      Debe retorna <code><strong>true</strong></code> si logra despachar satisfactoriamente la petición, de lo contrario debe retornar <code><strong>false</strong></code> para indicar que se debe seguir intentando con otros despachadores.
     </p>
     <p>
-      Por ejemplo, el siguiente despachador:
+      Para agregar o sustituir un despachador se utiliza el evento <code><strong>route.addDispatcher</strong></code> como se muestra a continuación.
     </p>
     <span>/app/am.init.php</span>
-    <pre><code class="language-php">(:= getCodeFile('routing/customization.php') :)</code></pre>
+    <pre><code class="language-php">(:= getCodeFile('routing/dispatchers.php') :)</code></pre>
     <p>
-      Puede atender la siguiente ruta:
+      Así entonces se puede atender la siguiente ruta:
     </p>
-    <pre><code class="language-php">(:= getCodeFile('routing/customization-routes.php') :)</code></pre>
-
+    <pre><code class="language-php">(:= getCodeFile('routing/dispatchers-routes.php') :)</code></pre>
 
   </div>
 
   <div>
     <h3>Pre-procesadores de ruta</h3>
     <p>
-      Los pre-procesadores de rutas son callbacks preparan una ruta antes de que esta sea evaluada. Estos  son asignados a un tipo de ruta. Reciben como primer parámetro la ruta en forma explícita y debe retornar la ruta transformada.
+      Los pre-procesadores de rutas son callbacks que reparan una ruta antes de que esta sea evaluada. Estos  son asignados a un tipo de ruta. Reciben como primer parámetro la ruta en forma explícita y debe retornar la ruta transformada.
     </p>
     <p>
       Para agregar el pre-procesador de ruta se utiliza el evento <code><strong>route.addPreProcessor</strong></code> como se muestra a continuación:
@@ -164,7 +155,7 @@
     </p>
     <ul class="nested-list">
       <li><strong>Inicio</strong></li>
-      <li>Obtener <strong>petición</strong>.</li>
+      <li>Obtener <strong>petición</strong></li>
       <li>Por cada <strong>ruta</strong>
         <ul>
           <li>Llamar preprocesadores correspondientes a la ruta</li>

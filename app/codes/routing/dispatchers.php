@@ -1,8 +1,8 @@
 // Despachador
 function customMyTypeDispatcher($destiny, $env, $params){
   echo 'Decir '.$destiny.' en '.$params['lang'];
-  return false;
+  return true;
 }
 
-// Agregando despachador al tipo 'myType'
+// Agregar el despachador al tipo 'myType'
 Am::call('route.addDispatcher', 'myType', 'customMyTypeDispatcher');
