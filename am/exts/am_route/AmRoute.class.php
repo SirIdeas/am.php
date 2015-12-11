@@ -244,17 +244,17 @@ final class AmRoute{
    *                            petición
    */
   public static final function evaluate($request){
-    
-    if(true === ($lastError = self::evalMatch($request,
+      
+    $response = self::evalMatch($request,
       array('routes' => Am::getProperty('routing', array())),
       Am::getProperty('env', array())
-    )))
-        return true;
+    );
 
-    // No se encontró una ruta válida
-    Am::e404($lastError);
+    if(!$response instanceof AmResponse)
+      $response =AmResponse::e404();
 
-    return false;
+    while($response instanceof AmResponse)
+      $response = $response->make();
 
   }
 
@@ -274,7 +274,7 @@ final class AmRoute{
   private static final function evalMatch($request, array $routes, array $env = array(), array $parent = array()){
 
     $routes = self::callPreProcessors($routes);
-    $lastError = false;
+    $lastResponse = false;
 
     $dispatchers = array_keys(self::$dispatchers);
 
@@ -300,15 +300,16 @@ final class AmRoute{
             $route[$key] = $value . itemOr($key, $route, '');
 
         // Llamar para la ruta interna
-        $newError = self::evalMatch($request, $route, $env, $routes);
+        $response = self::evalMatch($request, $route, $env, $routes);
 
-        // Se atendió la llamada
-        if(true === $newError)
-          return true;
-
-        // Si se retorno un error reescirbir el error anterior
-        if(is_string($newError))
-          $lastError = $newError;
+        if($response instanceof AmResponse){
+          // Se atendió la llamada
+          if($response->isResolved())
+            return $response;
+          // Error
+          else
+            $lastResponse = $response;
+        }
 
       }
     }
@@ -323,41 +324,36 @@ final class AmRoute{
     $r = new self($routes['route']);
 
     // Si hace match con la peticion
-    if(false !== ($originalParams = $r->match($request))){
-
-      $params = $originalParams;
+    if(false !== ($params = $r->match($request))){
 
       foreach ($routes as $type => $destiny) {
         if(isset(self::$dispatchers[$type])){
           
-          $dispatchers = self::$dispatchers[$type];
+          $dispatcher = self::$dispatchers[$type];
 
           // Reemplazar cada parámetro en el destino de la peticion
-          // Los parámetros que no esten el destino de la peticion serán
-          // los parámetros para la llamada de de respuesta
-          foreach($params as $key => $val){
-            $newDestiny = str_replace(":{$key}", $val, $destiny);
-            if($newDestiny !== $destiny)
-              unset($params[$key]);
-            $destiny = $newDestiny;
-          }
+          foreach($params as $key => $val)
+            $destiny = str_replace(":{$key}", $val, $destiny);
 
-          // Buscar el callback de atención para determinado metodo si existe
-          if(isValidCallback($dispatchers))
-            $newError = call_user_func_array($dispatchers, array($destiny, $env, $params));
-
-          // Si respondio la pentición retornar verdadero para indicar el exito
-          // de la operación
-          if(true === $newError)
-            return true;
+          $response = null;
           
-          // Si retorna un string entonces esta indicando el mensaje de un error
-          if(is_string($newError))
-            $lastError = $newError;
+          // Buscar el callback de atención para determinado metodo si existe
+          if(isValidCallback($dispatcher))
+            $response = call_user_func_array($dispatcher,
+                                             array($destiny, $env, $params));
 
-          // De lo contrario se toma un error y se toma el valor por defecto
-          else
-            $lastError = Am::t('NOT_FOUND_ATTEND', $type, $request);
+
+          if($response instanceof AmResponse){
+            // Se atendió la llamada
+            if($response->isResolved())
+              return $response;
+            // Error
+            else
+              $lastResponse = $response;
+
+          }else
+            // De lo contrario se toma un error y se toma el valor por defecto
+            $lastResponse = AmResponse::e404(Am::t('NOT_FOUND_ATTEND', $type, $request));
 
         }
 
@@ -366,7 +362,7 @@ final class AmRoute{
     }
 
     // Si ninguna ruta coincide con la petición entonces se devuelve un error.
-    return $lastError;
+    return $lastResponse;
 
   }
 
