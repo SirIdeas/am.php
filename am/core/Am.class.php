@@ -39,7 +39,7 @@ final class Am{
       'response.download' => null, // $file
 
       // Responder con una llamada
-      'response.call' => null, // $destiny, $env, $params
+      'response.call' => null, // $callback, $env, $params
 
       // Responder con controlador
       'response.control' => null, // $control, $action, $params, $env
@@ -260,7 +260,7 @@ final class Am{
    *                            como argumentos de la llamada del callback.
    * @return  mixed             Lo retornado por el callback correspondiente.
    */
-  public static function call($action /* Resto de los parametros*/){
+  public static function ring($action /* Resto de los parametros*/){
     
     // Obtener los parámetros
     $options = func_get_args();
@@ -497,7 +497,7 @@ final class Am{
    * @param   string  $file Ruta del archivo con el que se responderá
    * @return  bool          Si encontró o no el archivo
    */
-  public static function responseFile($file){
+  public static function file($file){
 
     return self::respondeWithFile(self::findFile($file));
 
@@ -510,7 +510,7 @@ final class Am{
    * @param   string  $file Ruta del archivo a descargar
    * @return  bool          Si encontró o no el archivo
    */
-  public static function responseDownload($file){
+  public static function download($file){
 
     return self::respondeWithFile(self::findFile($file), null, null, true);
 
@@ -737,12 +737,12 @@ final class Am{
    * ---------------------------------------------------------------------------
    * @param   string $url   URL que se desea ir.
    */
-  public static function gotoUrl($url){
 
     if(!empty($url)){
       header('location: '. $url);
       exit();
     }
+  public static function go($url){
 
     return true;
 
@@ -936,7 +936,7 @@ final class Am{
    */
   public static function getCredentialsHandler(){
 
-    return self::call('credentials.handler');
+    return self::ring('credentials.handler');
 
   }
   
@@ -1314,7 +1314,7 @@ final class Am{
     }else{
 
       // Llamado de accion para evaluar ruta
-      self::call('route.evaluate', self::getRequest());
+      self::ring('route.evaluate', self::getRequest());
       
     }
 
@@ -1427,9 +1427,9 @@ final class Am{
  * archivo.
  * -----------------------------------------------------------------------------
  */
-Am::on('response.file',     'Am::responseFile');
-Am::on('response.download', 'Am::responseDownload');
-Am::on('response.call',     'Am::responseCall');
-Am::on('render.template',   'Am::renderTemplate');
+Am::on('response.file',     'Am::file');
+Am::on('response.download', 'Am::download');
+Am::on('response.call',     'Am::call');
+Am::on('response.template', 'Am::template');
 
 Am::addTasksDir(dirname(__FILE__).'/tasks/');
