@@ -295,12 +295,10 @@ final class AmTpl extends AmObject{
   }
 
   // Funcion para atender el llamado de render.tempalte
-  public static function renderize($file, array $env = array(), array $params = array()){
+  public static function renderize($tpl, array $params = array()){
 
     // Instancia vista
-    $view = new self($file, array(
-      'env' => array_merge($env, $params),
-    ));
+    $view = new self($tpl, array('env' => $params));
 
     // Compilar y guardar
     $view->render();

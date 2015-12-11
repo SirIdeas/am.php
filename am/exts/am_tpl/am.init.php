@@ -13,6 +13,3 @@
  */
 // Atender el llamado a renderizaa vistas
 Am::on('render.template', 'AmTpl::renderize');
-
-// Ruta atendida por el callback indicado
-Am::call('route.addDispatcher', 'template', 'AmTpl::renderize');
