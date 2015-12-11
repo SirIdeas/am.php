@@ -6,4 +6,4 @@ function customRoutePreProcessor($route){
 }
 
 // Agregando pre-procesador
-Am::call('route.addPreProcessor', 'myAdmin', 'customRoutePreProcessor');
+Am::ring('route.addPreProcessor', 'myAdmin', 'customRoutePreProcessor');

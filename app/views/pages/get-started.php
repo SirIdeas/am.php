@@ -21,7 +21,7 @@
   <div>
     <h2>Eventos básicos</h2>
     <p>
-      Los eventos en Amathista son unidos a los callbacks mediante el método <code><strong>Am::on</strong></code> y disparados mediante el método <code><strong>Am::call</strong></code>. Los eventos básicos son:
+      Los eventos en Amathista son unidos a los callbacks mediante el método <code><strong>Am::on</strong></code> y disparados mediante el método <code><strong>Am::ring</strong></code>. Los eventos básicos son:
     </p>
     <table>
       <thead>
@@ -48,26 +48,41 @@
         <tr>
           <td><code><strong>response.file</strong></code></td>
           <td>Responder con un archivo</td>
-          <td><code>Am::responseFile</code></td>
+          <td><code>Am::file</code></td>
         </tr>
         <tr>
           <td><code><strong>response.download</strong></code></td>
-          <td>Responder con descarga de un archivo</td>
-          <td><code>Am::responseDownload</code></td>
+          <td>Responder con la descarga de un archivo</td>
+          <td><code>Am::download</code></td>
         </tr>
         <tr>
           <td><code><strong>response.call</strong></code></td>
-          <td>Responder con una llamada de una función o método</td>
-          <td><code>Am::responseCall</code></td>
+          <td>Responder con la llamada de una función o método</td>
+          <td><code>Am::call</code></td>
         </tr>
         <tr>
           <td><code><strong>response.control</strong></code></td>
           <td>Responder con la acción de un controlador</td>
         </tr>
         <tr>
+          <td><code><strong>response.redirect</strong></code></td>
+          <td>Responder con la redirección interna</td>
+          <td><code>Am::redirect</code></td>
+        </tr>
+        <tr>
+          <td><code><strong>response.go</strong></code></td>
+          <td>Responder con la redirección externa</td>
+          <td><code>Am::go</code></td>
+        </tr>
+        <tr>
+          <td><code><strong>response.template</strong></code></td>
+          <td>Responde con el renderizado de una vista</td>
+          <td><code>Am::template</code></td>
+        </tr>
+        <tr>
           <td><code><strong>render.template</strong></code></td>
           <td>Renderizar vista</td>
-          <td><code>Am::renderTemplate</code></td>
+          <td><code>Am::render</code></td>
         </tr>
       </tbody>
     </table>

@@ -1,9 +1,7 @@
 <?php
 
 return array(
-  'routes' => array(
-    
-    // Listado de rutas
-    
-  )
+
+  // Listado de rutas
+  
 );
