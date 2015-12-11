@@ -44,8 +44,17 @@ final class Am{
       // Responder con controlador
       'response.control' => null, // $control, $action, $params, $env
 
-      // Renderizar vista
-      'render.template' => array(), // $templete, $options
+      // Responder con una redirección interna
+      'response.redirect' => null, // $url
+
+      // Responder con una redirección externa
+      'response.go' => null, // $url
+
+      // Responde con el renderizado de una vista
+      'response.template' => array(), // $templete, $env, $params
+
+      // Renderiza de una vista
+      'render.template' => array(), // $__tpl, $__params
       
       // PENDIENTE: Volver a agregar cuando se agrege una extensión que las use
       
@@ -494,12 +503,13 @@ final class Am{
    * ---------------------------------------------------------------------------
    * Responde con un archivo indicado por parámetro.
    * ---------------------------------------------------------------------------
-   * @param   string  $file Ruta del archivo con el que se responderá
-   * @return  bool          Si encontró o no el archivo
+   * @param   string      $file Ruta del archivo con el que se responderá.
+   * @return  AmResponse  Instancia de una respuesta.
    */
   public static function file($file){
 
-    return self::respondeWithFile(self::findFile($file));
+    return AmResponse::file()
+      ->filename(self::findFile($file));
 
   }
 
@@ -507,12 +517,14 @@ final class Am{
    * ---------------------------------------------------------------------------
    * Responde la descarga de un archivo indicado por parámetro.
    * ---------------------------------------------------------------------------
-   * @param   string  $file Ruta del archivo a descargar
-   * @return  bool          Si encontró o no el archivo
+   * @param   string      $file Ruta del archivo a descargar.
+   * @return  AmResponse  Instancia de una respuesta.
    */
   public static function download($file){
 
-    return self::respondeWithFile(self::findFile($file), null, null, true);
+    return AmResponse::file()
+      ->filename(self::findFile($file))
+      ->attachment();
 
   }
 
@@ -521,78 +533,56 @@ final class Am{
    * Busca una llamada como función, método estático de una clase o llamada
    * a controlador.
    * ---------------------------------------------------------------------------
-   * @param  string $destiny  String que identifica el controlador a buscar.
-   * @param  array  $env      Variables de entorno.
-   * @param  array  $params   Parámetros obtenidos de la ruta.
-   * @return bool             Verdadero si encuentra el controlador
-   *                          correspondiente.
+   * @param   string $callback  String que identifica el controlador a buscar.
+   * @param   array  $env      Variables de entorno.
+   * @param   array  $params   Argumentos obtenidos de la ruta.
+   * @return  AmResponse  Instancia de una respuesta.
    */
-  public static function responseCall($destiny, array $env, array $params){
+  public static function call($callback, array $env = array(),
+                              array $params = array()){
+
+    return AmResponse::call()
+      ->callback($callback)
+      ->env($env)
+      ->params($params);
     
-    // Responder como una función como controlador
-    if (is_array($destiny) && call_user_func_array('method_exists', $destiny)){
-      
-      $params[] = $env;
-      call_user_func_array($destiny, $params);
-      return true;
-
-    }else if(function_exists($destiny)){
-
-      // Llamar funcion
-      $params[] = $env;
-      call_user_func_array($destiny, $params);
-      return true;
-
-    // Responder con un método estático como controlador
-    }elseif(preg_match('/^(.*)::(.*)$/', $destiny, $a)){
-      array_shift($a);
-
-      if(call_user_func_array('method_exists', $a)){
-        $params[] = $env;
-        call_user_func_array($a, $params);
-        return true;
-      }
-
-    }elseif(preg_match('/^(.*)@(.*)$/', $destiny, $a)){
-      array_shift($a);
-
-      // Despachar con controlador
-      if(Am::call('response.control', $a[0], $a[1], $params, $env) === true)
-        return true;
-
-    }
-
-    // El callback no existe
-    return false;
-
   }
 
   /**
    * ---------------------------------------------------------------------------
    * Busca un template y lo renderiza.
    * ---------------------------------------------------------------------------
-   * @param  string $destiny  Template a renderizar.
-   * @param  array  $options  Opciones de la vista.
+   * @param  string $tpl      Template a renderizar.
+   * @param  array  $env      Variables de entorno
+   * @param  array  $params   Parámetros obtenidos de la rutas
    * @return bool             Verdadero si encuentra el template.
    */
-  public static function renderTemplate($__tpl, array $__vars){
+  public static function template($tpl, array $env = array(),
+                                  array $params = array()){
 
-    $__tpl = findFileIn($__tpl, merge_unique(
-      itemOr('paths', $__vars, array()),
+    $env = array_merge($env, $params);
+
+    $tpl = findFileIn($tpl, merge_unique(
+      itemOr('paths', $env, array()),
       array_reverse(self::$dirs)
     ));
+    
+    return AmResponse::template()
+      ->tpl($tpl)
+      ->params($env);
 
-    if(is_file($__tpl)){
+  }
 
-      extract($__vars);
-
-      require $__tpl;
-
-      return true;
-    }
-
-    return false;
-
+  /**
+   * ---------------------------------------------------------------------------
+   * Renderiza un a vista.
+   * ---------------------------------------------------------------------------
+   * @param  string $__tpl      Template a renderizar.
+   * @param  array  $__params   Parámetros para la vista.
+   */
+  public static function render($__tpl, array $__params = array()){
+    extract($__params);
+    require self::findFile($__tpl);
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -737,14 +727,10 @@ final class Am{
    * ---------------------------------------------------------------------------
    * @param   string $url   URL que se desea ir.
    */
-
-    if(!empty($url)){
-      header('location: '. $url);
-      exit();
-    }
   public static function go($url){
 
-    return true;
+    return AmResponse::redirect()
+      ->url($url);
 
   }
 
@@ -756,9 +742,7 @@ final class Am{
    */
   public static function redirect($url){
 
-    self::gotoUrl(self::url($url));
-
-    return true;
+    return self::go(self::url($url));
 
   }
 
@@ -772,7 +756,7 @@ final class Am{
   public static function redirectIf($condition, $url){
 
     if($condition)
-      $this->redirect($url);
+      return self::redirect($url);
 
   }
 
@@ -785,7 +769,7 @@ final class Am{
    */
   public static function redirectUnless($condition, $url){
 
-    self::redirectIf(!$condition, $url);
+    return self::redirectIf(!$condition, $url);
 
   }
 
@@ -1377,48 +1361,6 @@ final class Am{
 
   }
 
-  /**
-   * ---------------------------------------------------------------------------
-   * Responde una petición HTTP con un determinado archivo.
-   * ---------------------------------------------------------------------------
-   * @param  string  $file       Archivo con el que se desea responder.
-   * @param  string  $mimeType   Tipo MIME con el que se responderá.
-   * @param  string  $name       Nombre que contendrá el archivo de respuesta.
-   * @param  boolean $attachment Para forzar la descarga del archivo en lulgar
-   *                             de verlo en el explorador.
-   * @return bool                Si se encotró o nó el archivo.
-   */
-  public static function respondeWithFile($file, $mimeType = null, $name = null,
-                                          $attachment = false){
-
-    // Si el archivo no esite retornar false
-    if(!is_file($file)) return false;
-
-    // Obtener el mime-type del archivo con el que se responderá
-    if(!isset($mimeType))
-      $mimeType = self::mimeType($file);
-
-    if(!isset($name))
-      $name = basename($file);
-
-    $attachment = $attachment ? 'attachment;' : '';
-
-    // Colocar cabeceras
-    header("content-type: {$mimeType}");
-    header("Content-Disposition: {$attachment} filename=\"{$name}\"");
-    header('Content-Transfer-Encoding: binary');
-    header('Expires: 0');
-    header('Cache-Control: must-revalidate');
-    header('Pragma: public');
-    header('Content-Length: ' . filesize($file));
-
-    // Leer archivo
-    readfile($file);
-
-    return true;
-
-  }
-
 }
 
 /**
@@ -1430,6 +1372,10 @@ final class Am{
 Am::on('response.file',     'Am::file');
 Am::on('response.download', 'Am::download');
 Am::on('response.call',     'Am::call');
+Am::on('response.redirect', 'Am::redirect');
+Am::on('response.go',       'Am::go');
 Am::on('response.template', 'Am::template');
+
+Am::on('render.template',   'Am::render');
 
 Am::addTasksDir(dirname(__FILE__).'/tasks/');
