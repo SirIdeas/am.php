@@ -55,6 +55,17 @@ class AmTemplateResponse extends AmResponse{
 
   /**
    * ---------------------------------------------------------------------------
+   * Indica si la petición se puede resolver o no.
+   * ---------------------------------------------------------------------------
+   * Se sobreescribe el método para saber si el template existe o no.
+   * @return  boolean   Indica si la petición se puede resolver o no.
+   */
+  public function isResolved(){
+    return parent::isResolved() && is_file($this->tpl);
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
    * Acción de la respuesta: Realizar llamado del callback
    * ---------------------------------------------------------------------------
    * @return  AmResponse  Si el callback a ejecutar no existe se devuelve una
@@ -63,7 +74,7 @@ class AmTemplateResponse extends AmResponse{
   public function make(){
 
     // Si no existe el archivo responder con error 404
-    if(!is_file($this->tpl))
+    if(!$this->isResolved())
       return AmResponse::e404();
       
     parent::make();

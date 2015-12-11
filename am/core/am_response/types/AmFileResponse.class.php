@@ -97,6 +97,17 @@ class AmFileResponse extends AmResponse{
 
   /**
    * ---------------------------------------------------------------------------
+   * Indica si la petición se puede resolver o no.
+   * ---------------------------------------------------------------------------
+   * Se sobreescribe el método para saber si el archivo existe o no.
+   * @return  boolean   Indica si la petición se puede resolver o no.
+   */
+  public function isResolved(){
+    return parent::isResolved() && is_file($this->filename);
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
    * Acción de la respuesta: Leer el archivo
    * ---------------------------------------------------------------------------
    * @return  AmResponse  Si el archivo que se intenta devolver no existe 
@@ -106,7 +117,7 @@ class AmFileResponse extends AmResponse{
   public function make(){
 
     // Si el archivo no existe retornar error 404
-    if(!is_file($this->filename))
+    if(!$this->isResolved())
       return AmResponse::e404();
 
     // Determinar el tipo MIME

@@ -560,13 +560,15 @@ final class Am{
   public static function template($tpl, array $env = array(),
                                   array $params = array()){
 
+    // Mezclar variables de entorno con los parametros
     $env = array_merge($env, $params);
 
+    // Obtener la ruta de la vista
     $tpl = findFileIn($tpl, merge_unique(
       itemOr('paths', $env, array()),
       array_reverse(self::$dirs)
     ));
-    
+
     return AmResponse::template()
       ->tpl($tpl)
       ->params($env);

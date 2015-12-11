@@ -78,6 +78,49 @@ class AmCallResponse extends AmResponse{
     return $this;
   }
 
+  protected function getCallback(){
+
+    $c = $this->callback;
+
+    // Responder como una función como controlador
+    if (is_array($c) && call_user_func_array('method_exists', $c))
+      
+      return array($c, false);
+
+    if(function_exists($c))
+
+      return array($c, false);
+
+    // Responder con un método estático como controlador
+    if(preg_match('/^(.*)::(.*)$/', $c, $a))
+      array_shift($a);
+
+      if(call_user_func_array('method_exists', $a))
+        return array($a, false);
+
+    if(preg_match('/^(.*)@(.*)$/', $c, $a))
+      array_shift($a);
+
+      return array($a, true);
+
+    return array(false, false);
+
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
+   * Indica si la petición se puede resolver o no.
+   * ---------------------------------------------------------------------------
+   * Se sobreescribe el método para saber si el callback existe o no.
+   * @return  boolean   Indica si la petición se puede resolver o no.
+   */
+  public function isResolved(){
+    // Obtener el callback real
+    list($callback, $isControl) = $this->getCallback();
+
+    return parent::isResolved() && $callback !== false;
+  }
+
   /**
    * ---------------------------------------------------------------------------
    * Acción de la respuesta: Realizar llamado del callback
@@ -88,40 +131,32 @@ class AmCallResponse extends AmResponse{
   public function make(){
 
     // Obtener las propiedades
-    $c = $this->callback;
     $params = $this->params;
     $env = $this->env;
 
     // Agegar entorno como último parámetro de la llamada.
     $params[] = $env;
 
-    // Responder como una función como controlador
-    if (is_array($c) && call_user_func_array('method_exists', $c)){
-      
+    // Obtener callback real y si es o no una
+    // llamada a un controlador
+    list($callback, $isControl) = $this->getCallback();
+
+    // Si $callback es un array entonces tiene un callback valido
+    if($this->isResolved()){
       parent::make();
-      return call_user_func_array($c, $params);
 
-    }else if(function_exists($c)){
+      // Responder como una función como controlador
+      if (!$isControl){
+        
+        return call_user_func_array($callback, $params);
 
-      // Llamar funcion
-      parent::make();
-      return call_user_func_array($c, $params);
+      }else{
 
-    // Responder con un método estático como controlador
-    }elseif(preg_match('/^(.*)::(.*)$/', $c, $a)){
-      array_shift($a);
+        // PENDIENTE
+        // Despachar con controlador
+        // return Am::ring('response.control', $a[0], $a[1], $params, $env);
 
-      if(call_user_func_array('method_exists', $a)){
-        parent::make();
-        return call_user_func_array($a, $params);
       }
-
-    }elseif(preg_match('/^(.*)@(.*)$/', $c, $a)){
-      array_shift($a);
-
-      // Despachar con controlador
-      parent::make();
-      return Am::ring('response.control', $a[0], $a[1], $params, $env);
 
     }
 

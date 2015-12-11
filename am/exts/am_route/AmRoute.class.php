@@ -342,6 +342,10 @@ final class AmRoute{
             $response = call_user_func_array($dispatcher,
                                              array($destiny, $env, $params));
 
+          // Si la respuesta es el valor true
+          // Entonces asignar una respuesta vacía
+          if($response === true)
+            $response = new AmResponse;
 
           if($response instanceof AmResponse){
             // Se atendió la llamada
