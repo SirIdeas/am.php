@@ -70,6 +70,7 @@ define('AM_BOOTFILE', realpath($_SERVER['SCRIPT_FILENAME']));
 
 require dirname(__FILE__) . '/core/am-helpers.php';
 require dirname(__FILE__) . '/core/Am.class.php';
+require dirname(__FILE__) . '/core/AmError.class.php';
 require dirname(__FILE__) . '/core/AmObject.class.php';
 
 /**

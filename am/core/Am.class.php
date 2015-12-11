@@ -157,12 +157,12 @@ final class Am{
      * -------------------------------------------------------------------------
      */
     $formats = array(
+      'CLASS_NOT_FOUND' => 'Am: Class "%s" Not Found',
       'NOT_FOUND' => 'Am: Not Found',
-      'NOT_FOUND_EXTS' => 'Am: No se encontró la extensión "%s"',
+      'NOT_FOUND_EXT' => 'Am: No se encontró la extensión "%s"',
       'NOT_FOUND_FILE_EXTS' => 'Am: No se encontró el archivo "%s" de la extensión "%s"',
       'NOT_FOUND_ATTEND' => 'Am: No se encontró quién atendiera %s : %s',
       'NOT_FOUND_COMMAND' => 'Am: No se encontró el comando %s',
-      'ARGS_MUST_BE_ARRAY' => 'El parámetro "args" del comando "%s" debe ser un array',
       'CANNOT_ACCESS_PROPERTY' => 'Am: No puede acceder al atributo protegido/privado %s::$%s',
     );
 
@@ -181,6 +181,21 @@ final class Am{
     $params[0] = itemOr($fmtKey, self::$formats, $fmtKey);
 
     return call_user_func_array('sprintf', $params);
+
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
+   * Devuelve un error con el mensaje obtenido del llamado del método Am::t con
+   * los parámetros de esta función.
+   * ---------------------------------------------------------------------------
+   * @params   Utilizados para generar el texto del mensaje
+   * @return   Una instancia de la clase AmError con el mensaje del texto
+   *           obtenido
+   */
+  public static function e(/* Parametros */){
+
+    return new AmError(call_user_func_array(array('Am', 't'), func_get_args()));
 
   }
 
@@ -212,7 +227,7 @@ final class Am{
 
     // Si la clase no existe devolver error
     if(!class_exists($className))
-      return null;
+      throw Am::e('CLASS_NOT_FOUND', $className);
 
     // Si la instancia existe se devuelve
     if(isset(self::$instances[$className]))
@@ -839,7 +854,7 @@ final class Am{
         if(is_file($realFile = "{$file}/{$item}.php"))
           require_once $realFile;
         else
-          throw new Exception(Am::t('NOT_FOUND_FILE_EXTS', $realFile, $file));
+          throw Am::e('NOT_FOUND_FILE_EXTS', $realFile, $file);
 
     }
 
@@ -905,7 +920,7 @@ final class Am{
         return;
 
     // No se agregó la extension
-    throw new Exception(Am::t('NOT_FOUND_EXTS', $name));
+    throw Am::e('NOT_FOUND_EXT', $name);
 
   }
 
@@ -1008,10 +1023,6 @@ final class Am{
 
     // Procesar preprar argumentos, si la configuración existe
     if(isset($options['args'])){
-
-      // Si no es un array generar error
-      if(!is_array($options['args']))
-        throw new Exception(Am::t('ARGS_MUST_BE_ARRAY', $task));
 
       $params = array();
       foreach ($options['args'] as $paramName => $value){
@@ -1123,7 +1134,7 @@ final class Am{
 
       // Si la funcion no existe mostrar error
       if(!function_exists($functionName))
-        throw new Exception(Am::t('NOT_FOUND_COMMAND', $task));
+        throw Am::e('NOT_FOUND_COMMAND', $task);
 
       // Si el target esta indicado
       if(isset($target) && isset($options['targets'][$target])
@@ -1202,26 +1213,6 @@ final class Am{
       // Incluir manejador principal de session
       'core/am_session'
     ));
-
-  }
-
-  /////////////////////////////////////////////////////////////////////////////
-  // Responder con error 404
-  /////////////////////////////////////////////////////////////////////////////
-  
-  /**
-   * ---------------------------------------------------------------------------
-   * Agrega las cabeceras para indicar un error 404 a la respuesta.
-   * ---------------------------------------------------------------------------
-   * @param   string  $msg  $mensaje para el error a 404.
-   */
-  public static function e404($msg = null){
-
-    if(!$msg)
-      $msg = Am::t('NOT_FOUND');
-
-    header("HTTP/1.0 404 {$msg}");
-    header("Status: 404 {$msg}");
 
   }
 
