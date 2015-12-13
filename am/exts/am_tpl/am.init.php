@@ -11,5 +11,5 @@
  * Configuración de eventos globales que atenderá la extensión.
  * -----------------------------------------------------------------------------
  */
-// Atender el llamado a renderizaa vistas
+// Atender el llamado a renderiza vistas
 Am::on('render.template', 'AmTpl::renderize');
