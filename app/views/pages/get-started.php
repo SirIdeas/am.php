@@ -1,5 +1,5 @@
-(:: parent:views/base.php :)
-(:: set:pageTitle='Comenzando' :)
+(: parent:views/base.php :)
+(: set:pageTitle='Comenzando' :)
 
 <div id="pageTitle" class="primary bg-d1 box-shadow-2">
   <div class="content inner spyscroll" data-neq="0" data-class="dispel">
