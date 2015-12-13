@@ -28,6 +28,22 @@ class AmCallResponse extends AmResponse{
 
     /**
      * -------------------------------------------------------------------------
+     * Callback obtenido apartir el $callback.
+     * -------------------------------------------------------------------------
+     * @var null
+     */
+    $realCallback = null,
+
+    /**
+     * -------------------------------------------------------------------------
+     * Indica el el callback es a un controlador
+     * -------------------------------------------------------------------------
+     * @var null
+     */
+    $isController = false,
+
+    /**
+     * -------------------------------------------------------------------------
      * Array con las variables de entorno.
      * -------------------------------------------------------------------------
      * Es agregado como ultimo argumento de la llamada.
@@ -40,7 +56,15 @@ class AmCallResponse extends AmResponse{
      * -------------------------------------------------------------------------
      * Contiene los parámetros obtenido de la ruta.
      */
-    $params = array();
+    $params = array(),
+
+    /**
+     * -------------------------------------------------------------------------
+     * Indica si el callback es válido.
+     * -------------------------------------------------------------------------
+     * @var boolean
+     */
+    $isValidCallback = false;
 
   /**
    * -------------------------------------------------------------------------
@@ -51,6 +75,10 @@ class AmCallResponse extends AmResponse{
    */
   public function callback($callback){
     $this->callback = $callback;
+    
+    // Obtener el callback real
+    list($this->realCallback, $this->isController) = $this->getCallback();
+
     return $this;
   }
 
@@ -92,16 +120,20 @@ class AmCallResponse extends AmResponse{
       return array($c, false);
 
     // Responder con un método estático como controlador
-    if(preg_match('/^(.*)::(.*)$/', $c, $a))
+    if(preg_match('/^(.*)::(.*)$/', $c, $a)){
       array_shift($a);
 
       if(call_user_func_array('method_exists', $a))
         return array($a, false);
 
-    if(preg_match('/^(.*)@(.*)$/', $c, $a))
+    }
+
+    if(preg_match('/^(.*)@(.*)$/', $c, $a)){
       array_shift($a);
 
       return array($a, true);
+
+    }
 
     return array(false, false);
 
@@ -115,10 +147,7 @@ class AmCallResponse extends AmResponse{
    * @return  boolean   Indica si la petición se puede resolver o no.
    */
   public function isResolved(){
-    // Obtener el callback real
-    list($callback, $isControl) = $this->getCallback();
-
-    return parent::isResolved() && $callback !== false;
+    return parent::isResolved() && $this->realCallback !== false;
   }
 
   /**
@@ -137,18 +166,14 @@ class AmCallResponse extends AmResponse{
     // Agegar entorno como último parámetro de la llamada.
     $params[] = $env;
 
-    // Obtener callback real y si es o no una
-    // llamada a un controlador
-    list($callback, $isControl) = $this->getCallback();
-
-    // Si $callback es un array entonces tiene un callback valido
+    // Si $this->realCallback es un array entonces tiene un callback valido
     if($this->isResolved()){
       parent::make();
 
       // Responder como una función como controlador
-      if (!$isControl){
-        
-        return call_user_func_array($callback, $params);
+      if (!$this->isController){
+
+        return call_user_func_array($this->realCallback, $params);
 
       }else{
 

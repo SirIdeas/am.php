@@ -67,7 +67,6 @@ define('AM_BOOTFILE', realpath($_SERVER['SCRIPT_FILENAME']));
  * Se incluye los archivos que forman parte del núcleo del framework.
  * 
  */
-
 require dirname(__FILE__) . '/core/am-helpers.php';
 require dirname(__FILE__) . '/core/Am.class.php';
 require dirname(__FILE__) . '/core/AmError.class.php';
@@ -81,5 +80,11 @@ require dirname(__FILE__) . '/core/AmObject.class.php';
  * Esta es la última ruta donde se buscarán extensiones.
  * 
  */
-
 Am::addDir(dirname(__FILE__) . '/');
+
+/**
+ * -----------------------------------------------------------------------------
+ * Incluir extensiones iniciales.
+ * -----------------------------------------------------------------------------
+ */
+Am::requireExt('core/am_response');
