@@ -155,11 +155,11 @@ final class AmRoute{
     $typeId = self::$TYPES['id'];
     
     // Obtener el ultimo parámetro
-    if(preg_match("/^(.*):({$typeId})(.*)$/", $route, $a)){
+    if(preg_match("/^(.*){({$typeId})}(.*)$/", $route, $a)){
       array_unshift($params, $a[2]);
       // Determina si el parámetro tiene un tipo asignado (numero, alfanumerico,
       // entre otros)
-      if(preg_match('/^\((.*)\)(.*)$/', $a[3], $b)){
+      if(preg_match('/^(.*):(.*)$/', $a[3], $b)){
         if(isset(self::$TYPES[$b[1]])){
           $type = self::$TYPES[$b[1]];
         }else{
@@ -333,7 +333,7 @@ final class AmRoute{
 
           // Reemplazar cada parámetro en el destino de la peticion
           foreach($params as $key => $val)
-            $destiny = str_replace(":{$key}", $val, $destiny);
+            $destiny = str_replace("{{$key}}", $val, $destiny);
 
           $response = null;
           
