@@ -45,38 +45,48 @@ final class AmTpl extends AmObject{
       $this->content = file_get_contents($this->realFile);
 
     // Obtener padre
-    preg_match_all('/\(:: parent:(.*) :\)/', $this->content, $parents);
-    $this->parent = array_pop($parents[1]);
+    preg_match_all('/\(::[ ]*parent:(.*):\)/', $this->content, $parents);
+    $this->parent = trim(array_pop($parents[1]));
 
     // Quitar sentencias de padres
     $this->content = implode('',
-      preg_split('/\(:: parent:(.*) :\)/',
+      preg_split('/\(::[ ]*parent:(.*):\)/',
       $this->content)
     );
 
     // Obtener lista de hijos en comandos place
-    preg_match_all('/\(:: (place:(.*)|put:.* = (.*)) :\)/',
+    // PENDIENTE: 'put =' no esta funcionando
+    preg_match_all('/\(::[ ]*(place:(.*)|put:.*=(.*)):\)/',
       $this->content, $dependences1);
 
     // Obtener lista de hijos en comandos put
-    $this->dependences = array_merge($dependences1[2], $dependences1[3]);
-    if(!empty($this->dependences))
-      $this->dependences = array_keys(array_filter(
-        array_combine($this->dependences, $this->dependences)
-      ));
+    $dependences = array_merge($dependences1[2], $dependences1[3]);
 
     // Instanciar padre dentro de las dependencias
-    if(null !== $this->parent)
-      array_unshift($this->dependences, $this->parent);
+    if(!empty($this->parent))
+      array_unshift($dependences, $this->parent);
+
+    $this->dependences = array();
+
+    foreach ($dependences as $views){
+      $views = trim($views);
+      if(!empty($views))
+        $this->dependences[$views] = false;
+    }
+
+    // if(!empty($this->dependences))
+    //   $this->dependences = array_keys(array_filter(
+    //     array_combine($this->dependences, $this->dependences)
+    //   ));
 
     // Convertir el array de dependencias a un array asociativo
     // donde todos los valores sean false
-    if(0<count($this->dependences)){
-      $this->dependences = array_combine(
-        $this->dependences,
-        array_fill(0, count($this->dependences), false)
-      );
-    }
+    // if(0<count($this->dependences)){
+    //   $this->dependences = array_combine(
+    //     $this->dependences,
+    //     array_fill(0, count($this->dependences), false)
+    //   );
+    // }
 
   }
 
@@ -98,10 +108,10 @@ final class AmTpl extends AmObject{
     $this->child = $child;  // Contenido de un vista hija
 
     // Dividir por comandos
-    $parts = preg_split('/\(:: (.*) :\)/', $this->content);
+    $parts = preg_split('/\(::(.*):\)/', $this->content);
 
     // Obtener comando
-    preg_match_all('/\(:: (.*) :\)/', $this->content, $cmds);
+    preg_match_all('/\(::(.*):\)/', $this->content, $cmds);
     $cmds = $cmds[1];
 
     ob_start(); // Para optener todo lo que se imprima durante el compilad
@@ -112,12 +122,12 @@ final class AmTpl extends AmObject{
       if(isset($cmds[$i])){ // Si existe un comando en la misma posicion
 
         // Obtener parametros del comando
-        $cmds[$i] = explode(':', $cmds[$i]);
+        $cmds[$i] = explode(':', trim($cmds[$i]));
         $method = array_shift($cmds[$i]);
         $params = $cmds[$i];
 
         // Si no existe un metodo con el mismo nombre del comando mostrar error
-        method_exists($this, $method) or die("Am: unknow method AmTemplate->{$method}");
+        method_exists($this, $method) or die("Am: unknow method ".get_class($this)."->{$method}");
 
         // Si el metodo es set
         if($method == 'set')
@@ -135,11 +145,11 @@ final class AmTpl extends AmObject{
     $content = ob_get_clean();
 
     $content = preg_replace('/\(:\/:\)/', '<?php echo Am::url() ?>', $content);
-    $content = preg_replace('/\(: (.*) :\)/', '<?php ${1} ?>', $content);
-    $content = preg_replace('/\(:= (.*) :\)/', '<?php echo ${1} ?>', $content);
+    $content = preg_replace('/\(:=[ ]*(.*):\)/', '<?php echo ${1} ?>', $content);
+    $content = preg_replace('/\(:(.*):\)/', '<?php ${1} ?>', $content);
 
     // Si la vista tiene un padre
-    if(null !== $this->parent){
+    if(!empty($this->parent)){
       // Obtener instancia de vista del padre
       $parentView = $this->getSubView($this->parent)
         // Compilar padre
@@ -163,7 +173,9 @@ final class AmTpl extends AmObject{
   // Obtiene una vista con el mismo entorno de la vista actual
   public function getSubView($name){
     // Si no esta definida la dependiencia mostrar error
-    isset($this->dependences[$name]) or die("Am: not found subview \"{$name}\" in \"{$this->realFile}\"");
+    if(!isset($this->dependences[$name])){
+      throw new Exception("Am: not found subview \"{$name}\" in \"{$this->realFile}\"");
+    }
     // Si la dependencia no es una instancia de AmView
     if(!$this->dependences[$name] instanceof self){
       // Se instancia la vista
@@ -184,13 +196,17 @@ final class AmTpl extends AmObject{
 
   // Imprimir una seccion
   public function put($name){
-    // Si tiene una vista por defecto se carga
-    if(preg_match('/(.*) = (.*)/', $name, $m)){
+    // // Si tiene una vista por defecto se carga
+    // PENDIENTE: PAra hacer funcionar 'put ='
+    // if(preg_match('/(.*)=(.*)/', $name, $m)){
 
-      array_shift($m);
-      list($name, $path) = $m;
-      $this->place($path);
-    }
+    //   array_shift($m);
+    //   list($name, $path) = $m;
+    //   $name = trim($name);
+    //   $path = trim($path);
+    //   $this->place($path);
+
+    // }
 
     $section = isset($this->sections[$name])? $this->sections[$name] : '';
     echo $section;
@@ -246,7 +262,9 @@ final class AmTpl extends AmObject{
   // Agregar variable
   public function set(){
     extract($this->getEnv());
-    eval('$this->env[\''.func_get_arg(0).'\'] = '.func_get_arg(1).';');
+    eval('$this->env[\''.
+      trim(func_get_arg(0)).'\'] = '.
+      trim(func_get_arg(1)).';');
   }
 
   // Obtener variables de la vista. Cinluye el entorno + las variables definidas en la vista
