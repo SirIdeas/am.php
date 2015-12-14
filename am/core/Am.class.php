@@ -583,8 +583,9 @@ final class Am{
    * @param  array  $__params   Parámetros para la vista.
    */
   public static function render($__tpl, array $__params = array()){
+    self::$__tpl = $__tpl;
     extract($__params);
-    require self::findFile($__tpl);
+    require self::findFile(self::$__tpl);
   }
 
   /////////////////////////////////////////////////////////////////////////////
