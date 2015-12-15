@@ -90,6 +90,7 @@ final class Am{
       'requires' => 'merge_if_snd_first_not_false',
       'env' => 'merge_if_both_are_array',
       'tasks' => 'array_merge_recursive',
+      'formats' => 'array_merge'
     ),
 
     // PENDIENTE: Revisar
@@ -144,7 +145,18 @@ final class Am{
      * Propiedades/Configuraciones globales cargadas
      * -------------------------------------------------------------------------
      */
-    $confs = array(),
+    $confs = array(
+      'formats' => array(
+        'CLASS_NOT_FOUND' => 'Am: Class "%s" Not Found',
+        'NOT_FOUND' => 'Am: Not Found',
+        'NOT_FOUND_EXT' => 'Am: No se encontró la extensión "%s"',
+        'NOT_FOUND_FILE_EXTS' => 'Am: No se encontró el archivo "%s" de la extensión "%s"',
+        'NOT_FOUND_ATTEND' => 'Am: No se encontró quién atendiera %s : %s',
+        'NOT_FOUND_COMMAND' => 'Am: No se encontró el comando %s',
+        'CANNOT_ACCESS_PROPERTY' => 'Am: No puede acceder al atributo protegido/privado %s::$%s',
+        'NOT_FOUND_VIEW' => 'Am: No existe view "%s"'
+      )
+    ),
 
     /**
      * -------------------------------------------------------------------------
@@ -158,22 +170,7 @@ final class Am{
      * Petición realizada
      * -------------------------------------------------------------------------
      */
-    $request = null,
-
-    /**
-     * -------------------------------------------------------------------------
-     * Formatos de cadenas
-     * -------------------------------------------------------------------------
-     */
-    $formats = array(
-      'CLASS_NOT_FOUND' => 'Am: Class "%s" Not Found',
-      'NOT_FOUND' => 'Am: Not Found',
-      'NOT_FOUND_EXT' => 'Am: No se encontró la extensión "%s"',
-      'NOT_FOUND_FILE_EXTS' => 'Am: No se encontró el archivo "%s" de la extensión "%s"',
-      'NOT_FOUND_ATTEND' => 'Am: No se encontró quién atendiera %s : %s',
-      'NOT_FOUND_COMMAND' => 'Am: No se encontró el comando %s',
-      'CANNOT_ACCESS_PROPERTY' => 'Am: No puede acceder al atributo protegido/privado %s::$%s',
-    );
+    $request = null;
 
   /**
    * ---------------------------------------------------------------------------
@@ -185,9 +182,11 @@ final class Am{
   public static function t($fmtKey /* Parametros */){
 
     $params = func_get_args();
+
+    $formats = self::getProperty('formats', array());
     
     // Obtener formato si existe
-    $params[0] = itemOr($fmtKey, self::$formats, $fmtKey);
+    $params[0] = itemOr($fmtKey, $formats, $fmtKey);
 
     return call_user_func_array('sprintf', $params);
 
