@@ -10,6 +10,7 @@
         <li><a href="(:/:)/get-started">Comenzando</a></li>
         <li><a href="(:/:)/routing">Rutas</a></li>
         <li><a href="(:/:)/views">Vistas</a></li>
+        <li><a href="(:/:)/controllers">Controladores</a></li>
       </ul>
     </li>
     <li>
