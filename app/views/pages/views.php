@@ -73,7 +73,7 @@
     <div>
       <h4>Secciones</h4>
       <p>
-        Para definir secciones se utiliza el método <code><strong>section</strong></code> para iniciarla y <code><strong>endSection</strong></code> para cerrarla como se muestra a continuación:
+        Para definir secciones se utiliza el método <code><strong>section</strong></code> para iniciarla y <code><strong>endSection</strong></code> para cerrarla:
       </p>
       <pre><code class="language-php">(:= getCodeFile('/views/sections.php') :)</code></pre>
       <p>
@@ -87,6 +87,18 @@
           <pre><code class="language-php">(:= getCodeFile('/views/put-result.php') :)</code></pre>
         </div>
       </div>
+      <p>
+        De esta forma, si una sección se vuelve a definir su contenido es sustituído por el nuevo. Se se desea conservar el contenido anterior se debe colocar el signo <code><strong>+</strong></code> antes despúes del nombre de la sección para indicar si el nuevo contenido se agrega al final o al principio.
+      </p>
+      <div class="row code-row">
+        <div class="col s6">
+          <pre><code class="language-php">(:= getCodeFile('/views/section-concat.php') :)</code></pre>
+        </div>
+        <div class="col s6">
+          <pre><code class="language-php">(:= getCodeFile('/views/section-concat-result.php') :)</code></pre>
+        </div>
+      </div>
+
     </div>
 
     <div>
