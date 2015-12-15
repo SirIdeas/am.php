@@ -30,42 +30,60 @@ class AmResponse{
 
   /**
    * ---------------------------------------------------------------------------
-   * Devuelve una instancia de una respuesta con un archivo
+   * Responde con un archivo indicado por parámetro.
    * ---------------------------------------------------------------------------
-   * @return AmFileResponse   Instancia creada
+   * @param   string  $filename     Ruta del archivo con el que se responderá.
+   * @param   bool    $attachment   Si la ruta se descarga o no.
+   * @return  any                   Respuesta de manejador configurado.
    */
-  public static function file(){
-    return new AmFileResponse;
+  public static function file($filename, $attachment = false){
+    return (new AmFileResponse)
+      ->filename($filename)
+      ->attachment($attachment);
   }
 
   /**
    * ---------------------------------------------------------------------------
-   * Devuelve una instancia de una respuesta con un archivo
+   * Busca una llamada como función, método estático de una clase o llamada
+   * a controlador.
    * ---------------------------------------------------------------------------
-   * @return AmFileResponse   Instancia creada
+   * @param   string $callback  String que identifica el controlador a buscar.
+   * @param   array  $env      Variables de entorno.
+   * @param   array  $params   Argumentos obtenidos de la ruta.
+   * @return  any    Respuesta de manejador configurado.
    */
-  public static function redirect(){
-    return new AmRedirectResponse;
+  public static function call($callback, array $env = array(),
+                              array $params = array()){
+    return (new AmCallResponse)
+      ->callback($callback)
+      ->env($env)
+      ->params($params);
+  }
+  /**
+   * ---------------------------------------------------------------------------
+   * Busca un template y lo renderiza.
+   * ---------------------------------------------------------------------------
+   * @param   string  $tpl      Template a renderizar.
+   * @param   array   $env      Variables de entorno
+   * @return  any               Respuesta de manejador configurado.
+   */
+  public static function template($tpl, array $env = array()){
+    return (new AmTemplateResponse)
+      ->tpl($tpl)
+      ->params($env);
   }
 
   /**
    * ---------------------------------------------------------------------------
-   * Devuelve una instancia de una respuesta con el llamado de un callback
+   * Redirigir a una URL.
    * ---------------------------------------------------------------------------
-   * @return AmCallResponse   Instancia creada
+   * @param   string $url   URL que se desea ir.
    */
-  public static function call(){
-    return new AmCallResponse;
-  }
+  public static function go($url){
 
-  /**
-   * ---------------------------------------------------------------------------
-   * Devuelve una instancia de una respuesta con el render de un template
-   * ---------------------------------------------------------------------------
-   * @return AmTemplateResponse   Instancia creada
-   */
-  public static function template(){
-    return new AmTemplateResponse;
+    return (new AmRedirectResponse)
+      ->url($url);
+
   }
 
   /**

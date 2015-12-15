@@ -32,7 +32,7 @@ return array(
    * ---------------------------------------------------------------------------
    */
   'requires' => array(
-    'core/am_response',
+    'exts/am_response',
   ),
 
   /**

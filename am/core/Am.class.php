@@ -35,23 +35,17 @@ final class Am{
       // Responder con archivo
       'response.file' => null, // $file
 
-      // Responder con descarga de archivo
-      'response.download' => null, // $file
-
       // Responder con una llamada
       'response.call' => null, // $callback, $env, $params
 
-      // Responder con controlador
-      'response.control' => null, // $control, $action, $params, $env
+      // Responde con el renderizado de una vista
+      'response.template' => array(), // $templete, $env
 
-      // Responder con una redirección interna
-      'response.redirect' => null, // $url
-
-      // Responder con una redirección externa
+      // Responder con una redirección
       'response.go' => null, // $url
 
-      // Responde con el renderizado de una vista
-      'response.template' => array(), // $templete, $env, $params
+      // Responder con controlador
+      'response.control' => null, // $control, $action, $params, $env
 
       // Renderiza de una vista
       'render.template' => array(), // $__tpl, $__params
@@ -502,13 +496,13 @@ final class Am{
    * ---------------------------------------------------------------------------
    * Responde con un archivo indicado por parámetro.
    * ---------------------------------------------------------------------------
-   * @param   string      $file Ruta del archivo con el que se responderá.
-   * @return  AmResponse  Instancia de una respuesta.
+   * @param   string  $file Ruta del archivo con el que se responderá.
+   * @param   bool    $attachment   Si la ruta se descarga o no.
+   * @return  any     Respuesta de manejador configurado.
    */
-  public static function file($file){
+  public static function file($filename, $attachment = false){
 
-    return AmResponse::file()
-      ->filename(self::findFile($file));
+    return self::ring('response.file', self::findFile($filename), $attachment);
 
   }
 
@@ -516,14 +510,12 @@ final class Am{
    * ---------------------------------------------------------------------------
    * Responde la descarga de un archivo indicado por parámetro.
    * ---------------------------------------------------------------------------
-   * @param   string      $file Ruta del archivo a descargar.
-   * @return  AmResponse  Instancia de una respuesta.
+   * @param   string  $file Ruta del archivo a descargar.
+   * @return  any     Respuesta de manejador configurado.
    */
   public static function download($file){
 
-    return AmResponse::file()
-      ->filename(self::findFile($file))
-      ->attachment();
+    return self::file($file, true);
 
   }
 
@@ -535,26 +527,23 @@ final class Am{
    * @param   string $callback  String que identifica el controlador a buscar.
    * @param   array  $env      Variables de entorno.
    * @param   array  $params   Argumentos obtenidos de la ruta.
-   * @return  AmResponse  Instancia de una respuesta.
+   * @return  any    Respuesta de manejador configurado.
    */
   public static function call($callback, array $env = array(),
                               array $params = array()){
 
-    return AmResponse::call()
-      ->callback($callback)
-      ->env($env)
-      ->params($params);
-    
+    return self::ring('response.call', $callback, $env, $params);
+
   }
 
   /**
    * ---------------------------------------------------------------------------
    * Busca un template y lo renderiza.
    * ---------------------------------------------------------------------------
-   * @param  string $tpl      Template a renderizar.
-   * @param  array  $env      Variables de entorno
-   * @param  array  $params   Parámetros obtenidos de la rutas
-   * @return bool             Verdadero si encuentra el template.
+   * @param   string  $tpl      Template a renderizar.
+   * @param   array   $env      Variables de entorno
+   * @param   array   $params   Parámetros obtenidos de la rutas
+   * @return  any               Respuesta de manejador configurado.
    */
   public static function template($tpl, array $env = array(),
                                   array $params = array()){
@@ -568,9 +557,7 @@ final class Am{
       array_reverse(self::$dirs)
     ));
 
-    return AmResponse::template()
-      ->tpl($tpl)
-      ->params($env);
+    return self::ring('response.template', $tpl, $env);
 
   }
 
@@ -731,8 +718,7 @@ final class Am{
    */
   public static function go($url){
 
-    return AmResponse::redirect()
-      ->url($url);
+    return self::ring('response.go', $url);
 
   }
 
@@ -1371,13 +1357,6 @@ final class Am{
  * archivo.
  * -----------------------------------------------------------------------------
  */
-Am::on('response.file',     'Am::file');
-Am::on('response.download', 'Am::download');
-Am::on('response.call',     'Am::call');
-Am::on('response.redirect', 'Am::redirect');
-Am::on('response.go',       'Am::go');
-Am::on('response.template', 'Am::template');
-
 Am::on('render.template',   'Am::render');
 
 Am::addTasksDir(dirname(__FILE__).'/tasks/');

@@ -401,12 +401,12 @@ final class AmTpl extends AmObject{
   public function set(){
     $args = func_get_args();
 
-    if(!count($args)==2)
+    if(count($args)!=2)
       $args = explode('=', implode(':', $args));
 
-    if(!count($args)==2)
+    if(count($args)!=2)
       throw Am::e('AMTPL_SET_BAD_ARGS_NUMBER');
-
+    
     $this->_set($args[0], $args[1]);
     
   }

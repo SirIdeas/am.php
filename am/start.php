@@ -81,10 +81,3 @@ require dirname(__FILE__) . '/core/AmObject.class.php';
  * 
  */
 Am::addDir(dirname(__FILE__) . '/');
-
-/**
- * -----------------------------------------------------------------------------
- * Incluir extensiones iniciales.
- * -----------------------------------------------------------------------------
- */
-Am::requireExt('core/am_response');
