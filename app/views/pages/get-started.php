@@ -28,14 +28,12 @@
         <tr>
           <th>Evento</th>
           <th>Descripción</th>
-          <th>Atendido por</th>
         </tr>
       </thead>
       <tbody>
         <tr>
           <td><code><strong>route.evaluate</strong></code></td>
           <td>Evalucación de ruta</td>
-          <td></td>
         </tr>
         <tr>
           <td><code><strong>route.addPreProcessor</strong></code></td>
@@ -48,17 +46,10 @@
         <tr>
           <td><code><strong>response.file</strong></code></td>
           <td>Responder con un archivo</td>
-          <td><code>Am::file</code></td>
-        </tr>
-        <tr>
-          <td><code><strong>response.download</strong></code></td>
-          <td>Responder con la descarga de un archivo</td>
-          <td><code>Am::download</code></td>
         </tr>
         <tr>
           <td><code><strong>response.call</strong></code></td>
           <td>Responder con la llamada de una función o método</td>
-          <td><code>Am::call</code></td>
         </tr>
         <tr>
           <td><code><strong>response.control</strong></code></td>
@@ -67,22 +58,14 @@
         <tr>
           <td><code><strong>response.redirect</strong></code></td>
           <td>Responder con la redirección interna</td>
-          <td><code>Am::redirect</code></td>
-        </tr>
-        <tr>
-          <td><code><strong>response.go</strong></code></td>
-          <td>Responder con la redirección externa</td>
-          <td><code>Am::go</code></td>
         </tr>
         <tr>
           <td><code><strong>response.template</strong></code></td>
           <td>Responde con el renderizado de una vista</td>
-          <td><code>Am::template</code></td>
         </tr>
         <tr>
           <td><code><strong>render.template</strong></code></td>
           <td>Renderizar vista</td>
-          <td><code>Am::render</code></td>
         </tr>
       </tbody>
     </table>
