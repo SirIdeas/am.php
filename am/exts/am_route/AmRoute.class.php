@@ -85,10 +85,11 @@ final class AmRoute{
    * ---------------------------------------------------------------------------
    * Evalua la ruta hace match con una petición.
    * ---------------------------------------------------------------------------
-   * @param  [type] $request URL de la petición
-   * @return array/bool      Si la URL de una petición concuerda con la ruta
-   *                         devuelve un array de pares parámetros=>valor, de lo
-   *                         contario retorna falso.
+   * @param  string     $request  URL de la petición
+   * @return array/bool           Si la URL de una petición concuerda con la
+   *                              ruta devuelve un array de pares
+   *                              parámetros=>valor, de lo contario retorna
+   *                              falso.
    */
   public function match($request){
 
