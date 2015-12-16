@@ -287,8 +287,11 @@ final class AmRoute{
         // Se parte la cadena con el caracter # el primer paremtro es un key y
         // el segundo el valor
         if(is_string($route)){
-          list($prop, $value) = explode(' => ', $route);
-          $route = array($prop => $value);
+          $route = explode(' => ', $route);
+          if(count($route) == 1)
+            $route = array('' => $route[0]);
+          else
+            $route = array($route[0] => $route[1]);
         }
 
         // Asignar key como ruta si no tiene ruta asignada
