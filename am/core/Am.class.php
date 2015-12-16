@@ -496,6 +496,34 @@ final class Am{
 
   /**
    * ---------------------------------------------------------------------------
+   * Asigna o sustituye un dispatcher a un tipo de ruta
+   * ---------------------------------------------------------------------------
+   * @param   string    $type         Nombre del tipo al que se agrega el
+   *                                  callback
+   * @param   callback  $dispatcher   Despachador a agregar
+   * @return  any                     Valor devuelvo por el manejador del
+   *                                  evento.
+   */
+  public static function addRouteDispatcher($type, $dispatcher){
+    return Am::ring('route.addDispatcher', $type, $dispatcher);
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
+   * Asigna un pre-procesador de rutas a un tipo
+   * ---------------------------------------------------------------------------
+   * @param   string    $type           Nombre del tipo al que se agrega el
+   *                                    callback
+   * @param   callback  $preProcessor   Preprocesador 
+   * @return  any                       Valor devuelvo por el manejador del
+   *                                    evento.
+   */
+  public static function addRoutePreProcessor($type, $preProcessor)  {
+    return Am::ring('route.addPreProcessor', $type, $preProcessor);
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
    * Responde con un archivo indicado por parámetro.
    * ---------------------------------------------------------------------------
    * @param   string  $file         Ruta del archivo con el que se responderá.

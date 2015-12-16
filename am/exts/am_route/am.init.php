@@ -23,12 +23,13 @@ Am::on('route.addDispatcher', 'AmRoute::addDispatcher');
  * Agregar algunos de los métodos que atenderán cierto tipo de rutas.
  * -----------------------------------------------------------------------------
  */
-Am::ring('route.addDispatcher', 'file',     'Am::file');
-Am::ring('route.addDispatcher', 'download', 'Am::download');
-Am::ring('route.addDispatcher', 'redirect', 'Am::redirect');
-Am::ring('route.addDispatcher', 'go',       'Am::go');
-Am::ring('route.addDispatcher', 'call',     'Am::call');
-Am::ring('route.addDispatcher', 'template', 'Am::template');
+Am::addRouteDispatcher('file',        'Am::file');
+Am::addRouteDispatcher('download',    'Am::download');
+Am::addRouteDispatcher('redirect',    'Am::redirect');
+Am::addRouteDispatcher('go',          'Am::go');
+Am::addRouteDispatcher('call',        'Am::call');
+Am::addRouteDispatcher('template',    'Am::template');
+Am::addRouteDispatcher('controller',  'Am::controller');
 
 // PENDIENTE Esto debe pasar a la extensión AmResource
 function resourcePrecall($route){
@@ -52,4 +53,4 @@ function resourcePrecall($route){
 
 }
 
-Am::ring('route.addPreProcessor', 'resource', 'resourcePrecall');
+Am::addRoutePreProcessor('resource', 'resourcePrecall');
