@@ -139,7 +139,7 @@
         Debe retorna <code><strong>true</strong></code> si logra despachar satisfactoriamente la petición, de lo contrario debe retornar <code><strong>false</strong></code> para indicar que se debe seguir intentando con otros despachadores.
       </p>
       <p>
-        Para agregar o sustituir un despachador se utiliza el evento <code><strong>route.addDispatcher</strong></code> como se muestra a continuación.
+        Para agregar o sustituir un despachador se utiliza el método <code><strong>Am::addRouteDispatcher</strong></code>:.
       </p>
       <span>/app/am.init.php</span>
       <pre><code class="language-php">(:= getCodeFile('routing/dispatchers.php') :)</code></pre>
@@ -155,7 +155,7 @@
         Los pre-procesadores de rutas son callbacks que reparan una ruta antes de que esta sea evaluada. Estos  son asignados a un tipo de ruta. Reciben como primer parámetro la ruta en forma explícita y debe retornar la ruta transformada.
       </p>
       <p>
-        Para agregar el pre-procesador de ruta se utiliza el evento <code><strong>route.addPreProcessor</strong></code> como se muestra a continuación:
+        Para agregar el pre-procesador de ruta se utiliza el método <code><strong>Am::addRoutePreProcessor</strong></code>:
       </p>
       <span>/app/am.init.php</span>
       <pre><code class="language-php">(:= getCodeFile('routing/preprocessor.php') :)</code></pre>

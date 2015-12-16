@@ -81,7 +81,7 @@
       </li>
       <li>
         <p>
-          <strong>Callback</strong>: Puede ser el nombre de una función, un método estático en formato de string (<code><strong>'Clase::metodo'</strong></code>) o formato array (<code><strong>array('Clase', 'metodo')</strong></code>), un método de un objeto (<code><strong>array($obj, 'método')</strong></code>) o en algunas ocasiones una llamada a un controlador (<code><strong>'NombreControlador@accion'</strong></code>).
+          <strong>Callback</strong>: Puede ser el nombre de una función, un método estático en formato de string (<code><strong>'Clase::metodo'</strong></code>) o formato array (<code><strong>array('Clase', 'metodo')</strong></code>) o un método de un objeto (<code><strong>array($obj, 'método')</strong></code>).
         </p>
       </li>
     </ul>

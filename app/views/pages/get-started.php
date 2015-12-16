@@ -52,7 +52,7 @@
           <td>Responder con la llamada de una función o método</td>
         </tr>
         <tr>
-          <td><code><strong>response.control</strong></code></td>
+          <td><code><strong>response.controller</strong></code></td>
           <td>Responder con la acción de un controlador</td>
         </tr>
         <tr>
@@ -62,6 +62,10 @@
         <tr>
           <td><code><strong>response.template</strong></code></td>
           <td>Responde con el renderizado de una vista</td>
+        </tr>
+        <tr>
+          <td><code><strong>response.e404</strong></code></td>
+          <td>Reponse con un error 404</td>
         </tr>
         <tr>
           <td><code><strong>render.template</strong></code></td>

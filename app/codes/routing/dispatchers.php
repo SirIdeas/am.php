@@ -5,4 +5,4 @@ function customMyTypeDispatcher($target, $env, $params){
 }
 
 // Agregar el despachador al tipo 'myType'
-Am::ring('route.addDispatcher', 'myType', 'customMyTypeDispatcher');
+Am::addRouteDispatcher('myType', 'customMyTypeDispatcher');
