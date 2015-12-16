@@ -21,4 +21,20 @@ return array(
     'types/AmTemplateResponse.class',
   ),
 
+  /**
+   * ---------------------------------------------------------------------------
+   * Configuración a extender
+   * ---------------------------------------------------------------------------
+   */
+  'extend' => array(
+
+    // Formatos
+    'formats' => array(
+      'AMRESPONSE_TEMPLATE_NOT_FOUND' => 'AmResponse: No se encontró el template "%s"',
+      'AMRESPONSE_FILE_NOT_FOUND' => 'AmResponse: No se encontró el archivo "%s"',
+      'AMRESPONSE_CALLBACK_NOT_FOUND' => 'AmResponse: No se encontró el callback "%s"',
+    )
+
+  ),
+
 );

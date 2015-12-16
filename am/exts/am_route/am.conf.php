@@ -41,9 +41,14 @@ return array(
    * ---------------------------------------------------------------------------
    */
   'extend' => array(
-    'routing' => array(
-      'routes' => array(),
-    ),
+    'routing' => array(),
+
+    // Formatos
+    'formats' => array(
+      'AMROUTE_NOT_MATCH' => 'AmRoute: No se encontró la ruta',
+      'AMROUTE_NOT_FOUND_DISPATCHER' => 'AmRoute: No se encontró despachador %s : %s',
+    )
+
   ),
 
 );

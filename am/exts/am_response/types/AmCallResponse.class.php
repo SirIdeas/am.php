@@ -186,7 +186,8 @@ class AmCallResponse extends AmResponse{
     }
 
     // Responder con un error 404
-    return AmResponse::e404();
+    return Am::e404(Am::t('AMRESPONSE_CALLBACK_NOT_FOUND',
+      var_export($this->callback, true)));
 
   }
 

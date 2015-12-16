@@ -182,7 +182,7 @@ final class AmTpl extends AmObject{
     if(false === ($fileRet = findFileIn($file, $this->paths))){
 
       // Instanciar el error
-      $error = Am::t('NOT_FOUND_VIEW', $file);
+      $error = Am::t('AMTPL_VIEW_NOT_FOUND', $file);
       $this->errors[] = $error;
 
       // Ignorar el error
@@ -233,7 +233,7 @@ final class AmTpl extends AmObject{
 
         // Si no existe un metodo con el mismo nombre del comando mostrar error
         if(!method_exists($this, $method))
-          throw Am::e('AMTPL_VIEW_NOT_FOUND', $method);
+          throw Am::e('AMTPL_METHOD_NOT_FOUND', $method);
 
         // Llamado el metodo
         call_user_func_array(array($this, $method), $params);
@@ -283,7 +283,7 @@ final class AmTpl extends AmObject{
 
     // Si no esta definida la dependiencia mostrar error
     if(!isset($this->dependences[$name]))
-      throw Am::e('AMTPL_SUBVIEW_NOT_FOUNT', $name, $this->realFile);
+      throw Am::e('AMTPL_SUBVIEW_NOT_FOUND', $name, $this->realFile);
 
     // Si la dependencia no es una instancia de AmView
     if(!$this->dependences[$name] instanceof self){

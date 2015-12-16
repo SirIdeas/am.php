@@ -11,7 +11,7 @@
  * Clase para crear respuestas
  * -----------------------------------------------------------------------------
  */
-class AmResponse{
+class AmResponse extends AmObject{
 
   protected
     /**
@@ -95,7 +95,7 @@ class AmResponse{
   public static function e404($msg = null){
 
     if(!$msg)
-      $msg = Am::t('NOT_FOUND');
+      $msg = Am::t('AM_NOT_FOUND');
 
     return (new AmResponse())
       ->resolved(false)

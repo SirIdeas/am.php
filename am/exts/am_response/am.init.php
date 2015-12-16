@@ -15,3 +15,4 @@ Am::on('response.file',     'AmResponse::file');
 Am::on('response.call',     'AmResponse::call');
 Am::on('response.go',       'AmResponse::go');
 Am::on('response.template', 'AmResponse::template');
+Am::on('response.e404',     'AmResponse::e404');

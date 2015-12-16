@@ -118,7 +118,7 @@ class AmFileResponse extends AmResponse{
 
     // Si el archivo no existe retornar error 404
     if(!$this->isResolved())
-      return AmResponse::e404();
+      return Am::e404(Am::t('AMRESPONSE_FILE_NOT_FOUND', $this->filename));
 
     // Determinar el tipo MIME
     if(isset($this->mimeType))

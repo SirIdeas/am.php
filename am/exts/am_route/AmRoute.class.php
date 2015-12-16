@@ -228,7 +228,7 @@ final class AmRoute{
       if(!empty($callbacks)){
         foreach (self::$preProcessors[$type] as $callback)
           $routes = call_user_func_array($callback, array($routes));
-        unset($routes[$key]);
+        unset($routes[$type]);
       }
     }
     return $routes;
@@ -252,7 +252,7 @@ final class AmRoute{
     );
 
     if(!$response instanceof AmResponse)
-      $response =AmResponse::e404();
+      $response = Am::e404(Am::t('AMROUTE_NOT_MATCH'));
 
     while($response instanceof AmResponse)
       $response = $response->make();
@@ -358,7 +358,8 @@ final class AmRoute{
 
           }else
             // De lo contrario se toma un error y se toma el valor por defecto
-            $lastResponse = AmResponse::e404(Am::t('NOT_FOUND_ATTEND', $type, $request));
+            $lastResponse = Am::e404(Am::t('AMROUTE_NOT_FOUND_DISPATCHER',
+              $type, $request));
 
         }
 
