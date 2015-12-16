@@ -9,6 +9,7 @@ return array(
   'requires' => array(
     'exts/am_route',
     'exts/am_tpl',
+    'exts/am_controller',
   ),
 
 );
