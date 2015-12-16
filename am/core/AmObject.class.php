@@ -89,8 +89,7 @@ class AmObject implements Iterator, Countable, ArrayAccess{
 
     // Si existe una propiedad de clase en el objeto generar error
     if(!$this->isPublicAttr($name))
-      throw new Exception(Am::t('CANNOT_ACCESS_PROPERTY',
-        get_class($this), $name));
+      throw Am::e('AMOBJECT_CANNOT_ACCESS_PROPERTY', get_class($this), $name);
 
     // Si existe el parametro devolver el valor
     if(isset($this->$name))
@@ -113,8 +112,7 @@ class AmObject implements Iterator, Countable, ArrayAccess{
 
     // Si existe una propiedad de clase en el objeto generar error
     if(!$this->isPublicAttr($name))
-      throw new Exception(Am::t('CANNOT_ACCESS_PROPERTY',
-        get_class($this), $name));
+      throw Am::e('AMOBJECT_CANNOT_ACCESS_PROPERTY', get_class($this), $name);
 
     // Agregar propiedad a lista de propiedades dinámicas si no se ha agregado
     if(!in_array($name, get_object_vars($this)))
@@ -137,8 +135,7 @@ class AmObject implements Iterator, Countable, ArrayAccess{
 
     // Si existe una propiedad de clase en el objeto generar error
     if(!$this->isPublicAttr($name))
-      throw new Exception(Am::t('CANNOT_ACCESS_PROPERTY',
-        get_class($this), $name));
+      throw Am::e('AMOBJECT_CANNOT_ACCESS_PROPERTY', get_class($this), $name);
 
     return isset($this->$name);
 
@@ -154,8 +151,7 @@ class AmObject implements Iterator, Countable, ArrayAccess{
 
     // Si existe una propiedad de clase en el objeto generar error
     if(!$this->isPublicAttr($name))
-      throw new Exception(Am::t('CANNOT_ACCESS_PROPERTY',
-        get_class($this), $name));
+      throw Am::e('AMOBJECT_CANNOT_ACCESS_PROPERTY', get_class($this), $name);
 
     // Eliminar atributo dinamico
     $this->_f = array_diff($this->_f, array($name));

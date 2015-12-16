@@ -27,10 +27,10 @@ final class Am{
       'route.evaluate' => null, // $request
 
       // Agregar un pre procesador de rutas
-      'route.addPreProcessor' => null, // $kewy, $callback
+      'route.addPreProcessor' => null, // $type, $callback
 
       // Agregar un despachador de ruta en base su key
-      'route.addDispatcher' => null, // $key, $callback
+      'route.addDispatcher' => null, // $type, $callback
       
       // Responder con archivo
       'response.file' => null, // $file
@@ -45,7 +45,10 @@ final class Am{
       'response.go' => null, // $url
 
       // Responder con controlador
-      'response.control' => null, // $control, $action, $params, $env
+      'response.controller' => null, // $action, $params, $env
+
+      // Responder con un error 404
+      'response.e404' => null, // $msg
 
       // Renderiza de una vista
       'render.template' => array(), // $__tpl, $__params
@@ -141,14 +144,13 @@ final class Am{
      */
     $confs = array(
       'formats' => array(
-        'CLASS_NOT_FOUND' => 'Am: Class "%s" Not Found',
-        'NOT_FOUND' => 'Am: Not Found',
-        'NOT_FOUND_EXT' => 'Am: No se encontró la extensión "%s"',
-        'NOT_FOUND_FILE_EXTS' => 'Am: No se encontró el archivo "%s" de la extensión "%s"',
-        'NOT_FOUND_ATTEND' => 'Am: No se encontró quién atendiera %s : %s',
-        'NOT_FOUND_COMMAND' => 'Am: No se encontró el comando %s',
-        'CANNOT_ACCESS_PROPERTY' => 'Am: No puede acceder al atributo protegido/privado %s::$%s',
-        'NOT_FOUND_VIEW' => 'Am: No existe view "%s"'
+        'AM_NOT_FOUND' => 'Am: Not Found',
+        'AM_CLASS_NOT_FOUND' => 'Am: Class "%s" Not Found',
+        'AM_NOT_FOUND_EXT' => 'Am: No se encontró la extensión "%s"',
+        'AM_NOT_FOUND_FILE_EXTS' => 'Am: No se encontró el archivo "%s" de la extensión "%s"',
+        'AM_NOT_FOUND_COMMAND' => 'Am: No se encontró el comando %s',
+        'AM_NOT_FOUND_VIEW' => 'Am: No existe view "%s"',
+        'AMOBJECT_CANNOT_ACCESS_PROPERTY' => 'Am: No puede acceder al atributo protegido/privado %s::$%s',
       )
     ),
 
@@ -229,7 +231,7 @@ final class Am{
 
     // Si la clase no existe devolver error
     if(!class_exists($className))
-      throw Am::e('CLASS_NOT_FOUND', $className);
+      throw Am::e('AM_CLASS_NOT_FOUND', $className);
 
     // Si la instancia existe se devuelve
     if(isset(self::$instances[$className]))
@@ -496,9 +498,9 @@ final class Am{
    * ---------------------------------------------------------------------------
    * Responde con un archivo indicado por parámetro.
    * ---------------------------------------------------------------------------
-   * @param   string  $file Ruta del archivo con el que se responderá.
+   * @param   string  $file         Ruta del archivo con el que se responderá.
    * @param   bool    $attachment   Si la ruta se descarga o no.
-   * @return  any     Respuesta de manejador configurado.
+   * @return  any                   Respuesta de manejador configurado.
    */
   public static function file($filename, $attachment = false){
 
@@ -511,7 +513,7 @@ final class Am{
    * Responde la descarga de un archivo indicado por parámetro.
    * ---------------------------------------------------------------------------
    * @param   string  $file Ruta del archivo a descargar.
-   * @return  any     Respuesta de manejador configurado.
+   * @return  any           Respuesta de manejador configurado.
    */
   public static function download($file){
 
@@ -525,14 +527,44 @@ final class Am{
    * a controlador.
    * ---------------------------------------------------------------------------
    * @param   string $callback  String que identifica el controlador a buscar.
-   * @param   array  $env      Variables de entorno.
-   * @param   array  $params   Argumentos obtenidos de la ruta.
-   * @return  any    Respuesta de manejador configurado.
+   * @param   array  $env       Variables de entorno.
+   * @param   array  $params    Argumentos obtenidos de la ruta.
+   * @return  any               Respuesta de manejador configurado.
    */
   public static function call($callback, array $env = array(),
                               array $params = array()){
 
     return self::ring('response.call', $callback, $env, $params);
+
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
+   * Responde con un error 404
+   * ---------------------------------------------------------------------------
+   * @param   string  $msg  Mensaje de error a mostrar
+   * @return  any           Respuesta de manejador configurado.
+   */
+  public static function e404($msg = null){
+
+    return self::ring('response.e404', $msg);
+
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
+   * Llamada de un controlador.
+   * ---------------------------------------------------------------------------
+   * @param   string $action    String que identifica la acción a ejecutar.
+   *                            Tiene el formato 'Controlador@action'
+   * @param   array  $env       Variables de entorno.
+   * @param   array  $params    Argumentos obtenidos de la ruta.
+   * @return  any               Respuesta de manejador configurado.
+   */
+  public static function controller($action, array $env = array(),
+                                    array $params = array()){
+
+    return self::ring('response.controller', $action, $env, $params);
 
   }
 
@@ -800,7 +832,7 @@ final class Am{
     if(is_file($realFile = $realFileConf)){
 
       // Obtener la configuracion de la extencion
-      $conf = require_once $realFile;
+      $conf = require($realFile);
 
       // Obtener las funciones para mezclar que s definirán
       $mergeFunctions = itemOr('mergeFunctions', $conf, array());
@@ -826,7 +858,7 @@ final class Am{
         if(is_file($realFile = "{$file}/{$item}.php"))
           require_once $realFile;
         else
-          throw Am::e('NOT_FOUND_FILE_EXTS', $realFile, $file);
+          throw Am::e('AM_NOT_FOUND_FILE_EXTS', $realFile, $file);
 
     }
 
@@ -892,7 +924,7 @@ final class Am{
         return;
 
     // No se agregó la extension
-    throw Am::e('NOT_FOUND_EXT', $name);
+    throw Am::e('AM_NOT_FOUND_EXT', $name);
 
   }
 
@@ -1106,7 +1138,7 @@ final class Am{
 
       // Si la funcion no existe mostrar error
       if(!function_exists($functionName))
-        throw Am::e('NOT_FOUND_COMMAND', $task);
+        throw Am::e('AM_NOT_FOUND_COMMAND', $task);
 
       // Si el target esta indicado
       if(isset($target) && isset($options['targets'][$target])
