@@ -20,9 +20,8 @@ class AmCallResponse extends AmResponse{
      * String o array Callback a llamar.
      * -------------------------------------------------------------------------
      * Puede ser el nombre de una función, un método estático en formato de
-     * string ('Clase::metodo') o formato array (array('Clase', 'metodo')), un
-     * método de un objeto (array($obj, 'método')) o una llamada a un
-     * controlador ('NombreControlador@accion').
+     * string ('Clase::metodo') o formato array (array('Clase', 'metodo')) o un
+     * método de un objeto (array($obj, 'método')).
      */
     $callback = null,
 
@@ -33,14 +32,6 @@ class AmCallResponse extends AmResponse{
      * @var null
      */
     $realCallback = null,
-
-    /**
-     * -------------------------------------------------------------------------
-     * Indica el el callback es a un controlador
-     * -------------------------------------------------------------------------
-     * @var null
-     */
-    $isController = false,
 
     /**
      * -------------------------------------------------------------------------
@@ -77,7 +68,7 @@ class AmCallResponse extends AmResponse{
     $this->callback = $callback;
     
     // Obtener el callback real
-    list($this->realCallback, $this->isController) = $this->getCallback();
+    $this->realCallback = $this->getCallback();
 
     return $this;
   }
@@ -106,36 +97,29 @@ class AmCallResponse extends AmResponse{
     return $this;
   }
 
-  protected function getCallback(){
+  private function getCallback(){
 
     $c = $this->callback;
 
     // Responder como una función como controlador
     if (is_array($c) && call_user_func_array('method_exists', $c))
       
-      return array($c, false);
+      return $c;
 
     if(function_exists($c))
 
-      return array($c, false);
+      return $c;
 
     // Responder con un método estático como controlador
     if(preg_match('/^(.*)::(.*)$/', $c, $a)){
       array_shift($a);
 
       if(call_user_func_array('method_exists', $a))
-        return array($a, false);
+        return $a;
 
     }
 
-    if(preg_match('/^(.*)@(.*)$/', $c, $a)){
-      array_shift($a);
-
-      return array($a, true);
-
-    }
-
-    return array(false, false);
+    return false;
 
   }
 
@@ -170,18 +154,7 @@ class AmCallResponse extends AmResponse{
     if($this->isResolved()){
       parent::make();
 
-      // Responder como una función como controlador
-      if (!$this->isController){
-
-        return call_user_func_array($this->realCallback, $params);
-
-      }else{
-
-        // PENDIENTE
-        // Despachar con controlador
-        // return Am::ring('response.control', $a[0], $a[1], $params, $env);
-
-      }
+      return call_user_func_array($this->realCallback, $params);
 
     }
 
