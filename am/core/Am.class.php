@@ -166,7 +166,20 @@ final class Am{
      * Petición realizada
      * -------------------------------------------------------------------------
      */
-    $request = null;
+    $requestStr = null,
+
+    /**
+     * -------------------------------------------------------------------------
+     * Instancia de AmObject que tiene como propiedades los valores los arrays
+     * respectivos.
+     * -------------------------------------------------------------------------
+     */
+    $server = null,
+    $get = null,
+    $post = null,
+    $cookie = null,
+    $request = null,
+    $env = null;
 
   /**
    * ---------------------------------------------------------------------------
@@ -205,16 +218,27 @@ final class Am{
 
   /**
    * ---------------------------------------------------------------------------
-   * Devuelve las attributos públicos de un objeto.
+   * Inicializa las variables de AmResponse
    * ---------------------------------------------------------------------------
-   * @param  object $object Objecto del que se desea obtener las propiedades
-   *                        públicas.
-   * @return array          Array de pares attributo=>valor.
    */
-  public static function getObjectVars($object){
+  public static function start(){
 
-    return get_object_vars($object);
+    self::$server = new AmObject($_SERVER);
+    self::$get = new AmObject($_GET);
+    self::$post = new AmObject($_POST);
+    self::$cookie = new AmObject($_COOKIE);
+    self::$request = new AmObject($_REQUEST);
+    self::$env = new AmObject($_ENV);
 
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
+   * Devuelve el método de la peticion.
+   * ---------------------------------------------------------------------------
+   */
+  public static function getMethod(){
+    return self::$server->REQUEST_METHOD;
   }
 
   /**
@@ -654,7 +678,7 @@ final class Am{
    */
   public static function getRequest(){
 
-    if(!self::$request){
+    if(!self::$requestStr){
 
       // Variable global de argumentos
       global $argv;
@@ -681,11 +705,11 @@ final class Am{
 
       }
 
-      self::$request = $request;
+      self::$requestStr = $request;
 
     }
 
-    return self::$request;
+    return self::$requestStr;
 
   }
   
