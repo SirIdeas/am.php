@@ -47,7 +47,6 @@ return array(
     'controllers' => array(
       'defaults' => array(
         'name' => 'Am',
-        'root' => 'control', // Carpeta raiz del controlador
         'views' => 'views',  // Carpeta por defecto para las vistas
         'paths' => array(    // Carpetas de vistas del controlador
           realPath('../am/exts')

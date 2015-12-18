@@ -75,6 +75,13 @@ final class AmTpl extends AmObject{
 
     /**
      * -------------------------------------------------------------------------
+     * Indica si se imprimó el contenido de la vista hija
+     * -------------------------------------------------------------------------
+     */
+    $printedChild = false,
+
+    /**
+     * -------------------------------------------------------------------------
      * Lista de vista de las que depende la vista actual: Padre y anidadas.
      * -------------------------------------------------------------------------
      */
@@ -257,10 +264,15 @@ final class AmTpl extends AmObject{
         ->compile($content, $this->sections);
 
       // Mezclar generadas en el padre con las definidas en la vista acutal
-      $this->env = $parentView['env'] = array_merge($parentView['env'], $this->env);
+      $this->env = $parentView['env'] = array_merge(
+        $parentView['env'], $this->env);
       $this->errors = array_merge($this->errors, $parentView['errors']);
       return $parentView;
     }
+
+    // Si no se imprimió el resultado del hijo se agrega al final de la vista.
+    if(!$this->printedChild)
+      $content .= $this->child;
 
     return array(
       'content'   => $content,        // Todo lo impreso
@@ -388,6 +400,7 @@ final class AmTpl extends AmObject{
    * ---------------------------------------------------------------------------
    */
   public function child(){
+    $this->printedChild = true;
     echo $this->child;
   }
 
@@ -491,13 +504,19 @@ final class AmTpl extends AmObject{
    * Manejador para el evento render.template.
    * ---------------------------------------------------------------------------
    * @param   string  $tpl      Nombre de la vista a renderizar
-   * @param   array   $params   Opciones de la vista.
+   * @param   array   $vars     Variables para el renderizado.
+   * @param   array   $options  Opciones para la vista.
    * @return  bool              Si se generó o no errores en el renderizado.
    */
-  public static function renderize($tpl, array $params = array()){
+  public static function renderize($tpl, array $vars = array(),
+                                   array $options = array()){
+
+    // Determinar las variables de entorno
+    // Mazclar las que viene enlas opciones con las recibidas por parámetro
+    $options['env'] = array_merge(itemOr('env', $vars, array()), $vars);
 
     // Instancia vista
-    $view = new self($tpl, array('env' => $params));
+    $view = new self($tpl, $options);
 
     // Compilar y guardar
     $view->render();
