@@ -14,17 +14,24 @@
 
 class AmRedirectResponse extends AmResponse{
 
-  protected
+  /**
+   * ---------------------------------------------------------------------------
+   * Constructor de la Clase.
+   * ---------------------------------------------------------------------------
+   */
+  public function __construct($data = null){
+    parent::__construct();
 
-    /**
-     * -------------------------------------------------------------------------
-     * Propiedades de la petición.
-     * -------------------------------------------------------------------------
-     */
-    $__p = array(
+    // Inicializar propiedades
+    $this->__p->extend(array(
       // URL a la que se redirigirá
       'url' => null
-    );
+    ));
+
+    // Asignar propiedades recibicas por parámetros
+    $this->__p->extend($data);
+
+  }
 
   /**
    * ---------------------------------------------------------------------------
@@ -45,7 +52,6 @@ class AmRedirectResponse extends AmResponse{
    */
   public function make(){
     $this->addHeader("location: {$this->url}");
-    parent::make();
   }
 
 }

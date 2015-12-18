@@ -14,23 +14,25 @@
 
 class AmFileResponse extends AmResponse{
 
-  protected
+  /**
+   * ---------------------------------------------------------------------------
+   * Constructor de la Clase.
+   * ---------------------------------------------------------------------------
+   */
+  public function __construct($data = null){
+    parent::__construct();
 
-    /**
-     * -------------------------------------------------------------------------
-     * Propiedades de la petición.
-     * -------------------------------------------------------------------------
-     */
-    $__p = array(
-
+    // Inicializar propiedades
+    $this->__p->extend(array(
+      
       // Cabeceras iniciales para responder con archivo
-      'headers' => array(
+      'headers', array(
         'Content-Transfer-Encoding' => 'Content-Transfer-Encoding: binary',
         'Expires' => 'Expires: 0',
         'Cache-Control' => 'Cache-Control: must-revalidate',
         'Pragma' => 'Pragma: public',
       ),
-
+    
       // Ruta del archivo que se devolverá.
       'filename' => null,
 
@@ -46,8 +48,13 @@ class AmFileResponse extends AmResponse{
       // Determina si el archivo se descarga o se intenva ver desde el
       //  explorador.
       'attachment' => false,
+      
+    ));
 
-    );
+    // Asignar propiedades recibicas por parámetros
+    $this->__p->extend($data);
+
+  }
 
   /**
    * ---------------------------------------------------------------------------
@@ -128,8 +135,6 @@ class AmFileResponse extends AmResponse{
     $this->addHeader("Content-Disposition:{$attachment} filename=\"{$name}\"");
     $this->addHeader('Content-Length: ' . filesize($this->__p->filename));
     $this->addHeader("Content-Type: {$mimeType}");
-
-    parent::make();
 
     // Leer archivo
     readfile($this->__p->filename);

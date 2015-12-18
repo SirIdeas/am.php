@@ -190,7 +190,7 @@ final class AmRoute{
    * @param   callback  $callback  Callback a agregar
    * 
    */
-  public static final function addPreProcessor($key, $callback){
+  public static function addPreProcessor($key, $callback){
 
     if(!isset(self::$preProcessors[$key]))
       self::$preProcessors[$key] = array();
@@ -209,7 +209,7 @@ final class AmRoute{
    * @param   callback  $callback   Callback a agregar
    * 
    */
-  public static final function addDispatcher($to, $callback){
+  public static function addDispatcher($to, $callback){
 
     self::$dispatchers[$to] = $callback;
 
@@ -244,7 +244,7 @@ final class AmRoute{
    * @return  bool              Si se encontró o no una respuesta para la
    *                            petición
    */
-  public static final function evaluate($request){
+  public static function evaluate($request){
       
     $response = self::evalMatch($request,
       array('routes' => Am::getProperty('routing', array())),
@@ -254,8 +254,7 @@ final class AmRoute{
     if(!$response instanceof AmResponse)
       $response = Am::e404(Am::t('AMROUTE_NOT_MATCH'));
 
-    while($response instanceof AmResponse)
-      $response = $response->make();
+    AmResponse::response($response);
 
   }
 
@@ -272,7 +271,7 @@ final class AmRoute{
    *                          falso o un string con un mensaje de error de lo
    *                          contario
    */
-  private static final function evalMatch($request, array $routes, array $env = array(), array $parent = array()){
+  private static function evalMatch($request, array $routes, array $env = array(), array $parent = array()){
 
     $routes = self::callPreProcessors($routes);
     $lastResponse = false;

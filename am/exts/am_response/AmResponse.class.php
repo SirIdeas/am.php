@@ -11,38 +11,43 @@
  * Clase para crear respuestas
  * -----------------------------------------------------------------------------
  */
-class AmResponse{
+class AmResponse extends AmObject{
 
   protected
     /**
      * -------------------------------------------------------------------------
-     * Propiedades de la petición.
+     * Propiedades Iniciales de la petición.
      * -------------------------------------------------------------------------
      */
-    $__p = array(
+    $__p = array();
 
+  /**
+   * ---------------------------------------------------------------------------
+   * Constructor de la Clase.
+   * ---------------------------------------------------------------------------
+   * Inicializa la propiedad __p con una instancia de AmObject. Las
+   * propiedades son las indicadas en $this->__p mas la recibidas por
+   * parámetro $data
+   */
+  public function __construct($data = null){
+    // Instancia el objeto de las propiedades
+    $this->__p = new AmObject;
+
+    // Inicializar propiedades
+    $this->__p->extend(array(
+      
       // Listado de headers a agregar para la petición
       'headers' => array(),
 
       // Indica si se resolvío o no la petición
       'resolved' => true,
 
-    );
+    ));
 
-    /**
-     * -------------------------------------------------------------------------
-     * Constructor de la Clase.
-     * -------------------------------------------------------------------------
-     * Inicializa la propiedad __p con una instancia de AmObject. Las
-     * propiedades son las indicadas en $this->__p mas la recibidas por
-     * parámetro $data
-     */
-    public function __construct($data = null){
-      $this->__p = new AmObject(array_merge(
-        $this->__p,
-        AmObject::parse($data)
-      ));
-    }
+    // Asignar propiedades recibicas por parámetros
+    $this->__p->extend($data);
+
+  }
 
   /**
    * ---------------------------------------------------------------------------
@@ -80,13 +85,16 @@ class AmResponse{
    * Busca un template y lo renderiza.
    * ---------------------------------------------------------------------------
    * @param   string  $tpl      Template a renderizar.
-   * @param   array   $env      Variables de entorno
+   * @param   array   $vars     Variables de la vista.
+   * @param   array   $options  Opciones para la vista.
    * @return  any               Respuesta de manejador configurado.
    */
-  public static function template($tpl, array $env = array()){
+  public static function template($tpl, array $vars = array(),
+                                  array $options = array()){
     return (new AmTemplateResponse)
       ->tpl($tpl)
-      ->params($env);
+      ->options($options)
+      ->vars($vars);
   }
 
   /**
@@ -129,6 +137,14 @@ class AmResponse{
     return $this->__p->$propertyName;
   }
 
+  /**
+   * ---------------------------------------------------------------------------
+   * ---------------------------------------------------------------------------
+   * @param   string  $propertyName   Nombre de la propiedad que se desea
+   *                                  asignar.
+   * @param   any     $value          Valor a asignar.
+   * @return  $this
+   */
   public function set($propertyName, $value){
     $this->__p->$propertyName = $value;
     return $this;
@@ -157,9 +173,9 @@ class AmResponse{
   }
 
   /**
-   * -------------------------------------------------------------------------
+   * ---------------------------------------------------------------------------
    * Agrega un header al listado de headers de la respuesta
-   * -------------------------------------------------------------------------
+   * ---------------------------------------------------------------------------
    * @param string $header Header a agregar
    */
   public function addHeader($header, $key = null){
@@ -171,16 +187,52 @@ class AmResponse{
   }
 
   /**
-   * -------------------------------------------------------------------------
-   * Método para ejecutar la respuesta
-   * -------------------------------------------------------------------------
+   * ---------------------------------------------------------------------------
+   * Método para ejecutar la respuesta.
+   * ---------------------------------------------------------------------------
    */
   public function make(){
 
-    foreach ($this->__p->headers as $header) {
-      header($header);
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
+   * Ejecutar una respuesta.
+   * ---------------------------------------------------------------------------
+   * @param   self    $response   Respuesta que se desea despachar
+   */
+  public static function response($response){
+
+    $headers = array();
+
+    // Para captar todo lo que se imprima en la salida standar
+    ob_start();
+
+    while($response instanceof AmResponse){
+      // Llamar respuesta
+      $ret = $response->make();
+
+      // Obtener cabecera
+      $headers = array_merge(
+        $headers,
+        $response->get('headers')
+      );
+      
+      $response = $ret;
+
     }
     
+    // Para obtener la salida
+    $buffer = ob_get_clean();
+
+    // Incluir las cabeceras
+    foreach ($headers as $header)
+      header($header);
+
+    // Imprimir la salida de la respuestas
+    echo $buffer;
+      
+
   }
 
 }

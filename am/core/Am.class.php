@@ -39,7 +39,7 @@ final class Am{
       'response.call' => null, // $callback, $env, $params
 
       // Responde con el renderizado de una vista
-      'response.template' => array(), // $templete, $env
+      'response.template' => array(), // $template, $vars, $options
 
       // Responder con una redirección
       'response.go' => null, // $url
@@ -51,7 +51,7 @@ final class Am{
       'response.e404' => null, // $msg
 
       // Renderiza de una vista
-      'render.template' => array(), // $__tpl, $__params
+      'render.template' => array(), // $__tpl, $__vars, $__options
       
       // PENDIENTE: Volver a agregar cuando se agrege una extensión que las use
       
@@ -227,7 +227,7 @@ final class Am{
    * @param   array   $params     Parámetros para instancia la clase.
    * @return  object              Objeto instanciado
    */
-  public final static function getInstance($className, array $params = array()){
+  public static function getInstance($className, array $params = array()){
 
     // Si la clase no existe devolver error
     if(!class_exists($className))
@@ -609,15 +609,12 @@ final class Am{
                                   array $params = array()){
 
     // Mezclar variables de entorno con los parametros
-    $env = array_merge($env, $params);
+    $vars = array_merge($env, $params);
 
     // Obtener la ruta de la vista
-    $tpl = findFileIn($tpl, merge_unique(
-      itemOr('paths', $env, array()),
-      array_reverse(self::$dirs)
-    ));
+    $tpl = findFileIn($tpl, array_reverse(self::$dirs));
 
-    return self::ring('response.template', $tpl, $env);
+    return self::ring('response.template', $tpl, $vars);
 
   }
 
@@ -627,11 +624,22 @@ final class Am{
    * ---------------------------------------------------------------------------
    * @param  string $__tpl      Template a renderizar.
    * @param  array  $__params   Parámetros para la vista.
+   * @param  array  $__options  Opciones de la vista.
    */
-  public static function render($__tpl, array $__params = array()){
-    self::$__tpl = $__tpl;
-    extract($__params);
-    require self::findFile(self::$__tpl);
+  public static function render($__tpl, array $__vars = array(),
+                                array $__options = array()){
+    
+    self::$__tpl = self::findFile(self::$__tpl);
+
+    // Generar error si la vista no existe
+    if(!is_file(self::$__tpl))
+      return false;
+
+    extract(array_merge($__vars, $__options));
+    require self::$__tpl;
+
+    return true;
+
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -1392,7 +1400,7 @@ final class Am{
    * @return String           Tipo mime del archivo según la extensión o falso
    *                          si no concuerda con ninguna extensión.
    */
-  public final static function mimeType($filename) {
+  public static function mimeType($filename) {
 
     $mimePath = self::findFile('rsc/mime.types');
     $fileext = substr(strrchr($filename, '.'), 1);

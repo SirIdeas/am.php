@@ -72,7 +72,7 @@ class AmObject implements Iterator, Countable, ArrayAccess{
    */
   public function haveAttr($name){
 
-    $vars = Am::getObjectVars($this);
+    $vars = get_object_vars($this);
     return isset($vars[$name]);
 
   }

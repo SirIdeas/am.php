@@ -13,27 +13,37 @@
  */
 class AmTemplateResponse extends AmResponse{
 
-  protected
+  /**
+   * ---------------------------------------------------------------------------
+   * Constructor de la Clase.
+   * ---------------------------------------------------------------------------
+   */
+  public function __construct($data = null){
+    parent::__construct();
 
-    /**
-     * -------------------------------------------------------------------------
-     * Propiedades de la petición.
-     * -------------------------------------------------------------------------
-     */
-    $__p = array(
+    // Inicializar propiedades
+    $this->__p->extend(array(
 
-      // String de la ruta del la vista a renderizar.
+      // Ruta del archivo que se devolverá.
       'tpl' => null,
 
       // Array todos los parámetros de la llamada.
-      'params' => array(),
+      'vars' => array(),
 
-    );
+      // Opciones para la vista.
+      'options' => array(),
+
+    ));
+
+    // Asignar propiedades recibicas por parámetros
+    $this->__p->extend($data);
+
+  }
 
   /**
-   * -------------------------------------------------------------------------
+   * ---------------------------------------------------------------------------
    * Asignar callback
-   * --------------------------------------------------------------------------
+   * ---------------------------------------------------------------------------
    * @param  array/string   $callback   Callback a ser llamado
    * @return this
    */
@@ -43,14 +53,49 @@ class AmTemplateResponse extends AmResponse{
   }
 
   /**
-   * -------------------------------------------------------------------------
-   * Asignar parámetros de la llamada
-   * --------------------------------------------------------------------------
-   * @param  array   $args   Parámetros de la llamada
+   * ---------------------------------------------------------------------------
+   * Agregar variables de la llamada.
+   * ---------------------------------------------------------------------------
+   * @param  array  $vars   Parámetros de la llamada.
+   * @param  bool   $rw     Indica si las variables nuevas sobreescriben las
+   *                        anteriores.
    * @return this
    */
-  public function params(array $params){
-    $this->__p->params = $params;
+  public function vars(array $vars, $rw = false){
+    if($rw)
+      $this->__p->vars = $vars;
+    else
+      $this->__p->vars = array_merge($this->__p->vars, $vars);
+    return $this;
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
+   * Agrega una variable.
+   * ---------------------------------------------------------------------------
+   * @param   string    $varName  Nombre de la variable a agregar.
+   * @param   strning   $value    Valor de la varible.
+   * @return  this
+   */
+  public function with($varName, $value){
+    $this->__p->vars[$varName] = $value;
+    return $this;
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
+   * Agregar opciones para la vista.
+   * ---------------------------------------------------------------------------
+   * @param  array  $options  Opciones a agregar.
+   * @param  bool   $rw       Indica si las opciones nuevas sobreescriben las
+   *                          anteriores.
+   * @return this
+   */
+  public function options(array $options, $rw = false){
+    if($rw)
+      $this->__p->options = $options;
+    else
+      $this->__p->options = array_merge($this->__p->options, $options);
     return $this;
   }
 
@@ -74,12 +119,12 @@ class AmTemplateResponse extends AmResponse{
    */
   public function make(){
 
+    $ret = Am::ring('render.template',
+      $this->__p->tpl, $this->__p->vars, $this->__p->options);
+
     // Si no existe el archivo responder con error 404
-    if(!$this->isResolved())
+    if(!$ret || !$this->isResolved())
       return Am::e404(Am::t('AMRESPONSE_TEMPLATE_NOT_FOUND', $this->__p->tpl));
-      
-    parent::make();
-    Am::ring('render.template', $this->__p->tpl, $this->__p->params);
 
   }
 

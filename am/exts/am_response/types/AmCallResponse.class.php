@@ -13,15 +13,17 @@
  */
 class AmCallResponse extends AmResponse{
 
-  protected
+  /**
+   * ---------------------------------------------------------------------------
+   * Constructor de la Clase.
+   * ---------------------------------------------------------------------------
+   */
+  public function __construct($data = null){
+    parent::__construct();
 
-    /**
-     * -------------------------------------------------------------------------
-     * Propiedades de la petición.
-     * -------------------------------------------------------------------------
-     */
-    $__p = array(
-
+    // Inicializar propiedades
+    $this->__p->extend(array(
+      
       // String o array Callback a llamar.
       'callback' => null,
 
@@ -37,7 +39,12 @@ class AmCallResponse extends AmResponse{
       // Indica si el callback es válido.
       'isValidCallback' => false,
 
-    );
+    ));
+
+    // Asignar propiedades recibicas por parámetros
+    $this->__p->extend($data);
+
+  }
 
   /**
    * -------------------------------------------------------------------------
@@ -134,7 +141,6 @@ class AmCallResponse extends AmResponse{
 
     // Si $this->__p->realCallback es un array entonces tiene un callback valido
     if($this->__p->isResolved()){
-      parent::make();
 
       return call_user_func_array($this->__p->realCallback, $params);
 
