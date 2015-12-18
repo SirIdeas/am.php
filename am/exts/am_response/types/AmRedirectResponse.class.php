@@ -18,10 +18,13 @@ class AmRedirectResponse extends AmResponse{
 
     /**
      * -------------------------------------------------------------------------
-     * URL a la que se redirigirá
+     * Propiedades de la petición.
      * -------------------------------------------------------------------------
      */
-    $url = null;
+    $__p = array(
+      // URL a la que se redirigirá
+      'url' => null
+    );
 
   /**
    * ---------------------------------------------------------------------------
@@ -31,7 +34,7 @@ class AmRedirectResponse extends AmResponse{
    * @return this
    */
   public function url($url){
-    $this->url = $url;
+    $this->__p->url = $url;
     return $this;
   }
 

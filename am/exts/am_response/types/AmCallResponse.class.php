@@ -17,45 +17,27 @@ class AmCallResponse extends AmResponse{
 
     /**
      * -------------------------------------------------------------------------
-     * String o array Callback a llamar.
+     * Propiedades de la petición.
      * -------------------------------------------------------------------------
-     * Puede ser el nombre de una función, un método estático en formato de
-     * string ('Clase::metodo') o formato array (array('Clase', 'metodo')) o un
-     * método de un objeto (array($obj, 'método')).
      */
-    $callback = null,
+    $__p = array(
 
-    /**
-     * -------------------------------------------------------------------------
-     * Callback obtenido apartir el $callback.
-     * -------------------------------------------------------------------------
-     * @var null
-     */
-    $realCallback = null,
+      // String o array Callback a llamar.
+      'callback' => null,
 
-    /**
-     * -------------------------------------------------------------------------
-     * Array con las variables de entorno.
-     * -------------------------------------------------------------------------
-     * Es agregado como ultimo argumento de la llamada.
-     */
-    $env = array(),
+      // Callback obtenido apartir el $callback.
+      'realCallback' => null,
 
-    /**
-     * -------------------------------------------------------------------------
-     * Array todos los parámetros de la llamada.
-     * -------------------------------------------------------------------------
-     * Contiene los parámetros obtenido de la ruta.
-     */
-    $params = array(),
+      // Array con las variables de entorno.
+      'env' => array(),
 
-    /**
-     * -------------------------------------------------------------------------
-     * Indica si el callback es válido.
-     * -------------------------------------------------------------------------
-     * @var boolean
-     */
-    $isValidCallback = false;
+      // Array todos los parámetros de la llamada.
+      'params' => array(),
+
+      // Indica si el callback es válido.
+      'isValidCallback' => false,
+
+    );
 
   /**
    * -------------------------------------------------------------------------
@@ -65,10 +47,10 @@ class AmCallResponse extends AmResponse{
    * @return this
    */
   public function callback($callback){
-    $this->callback = $callback;
+    $this->__p->callback = $callback;
     
     // Obtener el callback real
-    $this->realCallback = $this->getCallback();
+    $this->__p->realCallback = $this->getCallback();
 
     return $this;
   }
@@ -81,7 +63,7 @@ class AmCallResponse extends AmResponse{
    * @return this
    */
   public function env(array $env){
-    $this->env = $env;
+    $this->__p->env = $env;
     return $this;
   }
 
@@ -93,13 +75,13 @@ class AmCallResponse extends AmResponse{
    * @return this
    */
   public function params(array $params){
-    $this->params = $params;
+    $this->__p->params = $params;
     return $this;
   }
 
   private function getCallback(){
 
-    $c = $this->callback;
+    $c = $this->__p->callback;
 
     // Responder como una función como controlador
     if (is_array($c) && call_user_func_array('method_exists', $c))
@@ -131,7 +113,7 @@ class AmCallResponse extends AmResponse{
    * @return  boolean   Indica si la petición se puede resolver o no.
    */
   public function isResolved(){
-    return parent::isResolved() && $this->realCallback !== false;
+    return parent::isResolved() && $this->__p->realCallback !== false;
   }
 
   /**
@@ -144,23 +126,23 @@ class AmCallResponse extends AmResponse{
   public function make(){
 
     // Obtener las propiedades
-    $params = $this->params;
-    $env = $this->env;
+    $params = $this->__p->params;
+    $env = $this->__p->env;
 
     // Agegar entorno como último parámetro de la llamada.
     $params[] = $env;
 
-    // Si $this->realCallback es un array entonces tiene un callback valido
-    if($this->isResolved()){
+    // Si $this->__p->realCallback es un array entonces tiene un callback valido
+    if($this->__p->isResolved()){
       parent::make();
 
-      return call_user_func_array($this->realCallback, $params);
+      return call_user_func_array($this->__p->realCallback, $params);
 
     }
 
     // Responder con un error 404
     return Am::e404(Am::t('AMRESPONSE_CALLBACK_NOT_FOUND',
-      var_export($this->callback, true)));
+      var_export($this->__p->callback, true)));
 
   }
 

@@ -17,17 +17,18 @@ class AmTemplateResponse extends AmResponse{
 
     /**
      * -------------------------------------------------------------------------
-     * String de la ruta del la vista a renderizar.
+     * Propiedades de la petición.
      * -------------------------------------------------------------------------
      */
-    $tpl = null,
+    $__p = array(
 
-    /**
-     * -------------------------------------------------------------------------
-     * Array todos los parámetros de la llamada.
-     * -------------------------------------------------------------------------
-     */
-    $params = array();
+      // String de la ruta del la vista a renderizar.
+      'tpl' => null,
+
+      // Array todos los parámetros de la llamada.
+      'params' => array(),
+
+    );
 
   /**
    * -------------------------------------------------------------------------
@@ -37,7 +38,7 @@ class AmTemplateResponse extends AmResponse{
    * @return this
    */
   public function tpl($tpl){
-    $this->tpl = $tpl;
+    $this->__p->tpl = $tpl;
     return $this;
   }
 
@@ -49,7 +50,7 @@ class AmTemplateResponse extends AmResponse{
    * @return this
    */
   public function params(array $params){
-    $this->params = $params;
+    $this->__p->params = $params;
     return $this;
   }
 
@@ -61,7 +62,7 @@ class AmTemplateResponse extends AmResponse{
    * @return  boolean   Indica si la petición se puede resolver o no.
    */
   public function isResolved(){
-    return parent::isResolved() && is_file($this->tpl);
+    return parent::isResolved() && is_file($this->__p->tpl);
   }
 
   /**
@@ -75,10 +76,10 @@ class AmTemplateResponse extends AmResponse{
 
     // Si no existe el archivo responder con error 404
     if(!$this->isResolved())
-      return Am::e404(Am::t('AMRESPONSE_TEMPLATE_NOT_FOUND', $this->tpl));
+      return Am::e404(Am::t('AMRESPONSE_TEMPLATE_NOT_FOUND', $this->__p->tpl));
       
     parent::make();
-    Am::ring('render.template', $this->tpl, $this->params);
+    Am::ring('render.template', $this->__p->tpl, $this->__p->params);
 
   }
 

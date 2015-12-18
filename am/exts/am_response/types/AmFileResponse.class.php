@@ -18,46 +18,36 @@ class AmFileResponse extends AmResponse{
 
     /**
      * -------------------------------------------------------------------------
-     * Cabeceras iniciales para responder con archivo
+     * Propiedades de la petición.
      * -------------------------------------------------------------------------
      */
-    $headers = array(
-      'Content-Transfer-Encoding: binary',
-      'Expires: 0',
-      'Cache-Control: must-revalidate',
-      'Pragma: public',
-    ),
+    $__p = array(
 
-    /**
-     * -------------------------------------------------------------------------
-     * Ruta del archivo que se devolverá.
-     * -------------------------------------------------------------------------
-     */
-    $filename = null,
+      // Cabeceras iniciales para responder con archivo
+      'headers' => array(
+        'Content-Transfer-Encoding' => 'Content-Transfer-Encoding: binary',
+        'Expires' => 'Expires: 0',
+        'Cache-Control' => 'Cache-Control: must-revalidate',
+        'Pragma' => 'Pragma: public',
+      ),
 
-    /**
-     * -------------------------------------------------------------------------
-     * Tipo MIME de la respuesta.
-     * -------------------------------------------------------------------------
-     * Si no se asigna s determina el tipo MIME del archivo a devolver.
-     */
-    $mimeType = null,
+      // Ruta del archivo que se devolverá.
+      'filename' => null,
 
-    /**
-     * -------------------------------------------------------------------------
-     * Nombre del archivo que se responderá.
-     * -------------------------------------------------------------------------
-     * Si no se asigna se toma el basename del archivo a devolver.
-     */
-    $name = null,
+      // Tipo MIME de la respuesta.
+      // Si no se asigna s determina el tipo MIME del archivo a devolver.
+      'mimeType' => null,
 
-    /**
-     * -------------------------------------------------------------------------
-     * Si el archivo es adjunto o no.
-     * -------------------------------------------------------------------------
-     * Determina si el archivo se descarga o se intenva ver desde el explorador.
-     */
-    $attachment = false;
+      // Nombre del archivo que se responderá.
+      // Si no se asigna se toma el basename del archivo a devolver.
+      'name' => null,
+
+      // Si el archivo es adjunto o no.
+      // Determina si el archivo se descarga o se intenva ver desde el
+      //  explorador.
+      'attachment' => false,
+
+    );
 
   /**
    * ---------------------------------------------------------------------------
@@ -67,7 +57,7 @@ class AmFileResponse extends AmResponse{
    * @return this
    */
   public function filename($filename){
-    $this->filename = $filename;
+    $this->__p->filename = $filename;
     return $this;
   }
 
@@ -79,7 +69,7 @@ class AmFileResponse extends AmResponse{
    * @return this
    */
   public function attachment($attachment = true){
-    $this->attachment = $attachment;
+    $this->__p->attachment = $attachment;
     return $this;
   }
 
@@ -91,7 +81,7 @@ class AmFileResponse extends AmResponse{
    * @return this
    */
   public function mimeType($mimeType){
-    $this->mimeType = $mimeType;
+    $this->__p->mimeType = $mimeType;
     return $this;
   }
 
@@ -103,7 +93,7 @@ class AmFileResponse extends AmResponse{
    * @return  boolean   Indica si la petición se puede resolver o no.
    */
   public function isResolved(){
-    return parent::isResolved() && is_file($this->filename);
+    return parent::isResolved() && is_file($this->__p->ilename);
   }
 
   /**
@@ -118,31 +108,31 @@ class AmFileResponse extends AmResponse{
 
     // Si el archivo no existe retornar error 404
     if(!$this->isResolved())
-      return Am::e404(Am::t('AMRESPONSE_FILE_NOT_FOUND', $this->filename));
+      return Am::e404(Am::t('AMRESPONSE_FILE_NOT_FOUND', $this->__p->filename));
 
     // Determinar el tipo MIME
-    if(isset($this->mimeType))
-      $mimeType = $this->mimeType;
+    if(isset($this->__p->mimeType))
+      $mimeType = $this->__p->mimeType;
     else
-      $mimeType = Am::mimeType($this->filename);
+      $mimeType = Am::mimeType($this->__p->filename);
 
     // Determinar si se descarga o no el archivo
-    if(isset($this->name))
-      $name = $this->name;
+    if(isset($this->__p->name))
+      $name = $this->__p->name;
     else
-      $name = basename($this->filename);
+      $name = basename($this->__p->filename);
 
-    $attachment = $this->attachment ? ' attachment;' : '';
+    $attachment = $this->__p->attachment ? ' attachment;' : '';
 
     // Agregar cabeceras
     $this->addHeader("Content-Disposition:{$attachment} filename=\"{$name}\"");
-    $this->addHeader('Content-Length: ' . filesize($this->filename));
+    $this->addHeader('Content-Length: ' . filesize($this->__p->filename));
     $this->addHeader("Content-Type: {$mimeType}");
 
     parent::make();
 
     // Leer archivo
-    readfile($this->filename);
+    readfile($this->__p->filename);
 
   }
 

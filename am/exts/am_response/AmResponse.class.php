@@ -11,22 +11,38 @@
  * Clase para crear respuestas
  * -----------------------------------------------------------------------------
  */
-class AmResponse extends AmObject{
+class AmResponse{
 
   protected
     /**
      * -------------------------------------------------------------------------
-     * Listado de headers a agregar para la petición
+     * Propiedades de la petición.
      * -------------------------------------------------------------------------
      */
-    $headers = array(),
+    $__p = array(
+
+      // Listado de headers a agregar para la petición
+      'headers' => array(),
+
+      // Indica si se resolvío o no la petición
+      'resolved' => true,
+
+    );
 
     /**
      * -------------------------------------------------------------------------
-     * Indica si se resolvío o no la petición
+     * Constructor de la Clase.
      * -------------------------------------------------------------------------
+     * Inicializa la propiedad __p con una instancia de AmObject. Las
+     * propiedades son las indicadas en $this->__p mas la recibidas por
+     * parámetro $data
      */
-    $resolved = true;
+    public function __construct($data = null){
+      $this->__p = new AmObject(array_merge(
+        $this->__p,
+        AmObject::parse($data)
+      ));
+    }
 
   /**
    * ---------------------------------------------------------------------------
@@ -106,12 +122,26 @@ class AmResponse extends AmObject{
 
   /**
    * ---------------------------------------------------------------------------
+   * Devuelve el valor de una propiedad.
+   * ---------------------------------------------------------------------------
+   */
+  public function get($propertyName){
+    return $this->__p->$propertyName;
+  }
+
+  public function set($propertyName, $value){
+    $this->__p->$propertyName = $value;
+    return $this;
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
    * Devuelve si la petición fue resuelta o no.
    * ---------------------------------------------------------------------------
    * @return boolean  Devuelve si la petición fué resuelta o no
    */
   public function isResolved(){
-    return $this->resolved;
+    return $this->__p->resolved;
   }
 
   /**
@@ -122,7 +152,7 @@ class AmResponse extends AmObject{
    * @return this
    */
   public function resolved($resolved = true){
-    $this->resolved = $resolved;
+    $this->__p->resolved = $resolved;
     return $this;
   }
 
@@ -134,9 +164,9 @@ class AmResponse extends AmObject{
    */
   public function addHeader($header, $key = null){
     if(isset($key))
-      $this->headers[$key] = $header;
+      $this->__p->headers[$key] = $header;
     else
-      $this->headers[] = $header;
+      $this->__p->headers[] = $header;
     return $this;
   }
 
@@ -147,7 +177,7 @@ class AmResponse extends AmObject{
    */
   public function make(){
 
-    foreach ($this->headers as $header) {
+    foreach ($this->__p->headers as $header) {
       header($header);
     }
     
