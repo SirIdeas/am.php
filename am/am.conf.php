@@ -47,6 +47,21 @@ return array(
 
   /**
    * ---------------------------------------------------------------------------
+   * Formatos
+   * ---------------------------------------------------------------------------
+   */
+  'formats' => array(
+    'AM_NOT_FOUND' => 'Am: Not Found',
+    'AM_CLASS_NOT_FOUND' => 'Am: Class "%s" Not Found',
+    'AM_NOT_FOUND_EXT' => 'Am: No se encontró la extensión "%s"',
+    'AM_NOT_FOUND_FILE_EXTS' => 'Am: No se encontró el archivo "%s" de la extensión "%s"',
+    'AM_NOT_FOUND_COMMAND' => 'Am: No se encontró el comando %s',
+    'AM_NOT_FOUND_VIEW' => 'Am: No existe view "%s"',
+    'AMOBJECT_CANNOT_ACCESS_PROPERTY' => 'Am: No puede acceder al atributo protegido/privado %s::$%s',
+  ),
+
+  /**
+   * ---------------------------------------------------------------------------
    * Configuraciones de las tareas (Ver ./tasks.conf.php)
    * ---------------------------------------------------------------------------
    */

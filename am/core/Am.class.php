@@ -138,24 +138,14 @@ final class Am{
      * Archivos de configuración cargados
      * -------------------------------------------------------------------------
      */
-    $confsLoaded = array(),  
+    $confsLoaded = array(),
 
     /**
      * -------------------------------------------------------------------------
      * Propiedades/Configuraciones globales cargadas
      * -------------------------------------------------------------------------
      */
-    $confs = array(
-      'formats' => array(
-        'AM_NOT_FOUND' => 'Am: Not Found',
-        'AM_CLASS_NOT_FOUND' => 'Am: Class "%s" Not Found',
-        'AM_NOT_FOUND_EXT' => 'Am: No se encontró la extensión "%s"',
-        'AM_NOT_FOUND_FILE_EXTS' => 'Am: No se encontró el archivo "%s" de la extensión "%s"',
-        'AM_NOT_FOUND_COMMAND' => 'Am: No se encontró el comando %s',
-        'AM_NOT_FOUND_VIEW' => 'Am: No existe view "%s"',
-        'AMOBJECT_CANNOT_ACCESS_PROPERTY' => 'Am: No puede acceder al atributo protegido/privado %s::$%s',
-      )
-    ),
+    $confs = array(),
 
     /**
      * -------------------------------------------------------------------------
@@ -312,120 +302,151 @@ final class Am{
 
   /**
    * ---------------------------------------------------------------------------
-   * Mezcla nuevos valores ($value) a una propiedad global ($propiedad). Si
-   * $extend es verdadero, entonces los valores nuevos no sobrescriben los
-   * anteriores.
+   * Agrega una extensión de las configuraciones.
    * ---------------------------------------------------------------------------
-   * @param   string  $property   Nombre de la propiedad a asignar.
-   * @param   string  $value      Valor a asignar a la propiedad
-   * @param   bool    $extend     Indica si se extenderá los valores o si se
-   *                              sobreescribirán
+   * Estas configuraciones son las tomadas inicialmente al momento de mezclar.
+   * Las primeras configuraciones cargadas prevalecen sobre las nuevas.
+   * @param   string  $property   Nombre de la propiedad a cargar.
    */
-  public static function mergeProperty($property, $value, $extend = false){
+  public static function extendProperties(array $conf, $from){
+
+    // Recorrer la configuracion para ir agregandolas a la extensión.
+    foreach ($conf as $property => $propertyValue) {
+
+      // Inicializar la propiedad si no existe.
+      if(!isset(self::$confsLoaded[$property]))
+        self::$confsLoaded[$property] = array();
+
+      // Empilar la configuración.
+      array_unshift(self::$confsLoaded[$property], $propertyValue);
+
+    }
+
+    // Reiniciar las configuraciones globales
+    self::$confs = array();
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
+   * Realiza la mezcla de una propiedad.
+   * ---------------------------------------------------------------------------
+   * @param   string  $property   Nombre de la propiedad a cargar.
+   */
+  public static function mergeProperty($property){
+
+    // Si ya esta mezclado el valor retornar 
+    if(isset(self::$confs[$property]))
+      return;
+
+    // Obtener las configuraciones iniciales
+    $confs = itemOr($property, self::$confsLoaded, array());
+
+    // Recorrer cada uno de las carpetas en el path
+    foreach(self::$dirs as $path){
+      // Buscar en el archivo de configuración am y en el correspondiente a la
+      // propiedad
+      foreach(array_unique(array('am', $property)) as $file){
+        // Obtener el nombre real del archivo
+        $filename = realpath("{$path}/{$file}.conf.php");
+        // Si tiene una configuración cargada
+        if(isset(self::$confsLoaded[$filename])){
+          // Si no es una configuración de am se toma la configuración completa
+          if($file !== 'am'){
+            $confs[] = self::$confsLoaded[$filename];
+          // De lo contrario se toma solo la propiedad deseada si es que existe
+          }elseif(isset(self::$confsLoaded[$filename][$property])){
+            $confs[] = self::$confsLoaded[$filename][$property];
+          }
+        }
+      }
+    }
+
+    // Si no se obtuvo alguna configuración se sale
+    if(empty($confs))
+      return;
 
     // Obtener funcion callback para mezclar la propiedad solicitada
-    $mergeFunctions = itemOr($property, self::$mergeFunctions);
+    $mergeFunction = itemOr($property, self::$mergeFunctions);
 
-    // Si exite la funcion y existe un valor previo se mezcla a partir de la
-    // funcion designada
-    if($mergeFunctions !== null && isset(self::$confs[$property])){
+    // Si s obtuvo una sola configuración o no existe una función de mezclado
+    // se devuelve la ultima configuración cargada.
+    if(count($confs) === 1 || $mergeFunction === null){
+      $conf = end($confs);
 
-      // Si se desea extender. Entonces los valores nuevos son sobreescritos por
-      // los viejos
-      if($extend === true)
-        $params = array($value, self::$confs[$property]);
+    }else{
+      // Proceder a mezclar
+      $conf = array();
 
-      // De lo contrario los valores nuevos sobre escriben a los viejos
-      else
-        $params = array(self::$confs[$property], $value);
+      foreach($confs as $newConf)
+        $conf = call_user_func_array($mergeFunction, array($conf, $newConf));
 
-      self::$confs[$property] = call_user_func_array($mergeFunctions, $params);
+    }
 
-    // Si no existe el callback se devolvera el ultimo valor
-    }else
-      self::$confs[$property] = $value;
+    self::$confs[$property] = $conf;
 
   }
 
   /**
    * ---------------------------------------------------------------------------
-   * Mezcla un conjunto de propieades globales indicadas en $properties. Si
-   * $extend es verdadero, entonces los valores nuevos no sobrescriben los
-   * anteriores.
+   * Devuelve el valor de una propiedad de aplicación.
    * ---------------------------------------------------------------------------
-   * @param   array $properties Array de pares propiedad=>valor a asignar.
-   * @param   bool  $extend     Indica si se extenderá los valores o si se
-   *                            sobreescribirán
+   * @param   string  $property   Nombre de la propiedad a cargar.
+   * @param   any     $default    Valor por defecto a devolver sino existe un
+   *                              valor para la propiedad.
+   * @return  any                 Valor de la propiedad evaluada recursivamente
+   *                              después de incluir los archivos de
+   *                              configuración adecuados.
    */
-  public static function mergeProperties(array $properties, $extend = false){
+  public static function getProperty($property, $default = null){
 
-    // Recorrer elementos obtenidos para ir
-    foreach ($properties as $property => $value)
-      self::mergeProperty($property, $value, $extend);
+    // Cargar las configuraciones de las propiedad
+    self::loadAllConfFilesOfProperty($property);
+
+    // Realizar la mezcla de las propiedades
+    self::mergeProperty($property);
+
+    // Devolver propiedad
+    return itemOr($property, self::$confs, $default);
 
   }
 
   /**
    * ---------------------------------------------------------------------------
-   * Carga la configuración de un archivo. Si $property es recibida entonces la
-   * configuración se cargará en dicha propiedad, de lo contrario se recorrerá
-   * se mezclará en propiedades separadas
+   * Carga un archivo de configuración.
    * ---------------------------------------------------------------------------
-   * @param   string  $filename   Nombre del archivo de configuración a cargar.
-   * @param   string  $property   Nombre de la propiedad a asignar.
-   * @param   bool    $extend     Indica si se extenderá los valores o si se
-   *                              sobreescribirán
+   * @param   string  $filename   Archivo de configuración a cargar.
+   * 
    */
-  public static function mergePropertiesFromFile($filename,
-                                                 $property = null,
-                                                 $extend = false){
+  public static function loadConfFile($filename){
 
     // Obtener el nombre real del archivo
     $filename = realpath($filename);
 
     // Si el archivo no existe salir
-    if(!is_file($filename) || in_array($filename, self::$confsLoaded))
+    if(!is_file($filename) || isset(self::$confsLoaded[$filename]))
       return;
-
-    // Agregar el archivo a la lita de archivos de configuracion cargados
-    self::$confsLoaded[] = $filename;
 
     // Cargar archivo de configuracion
     $conf = require $filename;
 
-    // Si la configuración esta destinada a una propiedad especifica
-    // mezclar con dicha configuracion
-    if(isset($property))
-      self::mergeProperty($property, $conf, $extend);
-
-    else
-      // Sino se debe agregar las configuraciones una por una.
-      self::mergeProperties($conf, $extend);
+    // Agregar el archivo a la lita de archivos de configuracion cargados
+    self::$confsLoaded[$filename] = $conf;
 
   }
 
   /**
    * ---------------------------------------------------------------------------
-   * Carga las configuraciones de un archivo buscando en cada una de las
-   * carpetas del entorno. Si $property es recibida entonces la
-   * configuración se cargará en dicha propiedad, de lo contrario se recorrerá
-   * se mezclará en propiedades separadas. Si $extend es verdadero, entonces
-   * los valores nuevos no sobrescriben los anteriores.
+   * Carga los archivos de configuración de una propiedad.
    * ---------------------------------------------------------------------------
-   * @param   string  $filename   Nombre del archivo de configuración a cargar.
-   * @param   string  $property   Nombre de la propiedad a asignar.
-   * @param   bool    $extend     Indica si se extenderá los valores o si se
-   *                              sobreescribirán
+   * @param   string  $property   Nombre de la propiedad a cargar.
+   * 
    */
-  public static function mergePropertiesFromAllFiles($filename = 'am',
-                                                     $property = null,
-                                                     $extend = false){
+  public static function loadAllConfFilesOfProperty($property = 'am'){
 
     // Recorrer cada uno de las carpetas en el path
-    foreach (self::$dirs as $path)
+    foreach(self::$dirs as $path)
       // Si el archivo cargar la configuracion en la posicion path/property
-      self::mergePropertiesFromFile("{$path}/{$filename}.conf.php",
-                                    $property, $extend);
+      self::loadConfFile("{$path}/{$property}.conf.php");
 
   }
 
@@ -439,6 +460,12 @@ final class Am{
 
     self::$dirs[] = realpath($dir);
     self::$dirs = array_unique(self::$dirs);
+
+    // Cargar configuraciones de am.conf.file
+    self::loadAllConfFilesOfProperty();
+
+    // Reiniciar configuraciones globales.
+    self::$confs = array();
 
   }
 
@@ -466,7 +493,7 @@ final class Am{
    * @return  mixed               Valor de la propiedad o valor por defecto si
    *                              la primera no existe.
    */
-  public static function getProperty($property, $default = null){
+  public static function getProperty2($property, $default = null){
 
     self::mergePropertiesFromAllFiles($property, $property);
     return itemOr($property, self::$confs, $default);
@@ -908,33 +935,38 @@ final class Am{
     if(is_file($realFile = $realFileConf)){
 
       // Obtener la configuracion de la extencion
-      $conf = require($realFile);
+      $conf = require_once($realFile);
 
-      // Obtener las funciones para mezclar que s definirán
-      $mergeFunctions = itemOr('mergeFunctions', $conf, array());
+      // Si el valor devuelto es un array
+      if(is_array($conf)){
 
-      // Los items nuevos no sobreescriben los anteriores
-      self::$mergeFunctions = array_merge($mergeFunctions, self::$mergeFunctions);
+        // Obtener las funciones para mezclar que se definirán
+        $mergeFunctions = itemOr('mergeFunctions', $conf, array());
 
-      // Obtener dependencias
-      $requires = itemOr('requires', $conf, array());
+        // Los items nuevos no sobreescriben los anteriores
+        self::$mergeFunctions = array_merge($mergeFunctions, self::$mergeFunctions);
 
-      // Incluir las dependencias
-      self::requireExt($requires);
+        // Obtener dependencias
+        $requires = itemOr('requires', $conf, array());
 
-      // Extender propiedades por defecto
-      $extend = itemOr('extend', $conf, array());
-      self::mergeProperties($extend, true);
+        // Incluir las dependencias
+        self::requireExt($requires);
 
-      // Obtener archivos a agregar de la extencion
-      $files = itemOr('files', $conf, array());
+        // Extender propiedades por defecto
+        $extend = itemOr('extend', $conf, array());
+        self::extendProperties($extend, $realFile);
 
-      // Llamar archivo de iniciacion en la carpeta si existe.
-      foreach ($files as $item)
-        if(is_file($realFile = "{$file}/{$item}.php"))
-          require_once $realFile;
-        else
-          throw Am::e('AM_NOT_FOUND_FILE_EXTS', $realFile, $file);
+        // Obtener archivos a agregar de la extencion
+        $files = itemOr('files', $conf, array());
+
+        // Llamar archivo de iniciacion en la carpeta si existe.
+        foreach($files as $item)
+          if(is_file($realFile = "{$file}/{$item}.php"))
+            require_once $realFile;
+          else
+            throw Am::e('AM_NOT_FOUND_FILE_EXTS', $realFile, $file);
+
+        }
 
     }
 
@@ -945,7 +977,7 @@ final class Am{
       $init = require_once($realFile);
       // Si es un array entonces representan parametros que extender del conf global.
       if(is_array($init))
-        self::mergeProperties($init, true);
+        self::extendProperties($init);
 
     }
 
@@ -975,7 +1007,7 @@ final class Am{
     if(is_array($name)){
 
       // Incluir dependencias recursivamente
-      foreach ($name as $value)
+      foreach($name as $value)
         self::requireExt($value);
 
       return;
@@ -1105,7 +1137,7 @@ final class Am{
     if(isset($options['args'])){
 
       $params = array();
-      foreach ($options['args'] as $paramName => $value){
+      foreach($options['args'] as $paramName => $value){
 
         // Obtener tipo y valor por defecto de la configuración
         $value = explode(':', $value);
@@ -1159,7 +1191,7 @@ final class Am{
       }
 
       // Cargar valores restantes y convertir al tipo de dato adecuado.
-      foreach ($params as $paramName => $value){
+      foreach($params as $paramName => $value){
 
         // Si no se ha asignado valor al parametro, se toma el siguiente valor
         // de los argumentos recibiso ($argv);
@@ -1195,7 +1227,7 @@ final class Am{
 
       $ret = array();
       // Ejecutar cada comando
-      foreach ($options['compound'] as $key => $compoundTask)
+      foreach($options['compound'] as $key => $compoundTask)
         $ret[$key] = self::taskArray($compoundTask['task'],
                              array_merge($argv, $compoundTask['args']));
 
@@ -1326,7 +1358,7 @@ final class Am{
     }
 
     // Obtener las configuraciones
-    self::mergePropertiesFromAllFiles();
+    self::loadAllConfFilesOfProperty();
 
     // Obtener el valor
     $errorReporting = self::getProperty('errorReporting');
@@ -1336,7 +1368,7 @@ final class Am{
     self::requireExt(self::getProperty('requires', array()));
     $files = self::getProperty('files', array());
 
-    foreach ($files as $file)
+    foreach($files as $file)
       require_once self::findFile("{$file}.php");
 
     // Include init file at app root if exists
