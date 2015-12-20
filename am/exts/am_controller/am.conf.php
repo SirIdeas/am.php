@@ -56,7 +56,8 @@ return array(
 
     // Formatos
     'formats' => array(
-      'AMCONTROLLER_ACTION_NOT_FOUND' => 'AmController: No se encontró la acción "%s@%s"'
+      'AMCONTROLLER_ACTION_NOT_FOUND' => 'AmController: No se encontró la acción "%s@%s"',
+      'AMCONTROLLER_ACTION_FORBIDDEN' => 'AmController: Acción prohibida "%s@%s"'
     )
 
   ),

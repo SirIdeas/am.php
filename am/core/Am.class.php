@@ -50,6 +50,9 @@ final class Am{
       // Responder con un error 404
       'response.e404' => null, // $msg
 
+      // Responder con un error 403
+      'response.e403' => null, // $msg
+
       // Renderiza de una vista
       'render.template' => array(), // $__tpl, $__vars, $__options
       
@@ -600,6 +603,19 @@ final class Am{
   public static function e404($msg = null){
 
     return self::ring('response.e404', $msg);
+
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
+   * Responde con un error 403
+   * ---------------------------------------------------------------------------
+   * @param   string  $msg  Mensaje de error a mostrar
+   * @return  any           Respuesta de manejador configurado.
+   */
+  public static function e403($msg = null){
+
+    return self::ring('response.e403', $msg);
 
   }
 

@@ -127,7 +127,27 @@ class AmResponse extends AmObject{
     return (new AmResponse())
       ->resolved(false)
       ->addHeader("HTTP/1.0 404 {$msg}")
-      ->addHeader("Status: 404 {$msg}");
+      ->addHeader("Status: 404 {$msg}")
+      ->content($msg);
+
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
+   * Agrega las cabeceras para indicar un error 403 a la respuesta.
+   * ---------------------------------------------------------------------------
+   * @param   string  $msg  $mensaje para el error a 403.
+   */
+  public static function e403($msg = null){
+
+    if(!$msg)
+      $msg = Am::t('AM_NOT_FOUND');
+
+    return (new AmResponse())
+      ->resolved(false)
+      ->addHeader("HTTP/1.0 403 {$msg}")
+      ->addHeader("Status: 403 {$msg}")
+      ->content($msg);
 
   }
 
