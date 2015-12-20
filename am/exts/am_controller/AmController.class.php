@@ -46,20 +46,15 @@ class AmController extends AmResponse{
 
     $this->__p->extend(array(
       
+      // -----------------------------------------------------------------------
+      // Para todo el controlador.
+      // -----------------------------------------------------------------------
+      
       // Carpeta raíz del controlador.
       'root' => null,
 
       // Nombre del controlador.
       'name' => null,
-
-      // Acción a ejecutar.
-      'action' => null,
-
-      // Parémetros para ejecutar la acción.
-      'params' => array(),
-
-      // Nombre de la vista a renderizar.
-      'view' => null,
 
       // Directorios donde se buscará las vistas.
       'paths' => array(),
@@ -68,13 +63,31 @@ class AmController extends AmResponse{
       'filters' => array(),
 
       // Prefijos.
-      'prefixs' => array(),
+      'prefixs' => array(
+        'filters' => 'filter_',
+        'actions' => 'action_',
+        'getActions' => 'get_',
+        'getPost' => 'post_',
+      ),
 
       // Acciones permitidas.
       'allows' => array(),
 
       // Tipo de respuesta para el servicio: json, txt.
       'serviceMimeType' => 'json',
+
+      // -----------------------------------------------------------------------
+      // Solo para la petición actual
+      // -----------------------------------------------------------------------
+      
+      // Acción a ejecutar.
+      'action' => null,
+
+      // Parémetros para ejecutar la acción.
+      'params' => array(),
+
+      // Nombre de la vista a renderizar.
+      'view' => null,
 
     ));
 
@@ -347,7 +360,6 @@ class AmController extends AmResponse{
       return $ret;
 
     // PENDIENTE
-    // 
     // // Verificar las credenciales
     // Am::getCredentialsHandler()
     //   ->checkCredentials($action, $this->credentials);
@@ -649,6 +661,8 @@ class AmController extends AmResponse{
     // Si no es un array, entonces el valor indica el path del controlador
     if(is_string($conf))
       $conf = array('root' => $conf);
+
+    var_dump($conf);
 
     $conf['root'] = realPath(itemOr('root', $conf, self::DEFAULT_CONTROLLER_FOLDER));
 

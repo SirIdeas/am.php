@@ -23,7 +23,7 @@ return array(
    * ---------------------------------------------------------------------------
    */
   'mergeFunctions' => array(
-    'controllers' => 'array_merge_recursive',
+    'controllers' => 'merge_if_both_are_array',
   ),
 
   /**
