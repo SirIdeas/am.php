@@ -64,6 +64,15 @@ class AmController extends AmResponse{
       // Directorios donde se buscará las vistas.
       'paths' => array(),
 
+      // Filtros.
+      'filters' => array(),
+
+      // Prefijos.
+      'prefixs' => array(),
+
+      // Tipo de respuesta para el servicio: json, txt.
+      'serviceMimeType' => 'json',
+
     ));
 
     // Asignar propiedades recibicas por parámetros
@@ -71,69 +80,22 @@ class AmController extends AmResponse{
 
   }
 
-
-//     $paths = array(),         // Carpetas donde se buscara las vistas
-//     $filters = array(),       // Filtros agregados
 //     $credentials = false,     // Credenciales para el controlador
-//     $prefixs = array(),       // Prefijos para diferentes elementos en el controlador
 //     $actionAllows = array(),  // Acciones permitidas
 
-//     $response = null,   // Respesta de la peticion
-//     $server = null,     // Variables de SERVER
-//     $get = null,        // Variables recibidas por GET
-//     $post = null,       // Variables recibidas por POST
-//     $request = null,    // Todas las variables recibidas
-//     $cookie = null,     // Çookies
-//     $env = null;        // Variables de entorno
-
-//   // Devuelve la URL de base del controlador
-//   final public function getUrl(){
-//     return $this->url;
-//   }
-
-//   final public function redirect($url = ''){
-//     Am::gotoUrl($this->url . $url);
-//   }
-
-//   // Devuelve el prefijo para determinado elemento
-//   final protected function getPrefix($key){
-//     return itemOr($key, $this->prefixs, '');
-//   }
-
-//   // Asigna la vista que se renderizará.
-//   // Es un Alias de la funcion setView que agrega .view.php al final
-//   // del valore recibido.
-//   final protected function render($value){
-//     // Las vista de las acciones son de extencion .view.php
-//     return $this->setView(self::getViewName($value));
-//   }
-
-//   final protected function setResponse($response){
-//     $this->response = $response;
-//   }
-
-//   // Responder como servicio
-//   final private function renderService($content){
-
-//     $type = 'json';
-
-//     isset($content) && is_object($content) AND $content = (array)$content;
-
-//     switch ($type){
-//       case 'json':
-//         $contentType = 'application/json';
-//         $content = json_encode($content);
-//         break;
-//       default:
-//         $contentType = 'text/plain';
-//         $content = print_r($content, true);
-//         break;
-//     }
-
-//     header("content-type: {$contentType}");
-//     echo $content;
-
-//   }
+  /**
+   * ---------------------------------------------------------------------------
+   * Asigna el nombre de la vista a renderizar.
+   * ---------------------------------------------------------------------------
+   * Es un Alias de la funcion setView que agrega .view.php al final del valor
+   * recibido.
+   * @param   String  $view   Nombre de la vista que se desea asignar.
+   * @return  $this
+   */
+  final protected function render($view){
+    // Las vista de las acciones son de extencion .view.php
+    return $this->setView(self::getViewName($view));
+  }
 
 //   // Devuelve el array de acciones permitidas
 //   final public function getActionAllows(){
@@ -149,205 +111,299 @@ class AmController extends AmResponse{
 //       $this->actionAllows[$action] : true;
 //   }
 
-//   // Revisa si una accion esta permitida. Si la acción no esta
-//   // permitida se redirigue a la url raiz del controlador
-//   final public function checkIsActionAllow($action){
-//     if(!$this->isActionAllow($action))
-//       Am::gotoUrl($this->url);
-//   }
-
-//   // Manejo de filtros para las acciones de los controladores
-
-//   // Agregar un filtro
-//   final protected function addFilter($name, $cls, $to = 'all', $except = array(), $redirect = null){
-
-//     // Filtro 'only' para ciertos métodos
-//     if(is_array($to)){
-//       $scope = 'only';
-//       $redirect = $except;
-//       $except = array();
-
-//     // Filtro para 'all' métodos o para 'except'
-//     }else{
-//       $scope = $to;
-//       $to = array();
-//     }
-
-//     // Si no se ha creado el contenedor del filtro, se crea
-//     if(!isset($this->filters[$state][$name])){
-
-//       // Crear array vacío en el state si no existe.
-//       if(!isset($this->filters[$state]))
-//         $this->filters[$state] = array();
-
-//       // Agregar filtro vacío
-//       $this->filters[$state][$name] = array(
-
-//         // A que metodo se aplicara el filtro: 'all', 'only' o 'except'
-//         'scope' => $scope,
-
-//         // A quienes se aplicara el filtro en caso de que scope=='only'
-//         'to' => array(),
-
-//         // A quienes no se aplicará el filtro en caso de que scope=='except'
-//         'except' => $except,
-
-//         // Si la peticion no pasa el filtro rediriguir a la siguiente URL
-//         'redirect' => $redirect
-
-//       );
-
-//     }
-
-//     // Mezclar los métodos a los que se aplicará el filtro con los que
-//     // ya habian sido agregados y obtener los valores unicos
-//     $this->filters[$state][$name]['to'] = array_unique(array_merge(
-//       $this->filters[$state][$name]['to'],
-//       $to
-//     ));
-
-//   }
-
-//   // Agregar un filtro antes de la ejecucion de metodos
-//   final protected function addBeforeFilter($name, $to = 'all', $except = array(), $redirect = null){
-//     $this->addFilter($name, 'before', $to, $except, $redirect);
-//   }
-
-//   // Agregaun filtro antes de la ejecucion de métodos GET
-//   final protected function addBeforeGetFilter($name, $to = 'all', $except = array(), $redirect = null){
-//     $this->addFilter($name, 'before_get', $to, $except, $redirect);
-//   }
-
-//   // Agregaun filtro antes de la ejecucion de métodos POST
-//   final protected function addBeforePostFilter($name, $to = 'all', $except = array(), $redirect = null){
-//     $this->addFilter($name, 'before_post', $to, $except, $redirect);
-//   }
-
-//   // Agregaun filtro despues de la ejecucion de métodos
-//   final protected function addAfterFilter($name, $to = 'all', $except = array()){
-//     $this->addFilter($name, 'after', $to, $except);
-//   }
-
-//   // Agregaun filtro despues de la ejecucion de métodos GET
-//   final protected function addAfterGetFilter($name, $to = 'all', $except = array()){
-//     $this->addFilter($name, 'after_get', $to, $except);
-//   }
-
-//   // Agregaun filtro despues de la ejecucion de métodos POST
-//   final protected function addAfterPostFilter($name, $to = 'all', $except = array()){
-//     $this->addFilter($name, 'after_post', $to, $except);
-//   }
-
-//   // Ejecuta los filtros correspondiente para un método.
-//   // state: Indica el estado que se ejecutara: before, before_get, bofore_post, after, after_get, after_post
-//   // methodName: Nombre del metodo del que se desea ejecutar los filtros.
-//   // estraParams: Parámetros extras para los filtros.
-//   final protected function executeFilters($state, $methodName, $extraParams){
-
-//     // Si no hay filtro a ejecutar para dicha peticion salir
-//     if(!isset($this->filters[$state]))
-//       return true;
+  // // Revisa si una accion esta permitida. Si la acción no esta
+  // // permitida se redirigue a la url raiz del controlador
+  // final public function checkIsActionAllow($action){
+  //   if(!$this->isActionAllow($action))
+  //     Am::gotoUrl($this->url);
+  // }
 
 
-//     // Recorrer los filtros del peditoestado
-//     foreach($this->filters[$state] as $filterName => $filter){
-
-//       // Si el filtro no se aplica a todos y si el metodo solicitado no esta dentro de los
-//       // métodos a los que se aplicará el filtro actual continuar con el siguiente filtro.
-//       if($filter['scope'] != 'all' && !in_array($methodName, $filter['to']))
-//         continue;
-
-//       // Si el método esta dentro de las excepciones del filtro
-//       // continuar con el siguiente filtro
-//       if(isset($filter['except']) && in_array($methodName, $filter['except']))
-//         continue;
-
-//       // Obtener le nombre real del filtro
-//       $filterRealName = $this->getPrefix('filters') . $filterName;
-
-//       // Llamar el filtro
-//       $ret = call_user_func_array(array(&$this, $filterRealName), $extraParams);
-
-//       // Si la accion pasa el filtro o no se trata de un filtro before
-//       // se debe continuar con el siguiente filtro
-//       if($ret !== false || $state != 'before')
-//         continue;
-
-//       // Si se indica una ruta de redirección se lleva a esa ruta
-//       if(isset($filter['redirect']))
-//         Am::gotoUrl($filter['redirect']);
-
-//       // Si no retornar false para indicar que no se pasó el filtro.
-//       return false;
-
-//     }
-
-//     // Si todos los filtros pasaron retornar verdadero.
-//     return true;
-
-//   }
-
-  // Ejecuta una accion determinada
   /**
    * ---------------------------------------------------------------------------
-   * Ejecuta una acción.
+   * Devuelve el prefijo para determinado elemento
    * ---------------------------------------------------------------------------
-   * @param  [type] $action [description]
-   * @param  [type] $method [description]
-   * @param  array  $params [description]
-   * @return [type]         [description]
+   * @param   string  $key  Nombre del elemento del que se quiere obtener el
+   *                        prefijo.
+   * @return  string        Prefijo de elemento.
+   */
+  final protected function getPrefix($key){
+
+    return itemOr($key, $this->get('prefixs'), '');
+
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
+   * Agregar un filtro.
+   * ---------------------------------------------------------------------------
+   * @param   string  $name       Nombre del filtro a agregar,
+   * @param   string  $when       Cuando se ejecutará el filtro: before, after,
+   *                              before_get, after_get, ...
+   * @param   string  $to         Para que acciones se ejecutará el filtro.
+   *                              Puede 'all' que indica que el filtro se
+   *                              ejecuta para todas las acciones, 'only', que
+   *                              indica que le filtro se ejecuta para ciertas
+   *                              acciones, 'except' que indica que se
+   *                              ejecutara el filtro para todas las acciones
+   *                              con algunas excepciones, o un array de string
+   *                              que indica las acciones para las que se
+   *                              ejecutará el filtro.
+   * @param   array   $except     Array de acciones para las cuales no se
+   *                              ejecutará el filtro.
+   * @param   [type]  $redirect   A donde se redirigirá si el filtro no pasa.
+   */
+  final protected function addFilter($name, $when, $to = 'all',
+                                     $except = array(), $redirect = null){
+
+    // Obtener los filtros
+    $filters = $this->get('filters');
+
+    // Filtro 'only' para ciertos métodos
+    if(is_array($to)){
+      $scope = 'only';
+      $redirect = $except;
+      $except = array();
+
+    // Filtro para 'all' métodos o para 'except'
+    }else{
+      $scope = $to;
+      $to = array();
+    }
+
+    // Si no se ha creado el contenedor del filtro, se crea
+    if(!isset($filters[$when][$name])){
+
+      // Crear array vacío en el when si no existe.
+      if(!isset($filters[$when]))
+        $filters[$when] = array();
+
+      // Agregar filtro vacío
+      $filters[$when][$name] = array(
+        // A que metodo se aplicara el filtro: 'all', 'only' o 'except'
+        'scope' => $scope,
+        // A quienes se aplicara el filtro en caso de que scope=='only'
+        'to' => array(),
+        // A quienes no se aplicará el filtro en caso de que scope=='except'
+        'except' => array(),
+        // Si la peticion no pasa el filtro rediriguir a la siguiente URL
+        'redirect' => $redirect
+      );
+
+    }
+
+    // Mezclar los métodos a los que se aplicará el filtro con los que
+    // ya habian sido agregados y obtener los valores unicos
+    $filters[$state][$name]['to'] = array_unique(array_merge(
+      $filters[$state][$name]['to'],
+      $to
+    ));
+
+    // Mezclar los métodos a los que se aplicará el filtro con los que
+    // ya habian sido agregados y obtener los valores unicos
+    $filters[$state][$name]['except'] = array_unique(array_merge(
+      $filters[$state][$name]['except'],
+      $except
+    ));
+
+    // Asignar el filtro
+    $this->set('filters', $filters);
+
+  }
+
+  /*
+  
+    // Agregar un filtro antes de la ejecucion de metodos
+    final protected function addBeforeFilter(
+      $name, $to = 'all', $except = array(), $redirect = null){
+      $this->addFilter($name, 'before', $to, $except, $redirect);
+    }
+
+    // Agregaun filtro antes de la ejecucion de métodos GET
+    final protected function addBeforeGetFilter(
+      $name, $to = 'all', $except = array(), $redirect = null){
+      $this->addFilter($name, 'before_get', $to, $except, $redirect);
+    }
+
+    // Agregaun filtro antes de la ejecucion de métodos POST
+    final protected function addBeforePostFilter(
+      $name, $to = 'all', $except = array(), $redirect = null){
+      $this->addFilter($name, 'before_post', $to, $except, $redirect);
+    }
+
+    // Agregaun filtro despues de la ejecucion de métodos
+    final protected function addAfterFilter(
+      $name, $to = 'all', $except = array()){
+      $this->addFilter($name, 'after', $to, $except);
+    }
+
+    // Agregaun filtro despues de la ejecucion de métodos GET
+    final protected function addAfterGetFilter(
+      $name, $to = 'all', $except = array()){
+      $this->addFilter($name, 'after_get', $to, $except);
+    }
+
+    // Agregaun filtro despues de la ejecucion de métodos POST
+    final protected function addAfterPostFilter(
+      $name, $to = 'all', $except = array()){
+      $this->addFilter($name, 'after_post', $to, $except);
+    }
+
+  */
+
+  /**
+   * ---------------------------------------------------------------------------
+   * Ejecuta los filtros correspondiente para un método.
+   * ---------------------------------------------------------------------------
+   * @param   string  $when     Indica el estado que se ejecutara: before,
+   *                            before_get, bofore_post, after, after_get,
+   *                            after_post.
+   * @param   string  $action   Nombre del metodo del que se desea ejecutar
+   *                            los filtros.
+   * @param   array  $params    Parámetros extras para los filtros.
+   * @return  bool/AmResponse   Si el llamado de lacción paso o no el filtro.
+   */
+  final protected function executeFilters($when, $action,
+                                          array $params = array()){
+
+    // Obtener los filtros.
+    $filters = $this->get('filters');
+
+    // Si no hay filtro a ejecutar para dicha peticion salir
+    if(!isset($filters[$when]))
+      return true;
+
+    // Recorrer los filtros del peditoestado
+    foreach($filters[$when] as $filterName => $filter){
+
+      // Si el filtro no se aplica a todos y si el metodo solicitado no esta
+      // dentro de los métodos a los que se aplicará el filtro actual continuar
+      // con el siguiente filtro.
+      if($filter['scope'] != 'all' && !in_array($action, $filter['to']))
+        continue;
+
+      // Si el método esta dentro de las excepciones del filtro
+      // continuar con el siguiente filtro
+      if(isset($filter['except']) && in_array($action, $filter['except']))
+        continue;
+
+      // Obtener le nombre real del filtro
+      $filterRealName = $this->getPrefix('filters') . $filterName;
+
+      // Llamar el filtro
+      $ret = call_user_func_array(array(&$this, $filterRealName), $params   );
+
+      // Si la accion pasa el filtro o no se trata de un filtro before se debe
+      // continuar con el siguiente filtro
+      if($ret !== false || $when != 'before')
+        continue;
+
+      // El retornna una respuesta entonces devolver dicha respuesta.
+      if($ret instanceof parent)
+        return $ret;
+
+      // Si se indica una ruta de redirección se lleva a esa ruta
+      if(isset($filter['redirect']))
+        return Am::go($filter['redirect']);
+
+      // Si no retornar false para indicar que no se pasó el filtro.
+      return false;
+
+    }
+
+    // Si todos los filtros pasaron retornar verdadero.
+    return true;
+
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
+   * Ejecuta una acción, con un método y unos parámetros.
+   * ---------------------------------------------------------------------------
+   * @param   string  $action   Nombre de la acción a ejecutar.
+   * @param   string  $method   Nombre del método como se ejecuta.
+   * @param   array   $params   Parámetros para ejecutar la acción.
+   * @return  [type]            
    */
   final protected function executeAction($action, $method, array $params){
 
-    $method = strtolower($method);
-    var_dump($action, $method, $params, $this);
-    return;
     // Chequear si esta permitida o no la acción
-    $this->checkIsActionAllow($action);
+    // $this->checkIsActionAllow($action);
 
-    // Verificar las credenciales
-    Am::getCredentialsHandler()
-      ->checkCredentials($action, $this->credentials);
+    // PENDIENTE
+    // 
+    // // Verificar las credenciales
+    // Am::getCredentialsHandler()
+    //   ->checkCredentials($action, $this->credentials);
+      
+    // Guarda el valor a retornar.
+    $return = null;
 
-    // Valor de retorno
-    $ret = null;
+    // Para guardar métodos ejecutados.
+    $executed = array();
 
-    // Si el metodo existe llamar
-    if(method_exists($this, $actionMethod = 'action'))
-      call_user_func_array(array($this, $actionMethod), $params);
+    // Obtener los nombre de los métodos a ejecutar.
+    $methodsToExec = array(
+      'action',
+      // Acción normal
+      'before' => $this->getPrefix('actions') . $action,
+      // Acción correspondiente al método
+      "before_{$method}" => $this->getPrefix("{$method}Actions") . $action,
+      // Despues de acción con el método
+      "after_{$method}" => null,
+      // Despues de la acción
+      'after' => null
+    );
 
-    // Ejecutar filtros para la acción
-    if(!$this->executeFilters('before', $action, $params))
-      return false;
+    foreach ($methodsToExec as $when => $actionMethod) {
 
-    // Si el metodo existe llamar
-    if(method_exists($this, $actionMethod = $this->getPrefix('actions') . $action)){
-      $retTmp = call_user_func_array(array($this, $actionMethod), $params);
-      // Sobre escribir la salida
-      if($retTmp){
-        echo $ret;
-        $ret = $retTmp;
+      $ret = null;
+
+      // Si el método a ejecutar no es 'action' ni null
+      if($actionMethod !== 'action'){
+
+        // Ejecutar filtros befores
+        $ret = $this->executeFilters($when, $action, $params);
+
+        // Si retorno falso o un respuesta devolverlo
+        if($actionMethod!==null && ($ret === false || $ret instanceof parent))
+          return $ret;
+
       }
+
+      // Ejecutar el método si existe y no se ha ejecutado
+      if(!in_array($actionMethod, $executed) &&
+        method_exists($this, $actionMethod)){
+
+        $ret = call_user_func_array(array($this, $actionMethod), $params);
+
+        // Agregar a ejecutados
+        $executed[] = $actionMethod;
+
+      }
+
+      // Si retorna una array, respuesta o objeto salir.
+      if(!$return && (is_array($ret) || is_object($ret))){
+
+        // Convertir en respuesta
+        if(!$ret instanceof parent)
+          $ret = $this->responseService($ret);
+
+        $return = $ret;
+
+        // Si el métod ejecutado es accion retorna.
+        if('action' === $actionMethod)
+          return $return;
+
+        // Si no es el filtro after
+        if(null !== $actionMethod)
+          break;
+
+      }
+
     }
 
-    // Ejecutar filtros para la acción por el método enviado
-    if(!$this->executeFilters("before_{$method}", $action, $params))
-      return false;
-
-    // Si el metodo existe llamar correspondiente al metodo de la peticion
-    if(method_exists($this, $actionMethod = $this->getPrefix("{$method}Actions") . $action)){
-      $retTmp = call_user_func_array(array($this, $actionMethod), $params);
-      // Sobre escribir la salida
-      if($retTmp){
-        echo $ret;
-        $ret = $retTmp;
-      }
-    }
-
-    $this->executeFilters("after_{$method}", $action, $params);
-    $this->executeFilters('after', $action, $params);
-
-    return $ret;
+    return $return;
 
   }
 
@@ -394,7 +450,9 @@ class AmController extends AmResponse{
    * @return string         Nombre de la vista actual.
    */
   final protected function getView(){
+
     return $this->get('view');
+
   }
 
   /**
@@ -405,7 +463,9 @@ class AmController extends AmResponse{
    * @return  this
    */
   final protected function setView($view){
+
     return $this->set('view', $view);
+
   }
 
   // Renderizar la vista
@@ -439,6 +499,41 @@ class AmController extends AmResponse{
 
   /**
    * ---------------------------------------------------------------------------
+   * Responder como servicio.
+   * ---------------------------------------------------------------------------
+   * @param   array/object  $content  Contenido de la respuesta.
+   * @return  AmResponse              Respuesta
+   */
+  final private function responseService($content){
+
+    $type = $this->get('serviceMimeType');
+    $mimeType = Am::mimeType(".{$type}");
+
+    // Convertir a array
+    if(isset($content) && is_object($content))
+      $content = (array)$content;
+
+    // Codificar el contenido.
+    switch ($type){
+      case 'json':
+        $content = json_encode($content);
+        break;
+      case 'txt':
+        $content = var_export($content, true);
+        break;
+      default:
+        $content = print_r($content, true);
+        break;
+    }
+
+    return (new parent)
+      ->addHeader("Content-Type: {$mimeType}")
+      ->content($content);
+
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
    * Para despachar la petición.
    * ---------------------------------------------------------------------------
    */
@@ -458,24 +553,17 @@ class AmController extends AmResponse{
     // Para obtener la salida
     $buffer = ob_get_clean();
 
-    // Responder como un servicio
-    if(is_array($ret) || is_object($ret)){
+    // Crear respuesta de vista si lo devuelto no es una respuesta
+    if(!$ret instanceof parent){
 
-      echo $buffer;
-      return $this->renderService($ret);
-
-    // Si es una respuesta devolver la respuesta
-    }else if($ret instanceof AmResponse){
-
-      echo $buffer;
-      return $ret;
+      $ret = $this->view($this->getView(), array(
+        'child' => $ret
+      ));
 
     }
 
-    // Renderizar la vista
-    return $this->view($this->getView(), array(
-      'child' => $buffer.$ret
-    ));
+    // Agregar el buffer al principio de la respuesta
+    return $ret->addContentToBegin($buffer);
 
   }
   
@@ -557,6 +645,9 @@ class AmController extends AmResponse{
     if(is_file($realFile = "{$conf['root']}/am.conf.php"))
       $conf = self::mergeConf($conf, require($realFile));
 
+    // Asignar el nombre del controlador si no lo tiene.
+    $conf['name'] = itemOr('name', $conf, $controller);
+
     // Si tiene no tiene padre o si el padre esta vacío
     // y se mezcla con la configuracion por defecto
     if(!isset($conf['parent']) || empty($conf['parent'])){
@@ -564,8 +655,8 @@ class AmController extends AmResponse{
       // Mezclar con valores por defecto
       $conf = self::mergeConf($defaults, $conf);
 
-      // Obtener el nombre real del controlador
-      $controllerName = itemOr('name', $conf, $controller);
+      // Obtener el nombre del padre
+      $parentControllerName = itemOr('name', $defaults, null);
 
     // Mezclar con configuracion del padre
     }else{
@@ -577,8 +668,8 @@ class AmController extends AmResponse{
       $confParent['paths'][] = $confParent['root'];
       $confParent['paths'][] = $confParent['root'] . '/' . $confParent['views'];
 
-      // Obtener el nombre real del controlador antes de mezclar con el padre
-      $controllerName = itemOr('name', $conf, $controller);
+      // Obtener el nombre del padre
+      $parentControllerName = itemOr('name', $confParent, null);
 
       // Mezclar con la configuracion del padre
       $conf = self::mergeConf($confParent, $conf);
@@ -587,9 +678,12 @@ class AmController extends AmResponse{
 
     // Obtener la ruta del controlador
     // Incluir controlador si existe el archivo
-    if(is_file($file = "{$conf['root']}/{$controllerName}.control.php")){
-      $conf['name'] = $controllerName;
+    if(is_file($file = "{$conf['root']}/{$conf['name']}.controller.php")){
       require_once $file;
+    }else{
+      // Si no tiene un archivo que incluir se asigna como nombre de
+      // controlador el nombre del controlador padre.
+      $conf['name'] = $parentControllerName;
     }
 
     // Incluir como extension
