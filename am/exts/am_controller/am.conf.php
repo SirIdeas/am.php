@@ -46,11 +46,56 @@ return array(
     // Configuración inicial de los controladores
     'controllers' => array(
       'defaults' => array(
+      
+        // ---------------------------------------------------------------------
+        // Para todo el controlador.
+        // ---------------------------------------------------------------------
+
+        // Nombre del controlador.
         'name' => 'Am',
-        'views' => 'views',  // Carpeta por defecto para las vistas
-        'paths' => array(    // Carpetas de vistas del controlador
-          realPath('../am/exts')
+
+        // Nombre del controlador padre.
+        'parent' => null,
+        
+        // Carpeta raíz del controlador.
+        'root' => 'controllers/',
+
+        // Directorio hijo donde se buscará las vistas.
+        'views' => 'views',
+
+        // Directorios alternativos donde se buscará las vistas.
+        'paths' => array(),
+
+        // Prefijos.
+        'prefixs' => array(
+          'filters' => 'filter_',
+          'actions' => 'action_',
+          'getActions' => 'get_',
+          'postActions' => 'post_',
         ),
+
+        // Acciones permitidas.
+        'allows' => array(),
+
+        // Tipo de respuesta para el servicio: json, txt.
+        'serviceType' => 'json',
+
+        // Filtros.
+        'filters' => array(),
+
+        // ---------------------------------------------------------------------
+        // Solo para la petición actual
+        // ---------------------------------------------------------------------
+        
+        // Acción a ejecutar.
+        'action' => null,
+
+        // Parémetros para ejecutar la acción.
+        'params' => array(),
+
+        // Nombre de la vista a renderizar.
+        'view' => null,
+
       ),
     ),
 

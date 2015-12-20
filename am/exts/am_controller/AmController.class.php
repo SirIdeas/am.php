@@ -36,66 +36,6 @@ class AmController extends AmResponse{
       'filters' => 'merge_r_if_snd_first_not_false',
     );
 
-  /**
-   * ---------------------------------------------------------------------------
-   * Constructor de la Clase.
-   * ---------------------------------------------------------------------------
-   */
-  public function __construct($data = null){
-    parent::__construct();
-
-    $this->__p->extend(array(
-      
-      // -----------------------------------------------------------------------
-      // Para todo el controlador.
-      // -----------------------------------------------------------------------
-      
-      // Carpeta raíz del controlador.
-      'root' => null,
-
-      // Nombre del controlador.
-      'name' => null,
-
-      // Directorios donde se buscará las vistas.
-      'paths' => array(),
-
-      // Filtros.
-      'filters' => array(),
-
-      // Prefijos.
-      'prefixs' => array(
-        'filters' => 'filter_',
-        'actions' => 'action_',
-        'getActions' => 'get_',
-        'getPost' => 'post_',
-      ),
-
-      // Acciones permitidas.
-      'allows' => array(),
-
-      // Tipo de respuesta para el servicio: json, txt.
-      'serviceMimeType' => 'json',
-
-      // -----------------------------------------------------------------------
-      // Solo para la petición actual
-      // -----------------------------------------------------------------------
-      
-      // Acción a ejecutar.
-      'action' => null,
-
-      // Parémetros para ejecutar la acción.
-      'params' => array(),
-
-      // Nombre de la vista a renderizar.
-      'view' => null,
-
-    ));
-
-    // Asignar propiedades recibicas por parámetros
-    $this->__p->extend($data);
-
-  }
-
 //     $credentials = false,     // Credenciales para el controlador
 
   /**
@@ -167,13 +107,9 @@ class AmController extends AmResponse{
    * @param   string  $when       Cuando se ejecutará el filtro: before, after,
    *                              before_get, after_get, ...
    * @param   string  $to         Para que acciones se ejecutará el filtro.
-   *                              Puede 'all' que indica que el filtro se
-   *                              ejecuta para todas las acciones, 'only', que
-   *                              indica que le filtro se ejecuta para ciertas
-   *                              acciones, 'except' que indica que se
-   *                              ejecutara el filtro para todas las acciones
-   *                              con algunas excepciones, o un array de string
-   *                              que indica las acciones para las que se
+   *                              Puede ser 'all' que indica que el filtro se
+   *                              ejecuta para todas las acciones o un array de
+   *                              string que indica las acciones para las que se
    *                              ejecutará el filtro.
    * @param   array   $except     Array de acciones para las cuales no se
    *                              ejecutará el filtro.
@@ -187,14 +123,8 @@ class AmController extends AmResponse{
 
     // Filtro 'only' para ciertos métodos
     if(is_array($to)){
-      $scope = 'only';
       $redirect = $except;
       $except = array();
-
-    // Filtro para 'all' métodos o para 'except'
-    }else{
-      $scope = $to;
-      $to = array();
     }
 
     // Si no se ha creado el contenedor del filtro, se crea
@@ -206,11 +136,9 @@ class AmController extends AmResponse{
 
       // Agregar filtro vacío
       $filters[$when][$name] = array(
-        // A que metodo se aplicara el filtro: 'all', 'only' o 'except'
-        'scope' => $scope,
-        // A quienes se aplicara el filtro en caso de que scope=='only'
-        'to' => array(),
-        // A quienes no se aplicará el filtro en caso de que scope=='except'
+        // A quienes se aplicara el filtro
+        'to' => $to,
+        // A quienes no se aplicará el filtro en caso de que to=='all'
         'except' => array(),
         // Si la peticion no pasa el filtro rediriguir a la siguiente URL
         'redirect' => $redirect
@@ -220,15 +148,16 @@ class AmController extends AmResponse{
 
     // Mezclar los métodos a los que se aplicará el filtro con los que
     // ya habian sido agregados y obtener los valores unicos
-    $filters[$state][$name]['to'] = array_unique(array_merge(
-      $filters[$state][$name]['to'],
-      $to
-    ));
+    if(is_array($to) && is_array($filters[$when][$name]['to']))
+      $filters[$when][$name]['to'] = array_unique(array_merge(
+        $filters[$when][$name]['to'],
+        $to
+      ));
 
     // Mezclar los métodos a los que se aplicará el filtro con los que
     // ya habian sido agregados y obtener los valores unicos
-    $filters[$state][$name]['except'] = array_unique(array_merge(
-      $filters[$state][$name]['except'],
+    $filters[$when][$name]['except'] = array_unique(array_merge(
+      $filters[$when][$name]['except'],
       $except
     ));
 
@@ -236,46 +165,6 @@ class AmController extends AmResponse{
     $this->set('filters', $filters);
 
   }
-
-  /*
-  
-    // Agregar un filtro antes de la ejecucion de metodos
-    final protected function addBeforeFilter(
-      $name, $to = 'all', $except = array(), $redirect = null){
-      $this->addFilter($name, 'before', $to, $except, $redirect);
-    }
-
-    // Agregaun filtro antes de la ejecucion de métodos GET
-    final protected function addBeforeGetFilter(
-      $name, $to = 'all', $except = array(), $redirect = null){
-      $this->addFilter($name, 'before_get', $to, $except, $redirect);
-    }
-
-    // Agregaun filtro antes de la ejecucion de métodos POST
-    final protected function addBeforePostFilter(
-      $name, $to = 'all', $except = array(), $redirect = null){
-      $this->addFilter($name, 'before_post', $to, $except, $redirect);
-    }
-
-    // Agregaun filtro despues de la ejecucion de métodos
-    final protected function addAfterFilter(
-      $name, $to = 'all', $except = array()){
-      $this->addFilter($name, 'after', $to, $except);
-    }
-
-    // Agregaun filtro despues de la ejecucion de métodos GET
-    final protected function addAfterGetFilter(
-      $name, $to = 'all', $except = array()){
-      $this->addFilter($name, 'after_get', $to, $except);
-    }
-
-    // Agregaun filtro despues de la ejecucion de métodos POST
-    final protected function addAfterPostFilter(
-      $name, $to = 'all', $except = array()){
-      $this->addFilter($name, 'after_post', $to, $except);
-    }
-
-  */
 
   /**
    * ---------------------------------------------------------------------------
@@ -302,15 +191,32 @@ class AmController extends AmResponse{
     // Recorrer los filtros del peditoestado
     foreach($filters[$when] as $filterName => $filter){
 
+      // Si filter es un string se asume que es el scope
+      if(is_string($filter) || (is_array($filter) && isAssocArray($filter)))
+        $filter = array('to' => $filter);
+
+      // Valores por defecto del filtro
+      $filter = array_merge(array(
+        'to' => 'all',
+        'except' => array(),
+        'redirect' => null,
+      ), $filter);
+
+      // Determinar si el filtro se ejecura para todos las acciones
+      $all = $filter['to'] === 'all';
+
+      if($all)
+        $filter['to'] = array();
+
       // Si el filtro no se aplica a todos y si el metodo solicitado no esta
       // dentro de los métodos a los que se aplicará el filtro actual continuar
       // con el siguiente filtro.
-      if($filter['scope'] != 'all' && !in_array($action, $filter['to']))
+      if(!$all && !in_array($action, $filter['to']))
         continue;
 
       // Si el método esta dentro de las excepciones del filtro
       // continuar con el siguiente filtro
-      if(isset($filter['except']) && in_array($action, $filter['except']))
+      if(in_array($action, $filter['except']))
         continue;
 
       // Obtener le nombre real del filtro
@@ -533,17 +439,21 @@ class AmController extends AmResponse{
    * @param   array/object  $content  Contenido de la respuesta.
    * @return  AmResponse              Respuesta
    */
-  final private function responseService($content){
+  final private function responseService($content, $as = null){
 
-    $type = $this->get('serviceMimeType');
-    $mimeType = Am::mimeType(".{$type}");
+    // Si no se indica como se desea responder entonces se busca la propiedad
+    // servicesType
+    if(!isset($as))
+      $as = $this->get('servicesType');
+
+    $mimeType = Am::mimeType(".{$as}");
 
     // Convertir a array
     if(isset($content) && is_object($content))
       $content = (array)$content;
 
     // Codificar el contenido.
-    switch ($type){
+    switch ($as){
       case 'json':
         $content = json_encode($content);
         break;
@@ -661,8 +571,6 @@ class AmController extends AmResponse{
     // Si no es un array, entonces el valor indica el path del controlador
     if(is_string($conf))
       $conf = array('root' => $conf);
-
-    var_dump($conf);
 
     $conf['root'] = realPath(itemOr('root', $conf, self::DEFAULT_CONTROLLER_FOLDER));
 
