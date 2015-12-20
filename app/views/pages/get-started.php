@@ -68,6 +68,10 @@
           <td>Reponse con un error 404</td>
         </tr>
         <tr>
+          <td><code><strong>response.e403</strong></code></td>
+          <td>Reponse con un error 403</td>
+        </tr>
+        <tr>
           <td><code><strong>render.template</strong></code></td>
           <td>Renderizar vista</td>
         </tr>
