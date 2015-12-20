@@ -51,7 +51,10 @@ class AmRedirectResponse extends AmResponse{
    * ---------------------------------------------------------------------------
    */
   public function make(){
+    parent::make();
+    
     $this->addHeader("location: {$this->url}");
+
   }
 
 }

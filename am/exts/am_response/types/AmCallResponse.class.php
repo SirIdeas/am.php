@@ -131,6 +131,7 @@ class AmCallResponse extends AmResponse{
    *                      respuesta 404. De lo contario retorna null
    */
   public function make(){
+    parent::make();
 
     // Obtener las propiedades
     $params = $this->__p->params;

@@ -118,12 +118,13 @@ class AmTemplateResponse extends AmResponse{
    *                      respuesta 404. De lo contario retorna null
    */
   public function make(){
-
+    parent::make();
+    
     $ret = Am::ring('render.template',
       $this->__p->tpl, $this->__p->vars, $this->__p->options);
 
     // Si no existe el archivo responder con error 404
-    if(!$ret || !$this->isResolved())
+    if(!$ret && !$this->isResolved())
       return Am::e404(Am::t('AMRESPONSE_TEMPLATE_NOT_FOUND', $this->__p->tpl));
 
   }

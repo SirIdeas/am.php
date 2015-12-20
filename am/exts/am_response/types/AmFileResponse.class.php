@@ -112,7 +112,8 @@ class AmFileResponse extends AmResponse{
    *                      null
    */
   public function make(){
-
+    parent::make();
+    
     // Si el archivo no existe retornar error 404
     if(!$this->isResolved())
       return Am::e404(Am::t('AMRESPONSE_FILE_NOT_FOUND', $this->__p->filename));

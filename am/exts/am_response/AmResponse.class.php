@@ -42,6 +42,9 @@ class AmResponse extends AmObject{
       // Indica si se resolvío o no la petición
       'resolved' => true,
 
+      // Cuerpo de la respuesta
+      'content' => null,
+
     ));
 
     // Asignar propiedades recibicas por parámetros
@@ -154,22 +157,62 @@ class AmResponse extends AmObject{
    * ---------------------------------------------------------------------------
    * Devuelve si la petición fue resuelta o no.
    * ---------------------------------------------------------------------------
-   * @return boolean  Devuelve si la petición fué resuelta o no
+   * @return  boolean  Devuelve si la petición fué resuelta o no
    */
   public function isResolved(){
-    return $this->__p->resolved;
+    return $this->get('resolved');
   }
 
   /**
    * ---------------------------------------------------------------------------
    * Asignar Si la petición se resolvió o no.
    * ---------------------------------------------------------------------------
-   * @param  bool   $resolved   
-   * @return this
+   * @param   bool  $resolved   
+   * @return  this
    */
   public function resolved($resolved = true){
-    $this->__p->resolved = $resolved;
+    $this->set('resolved', $resolved);
     return $this;
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
+   * Asignar el cuerpo.
+   * ---------------------------------------------------------------------------
+   * @param   string  $content  Cuerpo de la respuesta.   
+   * @return  this
+   */
+  public function content($content){
+    $this->set('content', $content);
+    return $this;
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
+   * Agrega contenido al final del cuerpo de la respuesta.
+   * ---------------------------------------------------------------------------
+   * @param   string  $content  Cuerpo de la respuesta.   
+   * @return  this
+   */
+  public function addContent($content){
+
+    $this->content($this->get('content').$content);
+    return $this;
+
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
+   * Agrega contenido al inicio del cuerpo de la respuesta.
+   * ---------------------------------------------------------------------------
+   * @param   string  $content  Cuerpo de la respuesta.   
+   * @return  this
+   */
+  public function addContentToBegin($content){
+
+    $this->content($content.$this->get('content'));
+    return $this;
+    
   }
 
   /**
@@ -190,9 +233,14 @@ class AmResponse extends AmObject{
    * ---------------------------------------------------------------------------
    * Método para ejecutar la respuesta.
    * ---------------------------------------------------------------------------
+   * Si tiene un cuerpo asignado lo imprime.
    */
   public function make(){
 
+    $content = $this->get('content');
+    if(isset($content))
+      echo $content;
+    
   }
 
   /**
@@ -209,6 +257,7 @@ class AmResponse extends AmObject{
     ob_start();
 
     while($response instanceof AmResponse){
+
       // Llamar respuesta
       $ret = $response->make();
 
