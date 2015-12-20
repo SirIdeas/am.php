@@ -15,9 +15,9 @@
 class AmController extends AmResponse{
 
   /**
-   * -------------------------------------------------------------------------
+   * ---------------------------------------------------------------------------
    * Ubicación por defecto del controlador.
-   * -------------------------------------------------------------------------
+   * ---------------------------------------------------------------------------
    */
   const DEFAULT_CONTROLLER_FOLDER = 'controllers/';
 
@@ -29,11 +29,11 @@ class AmController extends AmResponse{
      * -------------------------------------------------------------------------
      */
     $mergeFunctions = array(
-      'paths'         => 'array_merge',
-      'prefix'        => 'array_merge',
-      'actionAllows'  => 'array_merge',
-      'headers'       => 'merge_unique',
-      'filters'       => 'merge_r_if_snd_first_not_false',
+      'paths'   => 'array_merge',
+      'prefix'  => 'array_merge',
+      'allows'  => 'array_merge',
+      'headers' => 'merge_unique',
+      'filters' => 'merge_r_if_snd_first_not_false',
     );
 
   /**
@@ -70,6 +70,9 @@ class AmController extends AmResponse{
       // Prefijos.
       'prefixs' => array(),
 
+      // Acciones permitidas.
+      'allows' => array(),
+
       // Tipo de respuesta para el servicio: json, txt.
       'serviceMimeType' => 'json',
 
@@ -81,7 +84,6 @@ class AmController extends AmResponse{
   }
 
 //     $credentials = false,     // Credenciales para el controlador
-//     $actionAllows = array(),  // Acciones permitidas
 
   /**
    * ---------------------------------------------------------------------------
@@ -97,26 +99,37 @@ class AmController extends AmResponse{
     return $this->setView(self::getViewName($view));
   }
 
-//   // Devuelve el array de acciones permitidas
-//   final public function getActionAllows(){
-//     return $this->actionAllows;
-//   }
+  /**
+   * ---------------------------------------------------------------------------
+   * Indica si una accion esta permitida o no.
+   * ---------------------------------------------------------------------------
+   * Si las acciones permitidas no tiene el item correspondiente a la acción
+   * solicitada entonces se asume que esta permitida la acción.
+   * @param   string    $action   Nombre de la acción que se desea consultar.
+   * @return  boolean             Si la acción está o no permitida.
+   */
+  final public function isActionAllow($action){
+    // Get allows actions configuration
+    $allows = $this->get('allows');
 
-//   // Indica si una accion esta permitida o no.
-//   // Si las acciones permitidas no tiene el item
-//   // correspondiente a la acción solicitada entonces
-//   // se asume que esta permitida la acción.
-//   final public function isActionAllow($action){
-//     return isset($this->actionAllows[$action])?
-//       $this->actionAllows[$action] : true;
-//   }
+    return isset($allows[$action])? $allows[$action] : true;
 
-  // // Revisa si una accion esta permitida. Si la acción no esta
-  // // permitida se redirigue a la url raiz del controlador
-  // final public function checkIsActionAllow($action){
-  //   if(!$this->isActionAllow($action))
-  //     Am::gotoUrl($this->url);
-  // }
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
+   * Revisa si una accion esta permitida.
+   * ---------------------------------------------------------------------------
+   * Si la acción no está permitida devuelve un error 403.
+   * @param  string   $action   Nombre de la acción que se desea consultar.
+   * @return AmResponse/null    Si está permitida devuelve null, de lo contrario
+   *                            Devuelve una respuesta de no autorizadod.
+   */
+  final public function checkIsActionAllow($action){
+    if(!$this->isActionAllow($action))
+      return Am::e403(Am::t('AMCONTROLLER_ACTION_FORBIDDEN',
+        $this->get('name'), $action));
+  }
 
 
   /**
@@ -327,8 +340,11 @@ class AmController extends AmResponse{
    */
   final protected function executeAction($action, $method, array $params){
 
-    // Chequear si esta permitida o no la acción
-    // $this->checkIsActionAllow($action);
+    // Chequear si esta permitida o no la acción.
+    // Si devuelve una respuesta devolver dicha respuesta.
+    $ret = $this->checkIsActionAllow($action);
+    if($ret instanceof parent)
+      return $ret;
 
     // PENDIENTE
     // 
@@ -468,18 +484,19 @@ class AmController extends AmResponse{
 
   }
 
-  // Renderizar la vista
-  final protected function view($view = null, array $options = array()){
+  /**
+   * ---------------------------------------------------------------------------
+   * Renderizar la vista.
+   * ---------------------------------------------------------------------------
+   * @param   string      $view   Vista a renderizar. Si no se indica se tomará
+   *                              La asignada en la propiedad 'view'.
+   * @return  AmResponse          Respuesta para renderizar la vista.
+   */
+  final protected function view($view = null){
 
     // Si no indicó la vista obtener la actual.
     if(!isset($view))
       $view = $this->getView();
-
-    // Obtener los directorios donde se buscará la vista
-    $options['paths'] = array_merge(
-      itemOr('paths', $options, array()),
-      $this->getPaths()
-    );
 
     // Renderizar vista mediante un callback
     return self::template(
@@ -491,7 +508,7 @@ class AmController extends AmResponse{
       $this->toArray(),
 
       // Parámetros para el renderizado de la vista.
-      $options
+      array('paths' => $this->getPaths())
 
     );
 
@@ -537,7 +554,7 @@ class AmController extends AmResponse{
    * Para despachar la petición.
    * ---------------------------------------------------------------------------
    */
-  public function make(){
+  final public function make(){
 
     $ret = null;
 
@@ -556,9 +573,7 @@ class AmController extends AmResponse{
     // Crear respuesta de vista si lo devuelto no es una respuesta
     if(!$ret instanceof parent){
 
-      $ret = $this->view($this->getView(), array(
-        'child' => $ret
-      ));
+      $ret = $this->view($this->getView());
 
     }
 
@@ -590,7 +605,7 @@ class AmController extends AmResponse{
    * @param   array  $conf            Configuración a agregar.
    * @return  array                   Configuraciones mezcladas.
    */
-  private static function mergeConf(array $confToRewrite, array $conf){
+  final private static function mergeConf(array $confToRewrite, array $conf){
 
     // Agregar items de
     foreach ($confToRewrite as $key => $value)
@@ -620,7 +635,7 @@ class AmController extends AmResponse{
    * @param   string   $control   Nombre del controlador a incluir.
    * @return  array               Configuración del controlador
    */
-  public static function includeController($controller){
+  final public static function includeController($controller){
 
     // Obtener configuraciones del controlador
     $confs = Am::getProperty('controllers');
@@ -704,7 +719,7 @@ class AmController extends AmResponse{
    *                                  la acción. Si no coincide con el formato
    *                                  devuelve false.
    */
-  private static function getControllerAndAction($actionStr){
+  final private static function getControllerAndAction($actionStr){
 
     if(preg_match('/^([a-zA-Z_][a-zA-Z0-9_]*)@([a-zA-Z_][a-zA-Z0-9_]*)$/',
           $actionStr, $m))
@@ -724,7 +739,7 @@ class AmController extends AmResponse{
    * @param  array  $route  Ruta a evaluar.
    * @return array          Ruta transformada.
    */
-  public static function routePreProcessor($route){
+  final public static function routePreProcessor($route){
 
     // Obtener acción
     $action = self::getControllerAndAction($route['']);
@@ -759,7 +774,7 @@ class AmController extends AmResponse{
    * @param   array  $env       Variables de entorno.
    * @param   array  $params    Argumentos obtenidos de la ruta.
    */
-  public static function response($action, array $env = array(),
+  final public static function response($action, array $env = array(),
                                   array $params = array()){
 
     $controller = $action['controller'];
