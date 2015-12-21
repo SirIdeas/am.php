@@ -9,4 +9,3 @@
 <p>Segunda definición</p>
 <p>Primera definición</p>
 <p>Tercera definición</p>
-(:: put:bar :)
