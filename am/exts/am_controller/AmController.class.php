@@ -615,7 +615,7 @@ class AmController extends AmResponse{
 
     // Obtener la ruta del controlador
     // Incluir controlador si existe el archivo
-    if(is_file($file = "{$conf['root']}/{$conf['name']}.controller.php")){
+    if(is_file($file = "{$conf['root']}/{$conf['name']}Controller.class.php")){
       require_once $file;
     }else{
       // Si no tiene un archivo que incluir se asigna como nombre de
@@ -698,6 +698,10 @@ class AmController extends AmResponse{
    */
   final public static function response($action, array $env = array(),
                                   array $params = array()){
+
+    // Obtener el controlador y la accion
+    if(is_string($action))
+      $action = self::getControllerAndAction($action);
 
     $controller = $action['controller'];
     $action = $action['action'];

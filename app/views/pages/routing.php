@@ -17,7 +17,7 @@
   <pre><code class="language-php">(:= getCodeFile('/routing/routing.php') :)</code></pre>
 
   <div>
-    <h3>Estructura de las rutas</h3>
+    <h2>Estructura de las rutas</h2>
     <p>
       Las rutas poseen 3 partes:
     </p>
@@ -35,7 +35,7 @@
   </div>
 
   <div>
-    <h3>Forma simple o Forma explícita de las rutas</h3>
+    <h2>Forma simple o Forma explícita de las rutas</h2>
 
     <p>
       Una ruta puede ser presentado de diferentes formas, sin embargo al final todas son convertidaas a una a la <i>forma explícita</i>. Por ejemplo:
@@ -44,38 +44,38 @@
   </div>
 
   <div>
-    <h3>Tipos de rutas</h3>
+    <h2>Tipos de rutas</h2>
     <p>
       Inicialmente se puede configurar los siguientes tipos de rutas
     </p>
 
     <div>
-      <h4>Reponder con un archivo: <code>file</code></h4>
+      <h3>Reponder con un archivo: <code>file</code></h3>
       <pre><code class="language-php">(:= getCodeFile('routing/file.php') :)</code></pre>
     </div>
 
     <div>
-      <h4>Responder con la descarga de un archivo: <code>download</code></h4>
+      <h3>Responder con la descarga de un archivo: <code>download</code></h3>
       <pre><code class="language-php">(:= getCodeFile('routing/download.php') :)</code></pre>
     </div>
 
     <div>
-      <h4>Renderizar un template: <code>template</code></h4>
+      <h3>Renderizar un template: <code>template</code></h3>
       <pre><code class="language-php">(:= getCodeFile('routing/template.php') :)</code></pre>
     </div>
 
     <div>
-      <h4>Redirigir a otra URL de la aplicación: <code>redirect</code></h4>
+      <h3>Redirigir a otra URL de la aplicación: <code>redirect</code></h3>
       <pre><code class="language-php">(:= getCodeFile('routing/redirect.php') :)</code></pre>
     </div>
 
     <div>
-      <h4>Rediriguir a una URL externa: <code>goto</code></h4>
+      <h3>Rediriguir a una URL externa: <code>goto</code></h3>
       <pre><code class="language-php">(:= getCodeFile('routing/goto.php') :)</code></pre>
     </div>
 
     <div>
-      <h4>Realizar la llamada de una función o método: <code>call</code></h4>
+      <h3>Realizar la llamada de una función o método: <code>call</code></h3>
       <pre><code class="language-php">(:= getCodeFile('routing/call.php') :)</code></pre>
       <p>
         Todos los estos callbacks recibien como parámetro un array con el entorno definido en la propiedad de aplicación <code><strong>env</strong></code>.
@@ -85,12 +85,12 @@
   </div>
 
   <div>
-    <h3>Rutas Anidadas</h3>
+    <h2>Rutas Anidadas</h2>
     <pre><code class="language-php">(:= getCodeFile('routing/nested.php') :)</code></pre>
   </div>
 
   <div>
-    <h3>Parámetros de ruta</h3>
+    <h2>Parámetros de ruta</h2>
     <p>
       Los parámetros pueden ser definidos entre llaves en ruta y serán sustituidos en <i>target</i>, Por ejemplo, para la ruta:
     </p>
@@ -103,7 +103,7 @@
     </p>
     <pre><code class="language-php">(:= getCodeFile('routing/params-callbacks.php') :)</code></pre>
     <div>
-      <h4>Tipos de los parámetros de ruta</h4>
+      <h3>Tipos de los parámetros de ruta</h3>
       <p>
         Los tipos para los parámetros de ruta son definidos despues del nombre del parámetro con dos puntos (:). Los tipos principales son <code><strong>id</strong></code>, <code><strong>numeric</strong></code>, <code><strong>alphabetic</strong></code> y <code><strong>alphanumeric</strong></code>, sin embargo tambien puede definirse definirse una regex:
       </p>
@@ -113,10 +113,10 @@
   </div>
   
   <div>
-    <h3>Opciones avanzadas</h3>
+    <h2>Opciones avanzadas</h2>
 
     <div>
-      <h4>Despachadores de rutas</h4>
+      <h3>Despachadores de rutas</h3>
       <p>
         Los despachadores son callbacks que se encargan de atender las peticiones HTTP según el tipo de ruta con el que coincidan.
       </p>
@@ -149,7 +149,7 @@
     </div>
 
     <div>
-      <h4>Pre-procesadores de ruta</h4>
+      <h3>Pre-procesadores de ruta</h3>
       <p>
         Los pre-procesadores de rutas son callbacks que reparan una ruta antes de que esta sea evaluada. Estos  son asignados a un tipo de ruta. Reciben como primer parámetro la ruta en forma explícita y debe retornar la ruta transformada.
       </p>
@@ -169,7 +169,7 @@
     </div>
 
     <div>
-      <h4>Flujo de petición</h4>
+      <h3>Flujo de petición</h3>
       <p>
         El proceso seguido para determinar como despachar un ruta es el siguiente:
       </p>
