@@ -58,7 +58,7 @@ return array(
         'parent' => null,
         
         // Carpeta raíz del controlador.
-        'root' => 'controllers/',
+        'root' => 'controllers',
 
         // Directorio hijo donde se buscará las vistas.
         'views' => 'views',

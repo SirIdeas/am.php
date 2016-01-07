@@ -93,11 +93,12 @@ class AmResponse extends AmObject{
    * @return  any               Respuesta de manejador configurado.
    */
   public static function template($tpl, array $vars = array(),
-                                  array $options = array()){
+                                  array $options = array(), $checkView = true){
     return (new AmTemplateResponse)
       ->tpl($tpl)
       ->options($options)
-      ->vars($vars);
+      ->vars($vars)
+      ->checkView($checkView);
   }
 
   /**

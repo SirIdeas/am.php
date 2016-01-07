@@ -8,7 +8,7 @@
 
 /**
  * -----------------------------------------------------------------------------
- * Clase para crear respuestas con renderizados de templates
+ * Clase para crear respuestas con renderizados de templates.
  * -----------------------------------------------------------------------------
  */
 class AmTemplateResponse extends AmResponse{
@@ -33,6 +33,9 @@ class AmTemplateResponse extends AmResponse{
       // Opciones para la vista.
       'options' => array(),
 
+      // Indica si se tiene que verificar la existencia de la vista
+      'checkView' => true
+
     ));
 
     // Asignar propiedades recibicas por parámetros
@@ -42,13 +45,25 @@ class AmTemplateResponse extends AmResponse{
 
   /**
    * ---------------------------------------------------------------------------
-   * Asignar callback
+   * Asignar callback.
    * ---------------------------------------------------------------------------
    * @param  array/string   $callback   Callback a ser llamado
    * @return this
    */
   public function tpl($tpl){
     $this->__p->tpl = $tpl;
+    return $this;
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
+   * Indicar si se tiene que verificar o no la existencia de la vista.
+   * ---------------------------------------------------------------------------
+   * @param  array/string   $callback   Callback a ser llamado
+   * @return this
+   */
+  public function checkView($checkView){
+    $this->__p->checkView = $checkView;
     return $this;
   }
 
@@ -124,7 +139,7 @@ class AmTemplateResponse extends AmResponse{
       $this->__p->tpl, $this->__p->vars, $this->__p->options);
 
     // Si no existe el archivo responder con error 404
-    if(!$ret && !$this->isResolved())
+    if($this->__p->checkView && !$ret && !$this->isResolved())
       return Am::e404(Am::t('AMRESPONSE_TEMPLATE_NOT_FOUND', $this->__p->tpl));
 
   }

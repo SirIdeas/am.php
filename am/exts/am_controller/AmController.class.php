@@ -36,8 +36,6 @@ class AmController extends AmResponse{
       'filters' => 'merge_r_if_snd_first_not_false',
     );
 
-//     $credentials = false,     // Credenciales para el controlador
-
   /**
    * ---------------------------------------------------------------------------
    * Asigna el nombre de la vista a renderizar.
@@ -426,7 +424,9 @@ class AmController extends AmResponse{
       $this->toArray(),
 
       // Parámetros para el renderizado de la vista.
-      array('paths' => $this->getPaths())
+      array('paths' => $this->getPaths()),
+
+      false
 
     );
 
@@ -572,7 +572,7 @@ class AmController extends AmResponse{
     if(is_string($conf))
       $conf = array('root' => $conf);
 
-    $conf['root'] = realPath(itemOr('root', $conf, self::DEFAULT_CONTROLLER_FOLDER));
+    $conf['root'] = realPath(itemOr('root', $conf, itemOr('root', $defaults)));
 
     if(is_file($realFile = "{$conf['root']}/am.init.php"))
       require_once $realFile;

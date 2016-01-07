@@ -1,4 +1,4 @@
-(:: set:title='Amathista')
+(:: set:title='Amathista' :)
 <html>
   <head>
     <title>(:= $title :)</title>
