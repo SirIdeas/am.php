@@ -21,17 +21,32 @@
     <p>
       Las rutas poseen 3 partes:
     </p>
-    <ul>
-      <li>
-        <code><strong>route</strong></code>: String con el formato de la ruta.
-      </li>
-      <li>
-        <code><strong>routes</strong></code>: Array de rutas hijas, las cuales se forman concatenando los valores de la ruta padre en cada ruta hija.
-      </li>
-      <li>
-        <strong>Tipos</strong>: Puede ser uno o varios y están representados por cada índice extra que contenga la ruta aparte de <code><strong>route</strong></code> y <code><strong>routes</strong></code>. Indican el blanco (target) de la ruta.
-      </li>
-    </ul>
+    <table class="table striped">
+      <thead>
+        <tr>
+          <th class="s2">Parte</th>
+          <th>Descripcón</th>
+        </tr>
+      </thead>
+      <tbody class="text-left">
+        <tr>
+          <th><code>route</code></th>
+          <td>String con el formato de la ruta.</td>
+        </tr>
+        <tr>
+          <th><code>routes</code></th>
+          <td>
+            Array de rutas hijas, las cuales se forman concatenando los valores de la ruta padre en cada ruta hija.
+          </td>
+        </tr>
+        <tr>
+          <th>Tipos</th>
+          <td>
+            Puede ser uno o varios y están representados por cada índice extra que contenga la ruta aparte de <code><strong>route</strong></code> y <code><strong>routes</strong></code>. Indican el blanco (target) de la ruta.
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
   <div>

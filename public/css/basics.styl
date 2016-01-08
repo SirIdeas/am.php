@@ -32,7 +32,7 @@ $clear()
   html
   body
     position                relative
-    font-size               14px
+    font-size               16px
     font-family             Roboto, 'Helvetica Neue', sans-serif;
     margin                  0
     padding                 0
@@ -41,7 +41,20 @@ $clear()
     text-decoration         none
 
   ul,ol
-    padding-left        20px
+    padding-left            20px
+    
+  table
+    font-size               16px
+  
+  th
+    font-weight             bold
+    text-align              center
+      
+  td,th
+    vertical-align          middle
+    
+  p
+    line-height             1.8
 
   .text-center
     text-align              center
@@ -62,16 +75,43 @@ $clear()
     overflow                auto
     
   .content
-    max-width               850px
+    max-width               1180px
     margin                  0 auto
     
   .inner
     padding                 10px
 
 // -----------------------------------------------------------------------------
+// Estilos para tablas
+// -----------------------------------------------------------------------------
+$table($tableClass = '.table', $color)
+  {$tableClass}
+    margin-top              10px
+    width                   100%
+    border-collapse         collapse
+      
+    td,th
+      padding               10px 1.2em
+    
+    thead
+      td,th
+        border-bottom       2px solid lightness($color, 90%)
+    
+    &.striped
+      tbody
+        tr:nth-of-type(odd)
+          $setBackground    lightness($color, 98%)
+    
+    &.bordered
+      td,th
+        border-bottom       1px solid lightness($color, 90%)
+
+// -----------------------------------------------------------------------------
 // Grid
 // -----------------------------------------------------------------------------
 $generateGrid($rowSelector = '.row', $colSelector = '.col', $numSections = 12)
+  
+  // Estilos filas
   {$rowSelector}
     &:after
     &:before
@@ -79,14 +119,17 @@ $generateGrid($rowSelector = '.row', $colSelector = '.col', $numSections = 12)
       display               table
     &:after
       clear                 both
-
+  
+  // Estilos Columnas
   {$colSelector}
+    display                 inline-block
     float                   left
     box-sizing              border-box
-    for $i in (1..$numSections)
-      &.s{$i}
-        display             inline-block
-        width               $i*(100 / $numSections)*1%
+  
+  // Ancho por columna
+  for $i in (1..$numSections)
+    &.s{$i}
+      width               $i*(100 / $numSections)*1%
 
 // -----------------------------------------------------------------------------
 // Colores

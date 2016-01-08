@@ -13,78 +13,100 @@
     <p>
       A continuación se definen alguno de los términos utilizados en la documentación:
     </p>
-    <ul>
-      <li>
-        <p>
-          <strong>Aplicación</strong>: Unidad de software conformada por subrutinas, clases, vistas, recursos y configuraciones entre otros, dispuestos de tal forma que dan solución a un problema.
-        </p>
-      </li>
-      <li>
-        <p>
-          <strong>Extensión</strong>: Módulos de software que pueden ser incluidos mediante Amathista para agregar una funcionalidad.
-        </p>
-      </li>
-      <li>
-        <p>
-          <strong>Modo <i>routing</i></strong>: Ejecución de Amathista desde un servidor w  eb para atender peticiones HTTP.
-        </p>
-      </li>
-      <li>
-        <p>
-          <strong>Modo <i>tasking</i></strong>: Ejecución de Amathista desde la línea de comandos para ejecutar una tarea o interpretar comandos.
-        </p>
-      </li>
-      <li>
-        <p>
-          <strong>Archivo de configuración</strong>: Archivo de extensión <code><strong>.conf.php</strong></code> que retorna un array asociativo con una determinada configuración.
-        </p>
-      </li>
-      <li>
-        <p>
-          <strong>Archivo de configuración raíz</strong>: Archivo de configuración <code><strong>am.conf.php</strong></code> que contiene la configuración básica de una extensión o aplicación y está ubicado en la carpeta raíz del mismo.
-        </p>
-      </li>
-      <li>
-        <p>
-          <strong>Archivo de configuración principal</strong>: Archivo de configuración raíz de la aplicación.
-        </p>
-      </li>
-      <li>
-        <p>
-          <strong>Archivo de inicio</strong>: Archivo <code><strong>am.init.php</strong></code> contiene al código de inicialización de una extensión o aplicación y está ubicado en la raíz del mismo.
-        </p>
-      </li>
-      <li>
-        <p>
-          <strong>Archivo de inicio principal</strong>: Archivo de inicio de la aplicación.
-        </p>
-      </li>
-      <li>
-        <p>
-          <strong>Bootfile</strong> Archivo de arranque de Amathista. Se encarga de incluir el núcleo de Amathista, inicializar la aplicación y ejecutarla. Por lo general es el archivo /public/bootfile.php. Es el único archivo que se ejecuta fuera del Entorno de ejecución.
-        </p>
-      </li>
-      <li>
-        <p>
-          <strong>Directorio raíz de la aplicación</strong>: Directorio contenedor de código fuente de la applicación como lo son los controladores, vistas y modelos entre otros) y donde se ejecutará Amathista (no confundir con el Directorio público). Este es definido en el llamado del método <code><strong>Am::app()</strong></code> del <code><strong>bootfile</strong></code>, en el cual or defecto es el directorio <code><strong>/app/</strong></code>. Su estrucutra interna es definida a conveniencia.
-        </p>
-      </li>
-      <li>
-        <p>
-          <strong>Directorio público de la aplicación</strong>: Directorio de archivos públicos de la aplicación. Contiene el archivo de arranque y los recursos públicos como los son archivos javascript, hoja de estilos, imágenes y fuentes entre otros. Su estructura interna es definida a conveniencia.
-        </p>
-      </li>
-      <li>
-        <p>
-          <strong>Directorio de Amathista</strong>: Directorio del cual se incluye Amathista y contiene su código fuente.
-        </p>
-      </li>
-      <li>
-        <p>
-          <strong>Callback</strong>: Puede ser el nombre de una función, un método estático en formato de string (<code><strong>'Clase::metodo'</strong></code>) o formato array (<code><strong>array('Clase', 'metodo')</strong></code>) o un método de un objeto (<code><strong>array($obj, 'método')</strong></code>).
-        </p>
-      </li>
-    </ul>
+    <table class="table striped">
+      <thead>
+        <tr>
+          <th class="s3">Término</th>
+          <th>Descripción</th>
+        </tr>
+      </thead>
+      <tbody class="text-left">
+        <tr>
+          <th>Aplicación</th>
+          <td>
+            Unidad de software conformada por subrutinas, clases, vistas, recursos y configuraciones entre otros, dispuestos de tal forma que dan solución a un problema.
+          </td>
+        </tr>
+        <tr>
+          <th>Extensión</th>
+          <td>
+            Módulos de software que pueden ser incluidos mediante Amathista para agregar una funcionalidad.
+          </td>
+        </tr>
+        <tr>
+          <th>Modo <i>routing</i></th>
+          <td>
+            Ejecución de Amathista desde un servidor w  eb para atender peticiones HTTP.
+          </td>
+        </tr>
+        <tr>
+          <th>Modo <i>tasking</i></th>
+          <td>
+            Ejecución de Amathista desde la línea de comandos para ejecutar una tarea o interpretar comandos.
+          </td>
+        </tr>
+        <tr>
+          <th>Archivo de configuración</th>
+          <td>
+            Archivo de extensión <code><strong>.conf.php</strong></code> que retorna un array asociativo con una determinada configuración.
+          </td>
+        </tr>
+        <tr>
+          <th>Archivo de configuración raíz</th>
+          <td>
+            Archivo de configuración <code><strong>am.conf.php</strong></code> que contiene la configuración básica de una extensión o aplicación y está ubicado en la carpeta raíz del mismo.
+          </td>
+        </tr>
+        <tr>
+          <th>Archivo de configuración principal</th>
+          <td>
+            Archivo de configuración raíz de la aplicación.
+          </td>
+        </tr>
+        <tr>
+          <th>Archivo de inicio</th>
+          <td>
+            Archivo <code><strong>am.init.php</strong></code> contiene al código de inicialización de una extensión o aplicación y está ubicado en la raíz del mismo.
+          </td>
+        </tr>
+        <tr>
+          <th>Archivo de inicio principal</th>
+          <td>
+            Archivo de inicio de la aplicación.
+          </td>
+        </tr>
+        <tr>
+          <th>Bootfile</th>
+          <td>
+            Archivo de arranque de Amathista. Se encarga de incluir el núcleo de Amathista, inicializar la aplicación y ejecutarla. Por lo general es el archivo /public/bootfile.php. Es el único archivo que se ejecuta fuera del Entorno de ejecución.
+          </td>
+        </tr>
+        <tr>
+          <th>Directorio raíz de la aplicación</th>
+          <td>
+            Directorio contenedor de código fuente de la applicación como lo son los controladores, vistas y modelos entre otros) y donde se ejecutará Amathista (no confundir con el Directorio público). Este es definido en el llamado del método <code><strong>Am::app()</strong></code> del <code><strong>bootfile</strong></code>, en el cual or defecto es el directorio <code><strong>/app/</strong></code>. Su estrucutra interna es definida a conveniencia.
+          </td>
+        </tr>
+        <tr>
+          <th>Directorio público de la aplicación</th>
+          <td>
+            Directorio de archivos públicos de la aplicación. Contiene el archivo de arranque y los recursos públicos como los son archivos javascript, hoja de estilos, imágenes y fuentes entre otros. Su estructura interna es definida a conveniencia.
+          </td>
+        </tr>
+        <tr>
+          <th>Directorio de Amathista</th>
+          <td>
+            Directorio del cual se incluye Amathista y contiene su código fuente.
+          </td>
+        </tr>
+        <tr>
+          <th>Callback</th>
+          <td>
+            Puede ser el nombre de una función, un método estático en formato de string (<code><strong>'Clase::metodo'</strong></code>) o formato array (<code><strong>array('Clase', 'metodo')</strong></code>) o un método de un objeto (<code><strong>array($obj, 'método')</strong></code>).
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
   <div>
@@ -101,7 +123,9 @@
     </p>
     <ul>
       <li>
-        Descarga directa de <a class="link" target="_blank" href="https://codeload.github.com/SirIdeas/amathista.php/zip/master">GitHub</a>, y se descomprime donde resulte conveniente.
+        <p>
+          Descarga directa de <a class="link" target="_blank" href="https://codeload.github.com/SirIdeas/amathista.php/zip/master">GitHub</a>, y se descomprime donde resulte conveniente.
+        </p>
       </li>
       <li>
         <p>
@@ -118,23 +142,28 @@
     <p>
       La estructura básica de una aplicación en Amathista consiste de 3 carpetas principales:
     </p>
-    <ul>
-      <li>
-        <p>
-          <code><strong>/am/</strong></code>: Directorio de Amathista.
-        </p>
-      </li>
-      <li>
-        <p>
-          <code><strong>/app/</strong></code>: Directorio raíz de la aplicación.
-        </p>
-      </li>
-      <li>
-        <p>
-          <code><strong>/public/</strong></code>: Directorio público de la aplicación
-        </p>
-      </li>
-    </ul>
+    <table class="table striped">
+      <thead>
+        <tr>
+          <th class="s2">Directorio</th>
+          <th>Uso</th>
+        </tr>
+      </thead>
+      <tbody class="text-left">
+        <tr>
+          <th><code>/am/</code></th>
+          <td>Directorio de Amathista.</td>
+        </tr>
+        <tr>
+          <th><code>/app/</code></th>
+          <td>Directorio raíz de la aplicación.</td>
+        </tr>
+        <tr>
+          <th><code>/public/</code></th>
+          <td>Directorio público de la aplicación</td>
+        </tr>
+      </tbody>
+    </table>
     <p>
       Estas carpetas pueden tener el nombre que convenga e inclusive pueden estar ubicadas en lugares que se desee.
     </p>
@@ -149,48 +178,48 @@
     <p>
       La plantilla base de Amathista incluye otros archivos:
     </p>
-    <ul>
-      <li>
-        <p>
-          <code><strong>/app/am.conf.php</strong></code>: Archivo de configuración principal de la aplicación
-        </p>
-      </li>
-      <li>
-        <p>
-          <code><strong>/app/routing.conf.php</strong></code>: Archivo de rutas la aplicación.
-        </p>
-      </li>
-      <li>
-        <p>
-          <code><strong>/app/views/index.php</strong></code>: Vista index de la aplicación
-        </p>
-      </li>
-      <li>
-        <p>
-          <code><strong>/public/bootfile.php</strong></code>: Bootfile.
-        </p>
-      </li>
-      <li>
-        <p>
-          <code><strong>/public/.htaccess</strong></code>: Configuración de Apache para la aplicación.
-        </p>
-      </li>
-      <li>
-        <p>
-          <code><strong>/public/serverblock.conf</strong></code>: Configuración de Nginx para la aplicación.
-        </p>
-      </li>
-      <li>
-        <p>
-          <code><strong>/public/404.html</strong></code>: Vista para errores 404.
-        </p>
-      </li>
-      <li>
-        <p>
-          <code><strong>/public/images/*</strong></code>: Imágenes utilizadas en las vistas copiadas.
-        </p>
-      </li>
-    </ul>
+    <table class="table striped">
+      <thead>
+        <tr>
+          <th class="s3">Archivo</th>
+          <th>Descripción</th>
+        </tr>
+      </thead>
+      <tbody class="text-left">
+        <tr>
+          <th><code>/app/am.conf.php</code></th>
+          <td>Archivo de configuración principal de la aplicación</td>
+        </tr>
+        <tr>
+          <th><code>/app/routing.conf.php</code></th>
+          <td>Archivo de rutas la aplicación.</td>
+        </tr>
+        <tr>
+          <th><code>/app/views/index.php</code></th>
+          <td>Vista index de la aplicación</td>
+        </tr>
+        <tr>
+          <th><code>/public/bootfile.php</code></th>
+          <td>Bootfile.</td>
+        </tr>
+        <tr>
+          <th><code>/public/.htaccess</code></th>
+          <td>Configuración de Apache para la aplicación.</td>
+        </tr>
+        <tr>
+          <th><code>/public/serverblock.conf</code></th>
+          <td>Configuración de Nginx para la aplicación.</td>
+        </tr>
+        <tr>
+          <th><code>/public/404.html</code></th>
+          <td>Vista para errores 404.</td>
+        </tr>
+        <tr>
+          <th><code>/public/images/*</code></th>
+          <td>Imágenes utilizadas en las vistas copiadas.</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
   <div>

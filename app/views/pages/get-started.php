@@ -23,7 +23,7 @@
     <p>
       Los eventos en Amathista son unidos a los callbacks mediante el método <code><strong>Am::on</strong></code> y disparados mediante el método <code><strong>Am::ring</strong></code>. Los eventos básicos son:
     </p>
-    <table>
+    <table class="table striped">
       <thead>
         <tr>
           <th>Evento</th>
@@ -89,7 +89,7 @@
       Cada propiedad de aplicación es extendería con un archivo de configuración con el mismo nombre ubicado en el mismo directorio por medio de una función de mezcla preconfigurada cuando se intente acceder a esta propiedad. Entonces por ejemplo con el siguiente archivo de configuración principal:
     </p>
     <span>/app/am.conf.php</span>
-    <pre><code class="language-php">(:= getCodeFile('configuration/am.conf.php') :)</code></pre>
+    <pre><code class="language-php">(:= getCodeFile('get-started/am.conf.php') :)</code></pre>
     <p>
       las propiedad <code><strong>env</strong></code> se extenderían con el archivo <code><strong>env.conf.php</strong></code> y la propiedad <code><strong>requires</strong></code> con <code><strong>requires.conf.php</strong></code> del directorio <code><strong>/app/</strong></code>.
     </p>
@@ -97,7 +97,7 @@
       <h3>Propiedades básicas</h3>
       
       El núcleo de Amathista utiliza las siguientes propieades:
-      <table>
+      <table class="table striped">
         <thead>
           <tr>
             <th>Propiedad</th>

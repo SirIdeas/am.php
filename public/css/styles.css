@@ -7,7 +7,7 @@
 html,
 body {
   position: relative;
-  font-size: 14px;
+  font-size: 16px;
   font-family: Roboto, 'Helvetica Neue', sans-serif;
   margin: 0;
   padding: 0;
@@ -18,6 +18,12 @@ a {
 ul,
 ol {
   padding-left: 20px;
+}
+table {
+  font-size: 16px;
+}
+p {
+  line-height: 1.8;
 }
 .text-center {
   text-align: center;
@@ -38,7 +44,7 @@ ol {
   overflow: auto;
 }
 .content {
-  max-width: 850px;
+  max-width: 1180px;
   margin: 0 auto;
 }
 .inner {
@@ -149,57 +155,46 @@ ol {
   clear: both;
 }
 .col {
+  display: inline-block;
   float: left;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-.col.s1 {
-  display: inline-block;
+.s1 {
   width: 8.333333333333334%;
 }
-.col.s2 {
-  display: inline-block;
+.s2 {
   width: 16.666666666666668%;
 }
-.col.s3 {
-  display: inline-block;
+.s3 {
   width: 25%;
 }
-.col.s4 {
-  display: inline-block;
+.s4 {
   width: 33.333333333333336%;
 }
-.col.s5 {
-  display: inline-block;
+.s5 {
   width: 41.66666666666667%;
 }
-.col.s6 {
-  display: inline-block;
+.s6 {
   width: 50%;
 }
-.col.s7 {
-  display: inline-block;
+.s7 {
   width: 58.333333333333336%;
 }
-.col.s8 {
-  display: inline-block;
+.s8 {
   width: 66.66666666666667%;
 }
-.col.s9 {
-  display: inline-block;
+.s9 {
   width: 75%;
 }
-.col.s10 {
-  display: inline-block;
+.s10 {
   width: 83.33333333333334%;
 }
-.col.s11 {
-  display: inline-block;
+.s11 {
   width: 91.66666666666667%;
 }
-.col.s12 {
-  display: inline-block;
+.s12 {
   width: 100%;
 }
 .btn {
@@ -375,6 +370,28 @@ ol {
   background-color: #212121;
   color: #fff;
 }
+.table {
+  margin-top: 10px;
+  width: 100%;
+  border-collapse: collapse;
+}
+.table td,
+.table th {
+  vertical-align: middle;
+  padding: 10px 1.2em;
+}
+.table thead td,
+.table thead th {
+  border-bottom: 2px solid #e2d8f3;
+}
+.table.striped tbody tr:nth-of-type(odd) {
+  background-color: #f9f7fd;
+  color: #000;
+}
+.table.bordered td,
+.table.bordered th {
+  border-bottom: 1px solid #e2d8f3;
+}
 .full-height {
   height: 100%;
 }
@@ -426,6 +443,7 @@ ol {
   position: fixed;
   left: 250px;
   right: 0;
+  z-index: 1;
 }
 #siteHeader {
   top: 0;
@@ -532,6 +550,26 @@ ul.nav >li >span {
 .code-row {
   margin-left: -5px;
 }
-.code-row .col {
-  padding-left: 5px;
+.code-row table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.code-row td {
+  position: relative;
+  padding: 0 0 0 5px;
+  vertical-align: top;
+}
+.code-row td >div {
+  position: absolute;
+  top: 0;
+  left: 5px;
+  bottom: 0;
+  right: 0;
+  background-color: #f5f2f0;
+  z-index: -1;
+}
+.code-row td pre {
+  margin: 0;
+  position: relative;
+  z-index: 0;
 }

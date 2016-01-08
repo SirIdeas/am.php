@@ -34,25 +34,39 @@
       <h4>Tomar a consideración</h4>
       <ul>
         <li>
-          Por defecto el directorio raíz de los controladores es <code><strong>/app/controllers/</strong></code>.
+          <p>
+            Por defecto el directorio raíz de los controladores es <code><strong>/app/controllers/</strong></code>.
+          </p>
         </li>
         <li>
-          Todos los controladores deben extender de <code><strong>AmController</strong></code> o de cualquier otro controlador.
+          <p>
+            Todos los controladores deben extender de <code><strong>AmController</strong></code> o de cualquier otro controlador.
+          </p>
         </li>
         <li>
-          Los nombres de clase de los controladores deben tener el sufijo en '<code><strong>Controller</strong></code>'.
+          <p>
+            Los nombres de clase de los controladores deben tener el sufijo en '<code><strong>Controller</strong></code>'.
+          </p>
         </li>
         <li>
-          Los nombres de archivos de declaración de los controladores debe ser el nombre de clase con el extensión '<code><strong>.class.php</strong></code>'.
+          <p>
+            Los nombres de archivos de declaración de los controladores debe ser el nombre de clase con el extensión '<code><strong>.class.php</strong></code>'.
+          </p>
         </li>
         <li>
-          Por defecto las acciones de los controladores están representadas por sus método con prefijo <code><strong>action_</strong></code>.
+          <p>
+            Por defecto las acciones de los controladores están representadas por sus método con prefijo <code><strong>action_</strong></code>.
+          </p>
         </li>
         <li>
-          Por defecto el directorio de vistas de los controladores es la carpeta <code><strong>views</strong></code> dentro de la carpeta raíz del controlador.
+          <p>
+            Por defecto el directorio de vistas de los controladores es la carpeta <code><strong>views</strong></code> dentro de la carpeta raíz del controlador.
+          </p>
         </li>
         <li>
-          Las acciones renderizan automáticamente la vista con el mismo que la acción y extensión <code><strong>.view.php</strong></code>.
+          <p>
+            Las acciones renderizan automáticamente la vista con el mismo que la acción y extensión <code><strong>.view.php</strong></code>.
+          </p>
         </li>
       </ul>
     </div>
@@ -66,7 +80,7 @@
       <code><strong>AmController</strong></code> obtiene las configuraciones de los controladores de la propiedad de aplicación <code><strong>controllers</strong></code>. Esta es un array asociativo donde cada item representa la configuración del controlador con nombre igual al key del item.
     </p>
 
-    <pre><code class="language-php">(:= getCodeFile('/controllers/route.php') :)</code></pre>
+    <pre><code class="language-php">(:= getCodeFile('/controllers/controllers.conf.php') :)</code></pre>
     
     <p>
       

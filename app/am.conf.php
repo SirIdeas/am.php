@@ -7,7 +7,10 @@ return array(
   ),
 
   'controllers' => array(
-    'Index' => 'controllers/index'
+    'Index' => array(
+      'root' => 'controllers/index',
+      // 'allows' => array('index' => false)
+    ),
   ),
 
   'requires' => array(
