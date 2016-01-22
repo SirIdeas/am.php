@@ -1,17 +1,18 @@
+// /app/controllers.conf.php
 <?php
 
 return array(
   
-  'default' => array(
-    // configuraciones por defecto para todos los controladores
+  '' => array(
+    // Parámetros por defecto para todos los controladores
   ),
 
   'Foo' => array(
-    // Configuraciones
+    // Parámetros
   ),
 
   'Bar' => array(
-    // Configuraciones
+    // Parámetros
   )
 
 );

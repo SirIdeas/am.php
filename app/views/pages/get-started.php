@@ -113,22 +113,22 @@
           </tr>
           <tr>
             <td><code><strong>requires</strong></code></td>
-            <td><code><strong>Array</strong></code></td>
+            <td><code><strong>array</strong></code></td>
             <td>Listado de extensiones a incluir.</td>
           </tr>
           <tr>
             <td><code><strong>files</strong></code></td>
-            <td><code><strong>Array</strong></code></td>
+            <td><code><strong>array</strong></code></td>
             <td>Listado de rutas de archivos que se incluyen automáticamente, después de incluir las extensiones.</td>
           </tr>
           <tr>
             <td><code><strong>env</strong></code></td>
-            <td><code><strong>Array asociativo</strong></code></td>
+            <td><code><strong>hash</strong></code></td>
             <td>Listado de pares variable=>valor del entorno global.</td>
           </tr>
           <tr>
             <td><code><strong>tasks</strong></code></td>
-            <td><code><strong>Array asociativo</strong></code></td>
+            <td><code><strong>hash</strong></code></td>
             <td>Listado de pares tarea=>configuración de las posibles tareas que se pueden ejecutar.</td>
           </tr>
         </tbody>

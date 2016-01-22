@@ -143,10 +143,10 @@
           <code><strong>$target</strong></code>: Valor del índice correspondiente al tipo de ruta evaluado con los parámetros de la petición sustituidos.
         </li>
         <li>
-          <code><strong>$env</strong></code>: Array asociativo con las variales de entorno de la propiedad de aplicación <code><strong>env</strong></code>.
+          <code><strong>$env</strong></code>: hash con las variales de entorno de la propiedad de aplicación <code><strong>env</strong></code>.
         </li>
         <li>
-          <code><strong>$params</strong></code>: Array asociativo con los parámetros obtenidos de la petición según indique el formato de la ruta.
+          <code><strong>$params</strong></code>: hash con los parámetros obtenidos de la petición según indique el formato de la ruta.
         </li>
       </ul>
       <p>

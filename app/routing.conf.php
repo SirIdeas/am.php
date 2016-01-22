@@ -6,6 +6,6 @@ return array(
   '/{view}' => 'template => views/pages/{view}.php',
 
   '/controller/{p1}/{p2}' => 'Index@index',
-  '/main' => 'Main@index',
+  '/main' => 'Main2@index',
     
 );

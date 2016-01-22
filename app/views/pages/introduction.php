@@ -48,7 +48,7 @@
         <tr>
           <th>Archivo de configuración</th>
           <td>
-            Archivo de extensión <code><strong>.conf.php</strong></code> que retorna un array asociativo con una determinada configuración.
+            Archivo de extensión <code><strong>.conf.php</strong></code> que retorna un hash con una determinada configuración.
           </td>
         </tr>
         <tr>

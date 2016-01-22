@@ -1,4 +1,4 @@
-// /app/controllers/FooController.php
+// /app/controllers/FooController.class.php
 <?php
 
 class FooController extends AmController{

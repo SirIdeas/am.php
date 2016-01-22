@@ -17,10 +17,18 @@ a {
 }
 ul,
 ol {
-  padding-left: 20px;
+  padding-left: 40px;
 }
 table {
   font-size: 16px;
+}
+th {
+  font-weight: bold;
+  text-align: center;
+}
+td,
+th {
+  vertical-align: middle;
 }
 p {
   line-height: 1.8;
@@ -377,7 +385,6 @@ p {
 }
 .table td,
 .table th {
-  vertical-align: middle;
   padding: 10px 1.2em;
 }
 .table thead td,
@@ -572,4 +579,8 @@ ul.nav >li >span {
   margin: 0;
   position: relative;
   z-index: 0;
+}
+.table .table-pre {
+  margin: 0;
+  padding: 3px 10px;
 }
