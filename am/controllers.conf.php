@@ -15,7 +15,7 @@ return array(/*
   // Configuraciónes por controlador.
 
   // Configuración por defecto para todos los controladores
-  'default' => array(
+  '' => array(
     // 'nombrePropiedad' => valor
   ),
 
@@ -27,7 +27,7 @@ return array(/*
   // El nombre del controlador es utilizado para determinar el nombre de la
   // clase del controlador y el archivo con el código fuente.
   // Nombre de la clase: {name}Controller
-  // Código fuente:  {root}/{name}.controller.php
+  // Código fuente:  {root}/{name}Controller.php
   
   'MyCtrl' => array(
     // ...
@@ -45,7 +45,7 @@ return array(/*
   // ---------------------------------------------------------------------------
   // Por defecto: null
   // El controlador hijo hereda todas las propiedades del padre. Por definición
-  // Todos los controladores heredan de la configuración de default y heredan
+  // Todos los controladores heredan la configuración de '' y heredan
   // de AmController. Antes de incluir el controlador hijo se incluye el
   // controlador padre.
 
@@ -135,19 +135,30 @@ return array(/*
   // ---------------------------------------------------------------------------
   // Acciones permitidas.
   // ---------------------------------------------------------------------------
-  // Por defecto: array()
-  // Listado de acciones permitidas. Indica que acciones del controlador están
-  // permitidas y cuales no. Por defecto asume que una acción está permitida.
+  // Por defecto: array(
+  //  '' => true
+  // )
+  // Listado de acciones permitidas. Indica por cuales request methods están
+  // permitidas cada accion del controlador.
   
   'MyCtrl' => array(
     // ..
     'allows' => array(
-      // {actionName} => (true|false)
-      // ...
+      // Indica que todas las acciones por defecto admite cualquier metodo o no
+      '' => true/false,
+
+      // Todos los request methods permitido para la acción index.
       'index' => true,
       'show' => true,
+
+      // Ningún request method permitido para lacción edit.
       'edit' => false,
-      'delete' => false,
+
+      // Solo el request method post permitido para la acción delete.
+      'delete' => array(
+        'get' => false,
+        'post' => true,
+      ),
       // ...
     )
     // ..
@@ -161,9 +172,9 @@ return array(/*
   // txt(var_export) o cualquier otro.
   
   'MyCtrl' => array(
-    // 'serviceType' => ('txt'|'json'|any)
+    // 'servicesFormat' => ('txt'|'json')
     // ...
-    'serviceType' => 'txt'
+    'servicesFormat' => 'json'
     // ...
   ),
 
@@ -178,7 +189,7 @@ return array(/*
   'MyCtrl' => array(
     // ...
     'filters' => array(
-      // '{before|befoer_get|after}' => array(...)
+      // '{before|before_get|after}' => array(...)
       // ...
       'before' => array(
         // {filterName} => ...

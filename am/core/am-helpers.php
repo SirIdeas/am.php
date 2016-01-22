@@ -81,12 +81,12 @@ function findFileIn($file, array $paths){
 
 /**
  * -----------------------------------------------------------------------------
- * Devuelve si es una array asociativo o no.
+ * Devuelve si es un hash o no.
  * -----------------------------------------------------------------------------
- * @param   array $arr  Array a virificar si es asociativo.
- * @return  bool        Si $arr es o no un array asociativo.
+ * @param   array $arr  Array a virificar si es un hash.
+ * @return  bool        Si $arr es o no un hash.
  */
-function isAssocArray(array $arr){
+function isHash(array $arr){
 
   $j = 0;
   foreach($arr as $i => $_){
@@ -227,8 +227,8 @@ function merge_r_if_are_array_and_snd_first_not_false($arr1, $arr2){
  */
 function merge_if_both_are_array(array $arr1, array $arr2){
   
-  // Si no son arrays asociativos se mezclan normalmente.
-  if(!isAssocArray($arr1) && !isAssocArray($arr2))
+  // Si no son hashes se mezclan normalmente.
+  if(!isHash($arr1) && !isHash($arr2))
     return array_merge($arr1, $arr2);
 
   $ret = array();

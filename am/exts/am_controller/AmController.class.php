@@ -14,13 +14,6 @@
 
 class AmController extends AmResponse{
 
-  /**
-   * ---------------------------------------------------------------------------
-   * Ubicación por defecto del controlador.
-   * ---------------------------------------------------------------------------
-   */
-  const DEFAULT_CONTROLLER_FOLDER = 'controllers/';
-
   private static
 
     /**
@@ -31,7 +24,7 @@ class AmController extends AmResponse{
     $mergeFunctions = array(
       'paths'   => 'array_merge',
       'prefix'  => 'array_merge',
-      'allows'  => 'array_merge',
+      'allows'  => 'merge_if_both_are_array',
       'headers' => 'merge_unique',
       'filters' => 'merge_r_if_snd_first_not_false',
     );
@@ -52,34 +45,52 @@ class AmController extends AmResponse{
 
   /**
    * ---------------------------------------------------------------------------
-   * Indica si una accion esta permitida o no.
+   * Indica si una accion esta permitida o no para cierto request method.
    * ---------------------------------------------------------------------------
    * Si las acciones permitidas no tiene el item correspondiente a la acción
    * solicitada entonces se asume que esta permitida la acción.
    * @param   string    $action   Nombre de la acción que se desea consultar.
+   * @param   string    $method   Metodo para el que se quiere consultar.
    * @return  boolean             Si la acción está o no permitida.
    */
-  final public function isActionAllow($action){
+  final public function isActionAllow($action, $method){
+
+    $method = strtolower($method);
+
     // Get allows actions configuration
     $allows = $this->get('allows');
 
-    return isset($allows[$action])? $allows[$action] : true;
+    // Obtener permisos correspondientes a la accion
+    $allow = itemOr($action, $allows, itemOr('', $allows));
+
+    if(is_bool($allow))
+      return $allow;
+
+    if(isset($allow[$method]))
+      return !!$allow[$method];
+
+    if(isset($allow['']))
+      return !!$allow[''];
+
+    return true;
 
   }
 
   /**
    * ---------------------------------------------------------------------------
-   * Revisa si una accion esta permitida.
+   * Revisa si una accion esta permitida para cierto request method.
    * ---------------------------------------------------------------------------
    * Si la acción no está permitida devuelve un error 403.
-   * @param  string   $action   Nombre de la acción que se desea consultar.
-   * @return AmResponse/null    Si está permitida devuelve null, de lo contrario
-   *                            Devuelve una respuesta de no autorizadod.
+   * @param   string    $action   Nombre de la acción que se desea consultar.
+   * @param   string    $method   Metodo para el que se quiere consultar.
+   * @return  AmResponse/null     Si está permitida devuelve null, de lo
+   *                              contrario Devuelve una respuesta de no 
+   *                              autorizadod.
    */
-  final public function checkIsActionAllow($action){
-    if(!$this->isActionAllow($action))
+  final public function checkIsActionAllow($action, $method){
+    if(!$this->isActionAllow($action, $method))
       return Am::e403(Am::t('AMCONTROLLER_ACTION_FORBIDDEN',
-        $this->get('name'), $action));
+        $this->get('name'), $action, $method));
   }
 
 
@@ -190,7 +201,7 @@ class AmController extends AmResponse{
     foreach($filters[$when] as $filterName => $filter){
 
       // Si filter es un string se asume que es el scope
-      if(is_string($filter) || (is_array($filter) && isAssocArray($filter)))
+      if(is_string($filter) || (is_array($filter) && isHash($filter)))
         $filter = array('to' => $filter);
 
       // Valores por defecto del filtro
@@ -259,7 +270,7 @@ class AmController extends AmResponse{
 
     // Chequear si esta permitida o no la acción.
     // Si devuelve una respuesta devolver dicha respuesta.
-    $ret = $this->checkIsActionAllow($action);
+    $ret = $this->checkIsActionAllow($action, $method);
     if($ret instanceof parent)
       return $ret;
 
@@ -359,15 +370,15 @@ class AmController extends AmResponse{
     $root = $this->get('root');
     $views = $this->get('views');
 
-    // Agregar carpeta raiz del controlador si existe si existe
-    $path = realPath($root);
-    if(isset($root) && $path)
-      array_unshift($ret, $path);
+    // // Agregar carpeta raiz del controlador si existe si existe
+    // $path = realPath($root);
+    // if(isset($root) && $path)
+    //   array_unshift($ret, $path);
 
     // Agregar carpeta raiz del controlador para vistas
     // si existe si existe
     $path = realPath($root . '/' . $views);
-    if(isset($views) && $path)
+    if(isset($root) && isset($views) && $path)
       array_unshift($ret, $path);
 
     // Invertir array,
@@ -442,9 +453,9 @@ class AmController extends AmResponse{
   final private function responseService($content, $as = null){
 
     // Si no se indica como se desea responder entonces se busca la propiedad
-    // servicesType
+    // servicesFormat
     if(!isset($as))
-      $as = $this->get('servicesType');
+      $as = $this->get('servicesFormat');
 
     $mimeType = Am::mimeType(".{$as}");
 
@@ -563,7 +574,7 @@ class AmController extends AmResponse{
     $confs = Am::getProperty('controllers');
 
     // Obtener valores por defecto
-    $defaults = itemOr('defaults', $confs, array());
+    $defaults = itemOr('', $confs, array());
 
     // Si no existe configuracion para el controlador
     $conf = itemOr($controller, $confs, array());
@@ -593,7 +604,7 @@ class AmController extends AmResponse{
       $conf = self::mergeConf($defaults, $conf);
 
       // Obtener el nombre del padre
-      $parentControllerName = itemOr('name', $defaults, null);
+      $parentControllerName = null;
 
     // Mezclar con configuracion del padre
     }else{
@@ -602,7 +613,7 @@ class AmController extends AmResponse{
       $confParent = self::includeController($conf['parent']);
 
       // Agregar carpeta de vistas por defecto del padre.
-      $confParent['paths'][] = $confParent['root'];
+      // $confParent['paths'][] = $confParent['root'];
       $confParent['paths'][] = $confParent['root'] . '/' . $confParent['views'];
 
       // Obtener el nombre del padre
@@ -617,10 +628,14 @@ class AmController extends AmResponse{
     // Incluir controlador si existe el archivo
     if(is_file($file = "{$conf['root']}/{$conf['name']}Controller.class.php")){
       require_once $file;
-    }else{
+    }
+
+    if(!class_exists("{$conf['name']}Controller") && $parentControllerName){
+
       // Si no tiene un archivo que incluir se asigna como nombre de
       // controlador el nombre del controlador padre.
       $conf['name'] = $parentControllerName;
+
     }
 
     // Incluir como extension
@@ -637,8 +652,8 @@ class AmController extends AmResponse{
    * ---------------------------------------------------------------------------
    * @param  string       $actionStr  String con la accion en formato
    *                                  'controlador@accion'
-   * @return false/array              Array asociativo con el controlador y
-   *                                  la acción. Si no coincide con el formato
+   * @return false/array              Hash con el controlador y la acción. Si
+   *                                  no coincide con el formato
    *                                  devuelve false.
    */
   final private static function getControllerAndAction($actionStr){
@@ -708,10 +723,10 @@ class AmController extends AmResponse{
 
     // Valores por defecto
     $conf = array_merge(
-      // Incluye el controlador y devuelve la configuracion para el mismo
+      // Incluye el controlador y devuelve la configuracion para el mismo.
       self::includeController($controller),
 
-      // Asignar vista que se mostrará,
+      // Asignar vista que se mostrará
       array(
         'view' => self::getViewName($action),
         'action' => $action,
@@ -719,14 +734,16 @@ class AmController extends AmResponse{
       )
     );
 
-    // Obtener la instancia del controlador
-    $controller = Am::getInstance("{$conf['name']}Controller", $conf);
+    // Obtener el nombre de la clase del controlador.
+    $controllerClassName = "{$conf['name']}Controller";
 
-    // Si no se puede instanciar el controlador retornar false.
-    
-    if(null === $controller)
+    // Si no se puede instanciar el controlador retornar error.
+    if(!class_exists($controllerClassName))
       return Am::e404(Am::t('AMCONTROLLER_ACTION_NOT_FOUND',
-        $controller, $action));
+        $conf['name'], $action));
+    
+    // Obtener la instancia del controlador.
+    $controller = Am::getInstance($controllerClassName, $conf);
 
     // Asignación de propiedades como propiedades del controlador.
     foreach ($env as $propertyName => $value)

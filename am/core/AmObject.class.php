@@ -299,7 +299,7 @@ class AmObject implements Iterator, Countable, ArrayAccess{
 
   /**
    * ---------------------------------------------------------------------------
-   * Devuelve un array asociativo con los valores de los atributos dinamicos
+   * Devuelve un hash con los valores de los atributos dinamicos
    * ---------------------------------------------------------------------------
    **/
   public function toArray(){

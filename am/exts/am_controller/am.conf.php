@@ -45,7 +45,7 @@ return array(
 
     // Configuración inicial de los controladores
     'controllers' => array(
-      'defaults' => array(
+      '' => array(
       
         // ---------------------------------------------------------------------
         // Para todo el controlador.
@@ -75,10 +75,12 @@ return array(
         ),
 
         // Acciones permitidas.
-        'allows' => array(),
+        'allows' => array(
+          '' => true
+        ),
 
         // Tipo de respuesta para el servicio: json, txt.
-        'serviceType' => 'json',
+        'servicesFormat' => 'json',
 
         // Filtros.
         'filters' => array(),
@@ -102,7 +104,7 @@ return array(
     // Formatos
     'formats' => array(
       'AMCONTROLLER_ACTION_NOT_FOUND' => 'AmController: No se encontró la acción "%s@%s"',
-      'AMCONTROLLER_ACTION_FORBIDDEN' => 'AmController: Acción prohibida "%s@%s"'
+      'AMCONTROLLER_ACTION_FORBIDDEN' => 'AmController: Acción prohibida "%s@%s por el método %s"'
     )
 
   ),
