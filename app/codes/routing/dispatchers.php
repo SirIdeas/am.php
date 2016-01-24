@@ -1,3 +1,4 @@
+// /app/am.init.php
 // Despachador
 function customMyTypeDispatcher($target, $env, $params){
   echo 'Decir '.$target.' en '.$params['lang'];

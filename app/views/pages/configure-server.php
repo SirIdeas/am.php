@@ -8,14 +8,12 @@
 </div>
 <div class="content inner">
 
-  <div id="configureServer">
-    <h2>Configurar servidor</h2>
+  <p>
+    El servidor web debe ser configurado para tomar el directorio <code><strong>/public/</strong></code> como directorio base de la aplicación.
+  </p>
 
-    <p>
-      El servidor web debe ser configurado para tomar el directorio <code><strong>/public/</strong></code> como directorio base de la aplicación.
-    </p>
-    
-    <h3>Apache</h3>
+  <div id="configureServer">
+    <h2>Apache</h2>
     <p>
       En el caso de apache la configuración se puede realizar en el archivo <code><strong>.htaccess</strong></code> del directorio <code><strong>/public/</strong></code> o en la configuración de Apache correspondiente a esta carpeta. La configuración sería la siguiente
     </p>
@@ -24,7 +22,7 @@
       <strong>Nota:</strong> Para el correcto funcinamiento con Apache se requiere tener activado el módulo <code><strong>mod_rewrite</strong></code>.
     </p>
 
-    <h3>Nginx</h3>
+    <h2>Nginx</h2>
     <p>
       Para configurar con Nginx se debe agregar crear un server block para la aplicación o agregar el bloque <code><strong>location</strong></code> al server block adecuado. La configuración sería la siguiente:
     </p>

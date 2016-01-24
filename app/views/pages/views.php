@@ -18,7 +18,7 @@
     <p>
       Para agregar código PHP propio dentro de la vista se puede de la forma tradicional, o utilizar las etiquetas <code><strong>(<span>:</span></strong></code> y <code><strong><span>:</span>)</strong></code>:
     </p>
-    <pre><code class="language-php">(:= getCodeFile('/views/embedded.php') :)</code></pre>
+    <pre><code class="language-php">(:= getCodeFile('views/embedded.php') :)</code></pre>
   </div>
 
   <div>
@@ -26,7 +26,7 @@
     <p>
       Adicionalmente, la directiva especial <code><strong><span>(</span>/:)</strong></code> es sustituida por la URL raíz de la aplicación (<code><strong>Am::url()</strong></code>):
     </p>
-    <pre><code class="language-php">(:= getCodeFile('/views/url.php') :)</code></pre>
+    <pre><code class="language-php">(:= getCodeFile('views/url.php') :)</code></pre>
   </div>
   
   <div>
@@ -43,15 +43,15 @@
         <table>
           <tr>
             <td class="s4">
-              <pre><code class="language-php">(:= getCodeFile('/views/parent1.php') :)</code></pre>
+              <pre><code class="language-php">(:= getCodeFile('views/parent1.php') :)</code></pre>
               <div></div>
             </td>
             <td class="s4">
-              <pre><code class="language-php">(:= getCodeFile('/views/parent2.php') :)</code></pre>
+              <pre><code class="language-php">(:= getCodeFile('views/parent2.php') :)</code></pre>
               <div></div>
             </td>
             <td class="s4">
-              <pre><code class="language-php">(:= getCodeFile('/views/parent3.php') :)</code></pre>
+              <pre><code class="language-php">(:= getCodeFile('views/parent3.php') :)</code></pre>
               <div></div>
             </td>
           </tr>
@@ -69,15 +69,15 @@
         <table>
           <tr>
             <td class="s4">
-              <pre><code class="language-php">(:= getCodeFile('/views/place1.php') :)</code></pre>
+              <pre><code class="language-php">(:= getCodeFile('views/place1.php') :)</code></pre>
               <div></div>
             </td>
             <td class="s4">
-              <pre><code class="language-php">(:= getCodeFile('/views/place2.php') :)</code></pre>
+              <pre><code class="language-php">(:= getCodeFile('views/place2.php') :)</code></pre>
               <div></div>
             </td>
             <td class="s4">
-              <pre><code class="language-php">(:= getCodeFile('/views/place3.php') :)</code></pre>
+              <pre><code class="language-php">(:= getCodeFile('views/place3.php') :)</code></pre>
               <div></div>
             </td>
           </tr>
@@ -91,7 +91,7 @@
       <p>
         Para definir secciones se utiliza el método <code><strong>section</strong></code> para iniciarla y <code><strong>endSection</strong></code> para cerrarla:
       </p>
-      <pre><code class="language-php">(:= getCodeFile('/views/sections.php') :)</code></pre>
+      <pre><code class="language-php">(:= getCodeFile('views/sections.php') :)</code></pre>
       <p>
         Para utilizar secciones se utiliza él método <code><strong>put</strong></code>:
       </p>
@@ -100,11 +100,11 @@
         <table>
           <tr>
             <td class="s4">
-              <pre><code class="language-php">(:= getCodeFile('/views/put.php') :)</code></pre>
+              <pre><code class="language-php">(:= getCodeFile('views/put.php') :)</code></pre>
               <div></div>
             </td>
             <td class="s4">
-              <pre><code class="language-php">(:= getCodeFile('/views/put-result.php') :)</code></pre>
+              <pre><code class="language-php">(:= getCodeFile('views/put-result.php') :)</code></pre>
               <div></div>
             </td>
           </tr>
@@ -119,11 +119,11 @@
         <table>
           <tr>
             <td class="s4">
-              <pre><code class="language-php">(:= getCodeFile('/views/section-concat.php') :)</code></pre>
+              <pre><code class="language-php">(:= getCodeFile('views/section-concat.php') :)</code></pre>
               <div></div>
             </td>
             <td class="s4">
-              <pre><code class="language-php">(:= getCodeFile('/views/section-concat-result.php') :)</code></pre>
+              <pre><code class="language-php">(:= getCodeFile('views/section-concat-result.php') :)</code></pre>
               <div></div>
             </td>
           </tr>
@@ -137,7 +137,7 @@
       <p>
         Para asignar valores a variables se utiliza el método <code><strong>set</strong></code>:
       </p>
-      <pre><code class="language-php">(:= getCodeFile('/views/set.php') :)</code></pre>
+      <pre><code class="language-php">(:= getCodeFile('views/set.php') :)</code></pre>
       <p>
         Los valores asignados con <code><strong>set</strong></code> reescriben a los asignados en la vistas padres o agregadas anteriormente.
       </p>

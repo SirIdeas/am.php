@@ -1,6 +1,6 @@
 <?php
 
-class MainController extends AmController{
+class Main extends AmController{
 
   public function index(){
     

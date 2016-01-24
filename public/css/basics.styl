@@ -48,6 +48,8 @@ $clear()
   
   th
     font-weight             bold
+  
+  thead th
     text-align              center
       
   td,th
@@ -95,7 +97,7 @@ $table($tableClass = '.table', $color)
     
     thead
       td,th
-        border-bottom       2px solid lightness($color, 90%)
+        border-bottom       1px solid lightness($color, 90%)
     
     &.striped
       tbody

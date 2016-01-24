@@ -13,8 +13,29 @@
     Amathista utiliza por defecto la extensión <code><strong>AmRoute</strong></code> (<code><strong>ext/am_route</strong></code>) para determinar como despachar las peticiones HTTP. <code><strong>AmRoute</strong></code> obtiene las rutas configuradas de la propiedad <code><strong>routing</strong></code>.
   </p>
 
-  <span>/app/routing.conf.php</span>
-  <pre><code class="language-php">(:= getCodeFile('/routing/routing.php') :)</code></pre>
+  <div>
+    <h2>Configuración</h2>
+    
+    <p>
+      Las configuración de las rutas son tomados de la propiedad de aplicación <code><strong>routing</strong></code>:
+    </p>
+
+    <div class="code-row">
+      <table>
+        <tr>
+          <td class="s6">
+            <pre><code class="language-php">(:= getCodeFile('routing/routing.conf.php') :)</code></pre>
+            <div></div>
+          </td>
+          <td class="s6">
+            <pre><code class="language-php">(:= getCodeFile('routing/am.conf.php') :)</code></pre>
+            <div></div>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+  </div>
 
   <div>
     <h2>Estructura de las rutas</h2>
@@ -55,7 +76,7 @@
     <p>
       Una ruta puede ser presentado de diferentes formas, sin embargo al final todas son convertidaas a una a la <i>forma explícita</i>. Por ejemplo:
     </p>
-    <pre><code class="language-php">(:= getCodeFile('/routing/forms.php') :)</code></pre>
+    <pre><code class="language-php">(:= getCodeFile('routing/forms.php') :)</code></pre>
   </div>
 
   <div>
@@ -93,7 +114,7 @@
       <h3>Realizar la llamada de una función o método: <code>call</code></h3>
       <pre><code class="language-php">(:= getCodeFile('routing/call.php') :)</code></pre>
       <p>
-        Todos los estos callbacks recibien como parámetro un array con el entorno definido en la propiedad de aplicación <code><strong>env</strong></code>.
+        Todos los estos callbacks reciben como parámetro un array con el entorno definido en la propiedad de aplicación <code><strong>env</strong></code>.
       </p>
     </div>
 
@@ -111,10 +132,10 @@
     </p>
     <pre><code class="language-php">(:= getCodeFile('routing/params.php') :)</code></pre>
     <p>
-      una petición <code><strong>/models/user/edit/3</strong></code>, renderizaría el template <code><strong></strong></code> y dentro de esta vista exisitirían los parámetros <code><strong>$model = 'user'</strong></code> y <code><strong>$id = '3'</strong></code>.
+      una petición <code><strong>/models/user/edit/3</strong></code>, renderizaría el template <code><strong></strong></code> y dentro de esta vista exisitirían las variables <code><strong>$model = 'user'</strong></code> y <code><strong>$id = '3'</strong></code>.
     </p>
     <p>
-      En el caso de que la ruta realice el llamado de un callback (ruta del tipo <code><strong>call</strong></code>), este recibirá como parámetros cada uno de los definidos en la ruta, agregando el parámetro extra con el entorno definido en la propiedad de aplicación<code><strong>env</strong></code>, por ejemplo:
+      En el caso de que la ruta realice el llamado de un callback (ruta del tipo <code><strong>call</strong></code>), este recibirá como parámetros cada uno de los definidos en la ruta, agregando el parámetro extra con el entorno definido en la propiedad de aplicación <code><strong>env</strong></code>, por ejemplo:
     </p>
     <pre><code class="language-php">(:= getCodeFile('routing/params-callbacks.php') :)</code></pre>
     <div>
@@ -155,7 +176,6 @@
       <p>
         Para agregar o sustituir un despachador se utiliza el método <code><strong>Am::addRouteDispatcher</strong></code>:.
       </p>
-      <span>/app/am.init.php</span>
       <pre><code class="language-php">(:= getCodeFile('routing/dispatchers.php') :)</code></pre>
       <p>
         Así entonces se puede atender la siguiente ruta:
@@ -171,7 +191,6 @@
       <p>
         Para agregar el pre-procesador de ruta se utiliza el método <code><strong>Am::addRoutePreProcessor</strong></code>:
       </p>
-      <span>/app/am.init.php</span>
       <pre><code class="language-php">(:= getCodeFile('routing/preprocessor.php') :)</code></pre>
       <p>
         Lo que transformaría las rutas de esto:

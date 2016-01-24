@@ -42,6 +42,7 @@ $generatePallete('.secondary', {
   '-d4':  #212121
 })
 
+
 $table('.table', $primaryColor);
 
 .full-height
@@ -169,8 +170,22 @@ ul.nav
       font-size         100%
       font-weight       bold
 
+.content.inner
+  h2
+  h3
+  h4
+    color               $primaryColor
+  h2
+    margin-top          30px
+    padding-top         15px
+    border-top          2px solid lightness($primaryColor, 90%)
+
+  pre.mb5
+    margin-bottom         5px
+
 .code-row
   margin-left           -5px
+  margin-bottom         5px
   table
     width               100%
     border-collapse     collapse
@@ -188,6 +203,8 @@ ul.nav
       z-index           0
   
 .table
+  &.small
+    width               auto
   .table-pre
     margin              0
     padding             3px 10px

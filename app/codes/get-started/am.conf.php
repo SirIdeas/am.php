@@ -1,5 +1,5 @@
+// /app/am.conf.php
 <?php
-
 return array(
 
   // Variables de entorno

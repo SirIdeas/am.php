@@ -14,7 +14,7 @@
       Amathista es un manejador de eventos capaz incorporar módulos de software extras (extensiones) para ampliar su funcionalidad.
     </p>
     <p>
-      Su configuración inicial por defecto permite ser utilizado como marco de trabajo (framework) para el desarrollo una aplicación Web escalable. Sin embargo, su núcleo y extensiones pueden ser utlizado como módulos secundarios o de apoyo otros frameworks.
+      Su configuración inicial por defecto permite ser utilizado como marco de trabajo (framework) para el desarrollo aplicaciones web escalables. Sin embargo, su núcleo y extensiones pueden ser utlizado como módulos secundarios o de apoyo otros frameworks.
     </p>
   </div>
 
@@ -88,7 +88,6 @@
     <p>
       Cada propiedad de aplicación es extendería con un archivo de configuración con el mismo nombre ubicado en el mismo directorio por medio de una función de mezcla preconfigurada cuando se intente acceder a esta propiedad. Entonces por ejemplo con el siguiente archivo de configuración principal:
     </p>
-    <span>/app/am.conf.php</span>
     <pre><code class="language-php">(:= getCodeFile('get-started/am.conf.php') :)</code></pre>
     <p>
       las propiedad <code><strong>env</strong></code> se extenderían con el archivo <code><strong>env.conf.php</strong></code> y la propiedad <code><strong>requires</strong></code> con <code><strong>requires.conf.php</strong></code> del directorio <code><strong>/app/</strong></code>.

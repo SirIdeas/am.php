@@ -1,3 +1,4 @@
+// /app/am.init.php
 // Pre-procesador de ruta
 function customRoutePreProcessor($route){
   $route['route'] = '/admin/'.$route['route'];

@@ -1,12 +1,12 @@
 <?php
 
-class IndexController extends AmController{
+class Index extends AmController{
 
   public function action(){
     var_dump('action');
   }
 
-  public function index(){
+  public function index2(){
     var_dump('index');
     // return array(1,2,3,4,5,6);
   }
