@@ -381,7 +381,6 @@ class AmController extends AmResponse{
     if(isset($root) && isset($views) && $path)
       array_unshift($ret, $path);
 
-    // Invertir array,
     return $ret;
 
   }
