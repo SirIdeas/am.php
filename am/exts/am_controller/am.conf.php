@@ -52,7 +52,7 @@ return array(
         // ---------------------------------------------------------------------
 
         // Nombre del controlador.
-        'name' => 'Am',
+        'name' => 'AmController',
 
         // Nombre del controlador padre.
         'parent' => null,

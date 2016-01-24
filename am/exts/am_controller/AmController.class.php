@@ -626,11 +626,11 @@ class AmController extends AmResponse{
 
     // Obtener la ruta del controlador
     // Incluir controlador si existe el archivo
-    if(is_file($file = "{$conf['root']}/{$conf['name']}Controller.class.php")){
+    if(is_file($file = "{$conf['root']}/{$conf['name']}.class.php")){
       require_once $file;
     }
 
-    if(!class_exists("{$conf['name']}Controller") && $parentControllerName){
+    if(!class_exists("{$conf['name']}") && $parentControllerName){
 
       // Si no tiene un archivo que incluir se asigna como nombre de
       // controlador el nombre del controlador padre.
@@ -734,16 +734,13 @@ class AmController extends AmResponse{
       )
     );
 
-    // Obtener el nombre de la clase del controlador.
-    $controllerClassName = "{$conf['name']}Controller";
-
     // Si no se puede instanciar el controlador retornar error.
-    if(!class_exists($controllerClassName))
+    if(!class_exists($conf['name']))
       return Am::e404(Am::t('AMCONTROLLER_ACTION_NOT_FOUND',
         $conf['name'], $action));
     
     // Obtener la instancia del controlador.
-    $controller = Am::getInstance($controllerClassName, $conf);
+    $controller = Am::getInstance($conf['name'], $conf);
 
     // Asignación de propiedades como propiedades del controlador.
     foreach ($env as $propertyName => $value)
