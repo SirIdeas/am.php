@@ -62,13 +62,14 @@ function isValidCallback($callback){
  * @param  array  $paths array de directorios donde se buscará el archivo.
  * @return string        Devuelve la ruta del primer archivo encontrado.
  */
-function findFileIn($file, array $paths){
+function findFileIn($file, array $paths, $reverse = true){
 
   // Si existe el archivo retornar el mismo
   if(is_file($file)) return $file;
 
   // Invertir el array
-  $pathsInv = array_reverse($paths);
+  if($reverse)
+    $paths = array_reverse($paths);
 
   // Buscar un archivo dentro de las carpetas
   foreach($pathsInv as $path)

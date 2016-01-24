@@ -22,7 +22,7 @@ class AmController extends AmResponse{
      * -------------------------------------------------------------------------
      */
     $mergeFunctions = array(
-      'paths'   => 'array_merge',
+      'paths'   => 'merge_unique',
       'prefix'  => 'array_merge',
       'allows'  => 'merge_if_both_are_array',
       'headers' => 'merge_unique',
@@ -358,12 +358,8 @@ class AmController extends AmResponse{
    */
   final protected function getPaths(){
 
-    // PENDIENTE: Revisar mas adelante como llegan los paths aqui.
-    // Se puede presentar un problema pues se invertir el orden de recorrido
-    // de findFileIn
-    $ret = array_filter($this->get('paths'));  // Tomar valores validos
-    $ret = array_unique($ret);          // Valor unicos
-    $ret = array_reverse($ret);         // Invertir array
+    // Tomar valores de paths validos
+    $ret = array_filter($this->get('paths'));
 
     // Obtener la directorio raíz del controlador
     // y el directorio de vistas.
@@ -381,7 +377,7 @@ class AmController extends AmResponse{
     if(isset($root) && isset($views) && $path)
       array_unshift($ret, $path);
 
-    return $ret;
+    return array_unique($ret);
 
   }
 
@@ -612,8 +608,8 @@ class AmController extends AmResponse{
       $confParent = self::includeController($conf['parent']);
 
       // Agregar carpeta de vistas por defecto del padre.
-      // $confParent['paths'][] = $confParent['root'];
       $confParent['paths'][] = $confParent['root'] . '/' . $confParent['views'];
+      // $confParent['paths'][] = $confParent['root'];
 
       // Obtener el nombre del padre
       $parentControllerName = itemOr('name', $confParent, null);

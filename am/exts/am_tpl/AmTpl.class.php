@@ -186,7 +186,7 @@ final class AmTpl extends AmObject{
   public function findView($file){
 
     // Si no existe la vista mostrar error
-    if(false === ($fileRet = findFileIn($file, $this->paths))){
+    if(false === ($fileRet = findFileIn($file, $this->paths, false))){
 
       // Instanciar el error
       $error = Am::t('AMTPL_VIEW_NOT_FOUND', $file);

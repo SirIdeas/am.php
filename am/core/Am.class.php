@@ -679,7 +679,7 @@ final class Am{
     $vars = array_merge($env, $params);
 
     // Obtener la ruta de la vista
-    $tpl = findFileIn($tpl, array_reverse(self::$dirs));
+    $tpl = Am::findFile($tpl);
 
     return self::ring('response.template', $tpl, $vars);
 
