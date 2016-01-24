@@ -22,12 +22,12 @@ return array(/*
   // ---------------------------------------------------------------------------
   // Nombre del controlador.
   // ---------------------------------------------------------------------------
-  // Por defecto: 'Am'
+  // Por defecto: null
   // ---------------------------------------------------------------------------
   // El nombre del controlador es utilizado para determinar el nombre de la
   // clase del controlador y el archivo con el código fuente.
-  // Nombre de la clase: {name}Controller
-  // Código fuente:  {root}/{name}Controller.php
+  // Nombre de la clase: {name}
+  // Código fuente:  {root}/{name}.class.php
   
   'MyCtrl' => array(
     // ...

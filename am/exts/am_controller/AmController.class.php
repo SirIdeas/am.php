@@ -33,13 +33,13 @@ class AmController extends AmResponse{
    * ---------------------------------------------------------------------------
    * Asigna el nombre de la vista a renderizar.
    * ---------------------------------------------------------------------------
-   * Es un Alias de la funcion setView que agrega .view.php al final del valor
+   * Es un Alias de la funcion setView que agrega .php al final del valor
    * recibido.
    * @param   String  $view   Nombre de la vista que se desea asignar.
    * @return  $this
    */
   final protected function render($view){
-    // Las vista de las acciones son de extencion .view.php
+    // Las vista de las acciones son de extencion .php
     return $this->setView(self::getViewName($view));
   }
 
@@ -525,7 +525,7 @@ class AmController extends AmResponse{
    */
   final protected static function getViewName($action){
 
-    return "{$action}.view.php";
+    return "{$action}.php";
 
   }
 
@@ -626,7 +626,7 @@ class AmController extends AmResponse{
 
     // Obtener la ruta del controlador
     // Incluir controlador si existe el archivo
-    if(is_file($file = "{$conf['root']}/{$conf['name']}.class.php")){
+    if(is_file($file = "{$conf['root']}/{$conf['name']}.php")){
       require_once $file;
     }
 
