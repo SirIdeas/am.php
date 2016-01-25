@@ -52,16 +52,12 @@
           <td>Responder con la llamada de una función o método</td>
         </tr>
         <tr>
-          <td><code><strong>response.controller</strong></code></td>
-          <td>Responder con la acción de un controlador</td>
-        </tr>
-        <tr>
-          <td><code><strong>response.redirect</strong></code></td>
-          <td>Responder con la redirección interna</td>
-        </tr>
-        <tr>
           <td><code><strong>response.template</strong></code></td>
           <td>Responde con el renderizado de una vista</td>
+        </tr>
+        <tr>
+          <td><code><strong>response.go</strong></code></td>
+          <td>Responder con la redirección</td>
         </tr>
         <tr>
           <td><code><strong>response.e404</strong></code></td>
@@ -70,6 +66,10 @@
         <tr>
           <td><code><strong>response.e403</strong></code></td>
           <td>Reponse con un error 403</td>
+        </tr>
+        <tr>
+          <td><code><strong>response.controller</strong></code></td>
+          <td>Responder con la acción de un controlador</td>
         </tr>
         <tr>
           <td><code><strong>render.template</strong></code></td>

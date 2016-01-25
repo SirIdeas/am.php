@@ -149,17 +149,17 @@
           <th>Uso</th>
         </tr>
       </thead>
-      <tbody class="text-left">
+      <tbody>
         <tr>
-          <th><code>/am/</code></th>
+          <td><code><strong>/am/</strong></code></td>
           <td>Directorio de Amathista.</td>
         </tr>
         <tr>
-          <th><code>/app/</code></th>
+          <td><code><strong>/app/</strong></code></td>
           <td>Directorio raíz de la aplicación.</td>
         </tr>
         <tr>
-          <th><code>/public/</code></th>
+          <td><code><strong>/public/</strong></code></td>
           <td>Directorio público de la aplicación</td>
         </tr>
       </tbody>
@@ -185,37 +185,37 @@
           <th>Descripción</th>
         </tr>
       </thead>
-      <tbody class="text-left">
+      <tbody>
         <tr>
-          <th><code>/app/am.conf.php</code></th>
+          <td><code><strong>/app/am.conf.php</strong></code></td>
           <td>Archivo de configuración principal de la aplicación</td>
         </tr>
         <tr>
-          <th><code>/app/routing.conf.php</code></th>
+          <td><code><strong>/app/routing.conf.php</strong></code></td>
           <td>Archivo de rutas la aplicación.</td>
         </tr>
         <tr>
-          <th><code>/app/views/index.php</code></th>
+          <td><code><strong>/app/views/index.php</strong></code></td>
           <td>Vista index de la aplicación</td>
         </tr>
         <tr>
-          <th><code>/public/bootfile.php</code></th>
+          <td><code><strong>/public/bootfile.php</strong></code></td>
           <td>Bootfile.</td>
         </tr>
         <tr>
-          <th><code>/public/.htaccess</code></th>
+          <td><code><strong>/public/.htaccess</strong></code></td>
           <td>Configuración de Apache para la aplicación.</td>
         </tr>
         <tr>
-          <th><code>/public/serverblock.conf</code></th>
+          <td><code><strong>/public/serverblock.conf</strong></code></td>
           <td>Configuración de Nginx para la aplicación.</td>
         </tr>
         <tr>
-          <th><code>/public/404.html</code></th>
+          <td><code><strong>/public/404.html</strong></code></td>
           <td>Vista para errores 404.</td>
         </tr>
         <tr>
-          <th><code>/public/images/*</code></th>
+          <td><code><strong>/public/images/*</strong></code></td>
           <td>Imágenes utilizadas en las vistas copiadas.</td>
         </tr>
       </tbody>

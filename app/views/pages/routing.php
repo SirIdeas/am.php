@@ -51,11 +51,11 @@
       </thead>
       <tbody class="text-left">
         <tr>
-          <th><code>route</code></th>
+          <td><code><strong>route</strong></code></td>
           <td>String con el formato de la ruta.</td>
         </tr>
         <tr>
-          <th><code>routes</code></th>
+          <td><code><strong>routes</strong></code></td>
           <td>
             Array de rutas hijas, las cuales se forman concatenando los valores de la ruta padre en cada ruta hija.
           </td>
@@ -159,17 +159,36 @@
       <p>
         El despachador recive 3 argumentos:
       </p>
-      <ul>
-        <li>
-          <code><strong>$target</strong></code>: Valor del índice correspondiente al tipo de ruta evaluado con los parámetros de la petición sustituidos.
-        </li>
-        <li>
-          <code><strong>$env</strong></code>: hash con las variales de entorno de la propiedad de aplicación <code><strong>env</strong></code>.
-        </li>
-        <li>
-          <code><strong>$params</strong></code>: hash con los parámetros obtenidos de la petición según indique el formato de la ruta.
-        </li>
-      </ul>
+
+
+      <table class="table striped">
+        <thead>
+          <tr>
+            <th class="s2">Parte</th>
+            <th>Descripcón</th>
+          </tr>
+        </thead>
+        <tbody class="text-left">
+          <tr>
+            <td><code><strong>$target</strong></code></td>
+            <td>
+              Valor del índice correspondiente al tipo de ruta evaluado con los parámetros de la petición sustituidos.
+            </td>
+          </tr>
+          <tr>
+            <td><code><strong>$env</strong></code></td>
+            <td>
+              Hash con las variales de entorno de la propiedad de aplicación <code><strong>env</strong></code>.
+            </td>
+          </tr>
+          <tr>
+            <th><code><strong>$params</strong></code></th>
+            <td>
+              Hash con los parámetros obtenidos de la petición según indique el formato de la ruta.
+            </td>
+          </tr>
+        </tbody>
+      </table>
       <p>
         Debe retorna <code><strong>true</strong></code> si logra despachar satisfactoriamente la petición, de lo contrario debe retornar <code><strong>false</strong></code> para indicar que se debe seguir intentando con otros despachadores.
       </p>
