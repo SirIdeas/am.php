@@ -6,12 +6,12 @@ class Index extends AmController{
     var_dump('action');
   }
 
-  public function index2(){
+  public function action_index2(){
     var_dump('index');
     // return array(1,2,3,4,5,6);
   }
 
-  public function get_index(){
+  public function get_index2(){
     var_dump('get_index');
   }
 

@@ -132,7 +132,7 @@
       </div>
 
       <div>
-        <small>En el caso del controlador <code><strong>Foo</strong></code> no tiene configuración, sin embargo por defecto los controladores son buscados en la carpeta <code><strong>/app/controllers/</strong></code>. Para el controlador <code><strong>Bar</strong></code> se define el nombre como <code><strong>BarCtrl</strong></code>. Por último, el controlador <code><strong>Baz</strong></code> no posee configuración, ni archivo de declaración y tampoco fue declarada previamente la clase del controlador por lo que las rutas que hacen referencia a este generarán un error 404.</small>
+        <small>Nota: En el caso del controlador <code><strong>Foo</strong></code> no tiene configuración, sin embargo por defecto los controladores son buscados en la carpeta <code><strong>/app/controllers/</strong></code>. Para el controlador <code><strong>Bar</strong></code> se define el nombre como <code><strong>BarCtrl</strong></code>. Por último, el controlador <code><strong>Baz</strong></code> no posee configuración, ni archivo de declaración y tampoco fue declarada previamente la clase del controlador por lo que las rutas que hacen referencia a este generarán un error 404.</small>
       </div>
 
     </div>
@@ -189,7 +189,7 @@
         </table>
       </div>
       <div>
-        <small>El controlador <code><strong>Foo</strong></code> se ubica en la carpeta <code><strong>/app/ctrls/</strong></code>. El controlador <code><strong>Bar</strong></code> hereda la configuración de <code><strong>Foo</strong></code> y su comportamiento (por la herencia en la clase), sin embargo se ubica en la carpeta <code><strong>/app/ctrls/bar/</strong></code>. El controlador <code><strong>Baz</strong></code> por su parte hereda solo la configuración de <code><strong>Foo</strong></code>, debido a que la clase hereda de <code><strong>AmController</strong></code>, pese a esto el controlador <code><strong>Foo</strong></code> tambien es cargado al llamar al controlador <code><strong>Baz</strong></code>. Por último el controlador <code><strong>Qux</strong></code> no posee una clase, pero, sus acciones son manejadas a través de una instancia del controlador <code><strong>Bar</strong></code> del cual hereda.
+        <small>Nota: El controlador <code><strong>Foo</strong></code> se ubica en la carpeta <code><strong>/app/ctrls/</strong></code>. El controlador <code><strong>Bar</strong></code> hereda la configuración de <code><strong>Foo</strong></code> y su comportamiento (por la herencia en la clase), sin embargo se ubica en la carpeta <code><strong>/app/ctrls/bar/</strong></code>. El controlador <code><strong>Baz</strong></code> por su parte hereda solo la configuración de <code><strong>Foo</strong></code>, debido a que la clase hereda de <code><strong>AmController</strong></code>, pese a esto el controlador <code><strong>Foo</strong></code> tambien es cargado al llamar al controlador <code><strong>Baz</strong></code>. Por último el controlador <code><strong>Qux</strong></code> no posee una clase, pero, sus acciones son manejadas a través de una instancia del controlador <code><strong>Bar</strong></code> del cual hereda.
         </small>
       </div>
 
@@ -321,6 +321,58 @@
 
       <pre class="table-pre"><code class="language-php">(:= getCodeFile('controllers/filters.Foo.php') :)</code></pre>
 
+    </div>
+
+    <div>
+      <h3>Cabeceras de respuesta</h3>
+
+      <table class="table striped small text-left">
+        <tr><th>Propiedad</th><td><code><strong>headers</strong></code></td></tr>
+        <tr><th>Tipo</th><td><code><strong>array(strings)</strong></code></td></tr>
+        <tr>
+          <th>Valor por defecto</th>
+          <td><pre class="table-pre"><code class="language-php">'headers' => array()</code></pre></td>
+        </tr>
+      </table>
+
+      <p>
+        Listado de cabeceras a incluir en la respuesta. Esta propiedad es heredada por la clase <code><strong>AmController</strong></code> de <code><strong>AmResponse</strong></code>. Si el controlador posee un controlador padre hereda las cabeceras de este.
+      </p>
+
+    </div>
+
+  </div>
+
+  <div>
+    <h2>Respuestas</h2>
+    
+    <p>
+      Los controladores por si solos son un tipo de respuesta, es por esto que heredan de <code><strong>AmResponse</strong></code>. Sin embargo existen otros tipos de respuestas, las cuales se puede utilizar como retorno tanto de los filtros como las acciones del controlador. Las diferentes respuestas que puede darse son:
+    </p>
+
+    <div>
+      <h3>Responder con una vista</h3>
+      <pre class="table-pre"><code class="language-php">(:= getCodeFile('controllers/response.template.php') :)</code></pre>
+    </div>
+
+    <div>
+      <h3>Responder con una redirección</h3>
+      <pre class="table-pre"><code class="language-php">(:= getCodeFile('controllers/response.go.php') :)</code></pre>
+    </div>
+
+    <div>
+      <h3>Responder con un archivo</h3>
+      <pre class="table-pre"><code class="language-php">(:= getCodeFile('controllers/response.file.php') :)</code></pre>
+    </div>
+
+    <div>
+      <h3>Responder con un error</h3>
+      <pre class="table-pre"><code class="language-php">(:= getCodeFile('controllers/response.error.php') :)</code></pre>
+    </div>
+
+    <div>
+      <h3>Responder como un web services</h3>
+      <pre class="table-pre"><code class="language-php">(:= getCodeFile('controllers/response.services.php') :)</code></pre>
     </div>
 
   </div>
