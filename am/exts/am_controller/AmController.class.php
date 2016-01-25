@@ -278,58 +278,101 @@ class AmController extends AmResponse{
     // // Verificar las credenciales
     // Am::getCredentialsHandler()
     //   ->checkCredentials($action, $this->credentials);
-      
+    
+    $return = null;
     // Para guardar métodos ejecutados.
     $executed = array();
+    // -------------------------------------------------------------------------
+    // Ejecutar el método action
+    if(method_exists($this, $actionMethod = 'action')){
 
-    // Obtener los nombre de los métodos a ejecutar.
+      // Agregar a ejecutados
+      $executed[] = $actionMethod;
+
+      call_user_func_array(array($this, $actionMethod), $params);
+
+    }
+
     $methodsToExec = array(
-      'action',
-      // Acción normal
       'before' => $this->getPrefix('actions') . $action,
-      // Acción correspondiente al método
-      "before_{$method}" => $this->getPrefix("{$method}Actions") . $action,
-      // Despues de acción con el método
-      "after_{$method}" => null,
-      // Despues de la acción
-      'after' => null
+      "before_{$method}" => $this->getPrefix("{$method}Actions") . $action
     );
 
+    // -----------------------------------------------------------------------
     foreach ($methodsToExec as $when => $actionMethod) {
 
-      $ret = null;
+      // Ejecutar filtros before
+      $ret = $this->executeFilters($when, $action, $params);
 
-      // Si el método a ejecutar no es 'action' ni null
-      if($actionMethod !== 'action'){
-
-        // Ejecutar filtros befores
-        $ret = $this->executeFilters($when, $action, $params);
-
-        // Si retorno falso o un respuesta devolverlo
-        if($actionMethod!==null && ($ret === false || $ret instanceof parent))
-          return $ret;
-
-      }
+      // Si retorno falso o un respuesta devolverlo
+      if($ret === false || $ret instanceof parent) return $ret;
 
       // Ejecutar el método si existe y no se ha ejecutado
-      if(!in_array($actionMethod, $executed) &&
+      if($return === null && !in_array($actionMethod, $executed) &&
         method_exists($this, $actionMethod)){
-
-        $ret = call_user_func_array(array($this, $actionMethod), $params);
-
-        if($ret instanceof parent)
-          return $ret;
-
-        // Si retorna una array, respuesta o objeto salir.
-        if(is_array($ret) || is_object($ret))
-          return $this->responseService($ret);
 
         // Agregar a ejecutados
         $executed[] = $actionMethod;
 
+        $ret = call_user_func_array(array($this, $actionMethod), $params);
+
+        // Convertir en respuesta
+        if(is_array($ret) || is_object($ret)){
+          if(!$ret instanceof parent)
+            $ret = $this->responseService($ret);
+          $return = $ret;
+        }
+
       }
 
     }
+
+    // -------------------------------------------------------------------------
+    // Ejecutar filtros before para el request method
+    $ret = $this->executeFilters("before_{$method}", $action, $params);
+
+    // Si retorno falso o un respuesta devolverlo
+    if($ret === false || $ret instanceof parent) return $ret;
+
+    // -------------------------------------------------------------------------
+    // Ejecutar la acción para el request method
+    
+    // Obtener le nombre del método
+    $actionMethod = $this->getPrefix("{$method}Actions") . $action;
+
+    // Ejecutar el método si existe y no se ha ejecutado
+    if($return !== null && !in_array($actionMethod, $executed) &&
+      method_exists($this, $actionMethod)){
+
+      // Agregar a ejecutados
+      $executed[] = $actionMethod;
+
+      $ret = call_user_func_array(array($this, $actionMethod), $params);
+
+      // Convertir en respuesta
+      if(is_array($ret) || is_object($ret)){
+        if(!$ret instanceof parent)
+          $ret = $this->responseService($ret);
+        $return = $ret;
+      }
+        
+    }
+
+    // -------------------------------------------------------------------------
+    // Ejecutar filtros after
+    foreach (array("after_{$method}", 'after') as $when) {
+      
+      $ret = $this->executeFilters($when, $action, $params);
+
+      if($return !== null && (is_array($ret) || is_object($ret))){
+        if(!$ret instanceof parent)
+          $ret = $this->responseService($ret);
+        $return = $ret;
+      }
+
+    }
+
+    return $return;
 
   }
 
