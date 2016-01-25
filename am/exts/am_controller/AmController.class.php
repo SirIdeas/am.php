@@ -23,7 +23,7 @@ class AmController extends AmResponse{
      */
     $mergeFunctions = array(
       'paths'   => 'merge_unique',
-      'prefix'  => 'array_merge',
+      'prefixs' => 'array_merge',
       'allows'  => 'merge_if_both_are_array',
       'headers' => 'merge_unique',
       'filters' => 'merge_r_if_snd_first_not_false',
@@ -279,9 +279,6 @@ class AmController extends AmResponse{
     // Am::getCredentialsHandler()
     //   ->checkCredentials($action, $this->credentials);
       
-    // Guarda el valor a retornar.
-    $return = null;
-
     // Para guardar métodos ejecutados.
     $executed = array();
 
@@ -320,33 +317,19 @@ class AmController extends AmResponse{
 
         $ret = call_user_func_array(array($this, $actionMethod), $params);
 
+        if($ret instanceof parent)
+          return $ret;
+
+        // Si retorna una array, respuesta o objeto salir.
+        if(is_array($ret) || is_object($ret))
+          return $this->responseService($ret);
+
         // Agregar a ejecutados
         $executed[] = $actionMethod;
 
       }
 
-      // Si retorna una array, respuesta o objeto salir.
-      if(!$return && (is_array($ret) || is_object($ret))){
-
-        // Convertir en respuesta
-        if(!$ret instanceof parent)
-          $ret = $this->responseService($ret);
-
-        $return = $ret;
-
-        // Si el métod ejecutado es accion retorna.
-        if('action' === $actionMethod)
-          return $return;
-
-        // Si no es el filtro after
-        if(null !== $actionMethod)
-          break;
-
-      }
-
     }
-
-    return $return;
 
   }
 

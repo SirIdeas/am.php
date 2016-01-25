@@ -13,7 +13,7 @@
  */
 
 // Atender las respuestas por controlador
-Am::on("response.controller", "AmController::response");
+Am::on('response.controller', 'AmController::response');
 
 // Agregar el preprocesador de rutas a las que no tienen tipo
 Am::addRoutePreProcessor('', 'AmController::routePreProcessor');
