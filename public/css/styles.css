@@ -569,6 +569,9 @@ ul.nav >li >span {
 .content.inner pre.mb5 {
   margin-bottom: 5px;
 }
+.content.inner .nested-list ul {
+  padding-left: 25px;
+}
 .code-row {
   margin-left: -5px;
   margin-bottom: 5px;

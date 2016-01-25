@@ -221,7 +221,7 @@
                       <ul>
                         <li>Preparar los parámetros</li>
                         <li>Llamar el despachador del <strong>tipo</strong></li>
-                        <li>Si el llamado devolvió <code>true</code>
+                        <li>Si el llamado se ejecutó satisfactoriamente
                           <ul>
                             <li>Ir al <strong>Fin</strong></li>
                           </ul>

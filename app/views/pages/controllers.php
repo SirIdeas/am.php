@@ -226,68 +226,102 @@
           <td><pre class="table-pre"><code class="language-php">'paths' => array()</code></pre></td>
         </tr>
       </table>
-      
+      <p>
+        Lista de directorios secundarios ordenados por prioridad donde se buscarán las vistas de las acciones del controlador. A diferencia del directorio <code><strong>views</strong></code> que es relativo al directorio raíz de la controlador, estos directorios deben ser realitivos al directorios raíz de la aplicación. Un controlador con la propiedad <code><strong>parent</strong></code> hereda el directorio <code><strong>views</strong></code> y los paths del padre.
+      </p>
+      <pre class="table-pre"><code class="language-php">(:= getCodeFile('controllers/paths.controllers.conf.php') :)</code></pre>
 
     </div>
 
-    <!-- <table class="table striped small">
-      <tbody>
+    <div>
+      <h3>Prefijos</h3>
+
+      <table class="table striped small text-left">
+        <tr><th>Propiedad</th><td><code><strong>prefixs</strong></code></td></tr>
+        <tr><th>Tipo</th><td><code><strong>hash(string)</strong></code></td></tr>
         <tr>
-          <td><code><strong>paths</strong></code></td>
-          <td><code><strong>array de strings</strong></code></td>
-          <td>
-            Lista de directorios alternativos ordenadas por prioridad donde se buscarán las vistas en caso de que no exista esta en el directorio de vistas por defecto. En el caso de que el controlador herede de otro controlador se agregan al final de esta lista el directorio de vistas del padre.
-          </td>
-          <td><pre class="table-pre"><code class="language-php">'paths' => array()</code></pre></td>
-        </tr>
-        <tr>
-          <td><code><strong>prefixs</strong></code></td>
-          <td><code><strong>hash de strings</strong></code></td>
-          <td>
-            Prefijos utilizados para identificar los diferentes métodos de controlador:
-            <ul>
-              <li>
-                <code><strong>filters</strong></code>: Prefijo para los métodos que representan filtros.
-              </li>
-              <li>
-                <code><strong>actions</strong></code>: Prefijo los métodos correspondientes a las acciones sin importar el <i>request method</i> por el que son recibidas las peticiónes HTTP.
-              </li>
-              <li>
-                <code><strong>getActions</strong></code>: Prefijo para los métodos correspondientes a las acciones recividas por <i>request method</i> GET.
-              </li>
-              <li>
-                <code><strong>postActions</strong></code>: Prefijo para los métodos correspondientes a las acciones recividas por <i>request method</i> POST.
-              </li>
-            </ul>
-          </td>
+          <th>Valor por defecto</th>
           <td><pre class="table-pre"><code class="language-php">(:= getCodeFile('controllers/prefixs.php') :)</code></pre></td>
         </tr>
+      </table>
+
+      <p>
+        Prefijos utilizados para identificar cada tipo de métodos del controlador. Básicamente posee dos tiupos: <strong>acciones</strong> que puede ser solicitadas por los diferentes requests methods y <strong>filtros</strong> que puede ser ejecutados antes y/o después del método de una acción.
+      </p>
+
+      <pre class="table-pre"><code class="language-php">(:= getCodeFile('controllers/prefixs.Foo.php') :)</code></pre>
+
+    </div>
+
+    <div>
+      <h3>Acciones permitidas</h3>
+
+      <table class="table striped small text-left">
+        <tr><th>Propiedad</th><td><code><strong>allows</strong></code></td></tr>
+        <tr><th>Tipo</th><td><code><strong>hash(bool|hash(bool))</strong></code></td></tr>
         <tr>
-          <td><code><strong>allows</strong></code></td>
-          <td><code><strong>hash de bools/hashes de bools</strong></code></td>
-          <td>
-            Hash que indica por cuales request methods está permitido ejecutar cada acción del controlador. <a href="#">Ver más</a>.
-          </td>
-          <td><pre class="table-pre"><code class="language-php">'allows' => array()</code></pre></td>
+          <th>Valor por defecto</th>
+          <td><pre class="table-pre"><code class="language-php">'allows' => array('' => true)</code></pre></td>
         </tr>
+      </table>
+
+      <p>
+        Hash que indica que acciones y por cuales request methods están permitidas. Los controladores que heredan la configuración de un padre mazcla el contenido de esta propiedad en el padre con las del hijo, prevaleciendo las del último.
+      </p>
+
+      <pre class="table-pre"><code class="language-php">(:= getCodeFile('controllers/allows.controllers.conf.php') :)</code></pre>
+
+    </div>
+
+    <div>
+      <h3>Formato de respuesta de los web services</h3>
+
+      <table class="table striped small text-left">
+        <tr><th>Propiedad</th><td><code><strong>servicesFormat</strong></code></td></tr>
+        <tr><th>Tipo</th><td><code><strong>string</strong></code></td></tr>
         <tr>
-          <td><code><strong>servicesFormat</strong></code></td>
-          <td><code><strong>string</strong></code></td>
-          <td>
-            Indica el formato de respuesta de los servicios. Puede ser <code><strong>'json'</strong></code> para codificar la respuesta con <code><strong>json_encode</strong></code> o <code><strong>'txt'</strong></code> par acodificar la respuesta con <code><strong>var_export</strong></code>. Cualquier otro valor hace que la respuesta se codifique con <code><strong>print_r</strong></code>.
-          </td>
+          <th>Valor por defecto</th>
           <td><pre class="table-pre"><code class="language-php">'servicesFormat' => 'json'</code></pre></td>
         </tr>
+      </table>
+
+      <p>
+        Indica el formato de respuesta de los servicios. Puede ser:
+      </p>
+
+      <ul>
+        <li><code><strong>'json'</strong></code> para codificar la respuesta con <code><strong>json_encode</strong></code></li>
+        <li><code><strong>'txt'</strong></code> para codificar la respuesta con <code><strong>var_export</strong></code></li>
+        <li>Cualquier otro valor hace que la respuesta se codifique con <code><strong>print_r</strong></code></li>
+      </ul>
+
+    </div>
+
+    <div>
+      <h3>Filtros</h3>
+
+      <table class="table striped small text-left">
+        <tr><th>Propiedad</th><td><code><strong>filters</strong></code></td></tr>
+        <tr><th>Tipo</th><td><code><strong>hash(arrays)</strong></code></td></tr>
         <tr>
-          <td><code><strong>filters</strong></code></td>
-          <td><code><strong>hash of arrays</strong></code></td>
-          <td>
-            Definiciones de los filtros. Los filtros pueden ser configurados para ejecutarse antes y/o despues de ciertas acciones. <a href="#">Ver más</a>.
-          </td>
+          <th>Valor por defecto</th>
           <td><pre class="table-pre"><code class="language-php">'filters' => array()</code></pre></td>
         </tr>
-      </tbody>
-    </table> -->
+      </table>
+
+      <p>
+        Definiciones de los filtros. Los filtros pueden ser configurados para ejecutarse antes y/o después de ciertas acciones y ciertos request methods. Tienen el objetivo de validar condiciones antes de la ejecución de una acción o realizar tareas anteriores o posteriores a una acción.
+      </p>
+
+      <pre class="table-pre"><code class="language-php">(:= getCodeFile('controllers/filters.controllers.conf.php') :)</code></pre>
+
+      <p>
+        En el caso un filtro ejecutado antes de la acción devuela <code><strong>false</strong></code> o devuelva una instancia de <code><strong>AmResponse</strong></code>, indica que la acción de debe ejecutarse.
+      </p>
+
+      <pre class="table-pre"><code class="language-php">(:= getCodeFile('controllers/filters.Foo.php') :)</code></pre>
+
+    </div>
 
   </div>
 
