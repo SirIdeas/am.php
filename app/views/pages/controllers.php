@@ -10,8 +10,7 @@
 <div class="content inner">
   
   <p>
-    Los controladores son manejados por defecto por la extensión <code><strong>AmController</strong></code> la cual es una extensión de <code><strong>AmResponse</strong></code>. Esta permite declarar controladores,
-    los cuales tienen acciones que se puede enlazar a las rutas, se le pueden asignar filtros y que renderizan automaticamente vistas.
+    Los controladores son clases que poseen métodos llamados acciones, las cuales pueden ser asignadas como procesadores de las rutas. Además de esto, los controladores tambien poseen métodos que pueden ser configurados como filtros para las acciones, con el fin de validar su ejecución, realizar tareas antes y despues de la acción. Además de todo esto, cada acción renderiza una vista con el mismo nombre de la acción, a menos que se indique lo controrio.
   </p>
 
   <div>
@@ -56,7 +55,7 @@
         Por defecto el directorio raíz de los controladores es <code><strong>/app/controllers/</strong></code>.
       </li>
       <li>
-        Las clases de los controladores deben extender de <code><strong>AmController</strong></code> o de cualquier otro controlador.
+        Las clases de los controladores deben extender de la clase <code><strong>AmController</strong></code> o de cualquier otro controlador.
       </li>
       <li>
         El nombre de la clase del controlador es el mismo nombre del controlador.
@@ -328,7 +327,7 @@
 
       <table class="table striped small text-left">
         <tr><th>Propiedad</th><td><code><strong>headers</strong></code></td></tr>
-        <tr><th>Tipo</th><td><code><strong>array(strings)</strong></code></td></tr>
+        <tr><th>Tipo</th><td><code><strong>array(string)|hash(string)</strong></code></td></tr>
         <tr>
           <th>Valor por defecto</th>
           <td><pre class="table-pre"><code class="language-php">'headers' => array()</code></pre></td>
@@ -336,7 +335,7 @@
       </table>
 
       <p>
-        Listado de cabeceras a incluir en la respuesta. Esta propiedad es heredada por la clase <code><strong>AmController</strong></code> de <code><strong>AmResponse</strong></code>. Si el controlador posee un controlador padre hereda las cabeceras de este.
+        Listado de cabeceras a incluir en la respuesta. Si el controlador posee un controlador padre, el primero hereda las cabeceras del segundo.
       </p>
 
     </div>

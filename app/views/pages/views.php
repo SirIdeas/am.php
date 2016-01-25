@@ -10,7 +10,7 @@
 <div class="content inner">
   
   <p>
-    Para el renderizado de vistas Amathista usa la extensión <code><strong>AmTpl</strong></code> por defecto. Esta extensión permite incluir vistas una dentro de otras, definir secciones, definir variables, imprimir variables, definir herencia y embeber código PHP a través de <i>directivas</i>.
+    El sistema de templates de Amathista permite incluir vistas una dentro de otras, definir secciones, definir variables, imprimir variables, definir herencia y embeber código PHP, todo a través de <i>directivas</i>.
   </p>
 
   <div>

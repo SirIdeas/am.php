@@ -54,7 +54,7 @@
         <tr>
           <th>Archivo de configuración raíz</th>
           <td>
-            Archivo de configuración <code><strong>am.conf.php</strong></code> que contiene la configuración básica de una extensión o aplicación y está ubicado en la carpeta raíz del mismo.
+            Archivo de configuración <code><strong>am.conf.php</strong></code> que contiene la configuración básica de una aplicación o extensión y está ubicado en la carpeta raíz del mismo.
           </td>
         </tr>
         <tr>
@@ -66,7 +66,7 @@
         <tr>
           <th>Archivo de inicio</th>
           <td>
-            Archivo <code><strong>am.init.php</strong></code> contiene al código de inicialización de una extensión o aplicación y está ubicado en la raíz del mismo.
+            Archivo <code><strong>am.init.php</strong></code> contiene al código de inicialización de una aplicación o extensión y está ubicado en la raíz del mismo.
           </td>
         </tr>
         <tr>

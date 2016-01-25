@@ -83,10 +83,10 @@
   <div>
     <h2>Archivo de configuración principal <small>(<code>/app/am.conf.php</code>)</small></h2>
     <p>
-      Contienen la inicialización de las propiedades de la aplicación, tales como extensiones a cargar, archivos inciales, configuraciones de los módulos a reescribir y variables de entorno entre otros. Cada item de este archivo de configuración representa un propiedad de la aplicación.
+      Contiene la inicialización de las propiedades de la aplicación, tales como extensiones a cargar, archivos inciales, configuraciones de los módulos a reescribir y variables de entorno entre otros. Cada item de este archivo de configuración representa un propiedad de la aplicación.
     </p>
     <p>
-      Cada propiedad de aplicación es extendería con un archivo de configuración con el mismo nombre ubicado en el mismo directorio por medio de una función de mezcla preconfigurada cuando se intente acceder a esta propiedad. Entonces por ejemplo con el siguiente archivo de configuración principal:
+      Cada propiedad de aplicación se extendería con un archivo de configuración con el mismo nombre ubicado en el mismo directorio por medio de una función de mezcla preconfigurada cuando se intente acceder a esta propiedad. Entonces por ejemplo con el siguiente archivo de configuración principal:
     </p>
     <pre><code class="language-php">(:= getCodeFile('get-started/am.conf.php') :)</code></pre>
     <p>
@@ -134,7 +134,7 @@
       </table>
 
       <p>
-        Las propiedades que se pueden inicializar en el archivo de configuración principal pueden ser ampliadas por cada extensión inclída. Por ejemplo la extensión <code><strong>AmRoute</strong></code> requiere propiedad <code><strong>routing</strong></code>.
+        Las propiedades que se pueden inicializar en el archivo de configuración principal pueden ser ampliadas por cada extensión incluída. Por ejemplo la extensión <code><strong>AmRoute</strong></code> requiere propiedad <code><strong>routing</strong></code>.
       </p>
 
     </div>

@@ -1,8 +1,8 @@
 <!-- Forma tradicional -->
 <p>Hora <?php echo date('Y-m-d H:m:s') ?></p>
 
-<!-- Embebido con AmTpl -->
+<!-- Embebido -->
 <p>Hora (: echo date('Y-m-d H:m:s') :)</p>
 
-<!-- Echo Embebido con AmTpl -->
+<!-- Echo Embebido-->
 <p>Hora (:= date('Y-m-d H:m:s') :)</p>

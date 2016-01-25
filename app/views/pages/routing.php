@@ -10,7 +10,7 @@
 <div class="content inner">
   
   <p>
-    Amathista utiliza por defecto la extensión <code><strong>AmRoute</strong></code> (<code><strong>ext/am_route</strong></code>) para determinar como despachar las peticiones HTTP. <code><strong>AmRoute</strong></code> obtiene las rutas configuradas de la propiedad <code><strong>routing</strong></code>.
+    Las rutas son configuradas en la propiedad de aplicación <code><strong>routing</strong></code>.
   </p>
 
   <div>
