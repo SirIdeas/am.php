@@ -72,7 +72,7 @@ function findFileIn($file, array $paths, $reverse = true){
     $paths = array_reverse($paths);
 
   // Buscar un archivo dentro de las carpetas
-  foreach($pathsInv as $path)
+  foreach($paths as $path)
     if(is_file($realPath = "{$path}/{$file}"))
       return $realPath;
 
