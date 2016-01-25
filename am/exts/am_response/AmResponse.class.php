@@ -58,12 +58,17 @@ class AmResponse extends AmObject{
    * ---------------------------------------------------------------------------
    * @param   string  $filename     Ruta del archivo con el que se responderá.
    * @param   bool    $attachment   Si la ruta se descarga o no.
+   * @param   string    $name       Nombre con el que se entregará el archivo.
+   * @param   mimeType  $mimeType   Tipo mime para la descarga.
    * @return  any                   Respuesta de manejador configurado.
    */
-  public static function file($filename, $attachment = false){
+  public static function file($filename, $attachment = false, $name = null,
+    $mimeType = null){
     return (new AmFileResponse)
       ->filename($filename)
-      ->attachment($attachment);
+      ->attachment($attachment)
+      ->name($name)
+      ->mimeType($mimeType);
   }
 
   /**
@@ -83,21 +88,24 @@ class AmResponse extends AmObject{
       ->env($env)
       ->params($params);
   }
+
   /**
    * ---------------------------------------------------------------------------
    * Busca un template y lo renderiza.
    * ---------------------------------------------------------------------------
-   * @param   string  $tpl      Template a renderizar.
-   * @param   array   $vars     Variables de la vista.
-   * @param   array   $options  Opciones para la vista.
-   * @return  any               Respuesta de manejador configurado.
+   * @param   string  $tpl        Template a renderizar.
+   * @param   array   $vars       Variables de la vista.
+   * @param   array   $options    Opciones para la vista.
+   * @param   array   $checkView  Indica si se desea o no chequear si la vista
+   *                              existe.
+   * @return  any                 Respuesta de manejador configurado.
    */
   public static function template($tpl, array $vars = array(),
                                   array $options = array(), $checkView = true){
     return (new AmTemplateResponse)
       ->tpl($tpl)
-      ->options($options)
       ->vars($vars)
+      ->options($options)
       ->checkView($checkView);
   }
 

@@ -33,25 +33,25 @@ final class Am{
       'route.addDispatcher' => null, // $type, $callback
       
       // Responder con archivo
-      'response.file' => null, // $file
+      'response.file' => null, // $filename, $attachment, $name, $mimeType
 
       // Responder con una llamada
       'response.call' => null, // $callback, $env, $params
 
       // Responde con el renderizado de una vista
-      'response.template' => array(), // $template, $vars, $options
+      'response.template' => array(), // $tpl, $vars, $options, $checkView
 
       // Responder con una redirección
       'response.go' => null, // $url
-
-      // Responder con controlador
-      'response.controller' => null, // $action, $params, $env
 
       // Responder con un error 404
       'response.e404' => null, // $msg
 
       // Responder con un error 403
       'response.e403' => null, // $msg
+
+      // Responder con controlador
+      'response.controller' => null, // $action, $params, $env
 
       // Renderiza de una vista
       'render.template' => array(), // $__tpl, $__vars, $__options
@@ -231,7 +231,7 @@ final class Am{
    * ---------------------------------------------------------------------------
    */
   public static function getMethod(){
-    return self::$server->REQUEST_METHOD;
+    return strtolower(self::$server->REQUEST_METHOD);
   }
 
   /**
@@ -580,13 +580,17 @@ final class Am{
    * ---------------------------------------------------------------------------
    * Responde con un archivo indicado por parámetro.
    * ---------------------------------------------------------------------------
-   * @param   string  $file         Ruta del archivo con el que se responderá.
-   * @param   bool    $attachment   Si la ruta se descarga o no.
-   * @return  any                   Respuesta de manejador configurado.
+   * @param   string    $file         Ruta del archivo con el que se responderá.
+   * @param   bool      $attachment   Si la ruta se descarga o no.
+   * @param   string    $name         Nombre con el que se entregará el archivo.
+   * @param   mimeType  $mimeType     Tipo mime para la descarga.
+   * @return  any                     Respuesta de manejador configurado.
    */
-  public static function file($filename, $attachment = false){
+  public static function file($filename, $attachment = false, $name = null,
+    $mimeType = null){
 
-    return self::ring('response.file', self::findFile($filename), $attachment);
+    return self::ring('response.file', self::findFile($filename), $attachment,
+      $name, $mimeType);
 
   }
 
@@ -594,12 +598,14 @@ final class Am{
    * ---------------------------------------------------------------------------
    * Responde la descarga de un archivo indicado por parámetro.
    * ---------------------------------------------------------------------------
-   * @param   string  $file Ruta del archivo a descargar.
-   * @return  any           Respuesta de manejador configurado.
+   * @param   string    $file       Ruta del archivo a descargar.
+   * @param   string    $name       Nombre con el que se entregará el archivo.
+   * @param   mimeType  $mimeType   Tipo mime para la descarga.
+   * @return  any                   Respuesta de manejador configurado.
    */
-  public static function download($file){
+  public static function download($file, $name = null, $mimeType = null){
 
-    return self::file($file, true);
+    return self::file($file, true, $name, $mimeType);
 
   }
 
@@ -617,6 +623,49 @@ final class Am{
                               array $params = array()){
 
     return self::ring('response.call', $callback, $env, $params);
+
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
+   * Busca un template y lo renderiza.
+   * ---------------------------------------------------------------------------
+   * @param   string  $tpl        Template a renderizar.
+   * @param   array   $vars       Variables de la vista.
+   * @param   array   $options    Opciones para la vista.
+   * @param   array   $checkView  Indica si se desea o no chequear si la vista
+   *                              existe.
+   * @return  any                 Respuesta de manejador configurado.
+   */
+  public static function template($tpl, array $vars = array(),
+                                  array $options = array(), $checkView = true){
+
+    return self::ring('response.template',
+      Am::findFile($tpl), $vars, $options, $checkView);
+
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
+   * Redirigir a una URL.
+   * ---------------------------------------------------------------------------
+   * @param   string $url   URL que se desea ir.
+   */
+  public static function go($url){
+
+    return self::ring('response.go', $url);
+
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
+   * Redirigir a una URL formateandola con self::url.
+   * ---------------------------------------------------------------------------
+   * @param   string $path  URL de la app que se desea redirigir.
+   */
+  public static function redirect($url){
+
+    return self::go(self::url($url));
 
   }
 
@@ -660,28 +709,6 @@ final class Am{
                                     array $params = array()){
 
     return self::ring('response.controller', $action, $env, $params);
-
-  }
-
-  /**
-   * ---------------------------------------------------------------------------
-   * Busca un template y lo renderiza.
-   * ---------------------------------------------------------------------------
-   * @param   string  $tpl      Template a renderizar.
-   * @param   array   $env      Variables de entorno
-   * @param   array   $params   Parámetros obtenidos de la rutas
-   * @return  any               Respuesta de manejador configurado.
-   */
-  public static function template($tpl, array $env = array(),
-                                  array $params = array()){
-
-    // Mezclar variables de entorno con los parametros
-    $vars = array_merge($env, $params);
-
-    // Obtener la ruta de la vista
-    $tpl = Am::findFile($tpl);
-
-    return self::ring('response.template', $tpl, $vars);
 
   }
 
@@ -842,30 +869,6 @@ final class Am{
   public static function eServerUrl($url = ''){
 
     echo self::serverUrl($url);
-
-  }
-
-  /**
-   * ---------------------------------------------------------------------------
-   * Redirigir a una URL.
-   * ---------------------------------------------------------------------------
-   * @param   string $url   URL que se desea ir.
-   */
-  public static function go($url){
-
-    return self::ring('response.go', $url);
-
-  }
-
-  /**
-   * ---------------------------------------------------------------------------
-   * Redirigir a una URL formateandola con self::url.
-   * ---------------------------------------------------------------------------
-   * @param   string $path  URL de la app que se desea redirigir.
-   */
-  public static function redirect($url){
-
-    return self::go(self::url($url));
 
   }
 

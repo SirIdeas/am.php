@@ -58,6 +58,18 @@ class AmFileResponse extends AmResponse{
 
   /**
    * ---------------------------------------------------------------------------
+   * Asignar nombre con el que se descargará el archivo
+   * ---------------------------------------------------------------------------
+   * @param  string   $filename   Ruta del archivo a devolver.
+   * @return this
+   */
+  public function name($name){
+    $this->__p->name = $name;
+    return $this;
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
    * Asignar el archivo a descargar
    * ---------------------------------------------------------------------------
    * @param  string   $filename   Ruta del archivo a devolver.
