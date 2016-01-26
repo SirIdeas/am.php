@@ -54,7 +54,7 @@ p {
   overflow: auto;
 }
 .content {
-  max-width: 1180px;
+  max-width: 1440px;
   margin: 0 auto;
 }
 .inner {
@@ -422,14 +422,6 @@ p {
   display: block;
   margin: auto;
 }
-#sidebarLeft {
-  z-index: 1;
-  position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  width: 250px;
-}
 .logo-parent img {
   max-height: 130px;
   display: block;
@@ -447,10 +439,17 @@ p {
 .sidebar-left-footer p {
   margin: 5px 0 5px 0;
 }
+.spyscroll {
+  -webkit-transition: opacity linear 0.1s;
+  -moz-transition: opacity linear 0.1s;
+  -o-transition: opacity linear 0.1s;
+  -ms-transition: opacity linear 0.1s;
+  transition: opacity linear 0.1s;
+}
 #siteHeader,
 #siteFooter {
   position: fixed;
-  left: 250px;
+  left: 0;
   right: 0;
   z-index: 1;
 }
@@ -462,19 +461,19 @@ p {
   height: 60px;
   padding: 0 10px;
   font-size: 130%;
-  -webkit-transition: opacity linear 0.1s;
-  -moz-transition: opacity linear 0.1s;
-  -o-transition: opacity linear 0.1s;
-  -ms-transition: opacity linear 0.1s;
-  transition: opacity linear 0.1s;
   opacity: 1;
   -ms-filter: none;
   filter: none;
 }
-#siteHeader .content.dispel {
+#siteHeader .content .dispel {
   opacity: 0;
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
   filter: alpha(opacity=0);
+}
+#siteHeader .header-logo {
+  height: 46px;
+  margin: 7px 50px 7px 0;
+  display: inline-block;
 }
 #siteFooter {
   height: 35px;
@@ -496,27 +495,30 @@ p {
   vertical-align: top;
   padding-left: 10px;
 }
-#pageTitle .content {
-  -webkit-transition: opacity linear 0.1s;
-  -moz-transition: opacity linear 0.1s;
-  -o-transition: opacity linear 0.1s;
-  -ms-transition: opacity linear 0.1s;
-  transition: opacity linear 0.1s;
+#pageTitle .inner {
   opacity: 1;
   -ms-filter: none;
   filter: none;
 }
-#pageTitle .content.dispel {
+#pageTitle .inner .dispel {
   opacity: 0;
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
   filter: alpha(opacity=0);
 }
+#pageTitle .title-parent {
+  position: relative;
+  min-height: 200px;
+}
 #pageTitle h1 {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
   margin: 18px 0;
   line-height: 34px;
 }
 #wrapper {
-  margin: 60px 0 35px 250px;
+  margin: 60px 0 35px 0;
 }
 .home-page-title h1 {
   margin: 0;
@@ -556,20 +558,20 @@ ul.nav >li >span {
   font-size: 100%;
   font-weight: bold;
 }
-.content.inner h2,
-.content.inner h3,
-.content.inner h4 {
+.inner h2,
+.inner h3,
+.inner h4 {
   color: #673ab7;
 }
-.content.inner h2 {
+.inner h2 {
   margin-top: 30px;
   padding-top: 15px;
   border-top: 2px solid #e2d8f3;
 }
-.content.inner pre.mb5 {
+.inner pre.mb5 {
   margin-bottom: 5px;
 }
-.content.inner .nested-list ul {
+.inner .nested-list ul {
   padding-left: 25px;
 }
 .code-row {

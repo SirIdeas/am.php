@@ -63,17 +63,17 @@ $table('.table', $primaryColor);
 // -----------------------------------------------------------------------------
 $toolbarHeight          = 60px
 $siteHeaderHeight       = $toolbarHeight
+$siteLogoHeaderPadding  = 7px
 $siteFooterHeight       = 35px
-$sidebarLeftWidth       = 250px
-$pageTitlePaddingTop    = 200px
+$pageTitleMinHeight     = 200px
 $pageTitleH1Hmargin     = 18px
 $pageTitleH1Height      = 34px
 $logoHeight             = $pageTitleH1Hmargin*2 + $pageTitleH1Height + $toolbarHeight
 
-#sidebarLeft
-  z-index               1
-  fixed                 top left bottom
-  width                 $sidebarLeftWidth
+// #sidebarLeft
+//   z-index               1
+//   fixed                 top left bottom
+//   width                 $sidebarLeftWidth
 
 .logo-parent
   img
@@ -88,9 +88,12 @@ $logoHeight             = $pageTitleH1Hmargin*2 + $pageTitleH1Height + $toolbarH
   p
     margin              5px 0 5px 0
 
+.spyscroll
+  transition            opacity linear 0.1s
+
 #siteHeader
 #siteFooter
-  fixed                 left $sidebarLeftWidth right
+  fixed                 left 0 right
   z-index               1
   
 #siteHeader
@@ -102,10 +105,14 @@ $logoHeight             = $pageTitleH1Hmargin*2 + $pageTitleH1Height + $toolbarH
     font-size           130%
     
     // Effecto ocultar 
-    transition          opacity linear 0.1s
     opacity             1
-    &.dispel
+    .dispel
       opacity           0
+      
+  .header-logo
+    height              $siteHeaderHeight - $siteLogoHeaderPadding*2
+    margin              $siteLogoHeaderPadding 50px $siteLogoHeaderPadding 0
+    display             inline-block
     
 
 #siteFooter
@@ -126,18 +133,21 @@ $logoHeight             = $pageTitleH1Hmargin*2 + $pageTitleH1Height + $toolbarH
   padding-left          10px
 
 #pageTitle
-  .content
+  .inner
     // Effecto ocultar 
-    transition          opacity linear 0.1s
     opacity             1
-    &.dispel
+    .dispel
       opacity           0
+  .title-parent
+    position            relative
+    min-height          $pageTitleMinHeight
   h1
+    absolute            bottom left right
     margin              $pageTitleH1Hmargin 0
     line-height         $pageTitleH1Height
 
 #wrapper
-  margin                $siteHeaderHeight 0 $siteFooterHeight $sidebarLeftWidth
+  margin                $siteHeaderHeight 0 $siteFooterHeight 0
 
 .home-page-title
   h1
@@ -170,7 +180,7 @@ ul.nav
       font-size         100%
       font-weight       bold
 
-.content.inner
+.inner
   h2
   h3
   h4
