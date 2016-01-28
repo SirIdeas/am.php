@@ -31,16 +31,16 @@ class AmController extends AmResponse{
 
   /**
    * ---------------------------------------------------------------------------
-   * Asigna el nombre de la vista a renderizar.
+   * Asigna el nombre de la vista a setView.
    * ---------------------------------------------------------------------------
-   * Es un Alias de la funcion setView que agrega .php al final del valor
+   * Es un Alias de la funcion setRender que agrega .php al final del valor
    * recibido.
    * @param   String  $view   Nombre de la vista que se desea asignar.
    * @return  $this
    */
-  final protected function render($view){
+  final protected function setView($view){
     // Las vista de las acciones son de extencion .php
-    return $this->setView(self::getViewName($view));
+    return $this->setRender(self::getViewName($view));
   }
 
   /**
@@ -424,9 +424,8 @@ class AmController extends AmResponse{
    * Asignar la vista actual.
    * ---------------------------------------------------------------------------
    * @param   string  $view   Nombre de la vista
-   * @return  this
-   */
-  final protected function setView($view){
+   * @return  setView   */
+  final protected function setRender($view){
 
     return $this->set('view', $view);
 
@@ -527,7 +526,7 @@ class AmController extends AmResponse{
     // Crear respuesta de vista si lo devuelto no es una respuesta
     if(!$ret instanceof parent){
 
-      $ret = $this->view($this->getView());
+      $ret = $this->view();
 
     }
 
