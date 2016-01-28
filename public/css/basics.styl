@@ -131,7 +131,14 @@ $generateGrid($rowSelector = '.row', $colSelector = '.col', $numSections = 12)
   // Ancho por columna
   for $i in (1..$numSections)
     &.s{$i}
-      width               $i*(100 / $numSections)*1%
+      width                 $i*(100 / $numSections)*1%
+      
+$generateGridOffset($numSections = 12)
+  
+  // Ancho por columna
+  for $i in (1..$numSections)
+    &.ofs{$i}
+      margin-left           $i*(100 / $numSections)*1%
 
 // -----------------------------------------------------------------------------
 // Colores

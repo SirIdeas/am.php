@@ -1,8 +1,9 @@
 (:: set:pageTitle='Amathista Framework' :)
 
-<section id="siteHeader" data-height="#pageTitle" data-class="box-shadow-2" class="primary bg-d1 spyscroll">
-  <div class="content valign-middle">
-    <img class="header-logo" src="(:/:)/images/am_hlogo_w.png">
-    <span class="spyscroll dispel" data-equal="0" data-class="dispel">(:= $pageTitle :)</span>
+<section class="site-header primary bg-d1 spyscroll" data-height="#pageTitle" data-class="box-shadow-2">
+  <div class="content row">
+    <div class="col s9 ofs3 valign-middle spyscroll dispel on" data-equal="0" data-class="on">
+      <div>(:= $pageTitle :)</div>
+    </div>
   </div>
 </section>

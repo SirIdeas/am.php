@@ -9,7 +9,7 @@
   <h2>Rutas</h2>
   
   <p>
-    Configurar una ruta a apuntar a una acción de un controlador:
+    Crear ruta con una acción de un controlador:
   </p>
 
   <pre><code class="language-php">(:= getCodeFile('controllers/routing.conf.php') :)</code></pre>

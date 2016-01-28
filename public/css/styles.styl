@@ -10,6 +10,7 @@ $primaryColor           = #673AB7
 $clear()
 $generateShadows()
 $generateGrid()
+$generateGridOffset()
 $generateButton()
 
 $generatePallete('.primary', {
@@ -45,9 +46,6 @@ $generatePallete('.secondary', {
 
 $table('.table', $primaryColor);
 
-.full-height
-  height                100%
-  
 .valign-middle
   $verticalAlignChilds  middle
 
@@ -70,11 +68,6 @@ $pageTitleH1Hmargin     = 18px
 $pageTitleH1Height      = 34px
 $logoHeight             = $pageTitleH1Hmargin*2 + $pageTitleH1Height + $toolbarHeight
 
-// #sidebarLeft
-//   z-index               1
-//   fixed                 top left bottom
-//   width                 $sidebarLeftWidth
-
 .logo-parent
   img
     max-height          $logoHeight
@@ -88,34 +81,44 @@ $logoHeight             = $pageTitleH1Hmargin*2 + $pageTitleH1Height + $toolbarH
   p
     margin              5px 0 5px 0
 
-.spyscroll
+// Effecto ocultar 
+.dispel
   transition            opacity linear 0.1s
+  opacity               1
+  &.on
+    opacity             0
 
-#siteHeader
-#siteFooter
+.site-header
+.site-footer
   fixed                 left 0 right
   z-index               1
   
-#siteHeader
+.site-header
   top                   0
   height                $siteHeaderHeight
   .content
-    height              $siteHeaderHeight
     padding             0 10px
     font-size           130%
-    
-    // Effecto ocultar 
-    opacity             1
-    .dispel
-      opacity           0
-      
-  .header-logo
-    height              $siteHeaderHeight - $siteLogoHeaderPadding*2
-    margin              $siteLogoHeaderPadding 50px $siteLogoHeaderPadding 0
-    display             inline-block
-    
 
-#siteFooter
+.side-bar
+  fixed                 left 0 right 0
+  .content
+    position            relative
+  
+.side-bar-inner
+  absolute              top 0 left 0
+
+.header-logo
+  display               block
+  height                $siteHeaderHeight - $siteLogoHeaderPadding*2
+  margin                $siteLogoHeaderPadding auto
+  
+.sub-header-logo
+  display               block
+  height                160px
+  margin                20px auto 0 auto
+
+.site-footer
   height                $siteFooterHeight
   bottom                0
   color                 #555
@@ -132,21 +135,17 @@ $logoHeight             = $pageTitleH1Hmargin*2 + $pageTitleH1Height + $toolbarH
   vertical-align        top
   padding-left          10px
 
-#pageTitle
-  .inner
-    // Effecto ocultar 
-    opacity             1
-    .dispel
-      opacity           0
-  .title-parent
-    position            relative
-    min-height          $pageTitleMinHeight
+.page-title-container
+  position              relative
+.title-parent
+  position              relative
+  min-height            $pageTitleMinHeight
   h1
     absolute            bottom left right
     margin              $pageTitleH1Hmargin 0
     line-height         $pageTitleH1Height
 
-#wrapper
+.wrapper
   margin                $siteHeaderHeight 0 $siteFooterHeight 0
 
 .home-page-title
@@ -170,15 +169,19 @@ ul.nav
       text-decoration   none
       display           block
       padding           0 15px
-      &:hover
-        background-color rgba(158,158,158,0.2)
+      // &:hover
+      //   background-color rgba(158,158,158,0.2)
   >li
     padding-bottom      5px
     >a
     >span
       padding           5px 15px
-      font-size         100%
+      font-size         120%
       font-weight       bold
+      color             $primaryColor
+
+.sub-nav
+  margin-bottom         20px
 
 .inner
   h2
