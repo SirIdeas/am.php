@@ -335,7 +335,61 @@
 </div>
 
 <div>
-  <h2>Respuestas</h2>
+  <h2>Recibir parámetros de la ruta</h2>
+  <p>
+    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sequi eligendi assumenda quae sit quia ullam omnis dolor repellat cumque consectetur autem ratione vitae non, hic, dignissimos magnam nobis mollitia reprehenderit.
+  </p>
+</div>
+
+<div>
+  <h2>Renderizado de vistas</h2>
+  <p>
+    Por defecto, al terminar ejecutar una acción se renderiza una vista con el mismo nombre de la acción y extensión <code><strong>.php</strong></code>, la cual es buscada dentro de los directorios de vistas del controlador. En el caso de que no exista simplemente no se realiza acción alguna. La vista tampoco de renderiza en el caso de que se devuelva un array o la instancia de un objecto.
+  </p>
+
+  <pre class="table-pre"><code class="language-php">(:= getCodeFile('controllers/render.Foo.php') :)</code></pre>
+  
+  <p>
+    Para pasar variables a la vista se asignan propiedades al controlador
+  </p>
+
+  <div class="code-row">
+    <table>
+      <tr>
+        <td class="s6">
+          <pre><code class="language-php">(:= getCodeFile('controllers/render.action.Foo.php') :)</code></pre>
+          <div></div>
+        </td>
+        <td class="s6">
+          <pre><code class="language-php">(:= getCodeFile('controllers/render.view.bar.php') :)</code></pre>
+          <div></div>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <p>
+    Para cambiar la vista que se renderizará por la de otra del mismo controlador se utiliza el método <code><strong>AmController::setView</strong></code>:
+  </p>
+
+  <pre class="table-pre"><code class="language-php">(:= getCodeFile('controllers/render.setView.php') :)</code></pre>
+
+  <p>
+    Cambiar la vista que se renderizará por otra en de la aplicación se utiliza el método <code><strong>AmController::setRender</strong></code>:
+  </p>
+
+  <pre class="table-pre"><code class="language-php">(:= getCodeFile('controllers/render.setRender.php') :)</code></pre>
+
+  <p>
+    Para renderizar la una vista y terminar la acción se utiliza el método <code><strong>AmController:view</strong></code>
+  </p>
+
+  <pre class="table-pre"><code class="language-php">(:= getCodeFile('controllers/render.view.php') :)</code></pre>
+
+</div>
+
+<div>
+  <h2>Tipos de respuestas</h2>
   
   <p>
     Los controladores por si solos son un tipo de respuesta, es por esto que heredan de <code><strong>AmResponse</strong></code>. Sin embargo existen otros tipos de respuestas, las cuales se puede utilizar como retorno tanto de los filtros como las acciones del controlador. Las diferentes respuestas que puede darse son:
