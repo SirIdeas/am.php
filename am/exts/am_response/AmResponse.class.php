@@ -234,7 +234,7 @@ class AmResponse extends AmObject{
    * ---------------------------------------------------------------------------
    * Agrega contenido al inicio del cuerpo de la respuesta.
    * ---------------------------------------------------------------------------
-   * @param   string  $content  Cuerpo de la respuesta.   
+   * @param   string  $content  Cuerpo de la respuesta.
    * @return  this
    */
   public function addContentToBegin($content){
@@ -246,15 +246,29 @@ class AmResponse extends AmObject{
 
   /**
    * ---------------------------------------------------------------------------
-   * Agrega un header al listado de headers de la respuesta
+   * Agrega un header al listado de headers de la respuesta.
    * ---------------------------------------------------------------------------
-   * @param string $header Header a agregar
+   * @param   string  $header   Header a agregar.
+   * @param   string  $key      Posición donde se quiere agregar la cabecera.
+   * @return          this
    */
   public function addHeader($header, $key = null){
     if(isset($key))
       $this->__p->headers[$key] = $header;
     else
       $this->__p->headers[] = $header;
+    return $this;
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
+   * Agrega un header al listado de headers de la respuesta.
+   * ---------------------------------------------------------------------------
+   * @param   string  $key  Posicion de la cabecera que se desea eliminar.
+   * @return          this
+   */
+  public function remoteHeader($key){
+    unset($this->__p->headers[$key]);
     return $this;
   }
 
