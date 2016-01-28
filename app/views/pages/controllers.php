@@ -330,6 +330,12 @@
       Listado de cabeceras a incluir en la respuesta. Si el controlador posee un controlador padre, el primero hereda las cabeceras del segundo.
     </p>
 
+    <p>
+      Adicionalmente se puede se puede manejar las cabeceras con los métodos <code><strong>AmController:addHeader</strong></code> y <code><strong>AmControllers::removeHeader</strong></code>:
+    </p>
+
+    <pre class="table-pre"><code class="language-php">(:= getCodeFile('controllers/headers.php') :)</code></pre>
+
   </div>
 
 </div>
@@ -337,8 +343,26 @@
 <div>
   <h2>Recibir parámetros de la ruta</h2>
   <p>
-    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sequi eligendi assumenda quae sit quia ullam omnis dolor repellat cumque consectetur autem ratione vitae non, hic, dignissimos magnam nobis mollitia reprehenderit.
+    Todos los métodos correspondientes a las acciones y filtros llamados durante la ejecución de una acción reciben como argumentos los parámetros configurados en la ruta y obtenidos de la petición HTTP.
   </p>
+
+  <pre class="table-pre"><code class="language-php">(:= getCodeFile('controllers/params.routing.php') :)</code></pre>
+
+  <div class="code-row">
+    <table>
+      <tr>
+        <td class="s5">
+          <pre class="table-pre"><code class="language-php">(:= getCodeFile('controllers/params.controllers.php') :)</code></pre>
+          <div></div>
+        </td>
+        <td class="s7">
+          <pre class="table-pre"><code class="language-php">(:= getCodeFile('controllers/params.Foo.php') :)</code></pre>
+          <div></div>
+        </td>
+      </tr>
+    </table>
+  </div>
+
 </div>
 
 <div>
