@@ -191,9 +191,9 @@ class AmCoder{
 
       $data = (array)$data;
 
-      $isAssocArray = isAssocArray($data);
+      $isHash = isHash($data);
 
-      if(!$isAssocArray){
+      if(!$isHash){
 
         $haveArray = false;
         $dataFormated = array();
@@ -221,7 +221,7 @@ class AmCoder{
 
       foreach($data as $i => $v){
         $encode = self::_encode($v, $prefixI);
-        if($isAssocArray){
+        if($isHash){
           $str .= "{$prefixI}'{$i}' => {$encode}\n";
         }else{
           $str .= "{$prefixI}{$encode}\n";
