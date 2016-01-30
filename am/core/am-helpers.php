@@ -292,3 +292,10 @@ function camelCase($s, $cfc = false){
   return preg_replace_callback('/_([a-z])/', $func, $s);
 
 }
+
+// Convierte un valor a booleano
+function parseBool($value){
+  if(in_array($value, array(true, 1, 'true', '1'))) return true;
+  if(in_array($value, array(false, 0, 'false', '0'))) return false;
+  return null;
+}

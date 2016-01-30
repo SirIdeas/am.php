@@ -224,11 +224,4 @@ final class AmORM{
     return preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $string) != 0;
   }
 
-  // Convierte un valor a booleano
-  public static function parseBool($value){
-    if(in_array($value, array(true, 1, 'true', '1'))) return true;
-    if(in_array($value, array(false, 0, 'false', '0'))) return false;
-    return null;
-  }
-
 }

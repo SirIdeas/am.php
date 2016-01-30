@@ -777,8 +777,8 @@ class MysqlSource extends AmSource{
     $column["type"] = itemOr($column["type"], self::$TYPES, $column["type"]);
 
     // Parse bool values
-    $column["primaryKey"] = AmORM::parseBool($column["primaryKey"]);
-    $column["allowNull"]  = AmORM::parseBool($column["allowNull"]);
+    $column["primaryKey"] = parseBool($column["primaryKey"]);
+    $column["allowNull"]  = parseBool($column["allowNull"]);
 
     // Get len of field
     // if is a bit, char or varchar take len
