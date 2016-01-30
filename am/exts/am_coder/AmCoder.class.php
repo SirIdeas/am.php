@@ -162,7 +162,33 @@ class AmCoder{
    */
   public static function encode($data){
     // return "<?php\n\nreturn " . self::_encode($data, '', ';') . "\n";
-    return "<?php\n\nreturn " . var_export($data, true) . ';';
+    
+    $str = var_export($data, true);
+    $lines = explode("\n", $str);
+  
+    // improves result encoding.
+    $prev = false;
+    foreach($lines as $i => $str){
+      if(trim($str) == '),' && $prev){
+        $lines[$i-2] .= '),';
+        $lines[$i] = false;
+      }elseif(trim($str) == 'array ('){
+        $lines[$i] = str_replace('array (', 'array(', $str);
+        if($i > 0){
+          $lines[$i-1] .= trim($lines[$i]);
+          $lines[$i] = false;
+        }
+        $prev = true;
+      }else{
+        $prev = false;
+      }
+    }
+
+    $lines = array_filter($lines);
+    $lines = implode("\n", $lines);
+
+    return "<?php\n\nreturn {$lines};";
+
   }
 
   // /**
@@ -238,6 +264,6 @@ class AmCoder{
 
   //   return "{$data}{$subfix}";
 
-  }
+  // }
 
 }
