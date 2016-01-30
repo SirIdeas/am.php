@@ -254,3 +254,41 @@ function merge_if_both_are_array(array $arr1, array $arr2){
   return array_merge($arr1, $arr2);
 
 }
+
+
+// Devuelve la cadena 's' convertida en formato under_score
+function underscore($s) {
+
+  // Primer caracter en miniscula
+  if(!empty($s)){
+    $s[0] = strtolower($s[0]);
+  }
+
+  // Crear funcion para convertir en minuscula
+  $func = create_function('$c', 'return "_" . strtolower($c[1]);');
+
+  // Operar
+  return preg_replace_callback('/([A-Z])/', $func, str_replace(' ', '_', $s));
+
+}
+
+// Devuelve una cadena 's' en formato camelCase. Si 'cfc == true' entonces
+// el primer caracter tambien es convertido en mayusculas
+function camelCase($s, $cfc = false){
+
+  // Primer caracter en mayuscula o en miniscula
+  if(!empty($s)){
+    if($cfc){
+      $s[0] = strtoupper($s[0]);
+    }else{
+      $s[0] = strtolower($s[0]);
+    }
+  }
+
+  // Funcion para convertir cada caracter en miniscula
+  $func = create_function('$c', 'return strtoupper($c[1]);');
+
+  // Operar
+  return preg_replace_callback('/_([a-z])/', $func, $s);
+
+}
