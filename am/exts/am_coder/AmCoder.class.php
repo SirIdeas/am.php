@@ -161,81 +161,82 @@ class AmCoder{
    * @return  string          Resultado de la codificación.
    */
   public static function encode($data){
-    return "<?php\n\nreturn " . self::_encode($data, '', ';') . "\n";
+    // return "<?php\n\nreturn " . self::_encode($data, '', ';') . "\n";
+    return "<?php\n\nreturn " . var_export($data, true) . ';';
   }
 
-  /**
-   * ---------------------------------------------------------------------------
-   * Algoritmo para codificar la data.
-   * ---------------------------------------------------------------------------
-   * @param   array   $data     Array a codificar.
-   * @param   string  $prefix   Prefijo de elemento. Sirve para ir colocando el
-   *                            margen.
-   * @param   string  $subfix   Subfijo de elemento. Sirve para colocar los
-   *                            puntos y comas y las comas.
-   * @return  string            Resultado de la codificación
-   */
-  public static function _encode($data, $prefix = '', $subfix = ',') {
+  // /**
+  //  * ---------------------------------------------------------------------------
+  //  * Algoritmo para codificar la data.
+  //  * ---------------------------------------------------------------------------
+  //  * @param   array   $data     Array a codificar.
+  //  * @param   string  $prefix   Prefijo de elemento. Sirve para ir colocando el
+  //  *                            margen.
+  //  * @param   string  $subfix   Subfijo de elemento. Sirve para colocar los
+  //  *                            puntos y comas y las comas.
+  //  * @return  string            Resultado de la codificación
+  //  */
+  // public static function _encode($data, $prefix = '', $subfix = ',') {
 
-    if (!isset($data)) {
-      return 'null$subfix';
-    }elseif(is_numeric($data)){
-      return "{$data}{$subfix}";
-    }elseif(is_string($data)){
-      return "'{$data}'{$subfix}";
-    }elseif($data === true){
-      return "true{$subfix}";
-    }elseif($data === false){
-      return "false{$subfix}";
-    }elseif(is_array($data) || is_object($data)){
+  //   if (!isset($data)) {
+  //     return 'null$subfix';
+  //   }elseif(is_numeric($data)){
+  //     return "{$data}{$subfix}";
+  //   }elseif(is_string($data)){
+  //     return "'{$data}'{$subfix}";
+  //   }elseif($data === true){
+  //     return "true{$subfix}";
+  //   }elseif($data === false){
+  //     return "false{$subfix}";
+  //   }elseif(is_array($data) || is_object($data)){
 
-      $data = (array)$data;
+  //     $data = (array)$data;
 
-      $isHash = isHash($data);
+  //     $isHash = isHash($data);
 
-      if(!$isHash){
+  //     if(!$isHash){
 
-        $haveArray = false;
-        $dataFormated = array();
+  //       $haveArray = false;
+  //       $dataFormated = array();
 
-        foreach($data as $i => $v){
-          if(is_array($v) || is_object($v)){
-            $haveArray = true;
-          }else{
-            $dataFormated[] = self::_encode($v, '', '');
-          }
-        }
+  //       foreach($data as $i => $v){
+  //         if(is_array($v) || is_object($v)){
+  //           $haveArray = true;
+  //         }else{
+  //           $dataFormated[] = self::_encode($v, '', '');
+  //         }
+  //       }
 
-        if(!$haveArray){
+  //       if(!$haveArray){
 
-          $str = 'array(' . implode(',', $dataFormated) . "){$subfix}";
+  //         $str = 'array(' . implode(',', $dataFormated) . "){$subfix}";
 
-          return $str;
+  //         return $str;
 
-        }
+  //       }
 
-      }
+  //     }
 
-      $str = "array(\n";
-      $prefixI = "  {$prefix}";
+  //     $str = "array(\n";
+  //     $prefixI = "  {$prefix}";
 
-      foreach($data as $i => $v){
-        $encode = self::_encode($v, $prefixI);
-        if($isHash){
-          $str .= "{$prefixI}'{$i}' => {$encode}\n";
-        }else{
-          $str .= "{$prefixI}{$encode}\n";
-        }
+  //     foreach($data as $i => $v){
+  //       $encode = self::_encode($v, $prefixI);
+  //       if($isHash){
+  //         $str .= "{$prefixI}'{$i}' => {$encode}\n";
+  //       }else{
+  //         $str .= "{$prefixI}{$encode}\n";
+  //       }
 
-      }
+  //     }
 
-      $str .= "{$prefix}){$subfix}";
+  //     $str .= "{$prefix}){$subfix}";
 
-      return $str;
+  //     return $str;
 
-    }
+  //   }
 
-    return "{$data}{$subfix}";
+  //   return "{$data}{$subfix}";
 
   }
 
