@@ -10,7 +10,6 @@ $primaryColor           = #673AB7
 $clear()
 $generateShadows()
 $generateGrid()
-$generateGridOffset()
 $generateButton()
 
 $generatePallete('.primary', {
@@ -44,7 +43,7 @@ $generatePallete('.secondary', {
 })
 
 
-$table('.table', $primaryColor);
+$generateTableStyles('.table', $primaryColor);
 
 .valign-middle
   $verticalAlignChilds  middle
@@ -90,7 +89,7 @@ $logoHeight             = $pageTitleH1Hmargin*2 + $pageTitleH1Height + $toolbarH
 
 .site-header
 .site-footer
-  fixed                 left 0 right
+  fixed                 left right
   z-index               1
   
 .site-header
@@ -99,24 +98,6 @@ $logoHeight             = $pageTitleH1Hmargin*2 + $pageTitleH1Height + $toolbarH
   .content
     padding             0 10px
     font-size           130%
-
-.side-bar
-  fixed                 left 0 right 0
-  .content
-    position            relative
-  
-.side-bar-inner
-  absolute              top 0 left 0
-
-.header-logo
-  display               block
-  height                $siteHeaderHeight - $siteLogoHeaderPadding*2
-  margin                $siteLogoHeaderPadding auto
-  
-.sub-header-logo
-  display               block
-  height                160px
-  margin                20px auto 0 auto
 
 .site-footer
   height                $siteFooterHeight
@@ -128,15 +109,41 @@ $logoHeight             = $pageTitleH1Hmargin*2 + $pageTitleH1Height + $toolbarH
     height              $siteFooterHeight
   a
     color               inherit
+    
+.site-sidebar
+  fixed                 top $siteHeaderHeight bottom $siteFooterHeight
+  .title-parent
+    absolute            top left right
+  .nav
+    absolute            bottom left right top $pageTitleMinHeight
+    &:hover
+      overflow          auto
+
+.site-body
+  absolute              left right
+  margin-bottom         $siteFooterHeight
+
+.page-title
+  margin-top            $siteHeaderHeight
+  position              relative
+  z-index               1
+  
+.header-logo
+  display               block
+  height                $siteHeaderHeight - $siteLogoHeaderPadding*2
+  margin                $siteLogoHeaderPadding auto
+  
+.sub-header-logo
+  display               block
+  height                160px
+  margin                20px auto 0 auto
       
 .nav-item
   line-height           40px
   display               inline-block
   vertical-align        top
   padding-left          10px
-
-.page-title-container
-  position              relative
+  
 .title-parent
   position              relative
   min-height            $pageTitleMinHeight

@@ -1,9 +1,7 @@
 (:: parent:views/tpl.php :)
-(:: place:views/header.php :)
-(:: place:views/sidebar.php :)
 
-<section class="wrapper">
-  (:: child :)
-</section>
+(:: place:views/header.php :)
+
+(:: child :)
 
 (:: place:views/footer.php :)

@@ -76,17 +76,13 @@ $clear()
   .scrollable
     overflow                auto
     
-  .content
-    max-width               1440px
-    margin                  0 auto
-    
   .inner
     padding                 10px
-
+    
 // -----------------------------------------------------------------------------
 // Estilos para tablas
 // -----------------------------------------------------------------------------
-$table($tableClass = '.table', $color)
+$generateTableStyles($tableClass = '.table', $color)
   {$tableClass}
     margin-top              10px
     width                   100%
@@ -111,10 +107,33 @@ $table($tableClass = '.table', $color)
 // -----------------------------------------------------------------------------
 // Grid
 // -----------------------------------------------------------------------------
-$generateGrid($rowSelector = '.row', $colSelector = '.col', $numSections = 12)
+// 320px, iPhone4, iPhone5, Lumia520, Lumia N9
+// 360px, BB Z30, Nexus5, Galaxy Note3/Note2/S3/S44
+// 375px, iPhone6
+// 384px, Nexus4, Optimus L70
+// 412px, Nexus6
+// 414px, iPhone6 plus
+// 600px, BB Play Book, Nexus7
+// 768px, iPad
+// 800px, Nexus10
+// 1280px, Laptop MDPI, Laptop Touch
+// 1440px, Laptop HiDPI
+// 1600px, Amazon Kindle
+$generateGrid($contentCls = 'content', $rowCls = 'row', $colCls = 'col', $constantCls = 'col', $offsetCls = 'os', $hideCls = 'hide', $numSections = 12, $screens = {
+    'c': 0,
+    'v': 512px,
+    's': 768px,
+    'm': 1024px,
+    'l': 1280px,
+    'x': 1440px,
+  })
   
+  // Content en general
+  .{$contentCls}
+    margin                  0 auto
+    
   // Estilos filas
-  {$rowSelector}
+  .{$rowCls}
     &:after
     &:before
       content               " "
@@ -123,22 +142,41 @@ $generateGrid($rowSelector = '.row', $colSelector = '.col', $numSections = 12)
       clear                 both
   
   // Estilos Columnas
-  {$colSelector}
+  .{$colCls}
     display                 inline-block
     float                   left
     box-sizing              border-box
   
-  // Ancho por columna
-  for $i in (1..$numSections)
-    &.s{$i}
-      width                 $i*(100 / $numSections)*1%
+  for $screenClass, $value in $screens
+    $minWidth = $value + 32px
+    @media screen and (min-width: $minWidth)
       
-$generateGridOffset($numSections = 12)
-  
-  // Ancho por columna
-  for $i in (1..$numSections)
-    &.ofs{$i}
-      margin-left           $i*(100 / $numSections)*1%
+      if $value
+        // Content max-width
+        .{$contentCls}
+          max-width         $value
+        
+        // Ocultar elementos
+        .{$hideCls}-{$screenClass}
+          display           none
+              
+      for $i in (1..$numSections)
+        
+        // Columnas
+        .{$screenClass}{$i}
+          width             $i*(100 / $numSections)*1%
+          
+        // Width fijo
+        if $constantCls
+          if $value
+            .{$constantCls}{$i}
+            .{$constantCls}-{$screenClass}{$i}
+              width             $i*($value / $numSections)
+        
+        // Margen anterior
+        if $offsetCls
+          .{$offsetCls}-{$screenClass}{$i}
+            margin-left     $i*(100 / $numSections)*1%
 
 // -----------------------------------------------------------------------------
 // Colores
