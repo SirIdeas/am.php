@@ -30,7 +30,7 @@
 final class AmGenerator{
 
   // Generar clase base para un model
-  public final static function classBaseModel(AmTable $table){
+  public final static function classBaseModel(AmSource $source, AmTable $table){
 
     $existMethods = get_class_methods('AmModel');
     $fields = array_keys((array)$table->getFields());
@@ -39,31 +39,11 @@ final class AmGenerator{
 
     // Agregar métodos GET para cada campos
 
-    $lines[] = "class {$table->getBaseModelClassname()} extends AmModel{\n";
+    $lines[] = "class {$source->getBaseModelClassname($table->getTableName())} extends AmModel{\n";
 
     $lines[] = '  protected static';
     $lines[] = "    \$sourceName = '{$table->getSource()->getName()}',";
     $lines[] = "    \$tableName  = '{$table->getTableName()}';\n";
-
-    // // Add getters methods
-    // $lines[] = '  // GETTERS';
-    // foreach($fields as $attr){
-    //   $methodName = "get_{$attr}";
-    //   $prefix = in_array($methodName, $existMethods)? '//' : '';
-    //   $existMethods[] = $methodName;
-    //   $lines[] = "  {$prefix}public function {$methodName}(){ return \$this->{$attr}; }";
-    // }
-    // $lines[] = '';
-
-    // // Add setters methods
-    // $lines[] = '  // SETTERS';
-    // foreach($fields as $attr){
-    //   $methodName = "set_{$attr}";
-    //   $prefix = in_array($methodName, $existMethods)? '//' : '';
-    //   $existMethods[] = $methodName;
-    //   $lines[] = "  {$prefix}public function {$methodName}(\$value, \$isRaw = false){ \$this->setValue('$attr', \$value, \$isRaw); return \$this; }";
-    // }
-    // $lines[] = '';
 
     // Add references to this class
     $methodsAddeds = array();
@@ -174,8 +154,10 @@ final class AmGenerator{
       if(count($cols) == 1){
         $colName = array_keys($cols);
         $f = $table->getField($colName[0]);
-        if(!$f->allowNull())
-          $validators[] = "    \$this->setValidator('{$f->getName()}', 'in_query', array('query' => AmORM::table('{$r->getTable()}', '{$table->getSource()->getName()}')->all(), 'field' => '{$cols[$colName[0]]}'));";
+        if(!$f->allowNull()){
+          $colStr = $cols[$colName[0]];
+          $validators[] = "    \$this->setValidator('{$f->getName()}', 'in_query', array('query' => AmORM::table('{$r->getTable()}', '{$table->getSource()->getName()}')->all(), 'field' => '{$colStr}'));";
+        }
       }
     }
 

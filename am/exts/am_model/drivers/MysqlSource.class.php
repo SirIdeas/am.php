@@ -386,7 +386,7 @@ class MysqlSource extends AmSource{
         $field = "({$field->sql()})";
 
       // Agregar parametro AS
-      $selects[] = AmORM::isNameValid($as) ? "$field AS '$as'" : (string)$field;
+      $selects[] = isNameValid($as) ? "$field AS '$as'" : (string)$field;
 
     }
 
@@ -416,7 +416,7 @@ class MysqlSource extends AmSource{
       }elseif($from instanceof AmTable){
         // Si es una tabla se concatena el nombre de la BD y el de la tabla
         $from = $this->getParseNameTable($from->getTableName());
-      }elseif(AmORM::isNameValid($from)){
+      }elseif(isNameValid($from)){
         // Si es una tabla se concatena el nombre de la BD y el de la tabla como strin
         $from = $this->getParseNameTable($from);
       }elseif(false !== (preg_match("/^([a-zA-Z_][a-zA-Z0-9_]*)\.([a-zA-Z_][a-zA-Z0-9_]*)$/", $from, $matches)!= 0)){
@@ -427,7 +427,7 @@ class MysqlSource extends AmSource{
       }
 
       // Agregar parametro AS
-      $froms[] = AmORM::isNameValid($as) ? "$from AS $as" : $from;
+      $froms[] = isNameValid($as) ? "$from AS $as" : $from;
 
     }
 

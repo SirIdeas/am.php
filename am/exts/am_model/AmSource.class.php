@@ -136,52 +136,76 @@ abstract class AmSource extends AmObject{
   }
 
   // Crea el archivo de configuracion para una fuente
-  public function createConfFile($rw = true){
+  public function generateConfFile($path = null, $conf = null, $rw = true){
 
     // Obtener de el nombre del archivo destino
-    $path = $this->getConfFilename();
+    if(!isset($path))
+      $path = $this->getConfFilename();
+
+    if(!isset($conf))
+      $conf = $this->toArray();
+
     if(!is_file($path) || $rw){
-      AmCoder::write($path, $this->toArray());
+      AmCoder::write($path, $conf);
       return true;
     }
     return false;
   }
 
-  // Crear carpetas de todas las tablas de la BD
-  public function mkdirBaseModel(){
+  // Crea el archivo que contiene clase para la tabla
+  public function generateBaseModelFile($model, AmTable $table){
 
-    $ret = array(); // Para retorno
+    // Incluir la clase para generar
+    AmORM::requireFile('AmGenerator.class');
 
-    $tables = $this->newQuery($this->sqlGetTables())
-                   ->getCol('tableName');
+    // Obtener el nombre del archivo destino
+    $path = $this->getBaseModelClassFilename($model);
+    
+    // Crear directorio donde se ubicará el archivo si no existe
+    @mkdir(dirname($path), 755, true);
 
-    foreach ($tables as $t){
-      // Obtener instancia de la tabla
-      $table = $this->describeTable($t);
-      // Crear modelo
-      $ret[$t] = $table->mkdirBaseModel();
-    }
-
-    return $ret;
+    // Generar el archivo
+    file_put_contents($path, "<?php\n\n" .
+      AmGenerator::classBaseModel($this, $table));
+    
+    return true;
 
   }
 
+  public function generateBaseModel($model, $table){
+    return array(
+
+      // Crear archivo de configuración
+      'conf' => $this->generateConfFile(
+        $this->getBaseModelConfFilename($model),
+        $table->toArray()
+      ),
+
+      // Crear clase
+      'model' => $this->generateBaseModelFile($model, $table)
+
+    );
+  }
+
   // Metodo para crear todos los modelos de la BD
-  public function createClassModels(){
+  public function generateClassModels(){
 
      // Para retorno
     $ret = array(
-      'source' => $this->createConfFile(),
+      'source' => $this->generateConfFile(),
       'tables' => array(),
     );
 
+    // Obtener listado de nombres de tablas
     $tables = $this->newQuery($this->sqlGetTables())->getCol('tableName');
 
-    foreach ($tables as $t){
+    foreach ($tables as $model){
+
       // Obtener instancia de la tabla
-      $table = $this->describeTable($t);
-      // Crear modelo
-      $ret['tables'][$t] = $table->createClassModels();
+      $table = $this->describeTable($model);
+
+      $ret['tables'][$model] = $this->generateBaseModel($model, $table);
+
     }
 
     return $ret;
@@ -189,7 +213,7 @@ abstract class AmSource extends AmObject{
   }
 
   // Crea todas las tablas de la BD
-  public function createClassTables(){
+  public function createTables(){
 
     $ret = array(); // Para el retorno
 

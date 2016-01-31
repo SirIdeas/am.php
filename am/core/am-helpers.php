@@ -299,3 +299,7 @@ function parseBool($value){
   if(in_array($value, array(false, 0, 'false', '0'))) return false;
   return null;
 }
+
+function isNameValid($str){
+  return preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $str) != 0;
+}

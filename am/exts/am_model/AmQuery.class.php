@@ -80,7 +80,7 @@ class AmQuery extends AmObject{
 
   // Asignar signar la clausula distint
   public function distinct(){ $this->distinct = true; return $this; }
-  public function noDistinct(){ $this->distinct = true; return $this; }
+  public function noDistinct(){ $this->distinct = false; return $this; }
 
   // Ejecuta la consulta SQL
   public function execute(){
@@ -140,14 +140,14 @@ class AmQuery extends AmObject{
 
     // Si no se indicó el argumetno $as
     if(empty($as)){
-      if (AmORM::isNameValid($field)){
+      if (isNameValid($field)){
         // Agregar en una posicion espeficia
         $this->selects[$field] = $field;
       }else{
         // Agregar al final
         $this->selects[] = $field;
       }
-    }elseif(AmORM::isNameValid($as)){
+    }elseif(isNameValid($as)){
       // Agregar en una posicion espeficia
       $this->selects[$as] = $field;
     }else{
@@ -189,7 +189,7 @@ class AmQuery extends AmObject{
         if(isset($table) && $table instanceof AmTable){
           $this->model = $table->getModelName();
         }
-      }elseif(is_string($from) && AmORM::isNameValid($from)){
+      }elseif(is_string($from) && isNameValid($from)){
         // Asignar modelo
         $this->model = $from;
       }
@@ -205,7 +205,7 @@ class AmQuery extends AmObject{
       }elseif($from instanceof AmTable){
         // Si es nua tabla se asigna en una posicion especifica
         $this->froms[$from->getTableName()] = $from;
-      }elseif (AmORM::isNameValid($from)){
+      }elseif (isNameValid($from)){
         // Se asigna en una posicion especifica
         $this->froms[$from] = $from;
       }else{
@@ -213,7 +213,7 @@ class AmQuery extends AmObject{
         $this->froms[] = $from;
       }
 
-    }elseif(AmORM::isNameValid($as)){
+    }elseif(isNameValid($as)){
       // Adicion en posicion determinada
       $this->froms[$as] = $from;
     }else{
@@ -546,21 +546,59 @@ class AmQuery extends AmObject{
   }
 
   // Metodos para obtener el SQL de cada clausula
-  public function sqlSelect($with = true){ return $this->getSource()->sqlSelect($this, $with); }
-  public function sqlFrom($with = true){ return $this->getSource()->sqlFrom($this, $with); }
-  public function sqlWhere($with = true){ return $this->getSource()->sqlWhere($this, $with); }
-  public function sqlOrders($with = true){ return $this->getSource()->sqlOrders($this, $with); }
-  public function sqlGroups($with = true){ return $this->getSource()->sqlGroups($this, $with); }
-  public function sqlLimit($with = true){ return $this->getSource()->sqlLimit($this, $with); }
-  public function sqlOffset($with = true){ return $this->getSource()->sqlOffset($this, $with); }
-  public function sqlJoins(){ return $this->getSource()->sqlJoins($this); }
-  public function sqlSets($with = true){ return $this->getSource()->sqlSets($this, $with); }
+  public function sqlSelect($with = true){
+    return $this->getSource()->sqlSelect($this, $with);
+  }
+
+  public function sqlFrom($with = true){
+    return $this->getSource()->sqlFrom($this, $with);
+  }
+
+  public function sqlWhere($with = true){
+    return $this->getSource()->sqlWhere($this, $with);
+  }
+
+  public function sqlOrders($with = true){
+    return $this->getSource()->sqlOrders($this, $with);
+  }
+
+  public function sqlGroups($with = true){
+    return $this->getSource()->sqlGroups($this, $with);
+  }
+
+  public function sqlLimit($with = true){
+    return $this->getSource()->sqlLimit($this, $with);
+  }
+
+  public function sqlOffset($with = true){
+    return $this->getSource()->sqlOffset($this, $with);
+  }
+
+  public function sqlJoins(){
+    return $this->getSource()->sqlJoins($this);
+  }
+
+  public function sqlSets($with = true){
+    return $this->getSource()->sqlSets($this, $with);
+  }
 
   // Metodos para obtener el SQL los diferentes tipos de consulta
-  public function sql(){ return $this->getSource()->sql($this); }
-  public function sqlInsertInto($table, array $fields = array()){ return $this->getSource()->sqlInsertInto($this, $table, $fields); }
-  public function sqlUpdate(){ return $this->getSource()->sqlUpdate($this); }
-  public function sqlDelete(){ return $this->getSource()->sqlDelete($this); }
+  public function sql(){
+    return $this->getSource()->sql($this);
+  }
+  
+  public function sqlInsertInto($table, array $fields = array()){
+    return $this->getSource()->sqlInsertInto($this, $table, $fields);
+  }
+  
+  public function sqlUpdate(){
+    return $this->getSource()->sqlUpdate($this);
+  }
+  
+  public function sqlDelete(){
+    return $this->getSource()->sqlDelete($this);
+  }
+  
 
   // Conver a Cadena de caracteres implica devolver el SQL de la consulta
   public function __toString() {
