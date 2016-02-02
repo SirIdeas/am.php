@@ -255,6 +255,7 @@ function merge_if_both_are_array(array $arr1, array $arr2){
 
 }
 
+// PENDIENTE documentar
 
 // Devuelve la cadena 's' convertida en formato under_score
 function underscore($s) {
@@ -295,11 +296,70 @@ function camelCase($s, $cfc = false){
 
 // Convierte un valor a booleano
 function parseBool($value){
+
   if(in_array($value, array(true, 1, 'true', '1'))) return true;
   if(in_array($value, array(false, 0, 'false', '0'))) return false;
+  
   return null;
+
 }
 
 function isNameValid($str){
+
   return preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $str) != 0;
+
 }
+
+function amGlobFiles($folders, array $options = array()){
+
+  // Convertir en array si no es un array.
+  if(!is_array($folders))
+    $folders = array($folders);
+
+  // Opciones por defcto
+  $options = array_merge(array(
+    'files' => true,
+    'dirs' => false,
+    'recursive' => true,
+    'include' => '/.*/',
+    'exclude' => '/^jade$/',
+    'return' => 0,
+  ), $options);
+  
+  // Variablle para el retorno.
+  $ret = array();
+
+  // recorer las careptas
+  foreach ($folders as $folder) {
+
+    $list = glob("$folder/*");
+
+    foreach ($list as $item) {
+
+      $item = realpath($item);
+
+      // Si cumple con la regex
+      if(preg_match_all($options['include'], $item, $m) && !preg_match($options['exclude'], $item)){
+
+        if((is_file($item) && $options['files']) ||
+          (is_dir($item) && $options['dirs'])){
+          $ret[] = $m[$options['return']][0];
+        }
+        
+      }
+
+      // Si es un directorio se pide explorar recursivamente
+      if(is_dir($item) && $options['recursive']){
+
+        $ret = array_merge($ret, amGlobFiles($item, $options));
+
+      }
+
+    }
+
+  }
+
+  return $ret;
+
+}
+

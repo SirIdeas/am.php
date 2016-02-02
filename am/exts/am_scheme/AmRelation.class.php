@@ -23,41 +23,53 @@
  * SOFTWARE.
  **/
  
-// class AmRelation extends AmObject{
+class AmRelation extends AmObject{
 
-//   protected
-//     $source = '',
-//     $table = null,
-//     $columns = array();
+  protected
+    $scheme = '',
+    $table = null,
+    $columns = array();
 
-//   // Métodos GET para las propiedades
-//   public function getSource(){ return $this->source; }
-//   public function getTable(){ return $this->table; }
-//   public function getColumns(){ return $this->columns; }
+  // Métodos GET para las propiedades
+  public function getScheme(){
+    
+    return $this->scheme;
 
-//   // Generador de la consulta para la relación
-//   public function getQuery($model){
+  }
+  public function getTable(){
+    
+    return $this->table;
 
-//     // Una consulta para todos los registros de la tabla
-//     $q = AmORM::table($this->getTable(), $this->getSource())->all();
+  }
+  public function getColumns(){
+    
+    return $this->columns;
 
-//     foreach($this->getColumns() as $from => $to){
-//       $q->where("{$to}='{$model->$from}'");
-//     }
+  }
 
-//     return $q;
+  // Generador de la consulta para la relación
+  public function getQuery($model){
 
-//   }
+    // Una consulta para todos los registros de la tabla
+    $q = AmScheme::table($this->getTable(), $this->getScheme())->all();
 
-//   // Convertir a Array
-//   public function toArray(){
+    foreach($this->getColumns() as $from => $to){
+      $q->where("{$to}='{$model->$from}'");
+    }
 
-//     return array(
-//       'source' => $this->getSource(),
-//       'table' => $this->getTable(),
-//       'columns' => $this->getColumns()
-//     );
+    return $q;
 
-//   }
+  }
 
-// }
+  // Convertir a Array
+  public function toArray(){
+
+    return array(
+      'scheme' => $this->getScheme(),
+      'table' => $this->getTable(),
+      'columns' => $this->getColumns()
+    );
+
+  }
+
+}

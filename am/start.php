@@ -54,6 +54,19 @@ define('AM_BOOTFILE', realpath($_SERVER['SCRIPT_FILENAME']));
 
 /**
  * -----------------------------------------------------------------------------
+ * Obtener el bootdir de la aplicación
+ * -----------------------------------------------------------------------------
+ * Define el directorio raíz donde inicializa Amathista
+ */
+// Si está definido se debe generar un error.
+if(defined('AM_BOOTDIR'))
+  throw new Exception('Am: ya existe una constante "AM_BOOTDIR" definida');
+
+// Definir constante
+define('AM_BOOTDIR', dirname(AM_BOOTFILE));
+
+/**
+ * -----------------------------------------------------------------------------
  * Versión del framework.
  * -----------------------------------------------------------------------------
  * Define la versión del framework si no esta definida.

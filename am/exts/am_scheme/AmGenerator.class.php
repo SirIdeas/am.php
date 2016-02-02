@@ -30,7 +30,7 @@
 final class AmGenerator{
 
   // Generar clase base para un model
-  public final static function classBaseModel(AmSource $source, AmTable $table){
+  public final static function classBaseModel(AmScheme $scheme, AmTable $table){
 
     $existMethods = get_class_methods('AmModel');
     $fields = array_keys((array)$table->getFields());
@@ -39,10 +39,10 @@ final class AmGenerator{
 
     // Agregar métodos GET para cada campos
 
-    $lines[] = "class {$source->getBaseModelClassname($table->getTableName())} extends AmModel{\n";
+    $lines[] = "class {$scheme->getBaseModelClassname($table->getTableName())} extends AmModel{\n";
 
     $lines[] = '  protected static';
-    $lines[] = "    \$sourceName = '{$table->getSource()->getName()}',";
+    $lines[] = "    \$schemeName = '{$table->getScheme()->getName()}',";
     $lines[] = "    \$tableName  = '{$table->getTableName()}';\n";
 
     // Add references to this class
@@ -155,7 +155,7 @@ final class AmGenerator{
         $f = $table->getField($colName[0]);
         if(!$f->allowNull()){
           $colStr = $cols[$colName[0]];
-          $validators[] = "    \$this->setValidator('{$f->getName()}', 'in_query', array('query' => AmORM::table('{$r->getTable()}', '{$table->getSource()->getName()}')->all(), 'field' => '{$colStr}'));";
+          $validators[] = "    \$this->setValidator('{$f->getName()}', 'in_query', array('query' => AmScheme::table('{$r->getTable()}', '{$table->getScheme()->getName()}')->all(), 'field' => '{$colStr}'));";
         }
       }
     }
@@ -190,7 +190,7 @@ final class AmGenerator{
     // Method to get table of model
     $lines[] = '  // GET TABLE OF MODEL';
     $lines[] = '  public static function me(){';
-    $lines[] = "    return AmORM::table('{$table->getTableName()}', '{$table->getSource()->getName()}');";
+    $lines[] = "    return AmScheme::table('{$table->getTableName()}', '{$table->getScheme()->getName()}');";
     $lines[] = "  }\n";
 
     // Method to get query to all records of model

@@ -10,7 +10,8 @@ return array(
     'exts/am_route',
     'exts/am_tpl',
     'exts/am_controller',
-    'exts/am_model',
+    'exts/am_scheme',
+    'helpers/sync.helpers'
   ),
 
   'routing' => array(
@@ -31,15 +32,17 @@ return array(
     ),
   ),
 
-  'sources' => array(
+  'schemes' => array(
     '' => array(
+      // 'prefix' => '',
       'driver' => 'mysql',
-      'server' => 'localhost',
-      'port' => '',
       'database' => 'tvadmin',
+      'server' => 'localhost',
+      // 'port' => '',
       'user' => 'tvadmin',
       'pass' => 'aUuf8QEHZLH4VQ3f',
-      'prefix' => '',
+      // 'charset' => '',
+      // 'collage' => '',
     ),
   )
 
