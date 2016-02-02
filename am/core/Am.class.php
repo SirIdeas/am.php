@@ -163,6 +163,13 @@ final class Am{
 
     /**
      * -------------------------------------------------------------------------
+     * Indica si ya se inicialicó la aplicación
+     * -------------------------------------------------------------------------
+     */
+    $apped = false,
+
+    /**
+     * -------------------------------------------------------------------------
      * Instancia de AmObject que tiene como propiedades los valores los arrays
      * respectivos.
      * -------------------------------------------------------------------------
@@ -1342,11 +1349,13 @@ final class Am{
    * ---------------------------------------------------------------------------
    * @param  string $appRoot directorio raíz de la aplicación.
    */
-  public static function app($appRoot = null){
+  public static function app($appRoot = '../app'){
 
     // Preparar petición
     self::getUrlBase();
     self::getRequest();
+
+    self::$apped = true;
 
     // Cambiar directorio de trabajo si este fue asignado
     if(isset($appRoot)){
@@ -1393,6 +1402,10 @@ final class Am{
 
     // Variable global de argumentos
     global $argv;
+
+    // Inicializar aplicación si no ha sido inicializada
+    if(!self::$apped)
+      self::app();
 
     // Es una peticion desde la consola
     if(isset($argv)){

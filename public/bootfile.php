@@ -17,17 +17,6 @@ include '../am/start.php';
 
 /**
  * -----------------------------------------------------------------------------
- * Inicialización de la aplicación.
- * -----------------------------------------------------------------------------
- * Para inicializar la aplicación debe indicar la carpeta donde esta ubicada
- * en el filesystem, ya sea de forma relativa o absoluta. Desde esta ruta se
- * ejecutará toda la aplicación.
- * 
- */
-Am::app('../app');
-
-/**
- * -----------------------------------------------------------------------------
  * Despachar la petición con la aplicación
  * -----------------------------------------------------------------------------
  * Si se esta ejecutando Amathista desde la línea de comandos, entonces se
