@@ -79,7 +79,7 @@ final class AmGenerator{
 
     // Method for customization model
     $lines[] = '  // METHOD FOR INIT MODEL';
-    $lines[] = "  protected function initModel(){\n";
+    $lines[] = "  protected function start(){\n";
 
     // Add vaidators for fields
     foreach($table->getFields() as $f){
@@ -203,12 +203,6 @@ final class AmGenerator{
     $lines[] = '  // GET QUERY TO SELECT';
     $lines[] = "  public static function q(\$limit, \$offset, \$as = 'q', \$withFields = false){";
     $lines[] = "    return self::me()->q(\$limit, \$offset, \$as, \$withFields);";
-    $lines[] = "  }\n";
-
-    // Method to get query to all records of model
-    $lines[] = '  // GET QUERY TO SEARCH';
-    $lines[] = '  public static function qSearch($txt, $limit, $offset){';
-    $lines[] = '    return false;';
     $lines[] = "  }\n";
 
     $lines[] = '}';

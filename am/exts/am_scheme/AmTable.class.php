@@ -135,7 +135,9 @@ class AmTable extends AmQuery{
 
   // Indica su un campo forma o no parte del primary key de la tabla
   public function isPk($fieldName){
+
     return in_array($fieldName, $this->getPks());
+    
   }
 
   // Agregar el nombre del campo a la lista de
@@ -154,8 +156,10 @@ class AmTable extends AmQuery{
 
   // Asigna un campo
   public function setField($name, AmField $field){
+
     $this->fields->$name = $field;
     return $this;
+
   }
 
   // Agregar una campo a la lista de campos

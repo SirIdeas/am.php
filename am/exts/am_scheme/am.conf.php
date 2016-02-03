@@ -13,6 +13,8 @@ return array(
     'AmScheme.class',
     'AmQuery.class',
     'AmTable.class',
+    'AmModel.class',
+    'AmValidator.class',
     'drivers/MysqlScheme.class',
   ),
 
@@ -23,8 +25,7 @@ return array(
    */
   'extend' => array(
     'models' => array(
-      'defaults' => array(
-        'root' => 'model/',
+      '' => array(
         'models' => array()
       )
     ),

@@ -753,6 +753,20 @@ abstract class AmScheme extends AmObject{
 
   }
 
+  // Incluye un validator y devuelve el nombre de la clases correspondiente
+  public static function validator($validator){
+
+    // Obtener el nombre de la clase
+    $validatorClassName = camelCase($validator, true).'Validator';
+
+    // Si se incluye satisfactoriamente el validator
+    self::requireFile("validators/{$validatorClassName}.class.php");
+
+    // Se retorna en nombre de la clase
+    return $validatorClassName;
+
+  }
+
   // Devuelve la instancia de una tabla en una fuente determinada
   public static function table($tableName, $scheme = ''){
 
@@ -762,7 +776,7 @@ abstract class AmScheme extends AmObject{
     // Si ya ha sido instanciada la tabla
     // entonces se devuelve la instancia
     if($scheme->hasTableInstance($tableName))
-      return $scheme->getTable($tableName);
+      return $scheme->getTableInstance($tableName);
 
     // Instancia la clase
     $table = new AmTable(array(
@@ -791,6 +805,84 @@ abstract class AmScheme extends AmObject{
 
     // Se retorna en nombre de la clase
     return $driverClassName;
+
+  }
+
+  public static function model($model){
+
+    // Si es un modelo nativo
+    if(preg_match('/^:(.*)@(.*)$/', $model, $m) || preg_match('/^:(.*)$/', $model, $m)){
+
+      // Si no se indica la fuente tomar la fuente por defecto
+      if(empty($m[2]))
+        $m[2] = '';
+
+      // Incluir modelo y  obtener la tabla
+      self::table($m[1], $m[2]);
+      
+      $scheme = self::get($m[2]);
+
+      // Retornar el nombre de la clase del modelo correspondiente
+      return $scheme->getBaseModelClassname($m[1]);
+
+    }
+
+    // Obtener configuraciones de mails
+    $models = Am::getProperty('models');
+
+    // Si se recibió un string asignar como nombre del modelo
+    if(is_string($model))
+      $model = array('name' => $model);
+
+    // Si no se recibió el nombre del modelo retornar falso
+    if(!isset($model['name']))
+      return false;
+
+    // Si ya fue incluido el model salir
+    if(in_array($model['name'], self::$includedModels))
+      return $model['name'];
+
+    // Configuración de valores po defecto
+    $defaults = itemOr('', $models, array());
+
+    if(is_string($defaults))
+      $defaults = array('root' => $defaults);
+
+    // Asignar directorio raíz de los modelos si no existe
+    $defaults['root'] = itemOr('root', $defaults, self::getSchemesDir());
+
+    // Configuración de valores del model
+    $modelConf = itemOr($model['name'], $models, array());
+    if(is_string($modelConf))
+      $modelConf = array('root' => $modelConf);
+
+    // Combinar opciones recibidas en el constructor con las
+    // establecidas en el archivo de configuracion
+    $model = array_merge($defaults, $modelConf, $model);
+
+    // Incluir como modelo de usuario
+    // Guardar el nombre del modelo dentro de los modelos incluidos
+    // para no generar bucles infinitos
+    self::$includedModels[] = $model['name'];
+
+    // Incluir de configuracion local del modelo
+    if(is_file($modelConfFile = $model['root'] . '.model.php')){
+      $modelConf = require_once($modelConfFile);
+      $model = array_merge($model, $modelConf);
+    }
+
+    // Incluir modelos requeridos por el modelo actual
+    foreach($model['models'] as $require)
+      self::model($require);
+
+    var_dump($model);
+
+    // Incluir archivo del modelo
+    if(is_file($modelFile = $model['root'] . $model['name'] . '.class.php'))
+      require_once($modelFile);
+
+    // Retornar el nombre de la clase
+    return $model['name'];
 
   }
 

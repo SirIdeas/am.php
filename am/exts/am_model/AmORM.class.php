@@ -29,9 +29,9 @@
 
 final class AmORM{
 
-  protected static
-    $includedModels = array(),
-    $sources = array();
+  // protected static
+  //   $includedModels = array(),
+  //   $sources = array();
 
   // // Incluye un archivo dentro buscado dentro de la
   // // carpeta de la libreria
@@ -56,19 +56,19 @@ final class AmORM{
 
   // }
 
-  // Incluye un validator y devuelve el nombre de la clases correspondiente
-  public static function validator($validator){
+  // // Incluye un validator y devuelve el nombre de la clases correspondiente
+  // public static function validator($validator){
 
-    // Obtener el nombre de la clase
-    $validatorClassName = camelCase($validator, true).'Validator';
+  //   // Obtener el nombre de la clase
+  //   $validatorClassName = camelCase($validator, true).'Validator';
 
-    // Si se incluye satisfactoriamente el validator
-    self::requireFile("validators/{$validatorClassName}.class");
+  //   // Si se incluye satisfactoriamente el validator
+  //   self::requireFile("validators/{$validatorClassName}.class");
 
-    // Se retorna en nombre de la clase
-    return $validatorClassName;
+  //   // Se retorna en nombre de la clase
+  //   return $validatorClassName;
 
-  }
+  // }
 
   // // Devuelve la configuracion de una determinada fuente de datos
   // public static function getSourceConf($sourceName = ''){
@@ -118,101 +118,101 @@ final class AmORM{
 
   // }
 
-  // Devuelve la instancia de una tabla en una fuente determinada
-  public static function table($tableName, $source = ''){
+  // // Devuelve la instancia de una tabla en una fuente determinada
+  // public static function table($tableName, $source = ''){
 
-    // Obtener la instancia de la fuente
-    $source = self::source($source);
+  //   // Obtener la instancia de la fuente
+  //   $source = self::source($source);
 
-    // Si ya ha sido instanciada la tabla
-    // entonces se devuelve la instancia
-    if($source->hasTableInstance($tableName))
-      return $source->getTable($tableName);
+  //   // Si ya ha sido instanciada la tabla
+  //   // entonces se devuelve la instancia
+  //   if($source->hasTableInstance($tableName))
+  //     return $source->getTable($tableName);
 
-    // Instancia la clase
-    $table = new AmTable(array(
-      'source' => $source,
-      'tableName' => $tableName
-    ));
+  //   // Instancia la clase
+  //   $table = new AmTable(array(
+  //     'source' => $source,
+  //     'tableName' => $tableName
+  //   ));
 
-    // Incluir modelo
-    self::requireFile($table->getBaseModelClassFilename(), false);  // Clase base para el modelo
+  //   // Incluir modelo
+  //   self::requireFile($table->getBaseModelClassFilename(), false);  // Clase base para el modelo
 
-    // Asignar tabla
-    $source->setTable($tableName, $table);
+  //   // Asignar tabla
+  //   $source->setTable($tableName, $table);
 
-    return $table;
+  //   return $table;
 
-  }
+  // }
 
-  public static function model($model){
+  // public static function model($model){
 
-    // Si es un modelo nativo
-    if(preg_match('/^:(.*)@(.*)$/', $model, $m) || preg_match('/^:(.*)$/', $model, $m)){
+  //   // Si es un modelo nativo
+  //   if(preg_match('/^:(.*)@(.*)$/', $model, $m) || preg_match('/^:(.*)$/', $model, $m)){
 
-      // Si no se indica la fuente tomar la fuente por defecto
-      if(empty($m[2]))
-        $m[2] = '';
+  //     // Si no se indica la fuente tomar la fuente por defecto
+  //     if(empty($m[2]))
+  //       $m[2] = '';
 
-      // Incluir modelo y  obtener la tabla
-      $table = self::table($m[1], $m[2]);
+  //     // Incluir modelo y  obtener la tabla
+  //     $table = self::table($m[1], $m[2]);
 
-      // Retornar el nombre de la clase del modelo correspondiente
-      return $table->getBaseModelClassname();
+  //     // Retornar el nombre de la clase del modelo correspondiente
+  //     return $table->getBaseModelClassname();
 
-    }
+  //   }
 
-    // Obtener configuraciones de mails
-    $models = Am::getProperty('models');
+  //   // Obtener configuraciones de mails
+  //   $models = Am::getProperty('models');
 
-    // Si se recibió un string asignar como nombre del modelo
-    if(is_string($model))
-      $model = array('name' => $model);
+  //   // Si se recibió un string asignar como nombre del modelo
+  //   if(is_string($model))
+  //     $model = array('name' => $model);
 
-    // Si no se recibió el nombre del modelo retornar falso
-    if(!isset($model['name']))
-      return false;
+  //   // Si no se recibió el nombre del modelo retornar falso
+  //   if(!isset($model['name']))
+  //     return false;
 
-    // Configuración de valores po defecto
-    $defaults = itemOr('defaults', $models, array());
-    if(is_string($defaults))
-      $defaults = array('root' => $defaults);
+  //   // Configuración de valores po defecto
+  //   $defaults = itemOr('defaults', $models, array());
+  //   if(is_string($defaults))
+  //     $defaults = array('root' => $defaults);
 
-    // Configuración de valores del model
-    $modelConf = itemOr($model['name'], $models, array());
-    if(is_string($modelConf))
-      $modelConf = array('root' => $modelConf);
+  //   // Configuración de valores del model
+  //   $modelConf = itemOr($model['name'], $models, array());
+  //   if(is_string($modelConf))
+  //     $modelConf = array('root' => $modelConf);
 
-    // Combinar opciones recibidas en el constructor con las
-    // establecidas en el archivo de configuracion
-    $model = array_merge($defaults, $modelConf, $model);
+  //   // Combinar opciones recibidas en el constructor con las
+  //   // establecidas en el archivo de configuracion
+  //   $model = array_merge($defaults, $modelConf, $model);
 
-    // Si ya fue incluido el model salir
-    if(in_array($model['name'], self::$includedModels))
-      return $model['name'];
-    else
-      // Incluir como modelo de usuario
-      // Guardar el nombre del modelo dentro de los modelos incluidos
-      // para no generar bucles infinitos
-      self::$includedModels[] = $model['name'];
+  //   // Si ya fue incluido el model salir
+  //   if(in_array($model['name'], self::$includedModels))
+  //     return $model['name'];
+  //   else
+  //     // Incluir como modelo de usuario
+  //     // Guardar el nombre del modelo dentro de los modelos incluidos
+  //     // para no generar bucles infinitos
+  //     self::$includedModels[] = $model['name'];
 
-    // Incluir de configuracion local del modelo
-    if(is_file($modelConfFile = $model['root'] . '.model.php')){
-      $modelConf = require_once($modelConfFile);
-      $model = array_merge($model, $modelConf);
-    }
+  //   // Incluir de configuracion local del modelo
+  //   if(is_file($modelConfFile = $model['root'] . '.model.php')){
+  //     $modelConf = require_once($modelConfFile);
+  //     $model = array_merge($model, $modelConf);
+  //   }
 
-    // Incluir modelos requeridos por el modelo actual
-    foreach($model['models'] as $require)
-      self::model($require);
+  //   // Incluir modelos requeridos por el modelo actual
+  //   foreach($model['models'] as $require)
+  //     self::model($require);
 
 
-    // Incluir archivo del modelo
-    if(is_file($modelFile = $model['root'] . $model['name'] . '.model.php'))
-      require_once($modelFile);
+  //   // Incluir archivo del modelo
+  //   if(is_file($modelFile = $model['root'] . $model['name'] . '.model.php'))
+  //     require_once($modelFile);
 
-    // Retornar el nombre de la clase
-    return $model['name'];
+  //   // Retornar el nombre de la clase
+  //   return $model['name'];
 
   }
 
