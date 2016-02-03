@@ -29,7 +29,7 @@ class MysqlScheme extends AmScheme{
       "datetime"   => "datetime",
       "timestamp"  => "timestamp",
       "time"       => "time",
-      "year"       => "year",
+      "year"       => "intval",
 
       // Cadenas de caracteres
       "char"       => "char",
@@ -207,22 +207,6 @@ class MysqlScheme extends AmScheme{
     
   }
 
-  // SQL para seleccionar la BD
-  public function sqlSelectDatabase(){
-
-    $database = $this->getParseNameDatabase();
-    $sql = "USE {$database}";
-    return $sql;
-
-  }
-
-  // Setear un valor a una variable de servidor
-  public function sqlSetServerVar($varName, $value){
-
-    return "set {$varName}={$value}";
-
-  }
-
   // Consulta select
   public function sqlSelectQuery(AmQuery $q){
 
@@ -386,95 +370,6 @@ class MysqlScheme extends AmScheme{
 
     // Agregar FROM
     return trim(empty($froms) ? "" : (($with ? "FROM " : "").$froms));
-
-  }
-
-  // Obtener el SQL para una condicion IN
-  public static function in($field, $collection){
-
-    // Si es un array se debe preparar la condició
-    if(is_array($collection)){
-
-        // Filtrar elementos repetidos
-        $collection = array_filter($collection);
-
-        // Si no esta vacía la colecion
-        if(!empty($collection)){
-
-          // Agregar cadenas dentro de los comillas simple
-          $func = create_function('$c', 'return is_numeric($c) ? $c : "\'$c\'";');
-          $collection = array_map($func, array_values($collection));
-
-          // Unir colecion por comas
-          $collection = implode($collection, ",");
-
-        }else{
-          // Si es una colecion vacía
-          $collection = null;
-        }
-
-    }elseif($collection instanceof AmQuery){
-
-      // Si es una consulta entonces se obtiene el SQL
-      $collection = $collection->sql();
-
-    }
-
-    // Agregar el comando IN
-    return isset($collection) ? "$field IN($collection)" : "false";
-
-  }
-
-  // Helper para obtener el SQL de la clausula WHERE
-  private function parseWhere($condition, $prefix = null, $isIn = false){
-
-    if($isIn){
-
-      // Es una condicion IN
-      $condition = self::in($condition[0], $condition[1]);
-
-    }elseif(is_array($condition)){
-
-      $str = "";
-      $lastUnion = "";
-
-      // Recorrer condiciones
-      foreach($condition as $c){
-
-        // Obtener siguiente condicion
-        $next = $this->parseWhere($c["condition"], $c["prefix"], $c["isIn"]);
-
-        // Es la primera condicion
-        if(empty($str)){
-          $str = $next;
-        }else{
-
-          // Si el operador de union es igual al anterior o no hay una anterior
-          if($c["union"] == $lastUnion || empty($lastUnion)){
-            $str = "$str {$c["union"]} $next";
-          }else{
-            // Cuando cambia el operador de union se debe agregar la condicion anterior
-            // entre parentesis
-            $str = "($str) {$c["union"]} $next";
-          }
-
-          // guardar para la siguiente condicion
-          $lastUnion = $c["union"];
-
-        }
-
-      }
-
-      // Agregar parentesis a la condicion
-      $condition = empty($str) ? "" : "($str)";
-
-    }
-
-    // Eliminar espacios al principio y al final
-    $condition = trim($condition);
-
-    // Agregar el prefix (NOT) si existe
-    return empty($condition) ? "" : trim($prefix." ".$condition);
 
   }
 
@@ -697,10 +592,6 @@ class MysqlScheme extends AmScheme{
     elseif($type === "text")
       $type = array_search($len, self::$TEXT_BYTES);
 
-    // As Decimal
-    elseif($type === "text")
-      $type = array_search($len, self::$TEXT_BYTES);
-
     // with var len
     elseif(in_array($type, array("bit", "char", "varchar")))
       $type = "$type($len)";
@@ -772,6 +663,13 @@ class MysqlScheme extends AmScheme{
 
   }
 
+  // Setear un valor a una variable de servidor
+  public function sqlSetServerVar($varName, $value){
+
+    return "set {$varName}={$value}";
+
+  }
+
   // SQL para crear la BD
   public function sqlCreate(){
 
@@ -779,6 +677,15 @@ class MysqlScheme extends AmScheme{
     $charset = $this->sqlCharset();
     $collage = $this->sqlCollage();
     $sql = "CREATE DATABASE IF NOT EXISTS {$database}{$charset}{$collage}";
+    return $sql;
+
+  }
+
+  // SQL para seleccionar la BD
+  public function sqlSelectDatabase(){
+
+    $database = $this->getParseNameDatabase();
+    $sql = "USE {$database}";
     return $sql;
 
   }
@@ -944,6 +851,97 @@ class MysqlScheme extends AmScheme{
       ->sql();
 
     return $sql;
+
+  }
+
+  // Obtener el SQL para una condicion IN
+  public function in($field, $collection){
+
+    // Si es un array se debe preparar la condició
+    if(is_array($collection)){
+
+        // Filtrar elementos repetidos
+        $collection = array_filter($collection);
+
+        // Si no esta vacía la colecion
+        if(!empty($collection)){
+
+          // Agregar cadenas dentro de los comillas simple
+          foreach ($collection as $i => $value){
+            $value = $this->realScapeString($value);
+            $collection[$i] = is_numeric($value) ? $value : "\'{$value}\'";
+          }
+
+          // Unir colecion por comas
+          $collection = implode($collection, ",");
+
+        }else{
+          // Si es una colecion vacía
+          $collection = null;
+        }
+
+    }elseif($collection instanceof AmQuery){
+
+      // Si es una consulta entonces se obtiene el SQL
+      $collection = $collection->sqlSelectQuery();
+
+    }
+
+    // Agregar el comando IN
+    return isset($collection) ? "$field IN($collection)" : "false";
+
+  }
+
+  // Helper para obtener el SQL de la clausula WHERE
+  private function parseWhere($condition, $prefix = null, $isIn = false){
+
+    if($isIn){
+
+      // Es una condicion IN
+      $condition = $this->in($condition[0], $condition[1]);
+
+    }elseif(is_array($condition)){
+
+      $str = "";
+      $lastUnion = "";
+
+      // Recorrer condiciones
+      foreach($condition as $c){
+
+        // Obtener siguiente condicion
+        $next = $this->parseWhere($c["condition"], $c["prefix"], $c["isIn"]);
+
+        // Es la primera condicion
+        if(empty($str)){
+          $str = $next;
+        }else{
+
+          // Si el operador de union es igual al anterior o no hay una anterior
+          if($c["union"] == $lastUnion || empty($lastUnion)){
+            $str = "$str {$c["union"]} $next";
+          }else{
+            // Cuando cambia el operador de union se debe agregar la condicion anterior
+            // entre parentesis
+            $str = "($str) {$c["union"]} $next";
+          }
+
+          // guardar para la siguiente condicion
+          $lastUnion = $c["union"];
+
+        }
+
+      }
+
+      // Agregar parentesis a la condicion
+      $condition = empty($str) ? "" : "($str)";
+
+    }
+
+    // Eliminar espacios al principio y al final
+    $condition = trim($condition);
+
+    // Agregar el prefix (NOT) si existe
+    return empty($condition) ? "" : trim($prefix." ".$condition);
 
   }
 

@@ -28,7 +28,15 @@ class AmRelation extends AmObject{
   protected
     $scheme = '',
     $table = null,
+    $tableName = null,
     $columns = array();
+
+  public function __construct($data = null){
+    
+    parent::__construct($data);
+    $this->table = AmScheme::table($this->getTableName(), $this->getScheme());
+
+  }
 
   // Métodos GET para las propiedades
   public function getScheme(){
@@ -36,11 +44,19 @@ class AmRelation extends AmObject{
     return $this->scheme;
 
   }
+
   public function getTable(){
     
     return $this->table;
 
   }
+
+  public function getTableName(){
+    
+    return $this->tableName;
+
+  }
+
   public function getColumns(){
     
     return $this->columns;
@@ -51,7 +67,7 @@ class AmRelation extends AmObject{
   public function getQuery($model){
 
     // Una consulta para todos los registros de la tabla
-    $q = AmScheme::table($this->getTable(), $this->getScheme())->all();
+    $q = $this->table->all();
 
     foreach($this->getColumns() as $from => $to){
       $q->where("{$to}='{$model->$from}'");
@@ -66,7 +82,7 @@ class AmRelation extends AmObject{
 
     return array(
       'scheme' => $this->getScheme(),
-      'table' => $this->getTable(),
+      'tableName' => $this->getTable(),
       'columns' => $this->getColumns()
     );
 

@@ -155,7 +155,11 @@ class AmField extends AmObject{
 
 
     // Métodos set para algunas propiedades
-    public function setPrimaryKey($value){ $this->primaryKey = $value; return $this; }
+    public function setPrimaryKey($value){
+
+      $this->primaryKey = $value; return $this;
+
+    }
 
     // Convertir campo en array
     public function toArray(){
@@ -195,8 +199,10 @@ class AmField extends AmObject{
 
     // Realizar casting a un valor por el tipo de datos del campo
     public function parseValue($value){
+
       $fn = self::$PARSE_FUNCS[$this->getType()];
       return $fn($value);
+      
     }
 
 }

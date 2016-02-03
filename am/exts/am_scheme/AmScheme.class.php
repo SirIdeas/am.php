@@ -470,7 +470,7 @@ abstract class AmScheme extends AmObject{
       if(!isset($ret[$name])){
         $ret[$name] = array(
           'scheme' => $schemeName,
-          'table' => $fk['toTable'],
+          'tableName' => $fk['toTable'],
           'columns' => array()
         );
       }
@@ -509,7 +509,7 @@ abstract class AmScheme extends AmObject{
       if(!isset($ret[$name])){
         $ret[$name] = array(
           'scheme' => $schemeName,
-          'table' => $fk['fromTable'],
+          'tableName' => $fk['fromTable'],
           'columns' => array()
         );
       }
