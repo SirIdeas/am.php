@@ -222,6 +222,19 @@ class AmQuery extends AmObject{
 
   }
 
+  public function create($orReplace = true){
+
+    return $this->getScheme()->createView($this, $orReplace);
+
+  }
+
+  public function drop($ifExists = true){
+
+    return $this->getScheme()->dropView($this, $ifExists);
+
+  }
+
+
   // Insertar los registros resultantes de la consulta en una table
   public function insert($table, array $fields = array()){
 
@@ -672,6 +685,14 @@ class AmQuery extends AmObject{
 
     return $ret;
 
+  }
+
+  public function haveNextPage(){
+
+    return !!$this->getCopy()
+      ->offset($this->getLimit() + $this->getOffset())
+      ->getRow('array');
+      
   }
 
 }

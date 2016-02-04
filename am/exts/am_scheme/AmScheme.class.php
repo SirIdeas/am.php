@@ -155,20 +155,6 @@ abstract class AmScheme extends AmObject{
 
   }
 
-  // Retorna donde se guarda la configuración de la fuente
-  public function getConfFilename(){
-
-    return $this->getDir() . '/' . underscore($this->getName()) . '.conf.php';
-
-  }
-
-  // Devuelve la configuracion particular de la fuente
-  public function getConf(){
-
-    $path = $this->getConfFilename();
-    return AmCoder::read($path);
-
-  }
 
   // Obtener la carpeta de archivos bases para un tabla
   public function getBaseModelDir($model){
@@ -214,14 +200,7 @@ abstract class AmScheme extends AmObject{
   }
 
   // Crea el archivo de configuracion para una fuente
-  public function generateConfFile($path = null, $conf = null, $rw = true){
-
-    // Obtener de el nombre del archivo destino
-    if(!isset($path))
-      $path = $this->getConfFilename();
-
-    if(!isset($conf))
-      $conf = $this->toArray();
+  public function generateConfFile($path, $conf, $rw = true){
 
     if(!is_file($path) || $rw){
       AmCoder::write($path, $conf);
@@ -268,7 +247,6 @@ abstract class AmScheme extends AmObject{
 
      // Para retorno
     $ret = array(
-      // 'scheme' => $this->generateConfFile(),
       'tables' => array(),
     );
 
@@ -296,10 +274,13 @@ abstract class AmScheme extends AmObject{
   }
 
   // Devuelve el nombre de una tabla para ser reconocida en el gestor de BD
-  public function getParseNameTable($table, $only = false){
+  public function getParseNameTableOrQuery($table, $only = false){
 
     // Obtenerl solo el nombre de la tabla
-    $table = $table instanceof AmTable? $table->getTableName() : $table;
+    $table = $table instanceof AmTable?
+      $table->getTableName() : $table instanceof AmQuery?
+      $table->getName() : $table;
+
     $table = $this->getParseName($table);
 
     // Si se desea obtener solo el nombre
@@ -400,16 +381,16 @@ abstract class AmScheme extends AmObject{
   }
 
   // Crea la BD
-  public function create(){
+  public function create($ifNotExists = true){
 
-    return !!$this->execute($this->sqlCreate());
+    return !!$this->execute($this->sqlCreate($ifNotExists));
 
   }
 
   // Elimina la BD
-  public function drop(){
+  public function drop($ifExists = true){
 
-    return !!$this->execute($this->sqlCreate());
+    return !!$this->execute($this->sqlDrop($ifExists));
 
   }
 
@@ -421,29 +402,74 @@ abstract class AmScheme extends AmObject{
   }
 
   // Crear tabla
-  public function createTable(AmTable $t){
+  public function createTable(AmTable $t, $ifNotExists = true){
 
-    return !!$this->execute($this->sqlCreateTable($t));
+    return !!$this->execute($this->sqlCreateTable($t, $ifNotExists));
+
+  }
+
+  // Crea todas las tablas de la BD
+  public function createTables(){
+
+    $ret = array(); // Para el retorno
+
+    // Obtener los nombres de la tabla en el archivo
+    $tablesNames = $this->getTableNames();
+
+    // Recorrer cada tabla generar crear la tabla
+    foreach ($tablesNames as $tableName)
+      // Crear la tabla
+      $ret[$tableName] = $this->createTable($tableName);
+
+    return $ret;
+
+  }
+
+  public function dropTable($table, $ifExists = true){
+
+    return !!$this->execute($this->sqlDropTable($table, $ifExists));
+
+  }
+
+  // Indica si la tabla existe
+  public function existsTable($table){
+
+    return !!$this->getTableDescription($t->getTableName());
+
+  }
+
+  public function truncate($table, $ignoreFk = true){
+
+    return !!$this->execute($this->sqlTruncate($table, $ignoreFk));
 
   }
 
   // Devuelve un array con el listado de tablas de la BD
   public function getTables(){
+
     return $this->q($this->sqlGetTables())
                 ->getResult('array');
+
   }
 
   // Devuelve un array con el listado de tablas
   public function getTableDescription($table){
+    
+    // Obtener nombre de la tabla
+    $table = $table instanceof AmTable? $table->getTableName() : $table;
+
     return $this->q($this->sqlGetTables())
                 ->where("tableName = '{$table}'")
                 ->getRow('array');
+
   }
 
   // Obtener un listado de las columnas de una tabla
   public function getTableColumns($table){
+
     return $this->q($this->sqlGetTableColumns($table))
                 ->getResult('array', array($this, 'sanitize'));
+                
   }
 
   // Obtener un listado de las columnas de una tabla
@@ -569,6 +595,18 @@ abstract class AmScheme extends AmObject{
 
     // Retornar tabla
     return $table;
+
+  }
+
+  public function createView(AmQuery $q, $replace = true){
+
+    return !!$this->execute($this->sqlCreateView($q, $replace));
+
+  }
+
+  public function dropView(AmQuery $q, $ifExists = true){
+
+    return !!$this->execute($this->sqlDropView($q, $ifExists));
 
   }
 
@@ -956,14 +994,13 @@ abstract class AmScheme extends AmObject{
   abstract public function sqlSets(AmQuery $q, $with = true);
 
   // Devuelve un String con el SQL para crear la base de datos
-  abstract public function sqlCreate();
+  abstract public function sqlCreate($ifNotExists = true);
   abstract public function sqlDrop();
   abstract public function sqlGetInfo();
 
   // SQL para obtener el listado de tablas
   abstract public function sqlGetTables();
 
-  abstract public function sqlGetTablePrimaryKeys($table);
   abstract public function sqlGetTableColumns($table);
   abstract public function sqlGetTableUniques($table);
   abstract public function sqlGetTableForeignKeys($table);
@@ -976,8 +1013,11 @@ abstract class AmScheme extends AmObject{
   abstract public function sqlCollage();
 
   abstract public function sqlField(AmField $field);
-  abstract public function sqlCreateTable(AmTable $t);
-  abstract public function sqlTruncate(AmTable $t);
-  abstract public function sqlDropTable(AmTable $t);
+  abstract public function sqlCreateTable(AmTable $t, $ifNotExists = true);
+  abstract public function sqlDropTable($table, $ifExists = true);
+  abstract public function sqlTruncate($table, $ignoreFk = true);
+
+  abstract public function sqlCreateView(AmQuery $q, $replace = true);
+  abstract public function sqlDropView($q, $ifExists = true);
 
 }

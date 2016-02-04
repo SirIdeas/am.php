@@ -56,7 +56,7 @@ class InQueryValidator extends AmValidator{
     $value = $this->value($model);
     $q = $this->getQuery();
 
-    $qq = $q->getSource()->newQuery($q, "qq")
+    $qq = $q->getScheme()->q($q, "qq")
         ->select($field)
         ->where("$field = $value");
 
@@ -65,11 +65,33 @@ class InQueryValidator extends AmValidator{
   }
 
   // Consulta en la que se basará la referencia a validar
-  public function getQuery(){ return $this->query; }
-  public function setQuery($value){ $this->query = $value; return $this; }
+  public function getQuery(){
+
+    return $this->query;
+
+  }
+
+  public function setQuery($value){
+
+    $this->query = $value;
+    return $this;
+
+  }
+
 
   // Campo de la consulta al que referencia el campo
-  public function getField(){ return $this->field; }
-  public function setField($value){ $this->field = $value; return $this; }
+  public function getField(){
+
+    return $this->field;
+
+  }
+
+  public function setField($value){
+
+    $this->field = $value;
+    return $this;
+
+  }
+
 
 }

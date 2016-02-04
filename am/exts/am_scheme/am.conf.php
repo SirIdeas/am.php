@@ -30,6 +30,12 @@ return array(
       )
     ),
 
+    'schemes' => array(),
+
+    'validators' => array(
+      'messages' => array()
+    ),
+
     // Formatos
     'formats' => array(
       'AMSCHEME_QUERY_TYPE_UNKNOW' => 'AmScheme: Tipo de consulta indefinida "%s"',

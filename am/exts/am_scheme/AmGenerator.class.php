@@ -41,7 +41,7 @@ final class AmGenerator{
 
     $lines[] = "class {$scheme->getBaseModelClassname($table->getTableName())} extends AmModel{\n";
 
-    $lines[] = '  protected static';
+    $lines[] = '  protected';
     $lines[] = "    \$schemeName = '{$table->getScheme()->getName()}',";
     $lines[] = "    \$tableName  = '{$table->getTableName()}';\n";
 

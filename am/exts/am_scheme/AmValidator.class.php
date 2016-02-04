@@ -45,7 +45,7 @@ class AmValidator extends AmObject{
   // Constructor de validador
   public function __construct($data = null) {
 
-    if(!isset($data['message'])){
+    if(!isset($data['messages'])){
 
       // Obtener la configuraciones de los validators
       if(!isset(self::$conf))
@@ -55,45 +55,14 @@ class AmValidator extends AmObject{
       $validatorName = strtolower($this->getValidatorName());
 
       // Obtener el mensaje de la configuracion
-      if(isset(self::$conf['message'][$validatorName]))
-        $data['message'] = self::$conf['message'][$validatorName];
+      if(isset(self::$conf['messages'][$validatorName]))
+        $data['messages'] = self::$conf['messages'][$validatorName];
 
     }
 
     // Llamar constructor
     parent::__construct($data);
 
-  }
-
-  // Devuelve el nombre del validador por el tipo
-  protected function getValidatorName(){
-
-    return preg_replace("/(.*)Validator$/", "$1", get_class($this));
-
-  }
-
-  // Valida el modelo
-  public function isValid(AmModel &$model){
-
-    // Obtener propiedades necesarias
-    $fnIf = $this->getFnIf();
-    $field = $model->getTable()->getField($this->getFieldName());
-    $allowNull = $field? !$field->allowNull() : true;
-
-    // Condiciones para no validar
-    if(($allowNull && null === $this->value($model) && false === $this->getForce()) ||
-        (method_exists($model, $fnIf) && !$model->$fnIf($this)))
-      return true;
-
-    // Realizar validacion
-    $this->value = $this->value($model);
-    return $this->validate($model);
-
-  }
-
-  // Indica si el modelo cumple con el validador actual
-  protected function validate(AmModel &$model){
-    return true;
   }
 
   // Métodos GET para algunas propiedades
@@ -125,26 +94,6 @@ class AmValidator extends AmObject{
 
     return isset($this->sustitutions[$substr])?
             $this->sustitutions[$substr] : null;
-
-  }
-
-  public function getMessage(AmModel $model){
-
-    $ret = $this->message;  // Obtener mensaje
-
-    // Obtener las sustituciones a realizar
-    $substitutions = $this->getSustitutions();
-
-    // Sustituir valores de las propiedades en el mensaje
-    foreach($substitutions as $substr => $for){
-      $value = $this->$for;
-      if(is_array($value)){
-        $value = implode(',', $value);
-      }
-      $ret = str_replace("[{$substr}]", $value, $ret);
-    }
-
-    return $ret;
 
   }
 
@@ -185,12 +134,68 @@ class AmValidator extends AmObject{
 
   }
 
+  // Devuelve el nombre del validador por el tipo
+  protected function getValidatorName(){
+
+    return preg_replace("/(.*)Validator$/", "$1", get_class($this));
+
+  }
+
+  public function getMessage(AmModel $model){
+
+    $ret = $this->message;  // Obtener mensaje
+
+    // Obtener las sustituciones a realizar
+    $substitutions = $this->getSustitutions();
+
+    // Sustituir valores de las propiedades en el mensaje
+    foreach($substitutions as $substr => $for){
+      $value = $this->$for;
+      if(is_array($value)){
+        $value = implode(',', $value);
+      }
+      $ret = str_replace("[{$substr}]", $value, $ret);
+    }
+
+    return $ret;
+
+  }
+
   // Obtener el valor de un modelo dependiendo el campos vigilado por el
   // validator
   protected function value(AmModel $model){
 
     return $model->getFieldValue($this->getFieldName());
 
+  }
+
+  // Valida el modelo
+  public function isValid(AmModel &$model){
+
+    // Obtener propiedades necesarias
+    $fnIf = $this->getFnIf();
+    $fnIfExists = method_exists($model, $fnIf);
+    $field = $model->getTable()->getField($this->getFieldName());
+    $allowNull = $field? !$field->allowNull() : true;
+    $value = $this->value($model);
+    $force = $this->getForce();
+
+    // Condiciones para no validar
+    if(($allowNull && null === $value && !$force) ||
+        ($fnIfExists && !$model->$fnIf($this)))
+      return true;
+
+    // Realizar validacion
+    $this->value = $this->value($model);
+    return $this->validate($model);
+
+  }
+
+  // Indica si el modelo cumple con el validador actual
+  protected function validate(AmModel &$model){
+
+    return true;
+    
   }
 
 }

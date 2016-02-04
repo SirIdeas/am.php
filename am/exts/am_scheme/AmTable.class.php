@@ -6,6 +6,22 @@ class AmTable extends AmQuery{
     $defCreatedAtFieldName = 'created_at',
     $defUpdatedAtFieldName = 'updated_at';
 
+
+  // Propiedades de la tabla
+  protected
+    $createdAtField = null,   // Nombre del campo para la fecha de creación
+    $updatedAtField = null,   // Nombre del campo para la fecha de actualización
+    $tableName = null,        // Nombre en la BD
+    $fields = null,           // Lista de campos
+    $engine = null,           // Motor
+    $charset = null,          // Set de caracteres
+    $collage = null,          // Coleción de caracteres
+    $pks = array(),           // Array de nombres de campos que forman el PK
+    $referencesTo = array(),  // Tablas a las que hace referencia
+    $referencesBy = array(),  // Tablas que le hacen referencia
+    $uniques = array(),       // Array de indeces unicos
+    $a;
+
   // Constructor para la clase
   public function __construct($params = null){
 
@@ -15,6 +31,13 @@ class AmTable extends AmQuery{
     // Obtener la instancia del esquema
     $scheme = is_string($params['scheme']) ? AmScheme::get($params['scheme']) :
               $params['scheme'];
+
+    // Obtener configuracion del modelo
+    if(isset($params['tableName']))
+      $params = array_merge(
+        $params,
+        $scheme->getBaseModelConf($params['tableName'])
+      );
 
     // Aaignar modelo
     $params['scheme'] = $scheme;
@@ -103,6 +126,83 @@ class AmTable extends AmQuery{
     
   }
 
+  public function getCreatedAtField(){
+
+    return $this->createdAtField;
+
+  }
+
+  public function getUpdatedAtField(){
+
+    return $this->updatedAtField;
+
+  }
+
+  public function setCreatedAtField($value){
+
+    $this->createdAtField = $value; return $this;
+    return $this;
+
+  }
+
+  public function setUpdatedAtField($value){
+
+    $this->updatedAtField = $value; return $this;
+    return $this;
+
+  }
+
+
+  public function hasCreatedAtField(){
+
+    return $this->hasField($this->getCreatedAtField());
+
+  }
+
+  public function hasUpdatedAtField(){
+
+    return $this->hasField($this->getUpdatedAtField());
+
+  }
+
+  // Agregar fecha al campo de fecha de creacion
+  public function setAutoCreatedAt($values){
+
+    // Si la tabla tiene un campo llamado 'created_at'
+    // Se asigna a todos los valores la fecha now
+    if($this->hasCreatedAtField())
+      self::setNowDateValueToAllRecordsInField($values,
+        $this->getCreatedAtField());
+  }
+
+  // Agregar fecha al campo de fecha de mpdificacion
+  public function setAutoUpdatedAt($values){
+
+    // Si la tabla tiene un campo llamado 'updated_at'
+    // Se asigna a todos los valores la fecha now
+    if($this->hasUpdatedAtField())
+      self::setNowDateValueToAllRecordsInField($values,
+        $this->getUpdatedAtField());
+  }
+
+  private static function setNowDateValueToAllRecordsInField($values, $field){
+
+    $now = date('c');
+
+    if($values instanceof AmQuery){
+      // Agregar campo a la consulta
+      $values->selectAs("'{$now}'", $field);
+
+    }elseif(is_array($values)){
+
+      // Agregar created_ad a cada registro
+      foreach (array_keys($values) as $i)
+        $values[$i][$field] = $now;
+
+    }
+
+  }
+  
   // Cargar columnas, referencias y PKs a la tabla
   public function describeTable(
     array $fields = array(),
@@ -162,6 +262,35 @@ class AmTable extends AmQuery{
 
   }
 
+  public function create($isNotExists = true){
+
+    return $this->getScheme()->createTable($this, $isNotExists);
+
+  }
+
+  public function drop($isExists = true){
+
+    return $this->getScheme()->dropTable($this, $isExists);
+
+  }
+
+  public function exists(){
+
+    return $this->getScheme()->existsTable($this);
+
+  }
+
+  public function truncate($ignoreFK = false){
+
+    return $this->getSource()->truncate($this, $ignoreFK);
+
+  }
+
+  // Insertar valores
+  public function insertInto($values, array $fields = array()){
+    return $this->getScheme()->insertInto($values, $this, $fields);
+  }
+
   // Agregar una campo a la lista de campos
   public function addField(AmField $f, $as = null){
 
@@ -180,6 +309,116 @@ class AmTable extends AmQuery{
     // lista de campos primarios
     if($f->isPrimaryKey())
       $this->addPk($name);
+
+  }
+
+  // Devuelve un Query que devuelve todos los registros de la Tabla
+  public function all($as = 'q', $withFields = false){
+
+    // por si se obvio el primer parametro
+    if(is_bool($as)){
+      $withFields = $as;
+      $as = 'q';
+    }
+
+    // Crear consultar
+    $q = $this->getSource()->newQuery($this, $as);
+
+    // Asignar campos
+    if($withFields){
+      $fields = array_keys((array)$this->getFields());
+      $fields = array_combine($fields, $fields);
+      $q->setSelects($fields);
+    }
+
+    return $q;
+
+  }
+  
+  public function q($limit = null, $offset = null,
+    $as = 'q', $withFields = false){
+
+    $q = $this->all($as, $withFields);
+
+    if($limit)
+      $q->limit($limit);
+
+    if($limit && $offset)
+      $q->offset($offset);
+
+    return $q;
+
+  }
+
+  // Obtener consulta para buscar por un campos
+  public function findBy($field, $value, $as = 'q', $withFields = false){
+
+    return $this->all($as, $withFields)->where("{$field}='{$value}'");
+
+  }
+
+  // Obtener todos los registros de buscar por un campos
+  public function findAllBy($field, $value, $type = null){
+
+    return $this->findBy($field, $value)->getResult($type);
+
+  }
+
+  // Obtener el primer registro de la busqueda por un campo
+  public function findOneBy($field, $value, $type = null){
+
+    return $this->findBy($field, $value)->getRow($type);
+    
+  }
+
+  // Obtener la consulta para encontrar el registro con un determinado ID
+  public function findById($id, $as = 'q', $withFields = false){
+
+    // Obtener consultar para obtener todos los registros
+    $q = $this->all($as, $withFields);
+    $pks = $this->getPks();  // Obtener el primary keys
+
+    // Si es un array no asociativo
+    if(is_array($id) && !isHash($id)){
+      // Si la cantidad de campos del PKs es igual
+      // a la cantidad de valores recibidos del ID
+      if(count($pks) === count($id)){
+        $id = array_combine($pks, $id);
+      }else{
+        // No es valido
+        return null;
+      }
+    }
+
+    // El primary key es un solo campo y los valores del ID no son un array
+    if(1 == count($pks) && !is_array($id)){
+      $id = array($pks[0] => $id);
+    }
+
+    // Recorrer los campos del PK
+    foreach($pks as $pk){
+
+      // Si no existe el valor para el campo devolver null
+      if(!isset($id[$pk]) && !array_key_exists($pk, $id))
+        return null;
+
+      // Agregar condicion
+      $fieldName = $this->getField($pk)->getName();
+      $q->where("{$fieldName}='{$id[$pk]}'");
+
+    }
+
+    return $q;
+
+  }
+
+  // Regresa un objeto con AmModel con el registro solicitado
+  public function find($id, $type = null){
+
+    $q = $this->findById($id);
+    $r = isset($q)? $q->getRow($type) : false;
+
+    return $r === false ? null : $r;
 
   }
 

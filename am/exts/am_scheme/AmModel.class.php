@@ -48,8 +48,8 @@ class AmModel extends AmObject{
 
     // Inicializar la tabla si no ha sido inicializada
     $className = get_class($this);
-    $schemeName = $className::$schemeName;
-    $tableName  = $className::$tableName;
+    $schemeName = $this->schemeName;
+    $tableName  = $this->tableName;
 
     $this->setIsNew($isNew);
 
@@ -602,13 +602,32 @@ class AmModel extends AmObject{
     return false;
 
   }
+
+  public function insertInto(){
+
+    return $this->getTable()->insertInto(array($this));
+
+  }
+
+  public function update(){
+
+    return !!$this->getQueryUpdate()->update();
+
+  }
+
+  public function delete(){
+
+    return !!$this->getQuerySelectItem()->delete();
+
+  }
+
   public static function me(){
 
     $className = get_called_class();
-    $schemeName = $className::$schemeName;
-    $tableName  = $className::$tableName;
 
-    return AmSheme::table($tableName, $schemeName);
+    $instance = new $className;
+
+    return $instance;
 
   }
 
