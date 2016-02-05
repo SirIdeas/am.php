@@ -60,7 +60,7 @@ class InQueryValidator extends AmValidator{
         ->select($field)
         ->where("$field = $value");
 
-    return $qq->getRow('array') !== false;
+    return false !== $qq->row();
 
   }
 

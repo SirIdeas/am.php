@@ -66,7 +66,7 @@ final class AmGenerator{
     foreach(array_keys((array)$table->getReferencesTo()) as $relation){
       $prefix = in_array($relation, $existMethods)? '//' : '';
       $existMethods[] = $relation;
-      $methodsAddeds[] = "  {$prefix}public function $relation(){ return \$this->getTable()->getReferencesTo()->{$relation}->getQuery(\$this)->getRow(); }";
+      $methodsAddeds[] = "  {$prefix}public function $relation(){ return \$this->getTable()->getReferencesTo()->{$relation}->getQuery(\$this)->row(); }";
     }
 
     // Add validators if has any
@@ -184,27 +184,7 @@ final class AmGenerator{
       $lines[] = '';
     }
 
-
     $lines[] = "  }\n";
-
-    // Method to get table of model
-    $lines[] = '  // GET TABLE OF MODEL';
-    $lines[] = '  public static function me(){';
-    $lines[] = "    return AmScheme::table('{$table->getTableName()}', '{$table->getScheme()->getName()}');";
-    $lines[] = "  }\n";
-
-    // Method to get query to all records of model
-    $lines[] = '  // GET QUERY TO ALL RECORDS';
-    $lines[] = "  public static function all(\$as = 'q', \$withFields = false){";
-    $lines[] = '    return self::me()->all($as, $withFields);';
-    $lines[] = "  }\n";
-
-    // Method to get query to all records of model
-    $lines[] = '  // GET QUERY TO SELECT';
-    $lines[] = "  public static function q(\$limit, \$offset, \$as = 'q', \$withFields = false){";
-    $lines[] = "    return self::me()->q(\$limit, \$offset, \$as, \$withFields);";
-    $lines[] = "  }\n";
-
     $lines[] = '}';
 
     // Preparacion de los metodos Get

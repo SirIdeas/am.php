@@ -151,7 +151,9 @@ abstract class AmScheme extends AmObject{
   // Obtener la ruta de la carpeta para las clases del ORM de la BD actual
   public function getDir(){
 
-    return self::getSchemesDir() . '/' . $this->getName();
+    $name = $this->getName();
+
+    return self::getSchemesDir() . (!empty($name)?'/' . $this->getName() : '');
 
   }
 
@@ -251,7 +253,7 @@ abstract class AmScheme extends AmObject{
     );
 
     // Obtener listado de nombres de tablas
-    $tables = $this->q($this->sqlGetTables())->getCol('tableName');
+    $tables = $this->q($this->sqlGetTables())->col('tableName');
 
     foreach ($tables as $model){
 
@@ -267,31 +269,48 @@ abstract class AmScheme extends AmObject{
   }
 
   // Devuelve el nombre de la BD para ser reconocida en el gestor de BD
-  public function getParseNameDatabase(){
+  public function getParseDatabaseName(){
 
     return $this->getParseName($this->getDatabase());
 
   }
 
   // Devuelve el nombre de una tabla para ser reconocida en el gestor de BD
-  public function getParseNameTableOrQuery($table, $only = false){
+  public function getParseObjectDatabaseName($table, $only = false){
 
-    // Obtenerl solo el nombre de la tabla
-    $table = $table instanceof AmTable?
-      $table->getTableName() : $table instanceof AmQuery?
-      $table->getName() : $table;
+    if($table instanceof AmTable)
+      $table = $table->getTableName();
 
-    $table = $this->getParseName($table);
+    if(isNameValid($table)){
 
-    // Si se desea obtener solo el nombre
-    if($only)
-      return $table;
+      $table = $this->getParseName($table);
 
-    // Retornar el nombre de la tabla con la BD
-    return $this->getParseNameDatabase().'.'.$table;
+      // Si se desea obtener solo el nombre
+      if($only)
+        return $table;
+
+      // Retornar el nombre de la tabla con la BD
+      return $this->getParseDatabaseName().'.'.$table;
+
+    }
 
   }
 
+  public function getParseTableNameOfView(AmQuery $q, $only = false){
+
+    $froms = array_values($q->getFroms());
+
+    foreach ($froms as $from) {
+
+      if($from instanceof AmTable)
+        $from = $from->getTableName();
+
+      if(isNameValid($from))
+        return $this->getParseObjectDatabaseName($from, $only);
+      
+    }
+
+  }
 
   // Devuelve la cadena de conexión del servidor
   public function getServerString(){
@@ -344,10 +363,18 @@ abstract class AmScheme extends AmObject{
 
 
   // Crea una instancia de un query
-  public function q($from = null, $as = 'q'){
-    $q = new AmQuery(); // Crear instancia
-    $q->setScheme($this);  // Asignar fuente
-    if(!empty($from)) $q->fromAs($from, $as);  // Asignar el from de la consulta
+  public function q($from = null, $alias = 'q'){
+
+    // Crear instancia
+    $q = new AmQuery;
+    
+    // Asignar fuente
+    $q->setScheme($this);
+
+    // Asignar el from de la consulta
+    if(!empty($from))
+      $q->fromAs($from, $alias);
+
     return $q;
 
   }
@@ -397,7 +424,7 @@ abstract class AmScheme extends AmObject{
   // Obtener la información de la BD
   public function getInfo(){
 
-    return $this->q($this->sqlGetInfo())->getRow('array');
+    return $this->q($this->sqlGetInfo())->row();
 
   }
 
@@ -417,9 +444,9 @@ abstract class AmScheme extends AmObject{
     $tablesNames = $this->getTableNames();
 
     // Recorrer cada tabla generar crear la tabla
-    foreach ($tablesNames as $tableName)
+    foreach ($tablesNames as $table)
       // Crear la tabla
-      $ret[$tableName] = $this->createTable($tableName);
+      $ret[$table] = $this->createTable($table);
 
     return $ret;
 
@@ -434,7 +461,7 @@ abstract class AmScheme extends AmObject{
   // Indica si la tabla existe
   public function existsTable($table){
 
-    return !!$this->getTableDescription($t->getTableName());
+    return !!$this->getTableDescription($table);
 
   }
 
@@ -448,7 +475,7 @@ abstract class AmScheme extends AmObject{
   public function getTables(){
 
     return $this->q($this->sqlGetTables())
-                ->getResult('array');
+                ->get();
 
   }
 
@@ -460,7 +487,7 @@ abstract class AmScheme extends AmObject{
 
     return $this->q($this->sqlGetTables())
                 ->where("tableName = '{$table}'")
-                ->getRow('array');
+                ->row();
 
   }
 
@@ -468,7 +495,7 @@ abstract class AmScheme extends AmObject{
   public function getTableColumns($table){
 
     return $this->q($this->sqlGetTableColumns($table))
-                ->getResult('array', array($this, 'sanitize'));
+                ->get(null, array($this, 'sanitize'));
                 
   }
 
@@ -482,7 +509,7 @@ abstract class AmScheme extends AmObject{
 
     // Obtener los ForeignKeys
     $fks = $this->q($this->sqlGetTableForeignKeys($table))
-                ->getResult('array');
+                ->get();
 
     foreach($fks as $fk){
 
@@ -496,7 +523,7 @@ abstract class AmScheme extends AmObject{
       if(!isset($ret[$name])){
         $ret[$name] = array(
           'scheme' => $schemeName,
-          'tableName' => $fk['toTable'],
+          'table' => $fk['toTable'],
           'columns' => array()
         );
       }
@@ -520,7 +547,7 @@ abstract class AmScheme extends AmObject{
 
     // Obtener las referencias a una tabla
     $fks = $this->q($this->sqlGetTableReferences($table))
-                ->getResult('array');
+                ->get();
 
     // Recorrer los FKs
     foreach($fks as $fk){
@@ -535,7 +562,7 @@ abstract class AmScheme extends AmObject{
       if(!isset($ret[$name])){
         $ret[$name] = array(
           'scheme' => $schemeName,
-          'tableName' => $fk['fromTable'],
+          'table' => $fk['fromTable'],
           'columns' => array()
         );
       }
@@ -553,7 +580,7 @@ abstract class AmScheme extends AmObject{
   public function getTableUniques($table){
 
     $uniques = $this->q($this->sqlGetTableUniques($table))
-      ->getResult('array');
+                    ->get();
 
     // Group fields of unique indices for name.
     $realUniques = array();
@@ -580,7 +607,7 @@ abstract class AmScheme extends AmObject{
       return false;
 
     // Asignar fuente
-    $table['scheme'] = $this;
+    $table['schemeName'] = $this->getName();
 
     // Crear instancia anonima de la tabla
     $table = new AmTable($table);
@@ -791,47 +818,6 @@ abstract class AmScheme extends AmObject{
 
   }
 
-  // Incluye un validator y devuelve el nombre de la clases correspondiente
-  public static function validator($validator){
-
-    // Obtener el nombre de la clase
-    $validatorClassName = camelCase($validator, true).'Validator';
-
-    // Si se incluye satisfactoriamente el validator
-    self::requireFile("validators/{$validatorClassName}.class.php");
-
-    // Se retorna en nombre de la clase
-    return $validatorClassName;
-
-  }
-
-  // Devuelve la instancia de una tabla en una fuente determinada
-  public static function table($tableName, $scheme = ''){
-
-    // Obtener la instancia de la fuente
-    $scheme = self::get($scheme);
-
-    // Si ya ha sido instanciada la tabla
-    // entonces se devuelve la instancia
-    if($scheme->hasTableInstance($tableName))
-      return $scheme->getTableInstance($tableName);
-
-    // Instancia la clase
-    $table = new AmTable(array(
-      'scheme' => $scheme,
-      'tableName' => $tableName
-    ));
-
-    // Incluir modelo
-    self::requireFile($scheme->getBaseModelClassFilename($tableName), false);  // Clase base para el modelo
-
-    // Asignar tabla
-    $scheme->setTable($tableName, $table);
-
-    return $table;
-
-  }
-
   // Incluye un driver de BD
   public static function driver($driver){
 
@@ -843,6 +829,35 @@ abstract class AmScheme extends AmObject{
 
     // Se retorna en nombre de la clase
     return $driverClassName;
+
+  }
+
+  // Devuelve la instancia de una tabla en una fuente determinada
+  public static function table($tableName, $schemeName = ''){
+
+    // Obtener la instancia de la fuente
+    $scheme = self::get($schemeName);
+
+    // Si ya ha sido instanciada la tabla
+    // entonces se devuelve la instancia
+    if($scheme->hasTableInstance($tableName))
+      return $scheme->getTableInstance($tableName);
+
+    // Instancia la clase
+    $table = new AmTable(array(
+      'schemeName' => $schemeName,
+      'tableName' => $tableName
+    ));
+
+
+    // Incluir modelo
+    $modelPath = realpath($scheme->getBaseModelClassFilename($tableName));
+    self::requireFile($modelPath, false);
+
+    // Asignar tabla
+    $scheme->setTable($tableName, $table);
+
+    return $table;
 
   }
 
@@ -913,14 +928,26 @@ abstract class AmScheme extends AmObject{
     foreach($model['models'] as $require)
       self::model($require);
 
-    var_dump($model);
-
     // Incluir archivo del modelo
     if(is_file($modelFile = $model['root'] . $model['name'] . '.class.php'))
       require_once($modelFile);
 
     // Retornar el nombre de la clase
     return $model['name'];
+
+  }
+
+  // Incluye un validator y devuelve el nombre de la clases correspondiente
+  public static function validator($validator){
+
+    // Obtener el nombre de la clase
+    $validatorClassName = camelCase($validator, true).'Validator';
+
+    // Si se incluye satisfactoriamente el validator
+    self::requireFile("validators/{$validatorClassName}.class.php");
+
+    // Se retorna en nombre de la clase
+    return $validatorClassName;
 
   }
 

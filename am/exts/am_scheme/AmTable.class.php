@@ -11,6 +11,7 @@ class AmTable extends AmQuery{
   protected
     $createdAtField = null,   // Nombre del campo para la fecha de creación
     $updatedAtField = null,   // Nombre del campo para la fecha de actualización
+    $schemeName = null,       // Nombre del esquema de conexión BD
     $tableName = null,        // Nombre en la BD
     $fields = null,           // Lista de campos
     $engine = null,           // Motor
@@ -29,8 +30,7 @@ class AmTable extends AmQuery{
     $params = AmObject::parse($params);
 
     // Obtener la instancia del esquema
-    $scheme = is_string($params['scheme']) ? AmScheme::get($params['scheme']) :
-              $params['scheme'];
+    $scheme = AmScheme::get($params['schemeName']);
 
     // Obtener configuracion del modelo
     if(isset($params['tableName']))
@@ -65,6 +65,13 @@ class AmTable extends AmQuery{
     return $this->tableName;
 
   }
+
+  public function getSchemeName(){
+
+    return $this->schemeName;
+
+  }
+
 
   public function getReferencesTo(){
 
@@ -282,7 +289,7 @@ class AmTable extends AmQuery{
 
   public function truncate($ignoreFK = false){
 
-    return $this->getSource()->truncate($this, $ignoreFK);
+    return $this->getScheme()->truncate($this, $ignoreFK);
 
   }
 
@@ -313,16 +320,21 @@ class AmTable extends AmQuery{
   }
 
   // Devuelve un Query que devuelve todos los registros de la Tabla
-  public function all($as = 'q', $withFields = false){
+  public function all($alias = 'q', $withFields = false){
 
     // por si se obvio el primer parametro
-    if(is_bool($as)){
-      $withFields = $as;
-      $as = 'q';
+    if(is_bool($alias)){
+      $withFields = $alias;
+      $alias = 'q';
     }
 
+    $scheme = $this->getScheme();
+
     // Crear consultar
-    $q = $this->getSource()->newQuery($this, $as);
+    $q = $scheme->q($this, $alias);
+    
+    // Obtener como retornará los resultados y asignarlo a la consulta
+    $q->setAs(':'.$this->getTableName().'@'.$scheme->getName());
 
     // Asignar campos
     if($withFields){
@@ -335,10 +347,10 @@ class AmTable extends AmQuery{
 
   }
   
-  public function q($limit = null, $offset = null,
-    $as = 'q', $withFields = false){
+  public function q($limit = null, $offset = null, $alias = 'q',
+    $withFields = false){
 
-    $q = $this->all($as, $withFields);
+    $q = $this->all($alias, $withFields);
 
     if($limit)
       $q->limit($limit);
@@ -351,31 +363,31 @@ class AmTable extends AmQuery{
   }
 
   // Obtener consulta para buscar por un campos
-  public function findBy($field, $value, $as = 'q', $withFields = false){
+  public function findBy($field, $value, $alias = 'q', $withFields = false){
 
-    return $this->all($as, $withFields)->where("{$field}='{$value}'");
+    return $this->all($alias, $withFields)->where("{$field}='{$value}'");
 
   }
 
   // Obtener todos los registros de buscar por un campos
   public function findAllBy($field, $value, $type = null){
 
-    return $this->findBy($field, $value)->getResult($type);
+    return $this->findBy($field, $value)->get($type);
 
   }
 
   // Obtener el primer registro de la busqueda por un campo
   public function findOneBy($field, $value, $type = null){
 
-    return $this->findBy($field, $value)->getRow($type);
+    return $this->findBy($field, $value)->row($type);
     
   }
 
   // Obtener la consulta para encontrar el registro con un determinado ID
-  public function findById($id, $as = 'q', $withFields = false){
+  public function findById($id, $alias = 'q', $withFields = false){
 
     // Obtener consultar para obtener todos los registros
-    $q = $this->all($as, $withFields);
+    $q = $this->all($alias, $withFields);
     $pks = $this->getPks();  // Obtener el primary keys
 
     // Si es un array no asociativo
@@ -416,7 +428,7 @@ class AmTable extends AmQuery{
   public function find($id, $type = null){
 
     $q = $this->findById($id);
-    $r = isset($q)? $q->getRow($type) : false;
+    $r = isset($q)? $q->row($type) : false;
 
     return $r === false ? null : $r;
 
@@ -446,7 +458,6 @@ class AmTable extends AmQuery{
     // Unir todas las partes
     return array(
       'tableName' => $this->getTableName(),
-      // 'modelName' => $this->getModelName(),
       'engine' => $this->getEngine(),
       'charset' => $this->getCharset(),
       'collage' => $this->getCollage(),

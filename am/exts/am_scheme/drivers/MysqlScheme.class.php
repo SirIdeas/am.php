@@ -253,7 +253,7 @@ class MysqlScheme extends AmScheme{
     if(!empty($strValues)){
 
       // Obtener nombre de la tabla
-      $tableName = $this->getParseNameTableOrQuery($table);
+      $tableName = $this->getParseObjectDatabaseName($table);
 
       // Obtener el listado de campos
       foreach ($fields as $key => $field)
@@ -281,8 +281,8 @@ class MysqlScheme extends AmScheme{
   public function sqlUpdateQuery(AmQuery $q){
 
     return implode(" ", array(
-      "UPDATE",
-      trim($this->sqlFrom($q, false)),
+      "UPDATE FROM",
+      trim($this->getParseTableNameOfView($q)),
       trim($this->sqlJoins($q)),
       trim($this->sqlSets($q)),
       trim($this->sqlWhere($q))
@@ -293,14 +293,11 @@ class MysqlScheme extends AmScheme{
   // Obtener el SQL para una consulta DELETE
   public function sqlDeleteQuery(AmQuery $q){
 
-    // Obtener el nombre de la tabla
-    $tableName = $this->getParseNameTableOrQuery($q->getTable());
-
     // Agregar DELETE FROM
     return implode(" ", array(
       "DELETE FROM",
-      trim($tableName),
-      trim($q->sqlWhere())
+      trim($this->getParseTableNameOfView($q)),
+      trim($this->sqlWhere($q))
     ));
 
   }
@@ -313,14 +310,14 @@ class MysqlScheme extends AmScheme{
     $selects = array();  // Lista de retorno
 
     // Recorrer argumentos del SELECT
-    foreach($selectsOri as $as => $field){
+    foreach($selectsOri as $alias => $field){
 
       // Si es una consulta se incierra entre parentesis
       if($field instanceof AmQuery)
         $field = "({$field->sql()})";
 
       // Agregar parametro AS
-      $selects[] = isNameValid($as) ? "$field AS '$as'" : (string)$field;
+      $selects[] = isNameValid($alias) ? "$field AS '$alias'" : (string)$field;
 
     }
 
@@ -338,21 +335,18 @@ class MysqlScheme extends AmScheme{
   // Obtener el SQL para la clausula FROM
   public function sqlFrom(AmQuery $q, $with = true){
 
-    $fromsOri = $q->getFroms();  // Listado de argumentos de la clausula FROM
-    $froms = array();   // Listado de retorno
+    $fromsOri = $q->getFroms();   // Listado de argumentos de la clausula FROM
+    $froms = array();             // Listado de retorno
 
     // Recorrer lista del FROM
-    foreach($fromsOri as $as => $from){
+    foreach($fromsOri as $alias => $from){
 
-      if($from instanceof AmQuery){
+      if($from instanceof AmTable || isNameValid($from)){
+        // Si es una tabla se concatena el nombre de la BD y el de la tabla como strin
+        $from = $this->getParseObjectDatabaseName($from);
+      }elseif($from instanceof AmQuery){
         // Si es una consulta se encierra en parentesis
         $from = "({$from->sql()})";
-      }elseif($from instanceof AmTable){
-        // Si es una tabla se concatena el nombre de la BD y el de la tabla
-        $from = $this->getParseNameTableOrQuery($from->getTableName());
-      }elseif(isNameValid($from)){
-        // Si es una tabla se concatena el nombre de la BD y el de la tabla como strin
-        $from = $this->getParseNameTableOrQuery($from);
       }elseif(false !== (preg_match("/^([a-zA-Z_][a-zA-Z0-9_]*)\.([a-zA-Z_][a-zA-Z0-9_]*)$/", $from, $matches)!= 0)){
         // Dividir por el punto
         $from = $this->getParseName($matches[1]).".".$this->getParseName($matches[2]);
@@ -361,7 +355,7 @@ class MysqlScheme extends AmScheme{
       }
 
       // Agregar parametro AS
-      $froms[] = isNameValid($as) ? "$from AS $as" : $from;
+      $froms[] = isNameValid($alias) ? "$from AS $alias" : $from;
 
     }
 
@@ -414,7 +408,7 @@ class MysqlScheme extends AmScheme{
           }
 
           // Agrgar parte de join
-          $joinsResult[] = " $type JOIN $table$as$on";
+          $joinsResult[] = " $type JOIN {$table}{$as}{$on}";
 
           // Liberar variables
           unset($table, $as, $on);
@@ -609,28 +603,28 @@ class MysqlScheme extends AmScheme{
   }
 
   // Obtener el SQL para crear una tabla
-  public function sqlCreateTable(AmTable $t, $ifNotExists = true){
+  public function sqlCreateTable(AmTable $table, $ifNotExists = true){
 
     // Obtener nombre de la tabla
-    $tableName = $this->getParseNameTableOrQuery($t->getTableName());
+    $tableName = $this->getParseObjectDatabaseName($table);
 
     // Lista de campos
     $fields = array();
-    $realFields = $t->getFields();
+    $realFields = $table->getFields();
 
     // Obtener el SQL para cada camppo
     foreach($realFields as $field)
       $fields[] = $this->sqlField($field);
 
     // Obtener los nombres de los primary keys
-    $pks = $t->getPks();
+    $pks = $table->getPks();
     foreach($pks as $offset => $pk)
-      $pks[$offset] = $this->getParseName($t->getField($pk)->getName());
+      $pks[$offset] = $this->getParseName($table->getField($pk)->getName());
 
     // Preparar otras propiedades
-    $engine = empty($t->engine) ? "" : "ENGINE={$t->engine} ";
-    $charset = $this->sqlCharset($t->getCharset());
-    $collage = $this->sqlCollage($t->getCollage());
+    $engine = empty($table->engine) ? "" : "ENGINE={$table->engine} ";
+    $charset = $this->sqlCharset($table->getCharset());
+    $collage = $this->sqlCollage($table->getCollage());
 
     // Agregar los primaris key al final de los campos
     $fields[] = empty($pks) ? "" : "PRIMARY KEY (" . implode(", ", $pks). ")";
@@ -649,7 +643,7 @@ class MysqlScheme extends AmScheme{
   public function sqlTruncate($table, $ignoreFk = true){
 
     // Obtener nombre de la tabla
-    $tableName = $this->getParseNameTableOrQuery($table);
+    $tableName = $this->getParseObjectDatabaseName($table);
 
     $sql = "TRUNCATE {$tableName}";
 
@@ -666,7 +660,7 @@ class MysqlScheme extends AmScheme{
   public function sqlDropTable($table, $ifExists = true){
 
     // Obtener nombre de la tabla
-    $tableName = $this->getParseNameTableOrQuery($table);
+    $tableName = $this->getParseObjectDatabaseName($table);
     $ifExists = $ifExists? 'IF EXISTS ' : '';
 
     return "DROP TABLE {$ifExists}{$tableName}";
@@ -675,7 +669,7 @@ class MysqlScheme extends AmScheme{
 
   public function sqlCreateView(AmQuery $q, $orReplace = true){
 
-    $queryName = $this->getParseNameTableOrQuery($q);
+    $queryName = $this->getParseObjectDatabaseName($q->getName());
     $orReplace = $orReplace? 'OR REPLACE ' : '';
 
     return "CREATE {$replace}VIEW {$queryName} AS {$q->sql()}";
@@ -684,7 +678,7 @@ class MysqlScheme extends AmScheme{
 
   public function sqlDropView($q, $ifExists = true){
 
-    $queryName = $this->getParseNameTableOrQuery($q);
+    $queryName = $this->getParseObjectDatabaseName($q->getName());
     $ifExists = $ifExists? 'IF EXISTS ' : '';
 
     return "DROP VIEW {$ifExists}{$queryName} AS {$q->sql()}";
@@ -702,7 +696,7 @@ class MysqlScheme extends AmScheme{
   // SQL para crear la BD
   public function sqlCreate($ifNotExists = true){
 
-    $database = $this->getParseNameDatabase();
+    $database = $this->getParseDatabaseName();
     $charset = $this->sqlCharset();
     $collage = $this->sqlCollage();
     $ifNotExists = $ifNotExists? 'IF NOT EXISTS ' : '';
@@ -714,7 +708,7 @@ class MysqlScheme extends AmScheme{
   // SQL para seleccionar la BD
   public function sqlSelectDatabase(){
 
-    $database = $this->getParseNameDatabase();
+    $database = $this->getParseDatabaseName();
     return "USE {$database}";
     
   }
@@ -722,7 +716,7 @@ class MysqlScheme extends AmScheme{
   // SQL para eliminar la BD
   public function sqlDrop($ifExists = true){
 
-    $database = $this->getParseNameDatabase();
+    $database = $this->getParseDatabaseName();
     $ifExists = $ifExists? 'IF EXISTS ' : '';
 
     return "DROP DATABASE {$ifExists}{$database}";

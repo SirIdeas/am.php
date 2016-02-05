@@ -33,13 +33,15 @@ class AmModel extends AmObject{
     $allValidators = array();
 
   // Propiedades
-  private
+  protected
+    $schemeName = null,     // Nombre del esquema a la que pertenece el model
+    $tableName = null,      // Nombre de la tabla a la que pertenece el model
     $table = null,          // Instancia de la tabla
     $isNew = true,          // Indica si es un registro nuevo
     $errors = array(),      // Listados de errores
     $realValues = array(),  // Valores reales
     $rawValues = array(),   // Indica si el valor que contiene la propieda
-                            // Es un vlaor crudo
+                            // Es un valor crudo
     $validators = null,     // Validators del modelo
     $errorsCount = 0;       // Cantidad de errores
 
@@ -51,7 +53,7 @@ class AmModel extends AmObject{
     $schemeName = $this->schemeName;
     $tableName  = $this->tableName;
 
-    $this->setIsNew($isNew);
+    $this->isNew = $isNew;
 
     // Inicializar los validators
     if(!isset(self::$allValidators[$className])){
@@ -436,9 +438,9 @@ class AmModel extends AmObject{
   }
 
   // Devuelve una consulta que selecciona el registro actual
-  public function getQuerySelectItem($as = 'q', $withFields = false){
+  public function getQuerySelectItem($alias = 'q', $withFields = false){
 
-    return $this->getTable()->findById($this->index(), $as, $withFields);
+    return $this->getTable()->findById($this->index(), $alias, $withFields);
 
   }
 
@@ -558,7 +560,7 @@ class AmModel extends AmObject{
 
           // Si el valor es diferente de false
           // Indicar que ya no es registro nuevo
-          $this->setIsNew(false);
+          $this->isNew = false;
 
           // Los nuevo valores reales del registro serán
           // los que se tiene desdpue de insertar
@@ -627,7 +629,21 @@ class AmModel extends AmObject{
 
     $instance = new $className;
 
-    return $instance;
+    return $instance->getTable();
+
+  }
+
+  // GET QUERY TO ALL RECORDS
+  public static function all($alias = 'q', $withFields = false){
+
+    return self::me()->all($alias, $withFields)->setAs(get_called_class());
+
+  }
+
+  // GET QUERY TO SELECT
+  public static function q($limit, $offset, $alias = 'q', $withFields = false){
+
+    return self::me()->q($limit, $offset, $alias, $withFields);
 
   }
 
@@ -636,17 +652,7 @@ class AmModel extends AmObject{
     return false;
 
   }
-
-  // // Métodos para obtener el SQL para insert, update y delete
-  // public function sqlInsertInto(){  return $this->getTable()->sqlInsertInto(array($this)); }
-  // public function sqlUpdate(){      return $this->getQueryUpdate()->sqlUpdate(); }
-  // public function sqlDelete(){      return $this->getQuerySelectItem()->sqlDelete(); }
-
-  // // Métodos para Insertar, Actualizar y eliminar el registro
-  // public function insertInto(){     return $this->getTable()->insertInto(array($this)); }
-  // public function update(){         return $this->getQueryUpdate()->update(); }
-  // public function delete(){         return $this->getQuerySelectItem()->delete() !== false; }
-
+  
   // // Convirte el ID del registro en un string con cada uno de sus valores
   // // separados por '/'
   // public function pkToString($encode = false){

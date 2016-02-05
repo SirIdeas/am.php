@@ -14,8 +14,7 @@ return array(
     'AmQuery.class',
     'AmTable.class',
     'AmModel.class',
-    'AmValidator.class',
-    'drivers/MysqlScheme.class',
+    'AmValidator.class'
   ),
 
   /**
