@@ -105,7 +105,7 @@
 <div>
   <h2>Requerimientos</h2>
 
-  <p>Para ejecutar Amathista solo se require PHP <strong>>=5.4</strong></p>
+  <p>Para ejecutar Amathista solo se require PHP <strong>>=5.3</strong></p>
 </div>
 
 <div>

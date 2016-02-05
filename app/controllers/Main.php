@@ -9,7 +9,7 @@ class Main extends AmController{
   public function action_model(){
     
     // $this->addHeader('content-type:text/plain');
-    // $sch = AmScheme::get();
+    $sch = AmScheme::get();
     // var_dump($sch->generateScheme());
     // var_dump($sch->getTableInstance('programas'));
     
@@ -17,8 +17,7 @@ class Main extends AmController{
 
     // $a = new ProgramasBase();
 
-    // var_dump(ProgramasBase::me()->getScheme());
-    // var_dump($a);
+    var_dump(ProgramasBase::all()->get('array'));
 
   }
 
