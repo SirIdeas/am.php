@@ -182,7 +182,7 @@ abstract class AmScheme extends AmObject{
   // Devuelve la dirección de la clase del model Base
   public function getBaseModelClassFilename($model){
 
-    return $this->getBaseModelDir($model) . '/'. $this->getBaseModelClassname($model) .'.class.php';
+    return $this->getBaseModelDir($model) . '/'. $this->getBaseModelClassname($model) .'.php';
 
   }
 
@@ -852,7 +852,8 @@ abstract class AmScheme extends AmObject{
 
     // Incluir modelo
     $modelPath = realpath($scheme->getBaseModelClassFilename($tableName));
-    self::requireFile($modelPath, false);
+    if(is_file($modelPath))
+      require_once $modelPath;
 
     // Asignar tabla
     $scheme->setTable($tableName, $table);
@@ -875,8 +876,10 @@ abstract class AmScheme extends AmObject{
       
       $scheme = self::get($m[2]);
 
+      $modelClass = $scheme->getBaseModelClassname($m[1]);
+
       // Retornar el nombre de la clase del modelo correspondiente
-      return $scheme->getBaseModelClassname($m[1]);
+      return class_exists($modelClass)? $modelClass : false;
 
     }
 
@@ -929,11 +932,11 @@ abstract class AmScheme extends AmObject{
       self::model($require);
 
     // Incluir archivo del modelo
-    if(is_file($modelFile = $model['root'] . $model['name'] . '.class.php'))
+    if(is_file($modelFile = $model['root'] . $model['name'] . '.php'))
       require_once($modelFile);
 
-    // Retornar el nombre de la clase
-    return $model['name'];
+    // Retornar el nombre de la clase si existe
+    return class_exists($model['name'])? $model['name'] : false;
 
   }
 
