@@ -115,7 +115,7 @@ class AmObject implements Iterator, Countable, ArrayAccess{
       throw Am::e('AMOBJECT_CANNOT_ACCESS_PROPERTY', get_class($this), $name);
 
     // Agregar propiedad a lista de propiedades dinámicas si no se ha agregado
-    if(!in_array($name, get_object_vars($this)))
+    if(!$this->haveAttr($name))
       $this->_f[] = $name;
 
     // Asignar valor
