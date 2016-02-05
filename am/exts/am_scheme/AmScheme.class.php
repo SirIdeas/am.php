@@ -196,8 +196,13 @@ abstract class AmScheme extends AmObject{
 
   // Obtener la configuracion del archivo de configuracion propio de un model
   public function getBaseModelConf($model){
+  
+    // Si el archivo existe retornar la configuración    
+    if(is_file($confFilePath = $this->getBaseModelConfFilename($model)))
+      return AmCoder::decode($confFilePath);
 
-    return AmCoder::decode($this->getBaseModelConfFilename($model));
+    // Si no existe retornar falso
+    return false;
 
   }
 

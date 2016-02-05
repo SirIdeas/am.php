@@ -20,8 +20,7 @@ class AmTable extends AmQuery{
     $pks = array(),           // Array de nombres de campos que forman el PK
     $referencesTo = array(),  // Tablas a las que hace referencia
     $referencesBy = array(),  // Tablas que le hacen referencia
-    $uniques = array(),       // Array de indeces unicos
-    $a;
+    $uniques = array();       // Array de indeces unicos
 
   // Constructor para la clase
   public function __construct($params = null){
@@ -33,19 +32,21 @@ class AmTable extends AmQuery{
     $scheme = AmScheme::get($params['schemeName']);
 
     // Obtener configuracion del modelo
-    if(isset($params['tableName']))
-      $params = array_merge(
-        $params,
-        $scheme->getBaseModelConf($params['tableName'])
-      );
+    $conf = $scheme->getBaseModelConf($params['tableName']);
 
-    // Aaignar modelo
-    $params['scheme'] = $scheme;
+    // Si se pudo obtener la configuración mazclarla con la recibida por
+    // parámetros
+    if($conf)
+      $params = array_merge($params, $conf);
 
+    // Asignar nombre de los campos de fecha
     $params = array_merge(array(
       'createdAtField' => self::$defCreatedAtFieldName,
       'updatedAtField' => self::$defUpdatedAtFieldName,
     ), $params);
+
+    // Aaignar modelo
+    $params['scheme'] = $scheme;
 
     // Llamar al constructor heredado
     parent::__construct($params);
