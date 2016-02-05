@@ -34,7 +34,7 @@ class AmModel extends AmObject{
 
   // Propiedades
   protected
-    $schemeName = null,     // Nombre del esquema a la que pertenece el model
+    $schemeName = '',       // Nombre del esquema a la que pertenece el model
     $tableName = null,      // Nombre de la tabla a la que pertenece el model
     $table = null,          // Instancia de la tabla
     $isNew = true,          // Indica si es un registro nuevo
