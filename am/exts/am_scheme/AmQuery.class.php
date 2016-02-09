@@ -6,7 +6,7 @@ class AmQuery extends AmObject{
 
   // Propidades
   protected
-    $asType = 'array',        // Formato de respuesta del los registros
+    $modelName = 'array',     // Formato de respuesta del los registros
     $formater = null,         // Formateador el resultado de la consulta
     $type = 'select',         // Tipo de consulta
     $scheme = null,           // Fuente de datos
@@ -26,9 +26,9 @@ class AmQuery extends AmObject{
     $insertIntoFields = null, // Campos para el insert
     $sets = array();          // Lista de cambios SETS para consultas UPDATE
 
-  public function getAs(){
+  public function getModelName(){
 
-    return $this->asType;
+    return $this->modelName;
 
   }
 
@@ -165,9 +165,9 @@ class AmQuery extends AmObject{
     
   }
 
-  public function setAs($value){
+  public function setModelName($value){
 
-    $this->asType = $value;
+    $this->modelName = $value;
     return $this;
 
   }
@@ -282,10 +282,23 @@ class AmQuery extends AmObject{
   // Eliminar registros selecionados
   public function update(){
 
-    $this->type = 'update';
 
+    if(count($this->sets)==0)
+      return true;
+
+    $froms = $this->getFroms();
+
+    foreach ($froms as $from)
+      if($from instanceof AmTable){
+        $from->setAutoUpdatedAt($this);
+        break;
+      }
+
+    $this->type = 'update';
+    
     return $this->execute();
 
+    
   }
 
   // Asignar los selects
@@ -588,7 +601,7 @@ class AmQuery extends AmObject{
     $scheme = $this->getScheme();
 
     if(!isset($as))
-      $as = $this->getAs();
+      $as = $this->getModelName();
 
     if(!isset($formater))
       $formater = $this->getFormater();

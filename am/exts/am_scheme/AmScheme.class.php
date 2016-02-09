@@ -3,6 +3,11 @@
 abstract class AmScheme extends AmObject{
 
   protected static
+    $defaultsLen = array(
+      'bit' => 8,
+      'char' => 64,
+      'varchar' => 128,
+    ),
     $includedModels = array(),
     $schemes = array(),
     $schemesDir = 'models';
@@ -91,9 +96,9 @@ abstract class AmScheme extends AmObject{
 
   // Setear la instancia de una tabla
   // 
-  public function setTable($offset, AmTable $t){
+  public function addTable(AmTable $t){
     
-    $this->tables[$offset] = $t;
+    $this->tables[$t->getModelName()] = $t;
     return $this;
 
   }
@@ -105,18 +110,14 @@ abstract class AmScheme extends AmObject{
   }
 
   // Obtener la instancia de una tabla
-  public function getTableInstance($table){
-
-    // Si es una instancia de una tabla
-    if($table instanceof AmTable)
-      return $table;
+  public function getTableInstance($modelName = null){
 
     // Si ya existe la instancia de la tabla
-    if($this->hasTableInstance($table))
-      return $this->tables[$table];
+    if($this->hasTableInstance($modelName))
+      return $this->tables[$modelName];
 
     // Sino instanciar la tabla
-    return AmScheme::table($table, $this->getName());
+    return null;
 
   }
 
@@ -163,6 +164,10 @@ abstract class AmScheme extends AmObject{
 
     return $this->getDir();
 
+  }
+
+  public function getModelRawName($modelName){
+    return ':'.$this->name.'@'.$modelName;
   }
 
   // // Nombre de las clases relacionadas a una tabla
@@ -217,13 +222,13 @@ abstract class AmScheme extends AmObject{
   }
 
   // Crea el archivo que contiene clase para la tabla
-  public function generateBaseModelFile($model, AmTable $table){
+  public function generateBaseModelFile(AmTable $table){
 
     // Incluir la clase para generar
     AmScheme::requireFile('AmGenerator.class.php');
 
     // Obtener el nombre del archivo destino
-    $path = $this->getBaseModelClassFilename($model);
+    $path = $this->getBaseModelClassFilename($table->getTableName());
     
     // Crear directorio donde se ubicará el archivo si no existe
     @mkdir(dirname($path), 755, true);
@@ -234,17 +239,17 @@ abstract class AmScheme extends AmObject{
     
   }
 
-  public function generateBaseModel($model, $table){
+  public function generateBaseModel(AmTable $table){
     return array(
 
       // Crear archivo de configuración
       'conf' => $this->generateConfFile(
-        $this->getBaseModelConfFilename($model),
+        $this->getBaseModelConfFilename($table->getTableName()),
         $table->toArray()
       ),
 
       // Crear clase
-      'model' => $this->generateBaseModelFile($model, $table)
+      'model' => $this->generateBaseModelFile($table)
 
     );
   }
@@ -260,14 +265,12 @@ abstract class AmScheme extends AmObject{
     // Obtener listado de nombres de tablas
     $tables = $this->q($this->sqlGetTables())->col('tableName');
 
-    foreach ($tables as $model){
+    foreach ($tables as $tableName)
 
       // Obtener instancia de la tabla
-      $table = $this->describeTable($model);
-
-      $ret['tables'][$model] = $this->generateBaseModel($model, $table);
-
-    }
+      $ret['tables'][$tableName] = $this->generateBaseModel(
+        $this->getTableFromScheme($tableName)
+      );
 
     return $ret;
 
@@ -303,7 +306,7 @@ abstract class AmScheme extends AmObject{
 
   public function getParseTableNameOfView(AmQuery $q, $only = false){
 
-    $froms = array_values($q->getFroms());
+    $froms = $q->getFroms();
 
     foreach ($froms as $from) {
 
@@ -602,7 +605,7 @@ abstract class AmScheme extends AmObject{
 
   // Devuelve la descripcion completa de una tabla
   // incluyendo los campos
-  public function describeTable($tableName){
+  public function getTableFromScheme($tableName){
 
     // Obtener la descripcion basica
     $table = $this->getTableDescription($tableName);
@@ -611,19 +614,19 @@ abstract class AmScheme extends AmObject{
     if($table === false)
       return false;
 
-    // Asignar fuente
-    $table['schemeName'] = $this->getName();
-
     // Crear instancia anonima de la tabla
-    $table = new AmTable($table);
+    $table = new AmTable(array_merge($table, array(
 
-    // Buscar la descripcion de sus campos y relaciones
-    $table->describeTable(
-      $this->getTableColumns($tableName),
-      $this->getTableForeignKeys($tableName),
-      $this->getTableReferences($tableName),
-      $this->getTableUniques($tableName)
-    );
+      // Asignar fuente
+      'schemeName'    => $this->getName(),
+
+      // Detalle de la tabla
+      'fields'        => $this->getTableColumns($tableName),
+      'referencesTo'  => $this->getTableForeignKeys($tableName),
+      'referencesBy'  => $this->getTableReferences($tableName),
+      'uniques'       => $this->getTableUniques($tableName),
+
+    )));
 
     // Retornar tabla
     return $table;
@@ -649,10 +652,12 @@ abstract class AmScheme extends AmObject{
       return $this->sqlSelectQuery($q);
 
     if($type == 'insert')
-      return $this->sqlInsert($q, $q->getInsertTable(), $q->getInsertFields());
+      return $this->sqlInsertQuery($q,
+        $q->getInsertTable(), $q->getInsertFields());
 
-    if($type == 'update')
-      return $this->sqlUpdate($q);
+    if($type == 'update'){
+      return $this->sqlUpdateQuery($q);
+    }
 
     if($type == 'delete')
       return $this->sqlDelete($q);
@@ -662,10 +667,16 @@ abstract class AmScheme extends AmObject{
   }
 
   // Ejecuta una consulta de insercion para los
-  public function insertInto($values, $table, array $fields = array()){
+  public function insertInto($values, $modelName, array $fields = array()){
+
+    $table = $modelName;
 
     // Obtener la instancia de la tabla
-    $table = $this->getTableInstance($table);
+    if(!$table instanceof AmTable)
+      $table = $this->getTableInstance($table);
+
+    if(!$table)
+      throw Am::e('AMSCHEME_MODEL_WITHOUT_TABLE', $modelName);
 
     // Agregar fechas de creacion y modificacion si existen en la tabla
     $table->setAutoCreatedAt($values);
@@ -702,7 +713,7 @@ abstract class AmScheme extends AmObject{
         // Si no se recibieron campos, entonces se mezclaran con los
         // indices obtenidos
         if($mergeWithFields)
-          $fields = array_unique(array_merge($fields, array_keys($values[$i])));
+          $fields = merge_unique($fields, array_keys($values[$i]));
 
       }
 
@@ -838,30 +849,31 @@ abstract class AmScheme extends AmObject{
   }
 
   // Devuelve la instancia de una tabla en una fuente determinada
-  public static function table($tableName, $schemeName = ''){
+  public static function table($tableName, $schemeName = '', $modelName = null){
 
     // Obtener la instancia de la fuente
     $scheme = self::get($schemeName);
 
+    if(!isset($modelName))
+      $modelName = $scheme->getModelRawName($tableName);
+
     // Si ya ha sido instanciada la tabla
     // entonces se devuelve la instancia
-    if($scheme->hasTableInstance($tableName))
-      return $scheme->getTableInstance($tableName);
+    if($scheme->hasTableInstance($modelName))
+      return $scheme->getTableInstance($modelName);
 
     // Instancia la clase
     $table = new AmTable(array(
       'schemeName' => $schemeName,
-      'tableName' => $tableName
+      'tableName' => $tableName,
+      'modelName' => $modelName
     ));
-
 
     // Incluir modelo
     $modelPath = realpath($scheme->getBaseModelClassFilename($tableName));
+    
     if(is_file($modelPath))
       require_once $modelPath;
-
-    // Asignar tabla
-    $scheme->setTable($tableName, $table);
 
     return $table;
 

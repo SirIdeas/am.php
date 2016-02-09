@@ -11,9 +11,12 @@ class AmTable extends AmQuery{
   protected
     $createdAtField = null,   // Nombre del campo para la fecha de creación
     $updatedAtField = null,   // Nombre del campo para la fecha de actualización
-    $schemeName = null,       // Nombre del esquema de conexión BD
+    $schemeName = '',         // Nombre del esquema de conexión BD
     $tableName = null,        // Nombre en la BD
+    $modelName = null,        // Nombre del modelo al que pertenece
     $fields = null,           // Lista de campos
+    $schemeStruct = false,    // Lista de campos
+    $validators = null,       // Validadores
     $engine = null,           // Motor
     $charset = null,          // Set de caracteres
     $collage = null,          // Coleción de caracteres
@@ -31,19 +34,19 @@ class AmTable extends AmQuery{
     // Obtener la instancia del esquema
     $scheme = AmScheme::get($params['schemeName']);
 
+    // Asignar nombre de los campos de fecha
+    $params = array_merge(array(
+      'createdAtField'  => self::$defCreatedAtFieldName,
+      'updatedAtField'  => self::$defUpdatedAtFieldName,
+    ), $params);
+
     // Obtener configuracion del modelo
     $conf = $scheme->getBaseModelConf($params['tableName']);
 
     // Si se pudo obtener la configuración mazclarla con la recibida por
     // parámetros
     if($conf)
-      $params = array_merge($params, $conf);
-
-    // Asignar nombre de los campos de fecha
-    $params = array_merge(array(
-      'createdAtField' => self::$defCreatedAtFieldName,
-      'updatedAtField' => self::$defUpdatedAtFieldName,
-    ), $params);
+      $params = array_merge($conf, $params, array('sctructScheme' => true));
 
     // Aaignar modelo
     $params['scheme'] = $scheme;
@@ -51,13 +54,45 @@ class AmTable extends AmQuery{
     // Llamar al constructor heredado
     parent::__construct($params);
 
-    // Describir tabla
-    $this->describeTable(
-      itemOr('fields', $params, array()),
-      itemOr('referencesTo', $params, array()),
-      itemOr('referencesBy', $params, array()),
-      itemOr('uniques', $params, array())
-    );
+    // Obtener como retornará los resultados y asignarlo a la consulta
+    if(!$this->getModelName())
+      $this->modelName = $scheme->getModelRawName($params['tableName']);
+
+    // Preparar campos
+    $fields = $this->fields;
+    $pks = $this->pks;
+
+    $this->pks = array();
+    $this->fields = array();
+
+    if(is_array($fields))
+      foreach($fields as $fieldName => $column)
+        // Agregar instancia del campo
+        $this->addField($fieldName, array_merge(
+          is_string($column)?array('type' => $column) : $column,
+          array('pk' => in_array($fieldName, $pks))
+        ));
+
+    $this->pks = merge_unique($this->pks, $pks);
+
+    // Preparar referencias
+    if(!is_array($this->referencesTo))
+      $this->referencesTo = array();
+
+    foreach($this->referencesTo as $name => $relation)
+      if(!$relation instanceof AmRelation)
+        $this->referencesTo[$name] = new AmRelation($relation);
+
+    // Preparar referencias a
+    if(!is_array($this->referencesBy))
+      $this->referencesBy = array();
+
+    foreach($this->referencesBy as $name => $relation)
+      if(!$relation instanceof AmRelation)
+        $this->referencesBy[$name] = new AmRelation($relation);
+
+    // Asignar tabla
+    $scheme->addTable($this);
 
   }
 
@@ -70,6 +105,29 @@ class AmTable extends AmQuery{
   public function getSchemeName(){
 
     return $this->schemeName;
+
+  }
+
+  public function setModelName($value){
+
+    $table = $this;
+
+    if(isset($this->modelName) && isset($value) && $this->modelName !== $value){
+
+      $modelName = $this->modelName;
+      $this->modelName = $value;
+      $table = clone($this);
+      $this->modelName = $modelName;
+
+    }elseif(!isset($this->modelName) && isset($value)){
+      $this->modelName = $value;
+
+    }
+
+    // Asignar tabla
+    $table->getScheme()->addTable($table);
+
+    return $table;
 
   }
 
@@ -97,6 +155,19 @@ class AmTable extends AmQuery{
     return $this->pks;
 
   }
+  
+  public function getValidators(){
+
+    return $this->validators;
+
+  }
+
+  public function isSchemeStruct(){
+
+    return $this->schemeStruct;
+
+  }
+
 
   public function getEngine(){
 
@@ -124,13 +195,13 @@ class AmTable extends AmQuery{
   
   public function getField($name){
 
-    return $this->hasField($name)? $this->fields->$name : null;
+    return itemOr($name, $this->fields, null);
 
   }
 
   public function hasField($name){
 
-    return isset($this->fields->$name);
+    return isset($this->fields[$name]);
     
   }
 
@@ -160,7 +231,6 @@ class AmTable extends AmQuery{
 
   }
 
-
   public function hasCreatedAtField(){
 
     return $this->hasField($this->getCreatedAtField());
@@ -173,6 +243,37 @@ class AmTable extends AmQuery{
 
   }
 
+  public function addCreatedAtField($name = null){
+
+    if(!isset($name))
+      $name = self::$defCreatedAtFieldName;
+    
+    $this->setCreatedAtField($name);
+
+    return $this->addField($name, 'datetime');
+
+  }
+
+  public function addUpdatedAtField($name = null){
+
+    if(!isset($name))
+      $name = self::$defUpdatedAtFieldName;
+    
+    $this->setUpdatedAtField($name);
+
+    return $this->addField($name, 'datetime');
+
+  }
+
+  public function addCreatedAndUpdateAtFields($createAtFieldName = null,
+    $updateAtFieldName = null){
+
+    return $this
+      ->addCreatedAtField($createAtFieldName)
+      ->addUpdatedAtField($updateAtFieldName);
+
+  }
+
   // Agregar fecha al campo de fecha de creacion
   public function setAutoCreatedAt($values){
 
@@ -181,6 +282,9 @@ class AmTable extends AmQuery{
     if($this->hasCreatedAtField())
       self::setNowDateValueToAllRecordsInField($values,
         $this->getCreatedAtField());
+
+    return $this;
+
   }
 
   // Agregar fecha al campo de fecha de mpdificacion
@@ -191,6 +295,9 @@ class AmTable extends AmQuery{
     if($this->hasUpdatedAtField())
       self::setNowDateValueToAllRecordsInField($values,
         $this->getUpdatedAtField());
+
+    return $this;
+
   }
 
   private static function setNowDateValueToAllRecordsInField($values, $field){
@@ -198,10 +305,16 @@ class AmTable extends AmQuery{
     $now = date('c');
 
     if($values instanceof AmQuery){
-      // Agregar campo a la consulta
-      $values->selectAs("'{$now}'", $field);
+
+      if($values->getType() == 'update')
+        $values->set($field, $now);
+
+      else
+        // Agregar campo a la consulta
+        $values->selectAs("'{$now}'", $field);
 
     }elseif(is_array($values)){
+
 
       // Agregar created_ad a cada registro
       foreach (array_keys($values) as $i)
@@ -211,36 +324,6 @@ class AmTable extends AmQuery{
 
   }
   
-  // Cargar columnas, referencias y PKs a la tabla
-  public function describeTable(
-    array $fields = array(),
-    array $referencesTo = array(),
-    array $referencesBy = array(),
-    array $uniques = array()
-  ){
-
-    // Preparar campos
-    $this->pks = array();
-    $this->fields = new stdClass;
-    foreach($fields as $column)
-      // Agregar instancia del campo
-      $this->addField(new AmField($column));
-
-    // Agregar campos unicos
-    $this->uniques = $uniques;
-
-    // Preparar referencias
-    $this->referencesTo = new stdClass;
-    foreach ($referencesTo as $name => $values)
-      $this->referencesTo->$name = new AmRelation($values);
-
-    // Preparar referencias a
-    $this->referencesBy = new stdClass;
-    foreach ($referencesBy as $name => $values)
-      $this->referencesBy->$name = new AmRelation($values);
-
-  }
-
   // Indica su un campo forma o no parte del primary key de la tabla
   public function isPk($fieldName){
 
@@ -258,14 +341,8 @@ class AmTable extends AmQuery{
       $this->pks[] = $fieldName;
 
     // Marcar el campo como primario
-    $this->getField($fieldName)->isPrimaryKey(true);
+    $this->getField($fieldName)->isPk(true);
 
-  }
-
-  // Asigna un campo
-  public function setField($name, AmField $field){
-
-    $this->fields->$name = $field;
     return $this;
 
   }
@@ -296,27 +373,48 @@ class AmTable extends AmQuery{
 
   // Insertar valores
   public function insertInto($values, array $fields = array()){
+
     return $this->getScheme()->insertInto($values, $this, $fields);
+
   }
 
   // Agregar una campo a la lista de campos
-  public function addField(AmField $f, $as = null){
+  public function addField($name = null, $field = null){
 
-    // Obtener el nombre para el campo
-    $fieldName = $f->getName();
-    $name = empty($as) ? $fieldName : $as;
+    if(is_string($field))
+      $field = array('type' => $field);
 
-    // Asignar nombre al campo
-    if(empty($fieldName))
-      $f->getName($name);
+    if($name instanceof AmField || is_array($name)){
+      $field = $name;
+      $name = null;
+    }
 
-    // Agregar campo a la lista de campos
-    $this->setField($name, $f);
+    if(is_array($field)){
+      $field = new AmField(array_merge($field, array(
+        'name' => $name
+      )));
+    }
+
+    if(isset($name) && $name !== $field->getName()){
+      $field = $field->cp(array(
+        'name' => $name
+      ));
+    }
+
+    $name = $field->getName();
+
+    if($this->hasField($name))
+      throw Am::e('AMSCHEMA_TABLE_ALREADY_HAVE_A_FIELD_NAMED',
+        $this->getTableName(), $name);
+
+    $this->fields[$name] = $field;
 
     // Si es campo primario se agrega a la
     // lista de campos primarios
-    if($f->isPrimaryKey())
+    if($field->isPk())
       $this->addPk($name);
+
+    return $this;
 
   }
 
@@ -333,15 +431,16 @@ class AmTable extends AmQuery{
 
     // Crear consultar
     $q = $scheme->q($this, $alias);
-    
+
     // Obtener como retornará los resultados y asignarlo a la consulta
-    $q->setAs(':'.$this->getTableName().'@'.$scheme->getName());
+    $q->setModelName($this->getModelName());
 
     // Asignar campos
     if($withFields){
-      $fields = array_keys((array)$this->getFields());
+      $fields = array_keys($this->getFields());
       $fields = array_combine($fields, $fields);
       $q->setSelects($fields);
+      
     }
 
     return $q;
@@ -371,16 +470,16 @@ class AmTable extends AmQuery{
   }
 
   // Obtener todos los registros de buscar por un campos
-  public function findAllBy($field, $value, $type = null){
+  public function findAllBy($field, $value, $type = null, $withFields = false){
 
-    return $this->findBy($field, $value)->get($type);
+    return $this->findBy($field, $value, $withFields)->get($type);
 
   }
 
   // Obtener el primer registro de la busqueda por un campo
-  public function findOneBy($field, $value, $type = null){
+  public function findOneBy($field, $value, $type = null, $withFields = false){
 
-    return $this->findBy($field, $value)->row($type);
+    return $this->findBy($field, $value, $withFields)->row($type);
     
   }
 
@@ -415,8 +514,13 @@ class AmTable extends AmQuery{
       if(!isset($id[$pk]) && !array_key_exists($pk, $id))
         return null;
 
+      $fieldName = $pk;
+
       // Agregar condicion
-      $fieldName = $this->getField($pk)->getName();
+      $field = $this->getField($pk);
+      if($field)
+        $fieldName = $field->getName();
+
       $q->where("{$fieldName}='{$id[$pk]}'");
 
     }
@@ -426,9 +530,9 @@ class AmTable extends AmQuery{
   }
 
   // Regresa un objeto con AmModel con el registro solicitado
-  public function find($id, $type = null){
+  public function find($id, $type = null, $withFields = false){
 
-    $q = $this->findById($id);
+    $q = $this->findById($id, $withFields);
     $r = isset($q)? $q->row($type) : false;
 
     return $r === false ? null : $r;
@@ -440,21 +544,18 @@ class AmTable extends AmQuery{
 
     // Convertir campos
     $fields = array();
-    foreach($this->getFields() as $offset => $field){
+    foreach($this->getFields() as $offset => $field)
       $fields[$offset] = $field->toArray();
-    }
 
     // Convertir refencias
     $referencesTo = array();
-    foreach($this->getReferencesTo() as $offset => $field){
+    foreach($this->getReferencesTo() as $offset => $field)
       $referencesTo[$offset] = $field->toArray();
-    }
 
     // Convertir referencias a
     $referencesBy = array();
-    foreach($this->getReferencesBy() as $offset => $field){
+    foreach($this->getReferencesBy() as $offset => $field)
       $referencesBy[$offset] = $field->toArray();
-    }
 
     // Unir todas las partes
     return array(

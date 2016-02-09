@@ -29,46 +29,77 @@
 
 class AmModel extends AmObject{
 
-  private static
-    $allValidators = array();
-
   // Propiedades
   protected
-    $schemeName = '',       // Nombre del esquema a la que pertenece el model
-    $tableName = null,      // Nombre de la tabla a la que pertenece el model
-    $table = null,          // Instancia de la tabla
-    $isNew = true,          // Indica si es un registro nuevo
-    $errors = array(),      // Listados de errores
-    $realValues = array(),  // Valores reales
-    $rawValues = array(),   // Indica si el valor que contiene la propieda
-                            // Es un valor crudo
-    $validators = null,     // Validators del modelo
-    $errorsCount = 0;       // Cantidad de errores
+    $schemeName = '',         // Nombre del esquema a la que pertenece el model
+    $tableName = null,        // Nombre de la tabla a la que pertenece el model
+    $fields = null,           // Definición de campos
+    $createdAtField = false,  // Nombre del campo para la fecha de creación
+    $updatedAtField = false,  // Nombre del campo para la fecha de actualización
+    $referencesTo = null,     // Definición de relaciones a otras clases
+    $referencesBy = null,     // Definición de relaciones de otras clases
+    $uniques = null,          // Configuraciones de uniques
 
-  // El constructor se encarga de asignar la instancia de la tabla correspondiente al model
+    $table = null,            // Instancia de la tabla
+    $isNew = true,            // Indica si es un registro nuevo
+    $errors = array(),        // Listados de errores
+    $realValues = array(),    // Valores reales
+    $rawValues = array(),     // Indica si el valor que contiene la propieda
+                              // Es un valor crudo
+    $validators = null,       // Validators del modelo
+    $errorsCount = 0;         // Cantidad de errores
+
+  // El constructor se encarga de asignar la instancia de la tabla
+  // correspondiente al model
   final public function __construct($params = array(), $isNew = true) {
 
     // Inicializar la tabla si no ha sido inicializada
     $className = get_class($this);
-    $schemeName = $this->schemeName;
-    $tableName  = $this->tableName;
+
+    $scheme = AmScheme::get($this->schemeName);
 
     $this->isNew = $isNew;
 
-    // Inicializar los validators
-    if(!isset(self::$allValidators[$className])){
-      self::$allValidators[$className] = new AmObject;
-      $this->validators = self::$allValidators[$className];
+    $this->table = $scheme->getTableInstance($className);
+
+    if(!$this->table){
+
+      // Crear instancia anonima de la tabla
+      $this->table = new AmTable(array(
+
+        // Asignar fuente
+        'schemeName'    => $this->schemeName,
+        'tableName'     => $this->tableName,
+        'modelName'     => $className,
+
+        // Detalle de la tabla
+        'fields'        => $this->fields,
+        'pks'           => $this->pks,
+        'referencesTo'  => $this->referencesTo,
+        'referencesBy'  => $this->referencesBy,
+        'uniques'       => $this->uniques,
+
+      ));
+
+      if($this->createdAtField){
+        $this->table->addCreatedAtField(
+          $this->createdAtField===true? null : $this->createdAtField);
+      }
+
+      if($this->updatedAtField){
+        $this->table->addUpdatedAtField(
+          $this->updatedAtField===true? null : $this->updatedAtField);
+      }
+
+      $this->validators = $this->table->getValidators();
+
+      // Inicializar los validators
       $this->start();
-    }else{
-      $this->validators = self::$allValidators[$className];
+      
     }
 
-    // Obtener el nombre de la tabla
-    $this->table = AmScheme::table($tableName, $schemeName);
-
     // Obtener los campos
-    $fields = (array)$this->table->getFields();
+    $fields = $this->table->getFields();
 
     // Por cada campo
     foreach($fields as $fieldName => $field){
@@ -95,11 +126,11 @@ class AmModel extends AmObject{
 
     }
 
-    // Limpiar errores
-    $this->clearErrors();
-
     // Llamar al constructor
     parent::__construct($params);
+
+    // Limpiar errores
+    $this->clearErrors();
 
     // Tomar valores reales
     $this->realValues = $this->toArray();
@@ -334,11 +365,6 @@ class AmModel extends AmObject{
     // Obtener la tabla
     $table = $this->getTable();
 
-    // Si no se recibió la lista de campos a asignar, se tomarán
-    // todos los campos de la tabla
-    if(empty($fields))
-      $fields = array_keys((array)$table->getFields());
-
     // Recorrer cada columan de cada referencia
     $references = $table->getReferencesTo();
     foreach($references as $rel){
@@ -346,11 +372,19 @@ class AmModel extends AmObject{
       foreach($cols as $from){
 
         // Las referencias si es un valor vacío se debe setear a null
-        $value = trim(isset($values[$from])? $values[$from] : '');
+        $value = trim(itemOr($from, $values));
         $values[$from] = empty($value) ? null : $value;
 
       }
     }
+
+    // Si no se recibió la lista de campos a asignar, se tomarán
+    // todos los campos de la tabla
+    if(empty($fields))
+      $fields = array_keys($table->getFields());
+
+    if(empty($fields))
+      $fields = array_keys($values);
 
     foreach($fields as $fieldName){
       $field = $table->getField($fieldName);  // Obtener el campos
@@ -396,6 +430,9 @@ class AmModel extends AmObject{
     $ret = array(); // Para el retorno
     $pks = $this->getTable()->getPks(); // Obtener PKs
 
+    if(empty($pks))
+      throw Am::e('AMSCHEME_MODEL_DONT_HAVE_PK', get_class($this));
+
     // Agregar los IDs
     foreach($pks as $pk)
       $ret[$pk] = $this->getRealValue($pk);
@@ -407,13 +444,22 @@ class AmModel extends AmObject{
   // Devuelve un array con los valores de los campos de la tabla
   public function dataToArray($withAI = true){
 
+    // Obtener la tabla
+    $table = $this->getTable();
+
     $ret = array(); // Para el retorno
+
     // Obtener los campos
-    $fields = $this->getTable()->getFields();
-    foreach($fields as $fieldName => $field){
+    if(!$table->isSchemeStruct())
+      return $this->toArray();
+    
+    $fields = array_keys($table->getFields());
+
+    foreach($fields as $fieldName){
+      $field = $table->getField($fieldName);  // Obtener el campos
       // Si se pidió incorporar los valores autoincrementados
       // o si el campo no es autoincrementado
-      if($withAI || !$field->isAutoIncrement())
+      if($withAI || !$field || !$field->isAutoIncrement())
         // Se agrega el campo al array de retorno
         $ret[$fieldName] = $this->$fieldName;
     }
@@ -447,19 +493,27 @@ class AmModel extends AmObject{
   // Devuelve una consulta para realizar los campos realizados en el modelo
   protected function getQueryUpdate(){
 
+    $table = $this->getTable();
+
     // Obtener los campos
-    $fields = $this->getTable()->getFields();
+    if($table->isSchemeStruct())
+      $fields = array_keys($table->getFields());
+    else
+      $fields = array_keys($this->toArray());
 
     // Obtener una consulta para selecionar el registro
     $q = $this->getQuerySelectItem();
 
     // Recorrer los campos para agregar los sets
     // de los campos que cambiaron
-    foreach($fields as $fieldName => $field)
+    foreach($fields as $fieldName){
+
       // Si el campo cambió
       if($this->hasChanged($fieldName))
         // Agregar set a la consulta
-        $q->set($field->getName(), $this->$fieldName);
+        $q->set($fieldName, $this->$fieldName);
+
+    }
 
     // Devolver consulta generada
     return $q;
@@ -551,8 +605,10 @@ class AmModel extends AmObject{
             if($f->isAutoIncrement()){
 
               // Obtener el nombre del método SET
+              $fieldName = $f->getName();
+
               // para asigar el valor autoincrementado
-              $this->$fielName = $ret;
+              $this->$fieldName = $ret;
 
             }
 
@@ -636,23 +692,9 @@ class AmModel extends AmObject{
   // GET QUERY TO ALL RECORDS
   public static function all($alias = 'q', $withFields = false){
 
-    return self::me()->all($alias, $withFields)->setAs(get_called_class());
+    return self::me()->all($alias, $withFields);
 
   }
-
-  // GET QUERY TO SELECT
-  public static function q($limit, $offset, $alias = 'q', $withFields = false){
-
-    return self::me()->q($limit, $offset, $alias, $withFields);
-
-  }
-
-  public static function qSearch($txt, $limit, $offset){
-
-    return false;
-
-  }
-  
   // // Convirte el ID del registro en un string con cada uno de sus valores
   // // separados por '/'
   // public function pkToString($encode = false){

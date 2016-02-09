@@ -33,7 +33,7 @@ final class AmGenerator{
   public final static function classBaseModel(AmScheme $scheme, AmTable $table){
 
     $existMethods = get_class_methods('AmModel');
-    $fields = array_keys((array)$table->getFields());
+    $fields = array_keys($table->getFields());
     $newMethods = array();
     $lines = array();
 
@@ -116,7 +116,7 @@ final class AmGenerator{
                               "array('max' => $len));";
 
       // To decimal fiels add float validator
-      }elseif($type == 'decimal'){
+      }elseif($type == 'float'){
         $precision = $f->getPrecision();
         $decimals = $f->getScale();
         $validators[] = "    \$this->setValidator('{$fieldName}', 'float', ".
@@ -124,7 +124,7 @@ final class AmGenerator{
       }
 
       // If is a PK not auto increment adde unique validator
-      if($f->isPrimaryKey() && count($table->getPks()) == 1)
+      if($f->isPk() && count($table->getPks()) == 1)
         $validators[] = "    \$this->setValidator('{$fieldName}', 'unique');";
 
       // Add notnull validator if no added any validators

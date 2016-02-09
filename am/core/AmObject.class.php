@@ -312,6 +312,14 @@ class AmObject implements Iterator, Countable, ArrayAccess{
     return $ret;
   }
 
+  public function cp(array $params){
+
+    $className = get_class($this);
+
+    return new $className(array_merge($this->toArray(), $params));
+
+  }
+
   /**
    * ---------------------------------------------------------------------------
    * Convierte una coleción (stdClass, AmObject) a un array. Si la colleción

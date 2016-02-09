@@ -9,7 +9,7 @@ class MysqlScheme extends AmScheme{
   // Equivalencias entre los tipos de datos del Gesto de BD y el Lenguaje de programacion
   protected static
 
-    $TYPES = array(
+    $types = array(
       // Enteros
       "tinyint"    => "integer",
       "smallint"   => "integer",
@@ -18,9 +18,9 @@ class MysqlScheme extends AmScheme{
       "bigint"     => "integer",
 
       // Flotantes
-      "decimal"    => "decimal",
-      "float"      => "decimal",
-      "double"     => "decimal",
+      "decimal"    => "float",
+      "float"      => "float",
+      "double"     => "float",
 
       "bit"        => "bit",
 
@@ -29,7 +29,7 @@ class MysqlScheme extends AmScheme{
       "datetime"   => "datetime",
       "timestamp"  => "timestamp",
       "time"       => "time",
-      "year"       => "intval",
+      "year"       => "year",
 
       // Cadenas de caracteres
       "char"       => "char",
@@ -41,7 +41,7 @@ class MysqlScheme extends AmScheme{
 
     ),
 
-    $INTEGER_BYTES = array(
+    $integerBytes = array(
       "tinyint"     => 1,
       "smallint"    => 2,
       "mediumint"   => 3,
@@ -49,17 +49,23 @@ class MysqlScheme extends AmScheme{
       "bigint"      => 8,
     ),
 
-    $DECIMAL_BYTES = array(
+    $floatBytes = array(
       "decimal" => 0,
       "float"   => 1,
       "double"  => 2,
     ),
 
-    $TEXT_BYTES = array(
+    $textBytes = array(
       "tinytext"    => 1,
       "text"        => 2,
       "mediumtext"  => 3,
       "longtext"    => 4,
+    ),
+
+    $defaultsByte = array(
+      'integer' => 'int',
+      'float'   => 'float',
+      'text'    => 'text'
     );
 
   // Propiedades propias para el Driver
@@ -151,10 +157,10 @@ class MysqlScheme extends AmScheme{
     // Si no se encuentra el tipo se retorna el tipo recibido
 
     $nativeType = $column["type"];
-    $column["type"] = itemOr($column["type"], self::$TYPES, $column["type"]);
+    $column["type"] = itemOr($column["type"], self::$types, $column["type"]);
 
     // Parse bool values
-    $column["primaryKey"] = parseBool($column["primaryKey"]);
+    $column["pk"] = parseBool($column["pk"]);
     $column["allowNull"]  = parseBool($column["allowNull"]);
 
     // Get len of field
@@ -168,19 +174,26 @@ class MysqlScheme extends AmScheme{
     // else look len into bytes used for native byte
     else
       $column["len"]  = itemOr($nativeType, array_merge(
-                self::$INTEGER_BYTES,
-                self::$DECIMAL_BYTES,
-                self::$TEXT_BYTES
+                self::$integerBytes,
+                self::$floatBytes,
+                self::$textBytes
               ));
 
-    if(in_array($column["type"], array("integer", "decimal"))){
-      $column["unsigned"]       = preg_match("/unsigned/", $column["columnType"]) != 0;
-      $column["zerofill"]       = preg_match("/unsigned zerofill/", $column["columnType"]) != 0;
-      $column["autoIncrement"]  = preg_match("/auto_increment/", $column["extra"]) != 0;
+    if(in_array($column["type"], array("integer", "float"))){
+
+      $column["unsigned"] = preg_match("/unsigned/",
+        $column["columnType"]) != 0;
+
+      $column["zerofill"] = preg_match("/unsigned zerofill/",
+        $column["columnType"]) != 0;
+
+      $column["autoIncrement"] = preg_match("/auto_increment/",
+        $column["extra"]) != 0;
+
     }
 
-    // Unset scale is not is a decimal
-    if($column["type"] != "decimal")
+    // Unset scale is not is a float
+    if($column["type"] != "float")
       unset($column["precision"], $column["scale"]);
 
     else
@@ -281,7 +294,7 @@ class MysqlScheme extends AmScheme{
   public function sqlUpdateQuery(AmQuery $q){
 
     return implode(" ", array(
-      "UPDATE FROM",
+      "UPDATE",
       trim($this->getParseTableNameOfView($q)),
       trim($this->sqlJoins($q)),
       trim($this->sqlSets($q)),
@@ -539,6 +552,14 @@ class MysqlScheme extends AmScheme{
 
   }
 
+  private function getTypeByLen($type, $len){
+    $seudoType = $type.'Bytes';
+    $types = self::$$seudoType;
+    $defaultType = itemOr($type, self::$defaultsByte);
+    $index = array_search($len, $types);
+    return $index? $index: $defaultType;
+  }
+
   // Obtener el SQL para un campo de una tabla al momento de crear la tabla
   public function sqlField(AmField $field){
 
@@ -580,22 +601,31 @@ class MysqlScheme extends AmScheme{
     // Get type
     // As integer
     if($type === "integer")
-      $type = array_search($len, self::$INTEGER_BYTES);
+      $type = self::getTypeByLen($type, $len);
 
     // As text
     elseif($type === "text")
-      $type = array_search($len, self::$TEXT_BYTES);
+      $type = self::getTypeByLen($type, $len);
 
-    // with var len
-    elseif(in_array($type, array("bit", "char", "varchar")))
-      $type = "$type($len)";
+    // as float precision
+    elseif($type == "float"){
 
-    // as decimal precision
-    elseif($type == "decimal"){
-      $type = array_search($len, self::$DECIMAL_BYTES);
+      $type = self::getTypeByLen($type, $len);
+
       $precision = $field->getPrecision();
       $scale = $field->getScale();
-      $type = "$type($precision, $scale)";
+
+      if($precision && $precision)
+        $type = "$type($precision, $scale)";
+
+    // with var len
+    }elseif(in_array($type, array("bit", "char", "varchar"))){
+      if(!$len)
+        $len = itemOr($type, self::$defaultsLen);
+      
+      if($len)
+        $type = "$type($len)";
+
     }
 
     return "$name $type $attrs";
@@ -622,7 +652,7 @@ class MysqlScheme extends AmScheme{
       $pks[$offset] = $this->getParseName($table->getField($pk)->getName());
 
     // Preparar otras propiedades
-    $engine = empty($table->engine) ? "" : "ENGINE={$table->engine} ";
+    $engine = empty($table->getEngine()) ? "" : "ENGINE={$table->getEngine()} ";
     $charset = $this->sqlCharset($table->getCharset());
     $collage = $this->sqlCollage($table->getCollage());
 
@@ -772,7 +802,7 @@ class MysqlScheme extends AmScheme{
       ->selectAs("DATA_TYPE", "type")
       ->selectAs("COLUMN_TYPE", "columnType")
       ->selectAs("COLUMN_DEFAULT", "defaultValue")
-      ->selectAs("COLUMN_KEY='PRI'", "primaryKey")
+      ->selectAs("COLUMN_KEY='PRI'", "pk")
       ->selectAs("IS_NULLABLE='YES'", "allowNull")
 
       // Strings

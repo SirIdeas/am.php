@@ -35,7 +35,7 @@ class AmField extends AmObject{
       'integer'     => 'intval',
       'bit'         => 'strval',
       // Flotantes
-      'decimal'     => 'floatval',
+      'float'       => 'floatval',
       // Cadenas de caracteres
       'char'        => 'strval',
       'varchar'     => 'strval',
@@ -51,9 +51,9 @@ class AmField extends AmObject{
   // Propiedades del campo
   protected
     $name = null,             // Nombre
-    $type = null,             // Tipo de datos
+    $type = 'text',             // Tipo de datos
     $defaultValue = null,     // Valor por defecto
-    $primaryKey = false,      // Indica si es o no una clave primaria
+    $pk = false,              // Indica si es o no una clave primaria
     $allowNull = true,        // Indica si se admite o no valores nulos
 
     $len = null,              // Tamanio máximo para campos tipo cadena y tipos enteros
@@ -147,17 +147,17 @@ class AmField extends AmObject{
     
     }
     
-    public function isPrimaryKey(){
+    public function isPk(){
 
-      return $this->primaryKey;
+      return $this->pk;
 
     }
 
 
     // Métodos set para algunas propiedades
-    public function setPrimaryKey($value){
+    public function setPk($value){
 
-      $this->primaryKey = $value; return $this;
+      $this->pk = $value; return $this;
 
     }
 
@@ -167,11 +167,11 @@ class AmField extends AmObject{
       $ret = array(
         'name' => $this->getName(),
         'type' => $this->getType(),
-        'primaryKey' => $this->isPrimaryKey(),
+        'pk' => $this->isPk(),
         'allowNull' => $this->allowNull(),
       );
 
-      if(in_array($this->type, array('integer', 'decimal'))){
+      if(in_array($this->type, array('integer', 'float'))){
         $ret['unsigned'] = $this->isUnsigned();
         $ret['zerofill'] = $this->isZerofill();
         $ret['autoIncrement'] = $this->isAutoIncrement();
@@ -188,7 +188,7 @@ class AmField extends AmObject{
         if(isset($this->$attr) && trim($this->$attr)!=='')
           $ret[$attr] = $this->$attr;
 
-      if($this->type == 'decimal'){
+      if($this->type == 'float'){
         $ret['precision'] = $this->getPrecision();
         $ret['scale'] = $this->getScale();
       }
