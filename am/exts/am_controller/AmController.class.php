@@ -378,7 +378,7 @@ class AmController extends AmResponse{
 
   /**
    * ---------------------------------------------------------------------------
-   * Devuelve un array de los paths de ámbito del controlador
+   * Devuelve un array de los paths de ámbito del controlador.
    * ---------------------------------------------------------------------------
    * @return  array   Listado de los directorios donde se buscará la vista.
    */

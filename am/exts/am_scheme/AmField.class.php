@@ -1,36 +1,27 @@
 <?php
 /**
- * The MIT License (MIT)
+ * Amathista - PHP Framework
  *
- * Copyright (c) 2014-2015 Sir Ideas, C. A.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- **/
- 
+ * @author Alex J. Rondón <arondn2@gmail.com>
+ * 
+ */
+
 /**
+ * -----------------------------------------------------------------------------
  * Clase para los campos de las tablas de las BD
+ * -----------------------------------------------------------------------------
  */
 
 class AmField extends AmObject{
 
   protected static
-    $PARSE_FUNCS = array(
+    
+    /**
+     * -------------------------------------------------------------------------
+     * Funciones para obtener el valor segun el tipo de dato
+     * -------------------------------------------------------------------------
+     */
+    $parseFuncs = array(
       // Enteros
       'integer'     => 'intval',
       'bit'         => 'strval',
@@ -48,161 +39,333 @@ class AmField extends AmObject{
       'year'        => 'strval',
     );
 
-  // Propiedades del campo
   protected
-    $name = null,             // Nombre
-    $type = 'text',             // Tipo de datos
-    $defaultValue = null,     // Valor por defecto
-    $pk = false,              // Indica si es o no una clave primaria
-    $allowNull = true,        // Indica si se admite o no valores nulos
 
-    $len = null,              // Tamanio máximo para campos tipo cadena y tipos enteros
-    $charset = null,          // Set de caracteres
-    $collage = null,          // Coleccion de caracteres
+    /**
+     * -------------------------------------------------------------------------
+     * String con el nombre.
+     * -------------------------------------------------------------------------
+     */
+    $name = null,
 
-    $unsigned = null,         // Indica si el campo admite valores negitos
-    $zerofill = null,         // Indica si se completa con zeros
+    /**
+     * -------------------------------------------------------------------------
+     * String con el tipo de datos.
+     * -------------------------------------------------------------------------
+     */
+    $type = 'text',
 
-    $precision = null,        // Numero de digitos del numero
-    $scale = null,            // Numero de digitos decimales
-    $autoIncrement = false,   // Indica si es un campo autoincrementable
-    $extra = null;            // Atributos extras
+    /**
+     * -------------------------------------------------------------------------
+     * Valor por defecto.
+     * -------------------------------------------------------------------------
+     */
+    $defaultValue = null,
 
-    // Métodos get para las propiedades del campo
-    public function getName(){
+    /**
+     * -------------------------------------------------------------------------
+     * Boolean que indica si es o no parte de la clave primaria de la tabla
+     * donde se encuentra.
+     * -------------------------------------------------------------------------
+     */
+    $pk = false,
 
-      return $this->name;
+    /**
+     * -------------------------------------------------------------------------
+     * Boolean si permite o no valores nulos.
+     * -------------------------------------------------------------------------
+     */
+    $allowNull = true,
+
+    /**
+     * -------------------------------------------------------------------------
+     * Entero con el tamaño de campo. Para los tipos varchar indicar el máximo
+     * tamaño, para campos del tipo bit y char el tamaño, para los tipos
+     * integer y floats indicar los bytes que ocupan.
+     * -------------------------------------------------------------------------
+     */
+    $len = null,
+
+    /**
+     * -------------------------------------------------------------------------
+     * String con el charset.
+     * -------------------------------------------------------------------------
+     */
+    $charset = null,
+
+    /**
+     * -------------------------------------------------------------------------
+     * String con el Collage.
+     * -------------------------------------------------------------------------
+     */
+    $collage = null,
+
+    /**
+     * -------------------------------------------------------------------------
+     * Boolean que indica si en un campo numérico (integer o float) tiene signo.
+     * -------------------------------------------------------------------------
+     */
+    $unsigned = null,
+
+    /**
+     * -------------------------------------------------------------------------
+     * Boolean que indica si es un integer o float indica si se rellenan los
+     * espacio con ceros.
+     * -------------------------------------------------------------------------
+     */
+    $zerofill = null,
+
+    /**
+     * -------------------------------------------------------------------------
+     * Entero con la precición de enteros de los números float.
+     * -------------------------------------------------------------------------
+     */
+    $precision = null,
+
+    /**
+     * -------------------------------------------------------------------------
+     * Entero con la precición de decimales de los números float.
+     * -------------------------------------------------------------------------
+     */
+    $scale = null,
+
+    /**
+     * -------------------------------------------------------------------------
+     * Boolean que indica si es un campo autoincrementable.
+     * -------------------------------------------------------------------------
+     */
+    $autoIncrement = false,
+
+    /**
+     * -------------------------------------------------------------------------
+     * String con configuración extra.
+     * -------------------------------------------------------------------------
+     */
+    $extra = null;
+
+  /**
+   * ---------------------------------------------------------------------------
+   * Devuelve el nombre.
+   * ---------------------------------------------------------------------------
+   * @return  string  Nombre.
+   */
+  public function getName(){
+
+    return $this->name;
+  
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
+   * Devuelve el tipo.
+   * ---------------------------------------------------------------------------
+   * @return  string  Tipo.
+   */
+  public function getType(){
+
+    return $this->type;
+  
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
+   * Devuelve el Tamaño.
+   * ---------------------------------------------------------------------------
+   * @return  integer   Tamaño.
+   */
+  public function getLen(){
+
+    return $this->len;
+  
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
+   * Devuelve la precisión de enteros de campos float.
+   * ---------------------------------------------------------------------------
+   * @return  integer   Precisión de enteros de campos float.
+   */
+  public function getPrecision(){
+
+    return $this->precision;
+  
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
+   * Devuelve la precisión de decimales de campos float.
+   * ---------------------------------------------------------------------------
+   * @return  integer   Precición de decimales de campos float.
+   */
+  public function getScale(){
+
+    return $this->scale;
+  
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
+   * Devuelve el tipo.
+   * ---------------------------------------------------------------------------
+   * @return  any  Tipo.
+   */
+  public function getDefaultValue(){
+
+    return $this->defaultValue;
+  
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
+   * Devuelve si permite o no valores null.
+   * ---------------------------------------------------------------------------
+   * @return  boolean   Si permite o no valores nullos.
+   */
+  public function allowNull(){
+
+    return $this->allowNull;
+  
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
+   * Devuelve si es un campo autoincrementable.
+   * ---------------------------------------------------------------------------
+   * @return  boolean   Si es un campo autoincrementable.
+   */
+  public function isAutoIncrement(){
+
+    return $this->autoIncrement;
+  
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
+   * Devuelve si es un campo sin signo.
+   * ---------------------------------------------------------------------------
+   * @return  boolean   Si es un campos sin signo.
+   */
+  public function isUnsigned(){
+
+    return $this->unsigned;
+  
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
+   * Devuelve si se rrellenan con ceros.
+   * ---------------------------------------------------------------------------
+   * @return  boolean  Si se rellena con ceros.
+   */
+  public function isZerofill(){
+
+    return $this->zerofill;
+  
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
+   * Devuelve si es parte de la clave primaria de la tabla a la que pertenece.
+   * ---------------------------------------------------------------------------
+   * @return  boolean  Si es parte de la clave primaria.
+   */
+  public function isPk(){
+
+    return $this->pk;
+
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
+   * Devuelve el charset.
+   * ---------------------------------------------------------------------------
+   * @return  string  Charset.
+   */
+  public function getCharset(){
+
+    return $this->charset;
+  
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
+   * Devuelve el collage.
+   * ---------------------------------------------------------------------------
+   * @return  string  Collage.
+   */
+  public function getCollage(){
+
+    return $this->collage;
+  
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
+   * Devuelve las configuraciones extras.
+   * ---------------------------------------------------------------------------
+   * @return  string  Configuraciones extras.
+   */
+  public function getExtra(){
+
+    return $this->extra;
+  
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
+   * Realizar casting a un valor por el tipo de datos del campo.
+   * ---------------------------------------------------------------------------
+   * @return  any   Valor parseado.
+   */
+  public function parseValue($value){
+
+    $fn = self::$parseFuncs[$this->getType()];
+    return $fn($value);
     
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
+   * Convertir el campo a array.
+   * ---------------------------------------------------------------------------
+   * @return  array   Campo convertir en array.
+   */
+  public function toArray(){
+
+    // Atributos obligatorios
+    $ret = array(
+      'name' => $this->getName(),
+      'type' => $this->getType(),
+      'pk' => $this->isPk(),
+      'allowNull' => $this->allowNull(),
+    );
+
+    // Atributos para campos numéricos.
+    if(in_array($this->type, array('integer', 'float'))){
+      $ret['unsigned'] = $this->isUnsigned();
+      $ret['zerofill'] = $this->isZerofill();
+      $ret['autoIncrement'] = $this->isAutoIncrement();
     }
-    
-    public function getType(){
 
-      return $this->type;
-    
-    }
-    
-    public function getLen(){
-
-      return $this->len;
-    
-    }
-    
-    public function getPrecision(){
-
-      return $this->precision;
-    
-    }
-    
-    public function getScale(){
-
-      return $this->scale;
-    
-    }
-    
-    public function getDefaultValue(){
-
-      return $this->defaultValue;
-    
-    }
-    
-    public function allowNull(){
-
-      return $this->allowNull;
-    
-    }
-    
-    public function isAutoIncrement(){
-
-      return $this->autoIncrement;
-    
-    }
-    
-    public function isUnsigned(){
-
-      return $this->unsigned;
-    
-    }
-    
-    public function isZerofill(){
-
-      return $this->zerofill;
-    
-    }
-    
-    public function getExtra(){
-
-      return $this->extra;
-    
-    }
-    
-    public function getCharset(){
-
-      return $this->charset;
-    
-    }
-    
-    public function getCollage(){
-
-      return $this->collage;
-    
-    }
-    
-    public function isPk(){
-
-      return $this->pk;
-
+    // Campos floats
+    if($this->type == 'float'){
+      $ret['precision'] = $this->getPrecision();
+      $ret['scale'] = $this->getScale();
     }
 
+    // Campos opcionales
+    foreach(array(
+      'defaultValue',
+      'collage',
+      'charset',
+      'extra',
+      'len',
+    ) as $attr)
+      if(isset($this->$attr) && trim($this->$attr)!=='')
+        $ret[$attr] = $this->$attr;
 
-    // Métodos set para algunas propiedades
-    public function setPk($value){
+    return $ret;
 
-      $this->pk = $value; return $this;
-
-    }
-
-    // Convertir campo en array
-    public function toArray(){
-
-      $ret = array(
-        'name' => $this->getName(),
-        'type' => $this->getType(),
-        'pk' => $this->isPk(),
-        'allowNull' => $this->allowNull(),
-      );
-
-      if(in_array($this->type, array('integer', 'float'))){
-        $ret['unsigned'] = $this->isUnsigned();
-        $ret['zerofill'] = $this->isZerofill();
-        $ret['autoIncrement'] = $this->isAutoIncrement();
-      }
-
-      // Eliminar campos vacios
-      foreach(array(
-        'defaultValue',
-        'collage',
-        'charset',
-        'extra',
-        'len',
-      ) as $attr)
-        if(isset($this->$attr) && trim($this->$attr)!=='')
-          $ret[$attr] = $this->$attr;
-
-      if($this->type == 'float'){
-        $ret['precision'] = $this->getPrecision();
-        $ret['scale'] = $this->getScale();
-      }
-
-      return $ret;
-
-    }
-
-    // Realizar casting a un valor por el tipo de datos del campo
-    public function parseValue($value){
-
-      $fn = self::$PARSE_FUNCS[$this->getType()];
-      return $fn($value);
-      
-    }
+  }
 
 }
