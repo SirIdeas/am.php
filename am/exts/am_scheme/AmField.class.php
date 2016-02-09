@@ -22,21 +22,26 @@ class AmField extends AmObject{
      * -------------------------------------------------------------------------
      */
     $parseFuncs = array(
+
       // Enteros
       'integer'     => 'intval',
       'bit'         => 'strval',
+
       // Flotantes
       'float'       => 'floatval',
+
       // Cadenas de caracteres
       'char'        => 'strval',
       'varchar'     => 'strval',
       'text'        => 'strval',
+
       // Fechas
       'date'        => 'strval',
       'datetime'    => 'strval',
       'timestamp'   => 'strval',
       'time'        => 'strval',
       'year'        => 'strval',
+      
     );
 
   protected

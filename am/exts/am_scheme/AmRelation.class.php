@@ -1,65 +1,108 @@
 <?php
 /**
- * The MIT License (MIT)
+ * Amathista - PHP Framework
  *
- * Copyright (c) 2014-2015 Sir Ideas, C. A.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- **/
- 
+ * @author Alex J. Rondón <arondn2@gmail.com>
+ * 
+ */
+
+/**
+ * -----------------------------------------------------------------------------
+ * Clase para las relaciones entre las tablas.
+ * -----------------------------------------------------------------------------
+ */
+
 class AmRelation extends AmObject{
 
   protected
-    $scheme = '',
-    $table = null,
-    $tableInstance = null,
-    $columns = array();
-
-  public function __construct($data = null){
     
+    /**
+     * -------------------------------------------------------------------------
+     * Nombre del esquema al que apunta la relación.
+     * -------------------------------------------------------------------------
+     */
+    $scheme = '',
+    
+    /**
+     * -------------------------------------------------------------------------
+     * Nombre de la tabla a la que apunta la relación.
+     * -------------------------------------------------------------------------
+     */
+    $table = null,
+    
+    /**
+     * -------------------------------------------------------------------------
+     * Instancia de la tabla a la que apunta la relación.
+     * -------------------------------------------------------------------------
+     */
+    $tableInstance = null,
+    
+    /**
+     * -------------------------------------------------------------------------
+     * Hash de columnas relacionadas.
+     * -------------------------------------------------------------------------
+     */
+    $columns = array();
+    
+  /**
+   * ---------------------------------------------------------------------------
+   * Contructor. Inicializa la tabla.
+   * ---------------------------------------------------------------------------
+   */
+  public function __construct($data = null){
     parent::__construct($data);
+
+    // Obtener la instancia de la tabla
     $this->tableInstance = AmScheme::table($this->getTable(),
       $this->getScheme());
 
   }
-
-  // Métodos GET para las propiedades
+    
+  /**
+   * ---------------------------------------------------------------------------
+   * Devuelve el nombre del esquema a la que referencia.
+   * ---------------------------------------------------------------------------
+   * @return  string  Nombre del esquema.
+   */
   public function getScheme(){
     
     return $this->scheme;
 
   }
 
+  /**
+   * ---------------------------------------------------------------------------
+   * Devuelve el nombre de la tabla a la que referencia.
+   * ---------------------------------------------------------------------------
+   * @return  string  Nombre de la tabla.
+   */
   public function getTable(){
     
     return $this->table;
 
   }
 
+  /**
+   * ---------------------------------------------------------------------------
+   * Devuelve el hash con las columnas relacionadas.
+   * ---------------------------------------------------------------------------
+   * @return  hash  Hash con las columnas relacionadas.
+   */
   public function getColumns(){
     
     return $this->columns;
 
   }
 
-  // Generador de la consulta para la relación
-  public function getQuery($model){
+  /**
+   * ---------------------------------------------------------------------------
+   * Generador de la consulta para la relación basado en un modelo.
+   * ---------------------------------------------------------------------------
+   * @param   AmModel   $model  Instancia de AmModel a la que se quiere obtener
+   *                            la relación.
+   * @return  AmQuery           Consulta generada.
+   */
+  public function getQuery(AmModel $model){
 
     // Una consulta para todos los registros de la tabla
     $q = $this->tableInstance->all();
@@ -72,7 +115,12 @@ class AmRelation extends AmObject{
 
   }
 
-  // Convertir a Array
+  /**
+   * ---------------------------------------------------------------------------
+   * Devuelve una array con los datos de la relación.
+   * ---------------------------------------------------------------------------
+   * @return  array   Relación como un array.
+   */
   public function toArray(){
 
     return array(
