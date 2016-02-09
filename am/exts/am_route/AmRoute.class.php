@@ -21,7 +21,7 @@ final class AmRoute{
      * Tipos de parámetros que puede tener la ruta
      * -------------------------------------------------------------------------
      */
-    $TYPES = array(
+    $types = array(
       'id'            => '[a-zA-Z_][a-zA-Z0-9_-]*', // Identificador
       'any'           => '.*',                      // Cualquier valor
       'numeric'       => '[0-9]*',                  // Numeros
@@ -153,7 +153,7 @@ final class AmRoute{
    */
   private static function __compileRoute($route, array &$params){
 
-    $typeId = self::$TYPES['id'];
+    $typeId = self::$types['id'];
     
     // Obtener el ultimo parámetro
     if(preg_match("/^(.*){({$typeId})}(.*)$/", $route, $a)){
@@ -161,8 +161,8 @@ final class AmRoute{
       // Determina si el parámetro tiene un tipo asignado (numero, alfanumerico,
       // entre otros)
       if(preg_match('/^(.*):(.*)$/', $a[3], $b)){
-        if(isset(self::$TYPES[$b[1]])){
-          $type = self::$TYPES[$b[1]];
+        if(isset(self::$types[$b[1]])){
+          $type = self::$types[$b[1]];
         }else{
           $type = $b[1];
         }
@@ -170,7 +170,7 @@ final class AmRoute{
 
       // Si no tiene un tipo definido entonces admitir cualquier tipo
       }else{
-        $type = self::$TYPES['any'];
+        $type = self::$types['any'];
       }
       // Realizar llamado para el reto de la ruta.
       return self::__compileRoute($a[1], $params)."({$type}){$a[3]}";
