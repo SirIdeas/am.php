@@ -97,6 +97,10 @@ class MysqlSource extends AmSource{
     return self::DEFAULT_PORT;
   }
 
+  public function isConnected(){
+    return !!$this->handle;
+  }
+
   // Crear una conexión
   protected function initConnect(){
     return $this->handle = mysql_connect(

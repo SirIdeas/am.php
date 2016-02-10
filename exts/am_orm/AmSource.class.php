@@ -269,7 +269,7 @@ abstract class AmSource extends AmObject{
 
   // Indica si la BD existe
   public function exists(){
-    return $this->select();
+    return !!$this->select();
   }
 
   // Devuelve el nombre de la BD para ser reconocida en el gestor de BD
@@ -735,6 +735,9 @@ abstract class AmSource extends AmObject{
 
   // Metodo para crear una conexion
   abstract protected function initConnect();
+
+  // Metodo para crear una conexion
+  abstract public function isConnected();
 
   // Metodo para cerrar una conexión
   abstract public function close();
