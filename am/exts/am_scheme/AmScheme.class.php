@@ -518,7 +518,7 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Función para reconectar. Desconecta y vuelve a conectar la DB.
-   * @return [type] [description]
+   * @return  Resource  Recurso generado por la nueva conexión.
    */
   public function reconnect(){
 
@@ -528,8 +528,8 @@ abstract class AmScheme extends AmObject{
   }
 
   /**
-   * Seleciona la BD
-   * @return [type] [description]
+   * Seleciona la BD.
+   * @return  boolan  Si se pudo selecionar la BD.
    */
   public function select(){
 
@@ -539,8 +539,8 @@ abstract class AmScheme extends AmObject{
   }
 
   /**
-   * Indica si la BD existe
-   * @return [type] [description]
+   * Indica si la BD existe.
+   * @return  boolean  Si la BD existe.
    */
   public function exists(){
 
@@ -617,9 +617,9 @@ abstract class AmScheme extends AmObject{
   }
 
   /**
-   * Crea la BD
-   * @param   boolean   $ifNotExists  Indica si la BD se ejecuta con el
-   *                                  parmámetro existe.
+   * Crea la BD.
+   * @param   boolean   $ifNotExists  Indica si se agrega la clausula IF NOT
+   *                                  EXISTS.
    * @return  boolean                 Si se creó la BD. Si la BD ya existe y
    *                                  el parámetro $ifNotExists == true,
    *                                  retornará true.
@@ -630,11 +630,12 @@ abstract class AmScheme extends AmObject{
 
   }
 
-  // Elimina la BD
   /**
-   * [drop description]
-   * @param  boolean $ifExists [description]
-   * @return [type]            [description]
+   * Elimina la BD.
+   * @param   boolean   $ifExists   Si se agrega la clausula IF EXISTS.
+   * @return  boolean               Si se eliminó la BD. Si la BD no existe y el
+   *                                parémetro $ifExists==true entonces retorna
+   *                                true.
    */
   public function drop($ifExists = true){
 
@@ -642,10 +643,9 @@ abstract class AmScheme extends AmObject{
 
   }
 
-  // Obtener la información de la BD
   /**
-   * [getInfo description]
-   * @return [type] [description]
+   * Obtener la información de la BD.
+   * @return  hash  Hash con las propiedades de laBD
    */
   public function getInfo(){
 
@@ -653,12 +653,14 @@ abstract class AmScheme extends AmObject{
 
   }
 
-  // Crear tabla
   /**
-   * [createTable description]
-   * @param  AmTable $t           [description]
-   * @param  boolean $ifNotExists [description]
-   * @return [type]               [description]
+   * Crear tabla en la BD.
+   * @param   AmTable   $t            Tabla a crear
+   * @param   boolean   $ifNotExists  Se agrega el parémtro IS NOT EXISTS.
+   * @return  boolean                 Si se creó la tabla. Si la tabla existe y
+   *                                  el parámetro $ifNotExists == true,
+   *                                  retornará true.
+   *                                  
    */
   public function createTable(AmTable $t, $ifNotExists = true){
 
@@ -666,12 +668,13 @@ abstract class AmScheme extends AmObject{
 
   }
 
-  // Crea todas las tablas de la BD
   /**
-   * [createTables description]
-   * @return [type] [description]
+   * Crea todas las tablas de la BD basandose en los modelos bases generados.
+   * @param   boolean   $ifNotExists  Si la se creanran las tablas si no existe
+   * @return  hash                    Hash con un valor por cada tabla que
+   *                                  indica si se creó.
    */
-  public function createTables(){
+  public function createTables($ifNotExists = true){
 
     $ret = array(); // Para el retorno
 
@@ -681,17 +684,20 @@ abstract class AmScheme extends AmObject{
     // Recorrer cada tabla generar crear la tabla
     foreach ($tablesNames as $table)
       // Crear la tabla
-      $ret[$table] = $this->createTable($table);
+      $ret[$table] = $this->createTable($table, $ifNotExists);
 
     return $ret;
 
   }
 
   /**
-   * [dropTable description]
-   * @param  [type]  $table    [description]
-   * @param  boolean $ifExists [description]
-   * @return [type]            [description]
+   * Elimina una tabla.
+   * @param   string/AmTable  $table      Nombre o instancia de la tabla a
+   *                                      eliminar.
+   * @param   boolean         $ifExists   Si se agrega la clausula IF EXISTS.
+   * @return  boolean                     Si se eliminó la Tabla. Si la Tabla no
+   *                                      existe y el parémetro $ifExists==true
+   *                                      entonces retorna true.
    */
   public function dropTable($table, $ifExists = true){
 
@@ -699,23 +705,25 @@ abstract class AmScheme extends AmObject{
 
   }
 
-  // Indica si la tabla existe
   /**
-   * [existsTable description]
-   * @param  [type] $table [description]
-   * @return [type]        [description]
+   * Indica si la tabla existe.
+   * @param   string/AmTable  $table  Nombre o instancia de la tabla.
+   * @return  boolean                 Si la tabla existe.
    */
   public function existsTable($table){
 
+    // Intenta obtener la descripcion de la tabla para saber si existe.
     return !!$this->getTableDescription($table);
 
   }
 
   /**
-   * [truncate description]
-   * @param  [type]  $table    [description]
-   * @param  boolean $ignoreFk [description]
-   * @return [type]            [description]
+   * Eliminar todos los registros de una tabla y reinicia los campos
+   * autoincrementables.
+   * @param  string/AmTable   $table      Nombre o instancia de la tabla.
+   * @param  boolean          $ignoreFk   Si se ingorará los Foreing Keys.
+   * @return boolean                      Si se vació la tabla
+   *                                      satisfactoriamente
    */
   public function truncate($table, $ignoreFk = true){
 
@@ -723,10 +731,9 @@ abstract class AmScheme extends AmObject{
 
   }
 
-  // Devuelve un array con el listado de tablas de la BD
   /**
-   * [getTables description]
-   * @return [type] [description]
+   * Devuelve un array con el listado de tablas de la BD y su descripción.
+   * @return  array   Array de hash con las descripción de las tablas.
    */
   public function getTables(){
 
@@ -735,11 +742,10 @@ abstract class AmScheme extends AmObject{
 
   }
 
-  // Devuelve un array con el listado de tablas
   /**
-   * [getTableDescription description]
-   * @param  [type] $table [description]
-   * @return [type]        [description]
+   * Obtiene la descripción de una tabla en el BD.
+   * @param   string/AmTable  $table  Nombre o instancia de la tabla.
+   * @return  hash                    Hash con la descripcion de la tabla.
    */
   public function getTableDescription($table){
     
@@ -752,11 +758,11 @@ abstract class AmScheme extends AmObject{
 
   }
 
-  // Obtener un listado de las columnas de una tabla
   /**
-   * [getTableColumns description]
-   * @param  [type] $table [description]
-   * @return [type]        [description]
+   * Obtener un listado de las columnas de una tabla.
+   * @param   string/AmTable  $table  Nombre o instancia de la tabla.
+   * @return  hash                    Array de hash con la descripcion de los
+   *                                  campos.
    */
   public function getTableColumns($table){
 
@@ -765,11 +771,11 @@ abstract class AmScheme extends AmObject{
                 
   }
 
-  // Obtener un listado de las columnas de una tabla
   /**
-   * [getTableForeignKeys description]
-   * @param  [type] $table [description]
-   * @return [type]        [description]
+   * Obtener un listado de las claves foráneas de una tabla.
+   * @param   string/AmTable  $table  Nombre o instancia de la tabla.
+   * @return  array                   Array de hash conla descripción de las
+   *                                  claves foráneas.
    */
   public function getTableForeignKeys($table){
 
@@ -808,11 +814,11 @@ abstract class AmScheme extends AmObject{
 
   }
 
-  // Obtener el listado de referencias a una tabla
   /**
-   * [getTableReferences description]
-   * @param  [type] $table [description]
-   * @return [type]        [description]
+   * Obtener el listado de referencias a una tabla.
+   * @param   string/AmTable  $table  Nombre o instancia de la tabla.
+   * @return  array                   Array de hash con la descripción de las
+   *                                  referencias.
    */
   public function getTableReferences($table){
 
@@ -852,11 +858,11 @@ abstract class AmScheme extends AmObject{
 
   }
 
-  // Obtener un listado de las columnas de una tabla
   /**
-   * [getTableUniques description]
-   * @param  [type] $table [description]
-   * @return [type]        [description]
+   * Obtener un listado de las claves restricciones únicas de una tabla.
+   * @param   string/AmTable  $table  Nombre o instancia de la tabla.
+   * @return  array                   Array de hash con la descripción de
+   *                                  claves únicas.
    */
   public function getTableUniques($table){
 
@@ -875,13 +881,10 @@ abstract class AmScheme extends AmObject{
 
   }
 
-
-  // Devuelve la descripcion completa de una tabla
-  // incluyendo los campos
   /**
-   * [getTableFromScheme description]
-   * @param  [type] $tableName [description]
-   * @return [type]            [description]
+   * Devuelve la descripción completa de una tabla incluyendo los campos.
+   * @param   string  $tableName  Nombre de la tabla.
+   * @return  AmTable             Instancia de la tabla.
    */
   public function getTableFromScheme($tableName){
 
@@ -912,10 +915,10 @@ abstract class AmScheme extends AmObject{
   }
 
   /**
-   * [createView description]
-   * @param  AmQuery $q       [description]
-   * @param  boolean $replace [description]
-   * @return [type]           [description]
+   * Crea una vista.
+   * @param   AmQuery   $q        Instancia de la consulta a crear.
+   * @param   boolean   $replace  Si se debe agregar la clausula OR REPLACE.
+   * @return  boolean             Si se creó la vista.
    */
   public function createView(AmQuery $q, $replace = true){
 
@@ -924,12 +927,13 @@ abstract class AmScheme extends AmObject{
   }
 
   /**
-   * [dropView description]
-   * @param  AmQuery $q        [description]
-   * @param  boolean $ifExists [description]
-   * @return [type]            [description]
+   * Eliminar una vista.
+   * @param   string/AmQuery  $q    Nombre o instancia de la consulta a
+   *                                eliminar.
+   * @param   boolean   $ifExists   Si se debe agregar la clausula IF EXISTS.
+   * @return  boolean               Si se eliminó la vista
    */
-  public function dropView(AmQuery $q, $ifExists = true){
+  public function dropView($q, $ifExists = true){
 
     return !!$this->execute($this->sqlDropView($q, $ifExists));
 

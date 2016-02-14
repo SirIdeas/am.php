@@ -716,11 +716,14 @@ class MysqlScheme extends AmScheme{
   }
 
   public function sqlDropView($q, $ifExists = true){
+    
+    if($q instanceof AmQuery)
+      $q = $q->getName();
 
-    $queryName = $this->getParseObjectDatabaseName($q->getName());
+    $queryName = $this->getParseObjectDatabaseName($q);
     $ifExists = $ifExists? 'IF EXISTS ' : '';
 
-    return "DROP VIEW {$ifExists}{$queryName} AS {$q->sql()}";
+    return "DROP VIEW {$ifExists}{$queryName}";
 
   }
 

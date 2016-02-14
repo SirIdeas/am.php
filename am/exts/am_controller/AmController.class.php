@@ -107,7 +107,7 @@ class AmController extends AmResponse{
    *                              ejecutará el filtro.
    * @param   array   $except     Array de acciones para las cuales no se
    *                              ejecutará el filtro.
-   * @param   [type]  $redirect   A donde se redirigirá si el filtro no pasa.
+   * @param   string  $redirect   A donde se redirigirá si el filtro no pasa.
    */
   final protected function addFilter($name, $when, $to = 'all',
                                      $except = array(), $redirect = null){
@@ -242,10 +242,10 @@ class AmController extends AmResponse{
 
   /**
    * Ejecuta una acción, con un método y unos parámetros.
-   * @param   string  $action   Nombre de la acción a ejecutar.
-   * @param   string  $method   Nombre del método como se ejecuta.
-   * @param   array   $params   Parámetros para ejecutar la acción.
-   * @return  [type]            
+   * @param   string      $action   Nombre de la acción a ejecutar.
+   * @param   string      $method   Nombre del método como se ejecuta.
+   * @param   array       $params   Parámetros para ejecutar la acción.
+   * @return  AmResponse            Instancia de la respuesta generada.
    */
   final protected function executeAction($action, $method, array $params){
 
