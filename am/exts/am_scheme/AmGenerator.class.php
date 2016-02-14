@@ -39,7 +39,7 @@ final class AmGenerator{
 
     // Agregar métodos GET para cada campos
 
-    $lines[] = "class {$scheme->getBaseModelClassname($table->getTableName())} extends AmModel{\n";
+    $lines[] = "class {$scheme->getBaseModelClassName($table->getTableName())} extends AmModel{\n";
 
     $lines[] = '  protected';
     $lines[] = "    \$schemeName = '{$table->getScheme()->getName()}',";

@@ -92,6 +92,25 @@ class AmCoder{
 
   /**
    * ---------------------------------------------------------------------------
+   * Guarda una configuración en archivo.
+   * ---------------------------------------------------------------------------
+   * @param   string  $path   Archivo donde se guardará la configuración.
+   * @param   hash    $conf   Hash con la configuración q se guadará.
+   * @param   bool    $rw     Indica si el archivo se debe sobreescribir en el
+   *                          caso de que no exista.
+   * @return  hash            Hash de propiedades del modelo.
+   */
+  public static function generate($path, $conf, $rw = true){
+
+    if(!is_file($path) || $rw){
+      self::write($path, $conf);
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * ---------------------------------------------------------------------------
    * Preparación de la información para escribir en el archivo.
    * ---------------------------------------------------------------------------
    * Consiste en crear array anidados en aquellas posiciones cuya key tenga el

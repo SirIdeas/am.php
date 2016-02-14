@@ -1,12 +1,10 @@
 <?php
 
-
-// Revisar Meodos getRow y fromAs y attributo model
 class AmQuery extends AmObject{
 
   // Propidades
   protected
-    $modelName = 'array',     // Formato de respuesta del los registros
+    $model = 'array',         // Formato de respuesta del los registros
     $formater = null,         // Formateador el resultado de la consulta
     $type = 'select',         // Tipo de consulta
     $scheme = null,           // Fuente de datos
@@ -26,9 +24,9 @@ class AmQuery extends AmObject{
     $insertIntoFields = null, // Campos para el insert
     $sets = array();          // Lista de cambios SETS para consultas UPDATE
 
-  public function getModelName(){
+  public function getModel(){
 
-    return $this->modelName;
+    return $this->model;
 
   }
 
@@ -165,9 +163,9 @@ class AmQuery extends AmObject{
     
   }
 
-  public function setModelName($value){
+  public function setModel($value){
 
-    $this->modelName = $value;
+    $this->model = $value;
     return $this;
 
   }
@@ -601,7 +599,7 @@ class AmQuery extends AmObject{
     $scheme = $this->getScheme();
 
     if(!isset($as))
-      $as = $this->getModelName();
+      $as = $this->getModel();
 
     if(!isset($formater))
       $formater = $this->getFormater();

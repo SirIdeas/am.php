@@ -70,7 +70,7 @@ class AmModel extends AmObject{
         // Asignar fuente
         'schemeName'    => $this->schemeName,
         'tableName'     => $this->tableName,
-        'modelName'     => $className,
+        'model'         => $className,
 
         // Detalle de la tabla
         'fields'        => $this->fields,

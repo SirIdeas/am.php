@@ -1,4 +1,16 @@
 <?php
+/**
+ * Amathista - PHP Framework
+ *
+ * @author Alex J. Rondón <arondn2@gmail.com>
+ * 
+ */
+
+/**
+ * -----------------------------------------------------------------------------
+ * Clase para representar una conexión a una base de datos.
+ * -----------------------------------------------------------------------------
+ */
 
 abstract class AmScheme extends AmObject{
 
@@ -12,194 +24,383 @@ abstract class AmScheme extends AmObject{
     $schemes = array(),
     $schemesDir = 'models';
 
-  // Propiedades
   protected
-    $name       = null,     // Nombre clave para la fuente. Se asume es único.
-    $prefix     = null,     // Prefijo para las clases nacidas de esta fuente.
-    $driver     = null,     // Driver utilizado en la fuente.
-    $database   = null,     // Nombre de la base de datos para conectarse.
-    $server     = null,     // Nombre del servidor.
-    $port       = null,     // Puerto de conexion.
-    $user       = null,     // Usuario para la conexion.
-    $pass       = null,     // Password para la conexion.
-    $charset    = null,     // Codificacion de caracteres.
-    $collage    = null,     // Colexion de caracteres.
-    $tables     = array();  // Listado de instancias de tablas.
 
-  // El destructor del objeto deve cerrar la conexion
+    /**
+     * -------------------------------------------------------------------------
+     * String con el nombre clave de la conexión. Se asume es único.
+     * -------------------------------------------------------------------------
+     */
+    $name = null,
+
+    /**
+     * -------------------------------------------------------------------------
+     * String con el prefijo para las clases nacidas de esta fuente.
+     * -------------------------------------------------------------------------
+     */
+    $prefix = null,
+
+    /**
+     * -------------------------------------------------------------------------
+     * String con el driver utilizado en la fuente.
+     * -------------------------------------------------------------------------
+     */
+    $driver = null,
+
+    /**
+     * -------------------------------------------------------------------------
+     * String con el nombre de la base de datos a conectarse.
+     * -------------------------------------------------------------------------
+     */
+    $database = null,
+
+    /**
+     * -------------------------------------------------------------------------
+     * String con la dirección o nombre del servidor.
+     * -------------------------------------------------------------------------
+     */
+    $server = null,
+
+    /**
+     * -------------------------------------------------------------------------
+     * Integer/string con número del puerto para la conexión.
+     * -------------------------------------------------------------------------
+     */
+    $port = null,
+
+    /**
+     * -------------------------------------------------------------------------
+     * String con el nombre de usuario para la conexion.
+     * -------------------------------------------------------------------------
+     */
+    $user = null,
+
+    /**
+     * -------------------------------------------------------------------------
+     * String con el password para la conexion.
+     * -------------------------------------------------------------------------
+     */
+    $pass = null,
+
+    /**
+     * -------------------------------------------------------------------------
+     * String con el charset.
+     * -------------------------------------------------------------------------
+     */
+    $charset = null,
+
+    /**
+     * -------------------------------------------------------------------------
+     * String con el collage.
+     * -------------------------------------------------------------------------
+     */
+    $collage = null,
+
+    /**
+     * -------------------------------------------------------------------------
+     * Hash con los las instancias por modelos de la conexión.
+     * -------------------------------------------------------------------------
+     */
+    $tables = array();
+
+  /**
+   * ---------------------------------------------------------------------------
+   * El destructor del objecto cierra la conexión
+   * ---------------------------------------------------------------------------
+   */
   public function __destruct() {
 
     $this->close();
 
   }
-
-  // Métodos get para las propiedades principales
+    
+  /**
+   * ---------------------------------------------------------------------------
+   * Devuelve el nombre del esquema a la que referencia.
+   * ---------------------------------------------------------------------------
+   * @return  string  Nombre del esquema.
+   */
   public function getName(){
     
     return $this->name;
 
   }
-
+    
+  /**
+   * ---------------------------------------------------------------------------
+   * Devuelve el prefijo para los modelos del esquema.
+   * ---------------------------------------------------------------------------
+   * @return  string  Prefijo para clases.
+   */
+  
   public function getPrefix(){
     
     return $this->prefix;
 
   }
-
+    
+  /**
+   * ---------------------------------------------------------------------------
+   * Devuelve el nombre driver de conexión.
+   * ---------------------------------------------------------------------------
+   * @return  string  Nombre del driver.
+   */
   public function getDriver(){
     
     return $this->driver;
 
   }
-
+    
+  /**
+   * ---------------------------------------------------------------------------
+   * Devuelve el nombre de la base de datos.
+   * ---------------------------------------------------------------------------
+   * @return  string  Nombre de la base de datos.
+   */
   public function getDatabase(){
     
     return $this->database;
 
   }
-
+    
+  /**
+   * ---------------------------------------------------------------------------
+   * Devuelve el nombre o dirección del servidor.
+   * ---------------------------------------------------------------------------
+   * @return  string  Nombre o dirección del servidor.
+   */
   public function getServer(){
     
     return $this->server;
 
   }
-
+    
+  /**
+   * ---------------------------------------------------------------------------
+   * Devuelve el Número del puerto para la conexión.
+   * ---------------------------------------------------------------------------
+   * @return  integer/string  Número de puerto para la conexión.
+   */
   public function getPort(){
     
     return $this->port;
 
   }
-
+    
+  /**
+   * ---------------------------------------------------------------------------
+   * Devuelve el nombre de usuario para la conexión.
+   * ---------------------------------------------------------------------------
+   * @return  string  Nombre de usuario para la conexión.
+   */
   public function getUser(){
     
     return $this->user;
 
   }
-
+    
+  /**
+   * ---------------------------------------------------------------------------
+   * Devuelve el password para la conexión.
+   * ---------------------------------------------------------------------------
+   * @return  string  Passwor para la conexión.
+   */
   public function getPass(){
     
     return $this->pass;
 
   }
-
+    
+  /**
+   * ---------------------------------------------------------------------------
+   * Devuelve el charset.
+   * ---------------------------------------------------------------------------
+   * @return  string  Charset.
+   */
   public function getCharset(){
     
     return $this->charset;
 
   }
-
+    
+  /**
+   * ---------------------------------------------------------------------------
+   * Devuelve el Collage.
+   * ---------------------------------------------------------------------------
+   * @return  string  Collage.
+   */
   public function getCollage(){
     
     return $this->collage;
 
   }
 
-  // Setear la instancia de una tabla
-  // 
-  public function addTable(AmTable $t){
+  /**
+   * ---------------------------------------------------------------------------
+   * Agrega una tabla a la conexión.
+   * ---------------------------------------------------------------------------
+   * @param   AmTable   $table  Tabla a agregar.
+   * @return  $this
+   */
+  public function addTable(AmTable $table){
     
-    $this->tables[$t->getModelName()] = $t;
+    // Se agrega la tabla en la posición del modelo.
+    $this->tables[$table->getModel()] = $table;
     return $this;
 
   }
 
-  public function getTableInstances(){
-    
-    return $this->tables;
+  /**
+   * ---------------------------------------------------------------------------
+   * Devuelve la instancia de una tabla correspondiente a un modelo. Si no
+   * existe la instancia para dicho modelo devuelve null.
+   * ---------------------------------------------------------------------------
+   * @param   string    $model  Nombre del modelo.
+   * @return  AmTable           Devuelve la instancia de la tabla si existe.
+   */
+  public function getTableInstance($model = null){
+
+    // Devuelve la instancia si existe
+    return itemOr($model, $this->tables);
 
   }
 
-  // Obtener la instancia de una tabla
-  public function getTableInstance($modelName = null){
+  /**
+   * ---------------------------------------------------------------------------
+   * Devuelve si la instancia para un modelo está cargada.
+   * ---------------------------------------------------------------------------
+   * @param   string    $model  Nombre del modelo a consultar.
+   * @return  boolean           Indica si existe la instancia de la tabla para
+   *                            el modelo.
+   */
+  public function hasTableInstance($model){
 
-    // Si ya existe la instancia de la tabla
-    if($this->hasTableInstance($modelName))
-      return $this->tables[$modelName];
-
-    // Sino instanciar la tabla
-    return null;
-
-  }
-
-  // Indica si ya está cargada una instancia de las tablas
-  public function hasTableInstance($table){
-
-    return isset($this->tables[$table]);
+    // Inidica si existe la instancia
+    return isset($this->tables[$model]);
 
   }
 
-  public function getTableNames(){
+  /**
+   * ---------------------------------------------------------------------------
+   * Devuelve los modelos del esquema generados en la aplicación
+   * ---------------------------------------------------------------------------
+   * @return  array   array de strings con los nombres de los modelos.
+   */
+  public function getGeneratedModels(){
 
     $ret = array();
 
+    // Buscar los modelo dentro de la carpeta del esquema
     $ret = amGlobFiles($this->getDir(), array(
-      'include' => '/(.*[\/\\\\](.*))\.conf\.php/',
+
+      // Obtener solo los archivos de configuración
+      'include' => '/.*[\/\\\\](.*)\.conf\.php/',
+
+      // No buscar recursivamente
+      'recursive' => false,
+
+      // Indica que sección de la regez devolverá.
       'return' => 1
+
     ));
 
-    foreach ($ret as $i => $file) {
-      if(dirname(dirname($file)) != realpath($this->getDir())){
-        $ret[$i] = false;
-      }else{
-        $ret[$i] = basename($file);
-      }
-    }
-
-    return array_values($ret);
+    return $ret;
 
   }
 
-  // Obtener la ruta de la carpeta para las clases del ORM de la BD actual
+  /**
+   * ---------------------------------------------------------------------------
+   * Devuelve el directorio de modelos del schema actual.
+   * ---------------------------------------------------------------------------
+   * @return  string  Directorio de modelos de esquema.
+   */
   public function getDir(){
 
+    // Obtener el nombre del esquema
     $name = $this->getName();
 
-    return self::getSchemesDir() . (!empty($name)?'/' . $this->getName() : '');
+    // Obtener el nombre del esquema por defecto su directorio raíz es el mismo
+    // directorio de esquemas.
+    return self::getSchemesDir() . (!empty($name)?'/' . $name : '');
 
   }
 
+  /**
+   * ---------------------------------------------------------------------------
+   * Devuelve la nombre del modelo para identificarlo dentro de todos los
+   * esquemas de la aplicación. El formato es: :<schemeName>@<tableName>
+   * ---------------------------------------------------------------------------
+   * @param   string  $model  Nombre del modelo que se desea consultar.
+   * @return  string          Nombre del modelo.
+   */
+  public function getSchemeModelName($model){
 
-  // Obtener la carpeta de archivos bases para un tabla
-  public function getBaseModelDir($model){
-
-    return $this->getDir();
+    return ':'.$this->name.'@'.underscore($model);
 
   }
 
-  public function getModelRawName($modelName){
-    return ':'.$this->name.'@'.$modelName;
-  }
-
-  // // Nombre de las clases relacionadas a una tabla
-  public function getBaseModelClassname($model){
+  /**
+   * ---------------------------------------------------------------------------
+   * Devuelve el nombre de la clase del modelo.
+   * ---------------------------------------------------------------------------
+   * @param   string  $model  Nombre del modelo que se desea consultar.
+   * @return  string          Nombre de la clase del modelo.
+   */
+  public function getBaseModelClassName($model){
 
     return $this->getPrefix() . camelCase($model, true).'Base';
 
   }
 
-  // Devuelve la direccion del archivo de configuracion
+  /**
+   * ---------------------------------------------------------------------------
+   * Devuelve la dirección del archivo de configuración del modelo.
+   * ---------------------------------------------------------------------------
+   * @param   string  $model  Nombre del modelo que se desea consultar.
+   * @return  string          Dirección del archivo de configuración.
+   */
   public function getBaseModelConfFilename($model){
 
-    return $this->getBaseModelDir($model) . '/'. underscore($model) .'.conf.php';
+    return $this->getDir() . '/'. underscore($model) .'.conf.php';
 
   }
 
-  // Devuelve la dirección de la clase del model Base
+  /**
+   * ---------------------------------------------------------------------------
+   * Devuelve la dirección de la clase base del model.
+   * ---------------------------------------------------------------------------
+   * @param   string  $model  Nombre del modelo que se desea consultar.
+   * @return  string          Dirección de la clase base del modelo.
+   */
   public function getBaseModelClassFilename($model){
 
-    return $this->getBaseModelDir($model) . '/'. $this->getBaseModelClassname($model) .'.php';
+    return $this->getDir() . '/'. $this->getBaseModelClassName($model) .'.php';
 
   }
 
-  // Inidic si todas las clases y archivos de un model existes
+  /**
+   * ---------------------------------------------------------------------------
+   * Indica si existe la clase base de un modelo y su configuración.
+   * ---------------------------------------------------------------------------
+   * @param   string  $model  Nombre del modelo que se desea consultar.
+   * @return  bool            Si existe o no el modelo.
+   */
   public function existsBaseModel($model){
 
+    // Preguntar si existen el archivo del modelo base y el del controlador.
     return is_file($this->getBaseModelConfFilename($model))
 
         && is_file($this->getBaseModelClassFilename($model));
   }
 
-  // Obtener la configuracion del archivo de configuracion propio de un model
+  /**
+   * ---------------------------------------------------------------------------
+   * Devuelve la configuración de un modelo base leída desde su archivo de
+   * copnfiguración.
+   * ---------------------------------------------------------------------------
+   * @param   string  $model  Nombre del modelo que se desea consultar.
+   * @return  hash            Hash de propiedades del modelo.
+   */
   public function getBaseModelConf($model){
   
     // Si el archivo existe retornar la configuración    
@@ -211,17 +412,13 @@ abstract class AmScheme extends AmObject{
 
   }
 
-  // Crea el archivo de configuracion para una fuente
-  public function generateConfFile($path, $conf, $rw = true){
-
-    if(!is_file($path) || $rw){
-      AmCoder::write($path, $conf);
-      return true;
-    }
-    return false;
-  }
-
-  // Crea el archivo que contiene clase para la tabla
+  /**
+   * ---------------------------------------------------------------------------
+   * Crea el archivo con la clase del modelo base basando en una tabla.
+   * ---------------------------------------------------------------------------
+   * @param   AmTable   $table  Tabla en el que se basará el modelo a generar.
+   * @return  bool              Si se generó o no el modelo.
+   */
   public function generateBaseModelFile(AmTable $table){
 
     // Incluir la clase para generar
@@ -239,11 +436,19 @@ abstract class AmScheme extends AmObject{
     
   }
 
+  /**
+   * ---------------------------------------------------------------------------
+   * Genera la clase base del modelo y su archivo de configuración.
+   * ---------------------------------------------------------------------------
+   * @param   AmTable   $table  Tabla en el que se basará el modelo a generar.
+   * @return  Hash              Resultado de la generación del archivo de
+   *                            configuración y el modelo.
+   */
   public function generateBaseModel(AmTable $table){
     return array(
 
       // Crear archivo de configuración
-      'conf' => $this->generateConfFile(
+      'conf' => AmCoder::generate(
         $this->getBaseModelConfFilename($table->getTableName()),
         $table->toArray()
       ),
@@ -254,7 +459,12 @@ abstract class AmScheme extends AmObject{
     );
   }
 
-  // Metodo para crear todos los modelos de la BD
+  /**
+   * ---------------------------------------------------------------------------
+   * Genera todos los modelos bases correspondientes a las tablas de un esquema.
+   * ---------------------------------------------------------------------------
+   * @return  Hash  Resultado de la generación de la configuración y el modelo.
+   */
   public function generateScheme(){
 
      // Para retorno
@@ -276,19 +486,36 @@ abstract class AmScheme extends AmObject{
 
   }
 
-  // Devuelve el nombre de la BD para ser reconocida en el gestor de BD
+  /**
+   * ---------------------------------------------------------------------------
+   * Devuelve el nombre de la BD para ser reconocida en el DBSM.
+   * ---------------------------------------------------------------------------
+   * @return  string  Nombre de la BD para ser utilizada dentro del DBSM.
+   */
   public function getParseDatabaseName(){
 
     return $this->getParseName($this->getDatabase());
 
   }
 
-  // Devuelve el nombre de una tabla para ser reconocida en el gestor de BD
+  /**
+   * ---------------------------------------------------------------------------
+   * Devuelve el nombre de una tabla para ser reconocida en el DBSM
+   * ---------------------------------------------------------------------------
+   * @param   string/AmTable  $table  Tabla de la que se desea obtener le
+   *                                  nombre. Puede ser un string y una
+   *                                  instancia de AmTable.
+   * @param   boolean         $only   Si se devuelve el nombre de la tabla
+   *                                  relativo al nombre de la base de datos.
+   * @return  string                  Nombre de tabla obtenido.
+   */
   public function getParseObjectDatabaseName($table, $only = false){
 
+    // Si es una instancia de AmTable se debe obtener el nombre
     if($table instanceof AmTable)
       $table = $table->getTableName();
 
+    // Si es un nombre válido
     if(isNameValid($table)){
 
       $table = $this->getParseName($table);
@@ -304,15 +531,28 @@ abstract class AmScheme extends AmObject{
 
   }
 
+  /**
+   * ---------------------------------------------------------------------------
+   * Obtiene la primera tabla de un Query y obtiene su nombre para ser
+   * reconocido en el DBSM.
+   * ---------------------------------------------------------------------------
+   * @param   AmQuery   $q      Consulta
+   * @param   boolean   $only   Si el nombre de la tabla se devolverá con el
+   *                            nombre de la BD.
+   * @return  string            Nombre de tabla obtenido.
+   */
   public function getParseTableNameOfView(AmQuery $q, $only = false){
 
+    // Obtener los froms de la consulta
     $froms = $q->getFroms();
 
     foreach ($froms as $from) {
 
+      // Si es una tabla obtener el nombre
       if($from instanceof AmTable)
         $from = $from->getTableName();
 
+      // Si tiene un nombre válido retornar el nombre de la tabla
       if(isNameValid($from))
         return $this->getParseObjectDatabaseName($from, $only);
       
@@ -320,17 +560,30 @@ abstract class AmScheme extends AmObject{
 
   }
 
-  // Devuelve la cadena de conexión del servidor
+  /**
+   * ---------------------------------------------------------------------------
+   * Devuelve la cadena con la dirección del servidor y el puerto.
+   * ---------------------------------------------------------------------------
+   * @return  string  Dirección del servidor con el puertos
+   */
   public function getServerString(){
 
+    // Obtener el puerto
     $port = $this->getPort();
-    $defPort = $this->getDefaultPort();
 
-    return $this->getServer() . ':' . (!empty($port) ? $port : $defPort);
+    if(empty($port))
+      $port = $this->getDefaultPort();
+
+    return "{$this->getServer()}:{$port}";
 
   }
 
-  // Realiza la conexión
+  /**
+   * ---------------------------------------------------------------------------
+   * Realiza la conexión.
+   * ---------------------------------------------------------------------------
+   * @return  Resource  Handle de conexión establecida o FALSE si falló.
+   */
   public function connect(){
 
     $ret = $this->start();
@@ -339,7 +592,8 @@ abstract class AmScheme extends AmObject{
     if($ret){
       $this->setServerVar('character_set_server',
         $this->realScapeString($this->getCharset()));
-      // REVISAR
+
+      // PENDIENTE: Revisar
       $this->execute('set names \'utf8\'');
     }
 
@@ -347,7 +601,12 @@ abstract class AmScheme extends AmObject{
 
   }
 
-  // Función para reconectar
+  /**
+   * ---------------------------------------------------------------------------
+   * Función para reconectar. Desconecta y vuelve a conectar la DB.
+   * ---------------------------------------------------------------------------
+   * @return [type] [description]
+   */
   public function reconnect(){
 
     $this->close();           // Desconectar
@@ -355,22 +614,40 @@ abstract class AmScheme extends AmObject{
 
   }
 
-  // Seleccionar la base de datos
+  /**
+   * ---------------------------------------------------------------------------
+   * Seleciona la BD
+   * ---------------------------------------------------------------------------
+   * @return [type] [description]
+   */
   public function select(){
 
+    // Ejecuta el SQL de seleción de de BD.
     return $this->query($this->sqlSelectDatabase());
 
   }
 
-  // Indica si la BD existe
+  /**
+   * ---------------------------------------------------------------------------
+   * Indica si la BD existe
+   * ---------------------------------------------------------------------------
+   * @return [type] [description]
+   */
   public function exists(){
 
+    // Intenta selecionar. Si logra selecionar la BD existe.
     return !!$this->select();
 
   }
 
-
-  // Crea una instancia de un query
+  /**
+   * ---------------------------------------------------------------------------
+   * Crea una instancia de un AmQuery para la actual BD.
+   * ---------------------------------------------------------------------------
+   * @param   string/AmQuery  $from   From principal de la consulta.
+   * @param   string          $alias  Alias del from recibido.
+   * @return  AmQuery                 Instancia de l query creado.
+   */
   public function q($from = null, $alias = 'q'){
 
     // Crear instancia
@@ -387,13 +664,28 @@ abstract class AmScheme extends AmObject{
 
   }
 
-  // Ejecutar una consulta SQL desde el ámbito de la BD actual
+  /**
+   * ---------------------------------------------------------------------------
+   * Ejecutar una consulta SQL desde el ámbito de la BD actual
+   * ---------------------------------------------------------------------------
+   * @param   string(SQL)/AmQuery   $q  SQL a ejecutar o instancia de AmQuery a
+   *                                    ejecutar.
+   * @return  boolean/int               Devuelve el resultado de la ejecución.
+   *                                    Puede ser un valor booleano que indica
+   *                                    si se ejecuto la consulta
+   *                                    satisfactoriamente, o un integer en el
+   *                                    caso de haberse ejecutatado un insert.
+   */
   public function execute($q){
 
+    // Obtener SQL si es una instancia de AmQuery
     if($q instanceof AmQuery)
       $q = $q->sql();
 
+    // Selecionar la BD actual
     $this->select();
+
+    // Ejecutar la consulta
     return $this->query($q);
 
   }
@@ -408,14 +700,29 @@ abstract class AmScheme extends AmObject{
 
   }
 
-  // Setea el valor de una variable en el gestor
+  /**
+   * ---------------------------------------------------------------------------
+   * Setea el valor de una variable en el DBSM
+   * ---------------------------------------------------------------------------
+   * @param   string  $varName  Nombre de la variable
+   * @param   any     $value    Valor a asignar
+   */
   public function setServerVar($varName, $value){
 
     return !!$this->execute($this->sqlSetServerVar($varName, $value));
 
   }
 
-  // Crea la BD
+  /**
+   * ---------------------------------------------------------------------------
+   * Crea la BD
+   * ---------------------------------------------------------------------------
+   * @param   boolean   $ifNotExists  Indica si la BD se ejecuta con el
+   *                                  parmámetro existe.
+   * @return  boolean                 Si se creó la BD. Si la BD ya existe y
+   *                                  el parámetro $ifNotExists == true,
+   *                                  retornará true.
+   */
   public function create($ifNotExists = true){
 
     return !!$this->execute($this->sqlCreate($ifNotExists));
@@ -423,6 +730,11 @@ abstract class AmScheme extends AmObject{
   }
 
   // Elimina la BD
+  /**
+   * [drop description]
+   * @param  boolean $ifExists [description]
+   * @return [type]            [description]
+   */
   public function drop($ifExists = true){
 
     return !!$this->execute($this->sqlDrop($ifExists));
@@ -430,6 +742,10 @@ abstract class AmScheme extends AmObject{
   }
 
   // Obtener la información de la BD
+  /**
+   * [getInfo description]
+   * @return [type] [description]
+   */
   public function getInfo(){
 
     return $this->q($this->sqlGetInfo())->row();
@@ -437,6 +753,12 @@ abstract class AmScheme extends AmObject{
   }
 
   // Crear tabla
+  /**
+   * [createTable description]
+   * @param  AmTable $t           [description]
+   * @param  boolean $ifNotExists [description]
+   * @return [type]               [description]
+   */
   public function createTable(AmTable $t, $ifNotExists = true){
 
     return !!$this->execute($this->sqlCreateTable($t, $ifNotExists));
@@ -444,12 +766,16 @@ abstract class AmScheme extends AmObject{
   }
 
   // Crea todas las tablas de la BD
+  /**
+   * [createTables description]
+   * @return [type] [description]
+   */
   public function createTables(){
 
     $ret = array(); // Para el retorno
 
     // Obtener los nombres de la tabla en el archivo
-    $tablesNames = $this->getTableNames();
+    $tablesNames = $this->getGeneratedModels();
 
     // Recorrer cada tabla generar crear la tabla
     foreach ($tablesNames as $table)
@@ -460,6 +786,12 @@ abstract class AmScheme extends AmObject{
 
   }
 
+  /**
+   * [dropTable description]
+   * @param  [type]  $table    [description]
+   * @param  boolean $ifExists [description]
+   * @return [type]            [description]
+   */
   public function dropTable($table, $ifExists = true){
 
     return !!$this->execute($this->sqlDropTable($table, $ifExists));
@@ -467,12 +799,23 @@ abstract class AmScheme extends AmObject{
   }
 
   // Indica si la tabla existe
+  /**
+   * [existsTable description]
+   * @param  [type] $table [description]
+   * @return [type]        [description]
+   */
   public function existsTable($table){
 
     return !!$this->getTableDescription($table);
 
   }
 
+  /**
+   * [truncate description]
+   * @param  [type]  $table    [description]
+   * @param  boolean $ignoreFk [description]
+   * @return [type]            [description]
+   */
   public function truncate($table, $ignoreFk = true){
 
     return !!$this->execute($this->sqlTruncate($table, $ignoreFk));
@@ -480,6 +823,10 @@ abstract class AmScheme extends AmObject{
   }
 
   // Devuelve un array con el listado de tablas de la BD
+  /**
+   * [getTables description]
+   * @return [type] [description]
+   */
   public function getTables(){
 
     return $this->q($this->sqlGetTables())
@@ -488,6 +835,11 @@ abstract class AmScheme extends AmObject{
   }
 
   // Devuelve un array con el listado de tablas
+  /**
+   * [getTableDescription description]
+   * @param  [type] $table [description]
+   * @return [type]        [description]
+   */
   public function getTableDescription($table){
     
     // Obtener nombre de la tabla
@@ -500,6 +852,11 @@ abstract class AmScheme extends AmObject{
   }
 
   // Obtener un listado de las columnas de una tabla
+  /**
+   * [getTableColumns description]
+   * @param  [type] $table [description]
+   * @return [type]        [description]
+   */
   public function getTableColumns($table){
 
     return $this->q($this->sqlGetTableColumns($table))
@@ -508,6 +865,11 @@ abstract class AmScheme extends AmObject{
   }
 
   // Obtener un listado de las columnas de una tabla
+  /**
+   * [getTableForeignKeys description]
+   * @param  [type] $table [description]
+   * @return [type]        [description]
+   */
   public function getTableForeignKeys($table){
 
     $ret = array(); // Para el retorno
@@ -546,6 +908,11 @@ abstract class AmScheme extends AmObject{
   }
 
   // Obtener el listado de referencias a una tabla
+  /**
+   * [getTableReferences description]
+   * @param  [type] $table [description]
+   * @return [type]        [description]
+   */
   public function getTableReferences($table){
 
     $ret = array(); // Para el retorno
@@ -585,6 +952,11 @@ abstract class AmScheme extends AmObject{
   }
 
   // Obtener un listado de las columnas de una tabla
+  /**
+   * [getTableUniques description]
+   * @param  [type] $table [description]
+   * @return [type]        [description]
+   */
   public function getTableUniques($table){
 
     $uniques = $this->q($this->sqlGetTableUniques($table))
@@ -605,6 +977,11 @@ abstract class AmScheme extends AmObject{
 
   // Devuelve la descripcion completa de una tabla
   // incluyendo los campos
+  /**
+   * [getTableFromScheme description]
+   * @param  [type] $tableName [description]
+   * @return [type]            [description]
+   */
   public function getTableFromScheme($tableName){
 
     // Obtener la descripcion basica
@@ -633,18 +1010,35 @@ abstract class AmScheme extends AmObject{
 
   }
 
+  /**
+   * [createView description]
+   * @param  AmQuery $q       [description]
+   * @param  boolean $replace [description]
+   * @return [type]           [description]
+   */
   public function createView(AmQuery $q, $replace = true){
 
     return !!$this->execute($this->sqlCreateView($q, $replace));
 
   }
 
+  /**
+   * [dropView description]
+   * @param  AmQuery $q        [description]
+   * @param  boolean $ifExists [description]
+   * @return [type]            [description]
+   */
   public function dropView(AmQuery $q, $ifExists = true){
 
     return !!$this->execute($this->sqlDropView($q, $ifExists));
 
   }
 
+  /**
+   * [sqlOf description]
+   * @param  AmQuery $q [description]
+   * @return [type]     [description]
+   */
   public function sqlOf(AmQuery $q){
     $type = $q->getType();
 
@@ -667,16 +1061,23 @@ abstract class AmScheme extends AmObject{
   }
 
   // Ejecuta una consulta de insercion para los
-  public function insertInto($values, $modelName, array $fields = array()){
+  /**
+   * [insertInto description]
+   * @param  [type] $values [description]
+   * @param  [type] $model  [description]
+   * @param  array  $fields [description]
+   * @return [type]         [description]
+   */
+  public function insertInto($values, $model, array $fields = array()){
 
-    $table = $modelName;
+    $table = $model;
 
     // Obtener la instancia de la tabla
     if(!$table instanceof AmTable)
       $table = $this->getTableInstance($table);
 
     if(!$table)
-      throw Am::e('AMSCHEME_MODEL_WITHOUT_TABLE', $modelName);
+      throw Am::e('AMSCHEME_MODEL_WITHOUT_TABLE', $model);
 
     // Agregar fechas de creacion y modificacion si existen en la tabla
     $table->setAutoCreatedAt($values);
@@ -764,6 +1165,10 @@ abstract class AmScheme extends AmObject{
   /////////////////////////////////////////////////////////////////////////////
 
   // Devuelve la carpeta destino para los orm
+  /**
+   * [getSchemesDir description]
+   * @return [type] [description]
+   */
   public static function getSchemesDir(){
 
     return self::$schemesDir;
@@ -772,6 +1177,12 @@ abstract class AmScheme extends AmObject{
 
   // Incluye un archivo dentro buscado dentro de la
   // carpeta de la libreria
+  /**
+   * [requireFile description]
+   * @param  [type]  $file         [description]
+   * @param  boolean $onCurrentDir [description]
+   * @return [type]                [description]
+   */
   public static function requireFile($file, $onCurrentDir = true){
 
     $path = ($onCurrentDir? dirname(__FILE__).'/' : '') . $file;
@@ -784,6 +1195,11 @@ abstract class AmScheme extends AmObject{
   }
 
   // Devuelve la configuracion de una determinada fuente de datos
+  /**
+   * [getSchemeConf description]
+   * @param  string $schemeName [description]
+   * @return [type]             [description]
+   */
   public static function getSchemeConf($schemeName = ''){
 
     // Obtener configuraciones para las fuentes
@@ -809,6 +1225,11 @@ abstract class AmScheme extends AmObject{
   }
 
   // Devuelve una instancia de una fuente
+  /**
+   * [get description]
+   * @param  string $name [description]
+   * @return [type]       [description]
+   */
   public static function get($name = ''){
 
     // Obtener la instancia si ya existe
@@ -835,6 +1256,11 @@ abstract class AmScheme extends AmObject{
   }
 
   // Incluye un driver de BD
+  /**
+   * [driver description]
+   * @param  [type] $driver [description]
+   * @return [type]         [description]
+   */
   public static function driver($driver){
 
     // Obtener el nombre de la clase
@@ -849,24 +1275,31 @@ abstract class AmScheme extends AmObject{
   }
 
   // Devuelve la instancia de una tabla en una fuente determinada
-  public static function table($tableName, $schemeName = '', $modelName = null){
+  /**
+   * [table description]
+   * @param  [type] $tableName  [description]
+   * @param  string $schemeName [description]
+   * @param  [type] $model      [description]
+   * @return [type]             [description]
+   */
+  public static function table($tableName, $schemeName = '', $model = null){
 
     // Obtener la instancia de la fuente
     $scheme = self::get($schemeName);
 
-    if(!isset($modelName))
-      $modelName = $scheme->getModelRawName($tableName);
+    if(!isset($model))
+      $model = $scheme->getSchemeModelName($tableName);
 
     // Si ya ha sido instanciada la tabla
     // entonces se devuelve la instancia
-    if($scheme->hasTableInstance($modelName))
-      return $scheme->getTableInstance($modelName);
+    if($scheme->hasTableInstance($model))
+      return $scheme->getTableInstance($model);
 
     // Instancia la clase
     $table = new AmTable(array(
       'schemeName' => $schemeName,
       'tableName' => $tableName,
-      'modelName' => $modelName
+      'model' => $model
     ));
 
     // Incluir modelo
@@ -879,6 +1312,11 @@ abstract class AmScheme extends AmObject{
 
   }
 
+  /**
+   * [model description]
+   * @param  [type] $model [description]
+   * @return [type]        [description]
+   */
   public static function model($model){
 
     // Si es un modelo nativo
@@ -893,10 +1331,10 @@ abstract class AmScheme extends AmObject{
       
       $scheme = self::get($m[2]);
 
-      $modelClass = $scheme->getBaseModelClassname($m[1]);
+      $model = $scheme->getBaseModelClassName($m[1]);
 
       // Retornar el nombre de la clase del modelo correspondiente
-      return class_exists($modelClass)? $modelClass : false;
+      return class_exists($model)? $model : false;
 
     }
 
@@ -958,6 +1396,11 @@ abstract class AmScheme extends AmObject{
   }
 
   // Incluye un validator y devuelve el nombre de la clases correspondiente
+  /**
+   * [validator description]
+   * @param  [type] $validator [description]
+   * @return [type]            [description]
+   */
   public static function validator($validator){
 
     // Obtener el nombre de la clase
@@ -976,6 +1419,10 @@ abstract class AmScheme extends AmObject{
   /////////////////////////////////////////////////////////////////////////////
 
   // Metodo para obtener el puerto por defecto para una conexión
+  /**
+   * [getDefaultPort description]
+   * @return [type] [description]
+   */
   abstract public function getDefaultPort();
 
   // Metodo para crear una conexion

@@ -13,7 +13,6 @@ class AmTable extends AmQuery{
     $updatedAtField = null,   // Nombre del campo para la fecha de actualización
     $schemeName = '',         // Nombre del esquema de conexión BD
     $tableName = null,        // Nombre en la BD
-    $modelName = null,        // Nombre del modelo al que pertenece
     $fields = null,           // Lista de campos
     $schemeStruct = false,    // Lista de campos
     $validators = null,       // Validadores
@@ -55,8 +54,8 @@ class AmTable extends AmQuery{
     parent::__construct($params);
 
     // Obtener como retornará los resultados y asignarlo a la consulta
-    if(!$this->getModelName())
-      $this->modelName = $scheme->getModelRawName($params['tableName']);
+    if(!$this->getModel())
+      $this->model = $scheme->getSchemeModelName($params['tableName']);
 
     // Preparar campos
     $fields = $this->fields;
@@ -108,19 +107,19 @@ class AmTable extends AmQuery{
 
   }
 
-  public function setModelName($value){
+  public function setModel($value){
 
     $table = $this;
 
-    if(isset($this->modelName) && isset($value) && $this->modelName !== $value){
+    if(isset($this->model) && isset($value) && $this->model !== $value){
 
-      $modelName = $this->modelName;
-      $this->modelName = $value;
+      $model = $this->model;
+      $this->model = $value;
       $table = clone($this);
-      $this->modelName = $modelName;
+      $this->model = $model;
 
-    }elseif(!isset($this->modelName) && isset($value)){
-      $this->modelName = $value;
+    }elseif(!isset($this->model) && isset($value)){
+      $this->model = $value;
 
     }
 
@@ -386,20 +385,14 @@ class AmTable extends AmQuery{
 
     if($name instanceof AmField || is_array($name)){
       $field = $name;
-      $name = null;
+      if($name instanceof AmField)
+        $name = $field->getName();
+      else
+        $name = itemOr('name', $field);
     }
 
-    if(is_array($field)){
-      $field = new AmField(array_merge($field, array(
-        'name' => $name
-      )));
-    }
-
-    if(isset($name) && $name !== $field->getName()){
-      $field = $field->cp(array(
-        'name' => $name
-      ));
-    }
+    if(is_array($field))
+      $field = new AmField($field);
 
     $name = $field->getName();
 
@@ -433,7 +426,7 @@ class AmTable extends AmQuery{
     $q = $scheme->q($this, $alias);
 
     // Obtener como retornará los resultados y asignarlo a la consulta
-    $q->setModelName($this->getModelName());
+    $q->setModel($this->getModel());
 
     // Asignar campos
     if($withFields){
