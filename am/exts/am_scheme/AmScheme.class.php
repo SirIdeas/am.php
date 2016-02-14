@@ -871,9 +871,10 @@ abstract class AmScheme extends AmObject{
 
     // Group fields of unique indices for name.
     $realUniques = array();
+
     foreach ($uniques as $value) {
-      $realUniques[$value['name']] = itemOr($value['name'], $realUniques,
-        array());
+      $realUniques[$value['name']] = itemOr($value['name'],
+        $realUniques, array());
       $realUniques[$value['name']][] = $value['columnName'];
     }
 
@@ -940,24 +941,28 @@ abstract class AmScheme extends AmObject{
   }
 
   /**
-   * [sqlOf description]
-   * @param  AmQuery $q [description]
-   * @return [type]     [description]
+   * Obtiene el SQL de una Query dependiendo de su tipo.
+   * @param   AmQuery   $q  Instancia de query.
+   * @return  string        SQL obtenido.
    */
   public function sqlOf(AmQuery $q){
     $type = $q->getType();
 
+    // Consulta de seleción
     if($type == 'select')
       return $this->sqlSelectQuery($q);
 
+    // Consulta de inserción
     if($type == 'insert')
-      return $this->sqlInsertQuery($q,
-        $q->getInsertTable(), $q->getInsertFields());
+      return $this->sqlInsertQuery(
+        $q, $q->getInsertTable(), $q->getInsertFields()
+      );
 
-    if($type == 'update'){
+    // Consulta de actualización
+    if($type == 'update')
       return $this->sqlUpdateQuery($q);
-    }
 
+    // Consulta de eliminación
     if($type == 'delete')
       return $this->sqlDelete($q);
 
@@ -965,9 +970,8 @@ abstract class AmScheme extends AmObject{
 
   }
 
-  // Ejecuta una consulta de insercion para los
   /**
-   * [insertInto description]
+   * Ejecuta una consulta de insercion para los
    * @param  [type] $values [description]
    * @param  [type] $model  [description]
    * @param  array  $fields [description]
