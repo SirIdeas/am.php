@@ -128,9 +128,12 @@ class AmFileResponse extends AmResponse{
     $attachment = $this->__p->attachment ? ' attachment;' : '';
 
     // Agregar cabeceras
-    $this->addHeader("Content-Disposition:{$attachment} filename=\"{$name}\"");
-    $this->addHeader('Content-Length: ' . filesize($this->__p->filename));
-    $this->addHeader("Content-Type: {$mimeType}");
+    $this->addHeader("Content-Disposition:{$attachment} filename=\"{$name}\"",
+      'conentDisposition');
+    $this->addHeader('Content-Length: ' . filesize($this->__p->filename),
+      'contentLength');
+    $this->addHeader("Content-Type: {$mimeType}",
+      'contentType');
 
     // Leer archivo
     readfile($this->__p->filename);

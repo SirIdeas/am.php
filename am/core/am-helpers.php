@@ -308,7 +308,7 @@ function amGlobFiles($folders, array $options = array()){
   // recorer las careptas
   foreach ($folders as $folder) {
 
-    $list = glob("$folder/*");
+    $list = glob("{$folder}/*");
 
     foreach ($list as $item) {
 

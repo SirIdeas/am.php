@@ -464,7 +464,7 @@ class AmController extends AmResponse{
     }
 
     return (new parent)
-      ->addHeader("Content-Type: {$mimeType}")
+      ->addHeader("Content-Type: {$mimeType}", 'contentType')
       ->content($content);
 
   }

@@ -1364,7 +1364,7 @@ final class Am{
     $mimePath = self::findFile('rsc/mime.types');
     $fileext = substr(strrchr($filename, '.'), 1);
     if (empty($fileext)) return false;
-    $regex = "/^([\w\+\-\.\/]+)\s+(\w+\s)*($fileext\s)/i";
+    $regex = "/^([\w\+\-\.\/]+)\s+(\w+\s)*({$fileext}\s)/i";
     $lines = file($mimePath);
     foreach($lines as $line) {
       if (substr($line, 0, 1) == '#') continue; // skip comments

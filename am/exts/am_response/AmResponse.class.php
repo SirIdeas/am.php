@@ -119,8 +119,8 @@ class AmResponse extends AmObject{
 
     return (new AmResponse())
       ->resolved(false)
-      ->addHeader("HTTP/1.0 404 {$msg}")
-      ->addHeader("Status: 404 {$msg}")
+      ->addHeader("HTTP/1.0 404 {$msg}", 'code')
+      ->addHeader("Status: 404 {$msg}", 'status')
       ->content($msg);
 
   }
@@ -136,8 +136,8 @@ class AmResponse extends AmObject{
 
     return (new AmResponse())
       ->resolved(false)
-      ->addHeader("HTTP/1.0 403 {$msg}")
-      ->addHeader("Status: 403 {$msg}")
+      ->addHeader("HTTP/1.0 403 {$msg}", 'code')
+      ->addHeader("Status: 403 {$msg}", 'status')
       ->content($msg);
 
   }

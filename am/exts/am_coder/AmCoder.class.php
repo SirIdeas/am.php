@@ -160,7 +160,6 @@ class AmCoder{
    * @return  string          Resultado de la codificación.
    */
   public static function encode($data){
-    // return "<?php\n\nreturn " . self::_encode($data, '', ';') . "\n";
     
     $str = var_export($data, true);
     $lines = explode("\n", $str);
@@ -189,78 +188,5 @@ class AmCoder{
     return "<?php\n\nreturn {$lines};";
 
   }
-
-  // /**
-  //  * Algoritmo para codificar la data.
-  //  * @param   array   $data     Array a codificar.
-  //  * @param   string  $prefix   Prefijo de elemento. Sirve para ir colocando el
-  //  *                            margen.
-  //  * @param   string  $subfix   Subfijo de elemento. Sirve para colocar los
-  //  *                            puntos y comas y las comas.
-  //  * @return  string            Resultado de la codificación
-  //  */
-  // public static function _encode($data, $prefix = '', $subfix = ',') {
-
-  //   if (!isset($data)) {
-  //     return 'null$subfix';
-  //   }elseif(is_numeric($data)){
-  //     return "{$data}{$subfix}";
-  //   }elseif(is_string($data)){
-  //     return "'{$data}'{$subfix}";
-  //   }elseif($data === true){
-  //     return "true{$subfix}";
-  //   }elseif($data === false){
-  //     return "false{$subfix}";
-  //   }elseif(is_array($data) || is_object($data)){
-
-  //     $data = (array)$data;
-
-  //     $isHash = isHash($data);
-
-  //     if(!$isHash){
-
-  //       $haveArray = false;
-  //       $dataFormated = array();
-
-  //       foreach($data as $i => $v){
-  //         if(is_array($v) || is_object($v)){
-  //           $haveArray = true;
-  //         }else{
-  //           $dataFormated[] = self::_encode($v, '', '');
-  //         }
-  //       }
-
-  //       if(!$haveArray){
-
-  //         $str = 'array(' . implode(',', $dataFormated) . "){$subfix}";
-
-  //         return $str;
-
-  //       }
-
-  //     }
-
-  //     $str = "array(\n";
-  //     $prefixI = "  {$prefix}";
-
-  //     foreach($data as $i => $v){
-  //       $encode = self::_encode($v, $prefixI);
-  //       if($isHash){
-  //         $str .= "{$prefixI}'{$i}' => {$encode}\n";
-  //       }else{
-  //         $str .= "{$prefixI}{$encode}\n";
-  //       }
-
-  //     }
-
-  //     $str .= "{$prefix}){$subfix}";
-
-  //     return $str;
-
-  //   }
-
-  //   return "{$data}{$subfix}";
-
-  // }
-
+  
 }
