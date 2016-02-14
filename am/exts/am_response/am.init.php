@@ -7,9 +7,7 @@
  */
 
 /**
- * -----------------------------------------------------------------------------
  * Configuración de eventos globales que atenderá la extensión.
- * -----------------------------------------------------------------------------
  */
 Am::on('response.file',       'AmResponse::file');
 Am::on('response.call',       'AmResponse::call');

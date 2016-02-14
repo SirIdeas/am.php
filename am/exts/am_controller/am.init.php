@@ -6,10 +6,8 @@
  * 
  */
 
- /**
- * -----------------------------------------------------------------------------
+/**
  * Configuración de eventos globales que atenderá la extensión.
- * -----------------------------------------------------------------------------
  */
 
 // Atender las respuestas por controlador

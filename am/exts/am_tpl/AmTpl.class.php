@@ -7,118 +7,85 @@
  */
 
 /**
- * -----------------------------------------------------------------------------
  * Clase para renderizar Templates
- * -----------------------------------------------------------------------------
  */
-
 final class AmTpl extends AmObject{
 
   protected
 
     /**
-     * -------------------------------------------------------------------------
      * Nombre de la vista a renderizar.
-     * -------------------------------------------------------------------------
      */
     $file = null,
 
     /**
-     * -------------------------------------------------------------------------
      * Ruta real de la vista a renderizar.
-     * -------------------------------------------------------------------------
      */
     $realFile = null,
 
 
     /**
-     * -------------------------------------------------------------------------
      * Contenido del archivo.
-     * -------------------------------------------------------------------------
      */
     $content = '',
 
     /**
-     * -------------------------------------------------------------------------
      * Variables de entorno.
-     * -------------------------------------------------------------------------
      */
     $env = array(),
 
     /**
-     * -------------------------------------------------------------------------
      * Vista padre.
-     * -------------------------------------------------------------------------
      */
     $parent = null,
 
     /**
-     * -------------------------------------------------------------------------
      * Listado de nonmbres de secciones abiertas.
-     * -------------------------------------------------------------------------
      */
     $openSections = array(),
 
     /**
-     * -------------------------------------------------------------------------
      * Contenido de las secciones.
-     * -------------------------------------------------------------------------
      */
     $sections = array(),
 
     /**
-     * -------------------------------------------------------------------------
      * Contenido de la vista hija.
-     * -------------------------------------------------------------------------
      */
     $child = null,
 
     /**
-     * -------------------------------------------------------------------------
      * Indica si se imprimó el contenido de la vista hija
-     * -------------------------------------------------------------------------
      */
     $printedChild = false,
 
     /**
-     * -------------------------------------------------------------------------
      * Lista de vista de las que depende la vista actual: Padre y anidadas.
-     * -------------------------------------------------------------------------
      */
     $dependences = array(),
 
     /**
-     * -------------------------------------------------------------------------
      * Lista de directorios donde se buscará la vista.
-     * -------------------------------------------------------------------------
      */
     $paths = array(),
 
     /**
-     * -------------------------------------------------------------------------
      * Bandera que indica si se ignoran o no las vistas inexistentes.
-     * -------------------------------------------------------------------------
      */
     $ignore = true,
 
     /**
-     * -------------------------------------------------------------------------
      * Errores generados.
-     * -------------------------------------------------------------------------
      */
     $errors = array(),
 
     /**
-     * -------------------------------------------------------------------------
      * Parámetros con los que se inicializó la vista.
-     * -------------------------------------------------------------------------
      */
     $options = array();
 
   /**
-   * -------------------------------------------------------------------------
    * Constructor de la vista
-   * -------------------------------------------------------------------------
    * @param   string  $file     Nombre de la vista a buscar.
    * @param   array   $options  Opciones de la vista.
    */
@@ -172,11 +139,8 @@ final class AmTpl extends AmObject{
 
   }
 
-  // Busca una vista en los paths definidos
   /**
-   * ---------------------------------------------------------------------------
    * Determina la ruta de un archivo.
-   * ---------------------------------------------------------------------------
    * Busca un archivo en los directorios de la propiedad $this->paths y de
    * vuelve la primera aparición.
    * @param   string  $file   Nombre del archivo a buscar
@@ -203,9 +167,7 @@ final class AmTpl extends AmObject{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Compilar la vista.
-   * ---------------------------------------------------------------------------
    * @param   string  $child      Contenido de la vista hija
    * @param   array   $sections   Array de secciones heredadas
    * @return  array               Se retorna en un array el resultado de la
@@ -283,11 +245,8 @@ final class AmTpl extends AmObject{
 
   }
 
-  // Obtiene una vista con el mismo entorno de la vista actual
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve la instancia de una vista pasando como opciones la vista actual.
-   * ---------------------------------------------------------------------------
    * @param   string  $name   Nombre del archivo a buscar
    * @return  AmTpl           Instancia de AmTpl con la nueva vista
    */
@@ -309,9 +268,7 @@ final class AmTpl extends AmObject{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Imprimir una vista.
-   * ---------------------------------------------------------------------------
    * Crea la instancia de una subvista y e imprime su contenido.
    * @param   string  $view   Nombre de la vista a renderizar.
    */
@@ -332,9 +289,7 @@ final class AmTpl extends AmObject{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Imprimir una sección.
-   * ---------------------------------------------------------------------------
    * @param   string  $name   Nombre de la sección a imprimir.
    */
   public function put($name){
@@ -344,9 +299,7 @@ final class AmTpl extends AmObject{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Abrir una sección.
-   * ---------------------------------------------------------------------------
    * @param   string  $name  Nombre que se le dará a la nueva sección.
    */
   public function section($name){
@@ -355,9 +308,7 @@ final class AmTpl extends AmObject{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Cerrar sección
-   * ---------------------------------------------------------------------------
    */
   public function endSection(){
 
@@ -395,9 +346,7 @@ final class AmTpl extends AmObject{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Imprime el contenido de la vista hija
-   * ---------------------------------------------------------------------------
    */
   public function child(){
     $this->printedChild = true;
@@ -405,9 +354,7 @@ final class AmTpl extends AmObject{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Agrega una variable de entorno.
-   * ---------------------------------------------------------------------------
    * Puede recibir un string con el formato varname=valor, o dos string donde el
    * primero el el varname y el segundo el valor.
    */
@@ -425,9 +372,7 @@ final class AmTpl extends AmObject{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Callback de la asignación de la variable de entorno
-   * ---------------------------------------------------------------------------
    */
   private function _set(){
     extract($this->getEnv());
@@ -437,20 +382,15 @@ final class AmTpl extends AmObject{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve las variables de entorno.
-   * ---------------------------------------------------------------------------
    * @return    array   Array de las variables de entorno.
    */
   public function getEnv(){
     return $this->env;
   }
 
-  // Obtener lista de dependencias
   /**
-   * ---------------------------------------------------------------------------
    * Vistas de las que depende.
-   * ---------------------------------------------------------------------------
    * @return  array  Lista de todos las subvista que se incluyen en la vista.
    */
   public function dependences(){
@@ -467,11 +407,8 @@ final class AmTpl extends AmObject{
 
   }
 
-  // Generar vista
   /**
-   * ---------------------------------------------------------------------------
    * Renderiza compila la vista e imprime el contenido.
-   * ---------------------------------------------------------------------------
    */
   public function render(){
 
@@ -487,22 +424,16 @@ final class AmTpl extends AmObject{
 
   }
 
-  // Método que indica si se generó algun error al renderizar la vista
   /**
-   * ---------------------------------------------------------------------------
    * Indica si se generó un error durante el compilado de la vista.
-   * ---------------------------------------------------------------------------
    * @return  bool   Si tiene o no errores
    */
   public function hasError(){
     return count($this->errors)>0;
   }
 
-  // Funcion para atender el llamado de render.tempalte
   /**
-   * ---------------------------------------------------------------------------
    * Manejador para el evento render.template.
-   * ---------------------------------------------------------------------------
    * @param   string  $tpl      Nombre de la vista a renderizar
    * @param   array   $vars     Variables para el renderizado.
    * @param   array   $options  Opciones para la vista.

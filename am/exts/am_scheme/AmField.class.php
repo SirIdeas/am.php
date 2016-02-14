@@ -7,19 +7,14 @@
  */
 
 /**
- * -----------------------------------------------------------------------------
  * Clase para los campos de las tablas de las BD
- * -----------------------------------------------------------------------------
  */
-
 class AmField extends AmObject{
 
   protected static
     
     /**
-     * -------------------------------------------------------------------------
      * Funciones para obtener el valor segun el tipo de dato
-     * -------------------------------------------------------------------------
      */
     $parseFuncs = array(
 
@@ -47,111 +42,81 @@ class AmField extends AmObject{
   protected
 
     /**
-     * -------------------------------------------------------------------------
      * String con el nombre.
-     * -------------------------------------------------------------------------
      */
     $name = null,
 
     /**
-     * -------------------------------------------------------------------------
      * String con el tipo de datos.
-     * -------------------------------------------------------------------------
      */
     $type = 'text',
 
     /**
-     * -------------------------------------------------------------------------
      * Valor por defecto.
-     * -------------------------------------------------------------------------
      */
     $defaultValue = null,
 
     /**
-     * -------------------------------------------------------------------------
      * Boolean que indica si es o no parte de la clave primaria de la tabla
      * donde se encuentra.
-     * -------------------------------------------------------------------------
      */
     $pk = false,
 
     /**
-     * -------------------------------------------------------------------------
      * Boolean si permite o no valores nulos.
-     * -------------------------------------------------------------------------
      */
     $allowNull = true,
 
     /**
-     * -------------------------------------------------------------------------
      * Entero con el tamaño de campo. Para los tipos varchar indicar el máximo
      * tamaño, para campos del tipo bit y char el tamaño, para los tipos
      * integer y floats indicar los bytes que ocupan.
-     * -------------------------------------------------------------------------
      */
     $len = null,
 
     /**
-     * -------------------------------------------------------------------------
      * String con el charset.
-     * -------------------------------------------------------------------------
      */
     $charset = null,
 
     /**
-     * -------------------------------------------------------------------------
      * String con el Collage.
-     * -------------------------------------------------------------------------
      */
     $collage = null,
 
     /**
-     * -------------------------------------------------------------------------
      * Boolean que indica si en un campo numérico (integer o float) tiene signo.
-     * -------------------------------------------------------------------------
      */
     $unsigned = null,
 
     /**
-     * -------------------------------------------------------------------------
      * Boolean que indica si es un integer o float indica si se rellenan los
      * espacio con ceros.
-     * -------------------------------------------------------------------------
      */
     $zerofill = null,
 
     /**
-     * -------------------------------------------------------------------------
      * Entero con la precición de enteros de los números float.
-     * -------------------------------------------------------------------------
      */
     $precision = null,
 
     /**
-     * -------------------------------------------------------------------------
      * Entero con la precición de decimales de los números float.
-     * -------------------------------------------------------------------------
      */
     $scale = null,
 
     /**
-     * -------------------------------------------------------------------------
      * Boolean que indica si es un campo autoincrementable.
-     * -------------------------------------------------------------------------
      */
     $autoIncrement = false,
 
     /**
-     * -------------------------------------------------------------------------
      * String con configuración extra.
-     * -------------------------------------------------------------------------
      */
     $extra = null;
 
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve el nombre.
-   * ---------------------------------------------------------------------------
    * @return  string  Nombre.
    */
   public function getName(){
@@ -161,9 +126,7 @@ class AmField extends AmObject{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve el tipo.
-   * ---------------------------------------------------------------------------
    * @return  string  Tipo.
    */
   public function getType(){
@@ -173,9 +136,7 @@ class AmField extends AmObject{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve el Tamaño.
-   * ---------------------------------------------------------------------------
    * @return  integer   Tamaño.
    */
   public function getLen(){
@@ -185,9 +146,7 @@ class AmField extends AmObject{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve la precisión de enteros de campos float.
-   * ---------------------------------------------------------------------------
    * @return  integer   Precisión de enteros de campos float.
    */
   public function getPrecision(){
@@ -197,9 +156,7 @@ class AmField extends AmObject{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve la precisión de decimales de campos float.
-   * ---------------------------------------------------------------------------
    * @return  integer   Precición de decimales de campos float.
    */
   public function getScale(){
@@ -209,9 +166,7 @@ class AmField extends AmObject{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve el tipo.
-   * ---------------------------------------------------------------------------
    * @return  any  Tipo.
    */
   public function getDefaultValue(){
@@ -221,9 +176,7 @@ class AmField extends AmObject{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve si permite o no valores null.
-   * ---------------------------------------------------------------------------
    * @return  boolean   Si permite o no valores nullos.
    */
   public function allowNull(){
@@ -233,9 +186,7 @@ class AmField extends AmObject{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve si es un campo autoincrementable.
-   * ---------------------------------------------------------------------------
    * @return  boolean   Si es un campo autoincrementable.
    */
   public function isAutoIncrement(){
@@ -245,9 +196,7 @@ class AmField extends AmObject{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve si es un campo sin signo.
-   * ---------------------------------------------------------------------------
    * @return  boolean   Si es un campos sin signo.
    */
   public function isUnsigned(){
@@ -257,9 +206,7 @@ class AmField extends AmObject{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve si se rrellenan con ceros.
-   * ---------------------------------------------------------------------------
    * @return  boolean  Si se rellena con ceros.
    */
   public function isZerofill(){
@@ -269,9 +216,7 @@ class AmField extends AmObject{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve si es parte de la clave primaria de la tabla a la que pertenece.
-   * ---------------------------------------------------------------------------
    * @return  boolean  Si es parte de la clave primaria.
    */
   public function isPk(){
@@ -281,9 +226,7 @@ class AmField extends AmObject{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve el charset.
-   * ---------------------------------------------------------------------------
    * @return  string  Charset.
    */
   public function getCharset(){
@@ -293,9 +236,7 @@ class AmField extends AmObject{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve el collage.
-   * ---------------------------------------------------------------------------
    * @return  string  Collage.
    */
   public function getCollage(){
@@ -305,9 +246,7 @@ class AmField extends AmObject{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve las configuraciones extras.
-   * ---------------------------------------------------------------------------
    * @return  string  Configuraciones extras.
    */
   public function getExtra(){
@@ -317,9 +256,7 @@ class AmField extends AmObject{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Realizar casting a un valor por el tipo de datos del campo.
-   * ---------------------------------------------------------------------------
    * @return  any   Valor parseado.
    */
   public function parseValue($value){
@@ -330,9 +267,7 @@ class AmField extends AmObject{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Convertir el campo a array.
-   * ---------------------------------------------------------------------------
    * @return  array   Campo convertir en array.
    */
   public function toArray(){

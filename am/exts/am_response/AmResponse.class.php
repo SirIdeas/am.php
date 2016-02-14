@@ -7,24 +7,18 @@
  */
 
 /**
- * -----------------------------------------------------------------------------
  * Clase para crear respuestas
- * -----------------------------------------------------------------------------
  */
 class AmResponse extends AmObject{
 
   protected
     /**
-     * -------------------------------------------------------------------------
      * Propiedades Iniciales de la petición.
-     * -------------------------------------------------------------------------
      */
     $__p = array();
 
   /**
-   * ---------------------------------------------------------------------------
    * Constructor de la Clase.
-   * ---------------------------------------------------------------------------
    * Inicializa la propiedad __p con una instancia de AmObject. Las
    * propiedades son las indicadas en $this->__p mas la recibidas por
    * parámetro $data
@@ -53,9 +47,7 @@ class AmResponse extends AmObject{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Responde con un archivo indicado por parámetro.
-   * ---------------------------------------------------------------------------
    * @param   string  $filename     Ruta del archivo con el que se responderá.
    * @param   bool    $attachment   Si la ruta se descarga o no.
    * @param   string    $name       Nombre con el que se entregará el archivo.
@@ -72,10 +64,8 @@ class AmResponse extends AmObject{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Busca una llamada como función, método estático de una clase o llamada
    * a controlador.
-   * ---------------------------------------------------------------------------
    * @param   string $callback  String que identifica el controlador a buscar.
    * @param   array  $env      Variables de entorno.
    * @param   array  $params   Argumentos obtenidos de la ruta.
@@ -90,9 +80,7 @@ class AmResponse extends AmObject{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Busca un template y lo renderiza.
-   * ---------------------------------------------------------------------------
    * @param   string  $tpl        Template a renderizar.
    * @param   array   $vars       Variables de la vista.
    * @param   array   $options    Opciones para la vista.
@@ -110,9 +98,7 @@ class AmResponse extends AmObject{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Redirigir a una URL.
-   * ---------------------------------------------------------------------------
    * @param   string $url   URL que se desea ir.
    */
   public static function go($url){
@@ -123,9 +109,7 @@ class AmResponse extends AmObject{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Agrega las cabeceras para indicar un error 404 a la respuesta.
-   * ---------------------------------------------------------------------------
    * @param   string  $msg  $mensaje para el error a 404.
    */
   public static function e404($msg = null){
@@ -142,9 +126,7 @@ class AmResponse extends AmObject{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Agrega las cabeceras para indicar un error 403 a la respuesta.
-   * ---------------------------------------------------------------------------
    * @param   string  $msg  $mensaje para el error a 403.
    */
   public static function e403($msg = null){
@@ -161,17 +143,13 @@ class AmResponse extends AmObject{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve el valor de una propiedad.
-   * ---------------------------------------------------------------------------
    */
   public function get($propertyName){
     return $this->__p->$propertyName;
   }
 
   /**
-   * ---------------------------------------------------------------------------
-   * ---------------------------------------------------------------------------
    * @param   string  $propertyName   Nombre de la propiedad que se desea
    *                                  asignar.
    * @param   any     $value          Valor a asignar.
@@ -183,9 +161,7 @@ class AmResponse extends AmObject{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve si la petición fue resuelta o no.
-   * ---------------------------------------------------------------------------
    * @return  boolean  Devuelve si la petición fué resuelta o no
    */
   public function isResolved(){
@@ -193,9 +169,7 @@ class AmResponse extends AmObject{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Asignar Si la petición se resolvió o no.
-   * ---------------------------------------------------------------------------
    * @param   bool  $resolved   
    * @return  this
    */
@@ -205,9 +179,7 @@ class AmResponse extends AmObject{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Asignar el cuerpo.
-   * ---------------------------------------------------------------------------
    * @param   string  $content  Cuerpo de la respuesta.   
    * @return  this
    */
@@ -217,9 +189,7 @@ class AmResponse extends AmObject{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Agrega contenido al final del cuerpo de la respuesta.
-   * ---------------------------------------------------------------------------
    * @param   string  $content  Cuerpo de la respuesta.   
    * @return  this
    */
@@ -231,9 +201,7 @@ class AmResponse extends AmObject{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Agrega contenido al inicio del cuerpo de la respuesta.
-   * ---------------------------------------------------------------------------
    * @param   string  $content  Cuerpo de la respuesta.
    * @return  this
    */
@@ -245,9 +213,7 @@ class AmResponse extends AmObject{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Agrega un header al listado de headers de la respuesta.
-   * ---------------------------------------------------------------------------
    * @param   string  $header   Header a agregar.
    * @param   string  $key      Posición donde se quiere agregar la cabecera.
    * @return          this
@@ -261,9 +227,7 @@ class AmResponse extends AmObject{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Agrega un header al listado de headers de la respuesta.
-   * ---------------------------------------------------------------------------
    * @param   string  $key  Posicion de la cabecera que se desea eliminar.
    * @return          this
    */
@@ -273,9 +237,7 @@ class AmResponse extends AmObject{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Método para ejecutar la respuesta.
-   * ---------------------------------------------------------------------------
    * Si tiene un cuerpo asignado lo imprime.
    */
   public function make(){
@@ -287,9 +249,7 @@ class AmResponse extends AmObject{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Ejecutar una respuesta.
-   * ---------------------------------------------------------------------------
    * @param   self    $response   Respuesta que se desea despachar
    */
   public static function response($response){

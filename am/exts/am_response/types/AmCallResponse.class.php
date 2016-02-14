@@ -7,16 +7,12 @@
  */
 
 /**
- * -----------------------------------------------------------------------------
  * Clase para crear respuestas con callbacks
- * -----------------------------------------------------------------------------
  */
 class AmCallResponse extends AmResponse{
 
   /**
-   * ---------------------------------------------------------------------------
    * Constructor de la Clase.
-   * ---------------------------------------------------------------------------
    */
   public function __construct($data = null){
     parent::__construct();
@@ -47,9 +43,7 @@ class AmCallResponse extends AmResponse{
   }
 
   /**
-   * -------------------------------------------------------------------------
    * Asignar callback
-   * --------------------------------------------------------------------------
    * @param  array/string   $callback   Callback a ser llamado
    * @return this
    */
@@ -63,9 +57,7 @@ class AmCallResponse extends AmResponse{
   }
 
   /**
-   * -------------------------------------------------------------------------
    * Asignar variables de entorno
-   * --------------------------------------------------------------------------
    * @param  array   $env   Variables de entorno
    * @return this
    */
@@ -75,9 +67,7 @@ class AmCallResponse extends AmResponse{
   }
 
   /**
-   * -------------------------------------------------------------------------
    * Asignar parámetros de la llamada
-   * --------------------------------------------------------------------------
    * @param  array   $args   Parámetros de la llamada
    * @return this
    */
@@ -113,9 +103,7 @@ class AmCallResponse extends AmResponse{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Indica si la petición se puede resolver o no.
-   * ---------------------------------------------------------------------------
    * Se sobreescribe el método para saber si el callback existe o no.
    * @return  boolean   Indica si la petición se puede resolver o no.
    */
@@ -124,9 +112,7 @@ class AmCallResponse extends AmResponse{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Acción de la respuesta: Realizar llamado del callback
-   * ---------------------------------------------------------------------------
    * @return  AmResponse  Si el callback a ejecutar no existe se devuelve una
    *                      respuesta 404. De lo contario retorna null
    */

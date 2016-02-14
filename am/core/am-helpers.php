@@ -7,10 +7,8 @@
  */
 
 /**
- * -----------------------------------------------------------------------------
  * Devuelve el valor del $arr en la posición $index si existe, de lo contrario
  * devuelve $def.
- * -----------------------------------------------------------------------------
  * @param   string  $index  Indice que se desea consultar.
  * @param   array   $arr    Array de donde se desea obtener el valor.
  * @param   mixed   $def    Valor a devolver si $arr no contiene la posicion
@@ -24,9 +22,7 @@ function itemOr($index, array $arr, $def = null){
 }
 
 /**
- * -----------------------------------------------------------------------------
  * Devuelve si un $callback es un callback válido o no.
- * -----------------------------------------------------------------------------
  * @param   callback $callback Callback a verificar
  */
 function isValidCallback($callback){
@@ -52,12 +48,9 @@ function isValidCallback($callback){
 
 }
 
-
 /**
- * -----------------------------------------------------------------------------
  * Busca un archivo dentro de los directorios indicados hasta encontrar el
  * uno donde exista.
- * -----------------------------------------------------------------------------
  * @param  string $file  Archivo a buscar.
  * @param  array  $paths array de directorios donde se buscará el archivo.
  * @return string        Devuelve la ruta del primer archivo encontrado.
@@ -81,9 +74,7 @@ function findFileIn($file, array $paths, $reverse = true){
 }
 
 /**
- * -----------------------------------------------------------------------------
  * Devuelve si es un hash o no.
- * -----------------------------------------------------------------------------
  * @param   array $arr  Array a virificar si es un hash.
  * @return  bool        Si $arr es o no un hash.
  */
@@ -100,9 +91,7 @@ function isHash(array $arr){
 }
 
 /**
- * -----------------------------------------------------------------------------
  * Devuelve un array con los valores únicos de la mezcla de dos arrays.
- * -----------------------------------------------------------------------------
  * @param array $arr1
  * @param array $arr2
  * @return array        
@@ -112,10 +101,8 @@ function merge_unique(array $arr1, array $arr2){
 }
 
 /**
- * -----------------------------------------------------------------------------
  * Devuelve la mezcla de dos array si ambos parámetros son arrays, de lo
  * contrario devuelve el segundo parámetro ($arr2).
- * -----------------------------------------------------------------------------
  * @param mixed $arr1
  * @param mixed $arr2
  * @return mixed
@@ -127,10 +114,8 @@ function merge_if_are_array($arr1, $arr2){
 }
 
 /**
- * -----------------------------------------------------------------------------
  * Devuelve la mezcla recursiva de dos array si ambos parámetros son arrays, de
  * lo contrario devuelve el segundo parámetro ($arr2).
- * -----------------------------------------------------------------------------
  * @param mixed $arr1
  * @param mixed $arr2
  * @return mixed
@@ -142,11 +127,9 @@ function merge_r_if_are_array($arr1, $arr2){
 }
 
 /**
- * -----------------------------------------------------------------------------
  * Devuelve la mezcla de dos array si el segundo array en la posición 0 
  * ($arr[0]) es diferente de falso, de lo contrario devuelve el segundo
  * array ($arr2).
- * -----------------------------------------------------------------------------
  * @param array $arr1
  * @param array $arr2
  * @return array
@@ -158,10 +141,8 @@ function merge_if_snd_first_not_false(array $arr1, array $arr2){
 }
 
 /**
- * -----------------------------------------------------------------------------
  * Deveulve la mezcla dos arrays con merge_if_snd_first_not_false y elimina los
  * valores duplicados.
- * -----------------------------------------------------------------------------
  * @param array $arr1
  * @param array $arr2
  * @return array
@@ -171,11 +152,9 @@ function merge_if_snd_first_not_false_unique(array $arr1, array $arr2){
 }
 
 /**
- * -----------------------------------------------------------------------------
  * Devuelve la mezcla recursiva de dos arrays si el segundo array en la
  * posición 0 ($arr[0]) es diferente de falso (false), de lo contrario devuelve
  * el segundo array ($arr2).
- * -----------------------------------------------------------------------------
  * @param array $arr1
  * @param array $arr2
  * @return array
@@ -187,10 +166,8 @@ function merge_r_if_snd_first_not_false(array $arr1, array $arr2){
 }
 
 /**
- * -----------------------------------------------------------------------------
  * Devuelve la mezcla de dos arrays con merge_if_snd_first_not_false si ambos
  * son arrays, de lo contrario devuelve el segundo parámetro ($arr2).
- * -----------------------------------------------------------------------------
  * @param mixed $arr1
  * @param mixed $arr2
  * @return mixed
@@ -202,10 +179,8 @@ function merge_if_are_array_and_snd_first_not_false($arr1, $arr2){
 }
 
 /**
- * -----------------------------------------------------------------------------
  * Devuelve la mezcla de dos arrays con merge_r_if_snd_first_not_false si ambos
  * son arrays, de lo contrario devuelve el segundo parámetro ($arr2).
- * -----------------------------------------------------------------------------
  * @param mixed $arr1
  * @param mixed $arr2
  * @return mixed
@@ -217,11 +192,9 @@ function merge_r_if_are_array_and_snd_first_not_false($arr1, $arr2){
 }
 
 /**
- * -----------------------------------------------------------------------------
  * Mezcla recursivamente dos arrays. Si una posición existe en ambos arrays se
  * mezclan recursivamente si ambos son arrays, de lo contrario prevalece el del
  * segundo array.
- * -----------------------------------------------------------------------------
  * @param array $arr1
  * @param array $arr2
  * @return array
@@ -255,8 +228,7 @@ function merge_if_both_are_array(array $arr1, array $arr2){
 
 }
 
-// PENDIENTE documentar
-
+// PENDIENTE: documentar
 // Devuelve la cadena 's' convertida en formato under_score
 function underscore($s) {
 
@@ -273,6 +245,7 @@ function underscore($s) {
 
 }
 
+// PENDIENTE: documentar
 // Devuelve una cadena 's' en formato camelCase. Si 'cfc == true' entonces
 // el primer caracter tambien es convertido en mayusculas
 function camelCase($s, $cfc = false){
@@ -294,6 +267,7 @@ function camelCase($s, $cfc = false){
 
 }
 
+// PENDIENTE: documentar
 // Convierte un valor a booleano
 function parseBool($value){
 
@@ -304,12 +278,14 @@ function parseBool($value){
 
 }
 
+// PENDIENTE: documentar
 function isNameValid($str){
 
   return preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $str) != 0;
 
 }
 
+// PENDIENTE: documentar
 function amGlobFiles($folders, array $options = array()){
 
   // Convertir en array si no es un array.
@@ -362,4 +338,3 @@ function amGlobFiles($folders, array $options = array()){
   return $ret;
 
 }
-

@@ -7,19 +7,14 @@
  */
 
 /**
- * -----------------------------------------------------------------------------
  * Clase principal de Amathista
- * -----------------------------------------------------------------------------
  */
-
 final class Am{
 
   protected static
 
     /**
-     * -------------------------------------------------------------------------
      * Callbacks de eventos globales del sistema.
-     * -------------------------------------------------------------------------
      */
     $callbacks = array(
 
@@ -82,9 +77,7 @@ final class Am{
     ),
 
     /**
-     * -------------------------------------------------------------------------
      * Definición de callbacks a utilizar para mezclar atributos.
-     * -------------------------------------------------------------------------
      */
     $mergeFunctions = array(
       'requires' => 'merge_if_snd_first_not_false',
@@ -95,84 +88,62 @@ final class Am{
 
     // PENDIENTE: Revisar
     /**
-     * -------------------------------------------------------------------------
      * Exteciones manejadoras de session
-     * -------------------------------------------------------------------------
      */
     $aliasExts = array(
       'normalSession' => 'exts/am_normal_session/'
     ),
 
     /**
-     * -------------------------------------------------------------------------
      * Array de extensiones cargadas
-     * -------------------------------------------------------------------------
      */
     $loadedExts = array(),
 
     /**
-     * -------------------------------------------------------------------------
      * Instancias unicas de clases
-     * -------------------------------------------------------------------------
      */
     $instances = array(),
 
     /**
-     * -------------------------------------------------------------------------
      * Directorios de entorno
-     * -------------------------------------------------------------------------
      * Este es un array que contiene d
      */
     $dirs = array(),
 
     /**
-     * -------------------------------------------------------------------------
      * Directorios de tareas
-     * -------------------------------------------------------------------------
      * Este es un array que contiene d
      */
     $tasksDirs = array(),
 
     /**
-     * -------------------------------------------------------------------------
      * Archivos de configuración cargados
-     * -------------------------------------------------------------------------
      */
     $confsLoaded = array(),
 
     /**
-     * -------------------------------------------------------------------------
      * Propiedades/Configuraciones globales cargadas
-     * -------------------------------------------------------------------------
      */
     $confs = array(),
 
     /**
-     * -------------------------------------------------------------------------
      * URL base de la aplicación
-     * -------------------------------------------------------------------------
      */
     $urlBase = null,
 
     /**
-     * -------------------------------------------------------------------------
      * Petición realizada
-     * -------------------------------------------------------------------------
      */
     $requestStr = null,
 
     /**
-     * -------------------------------------------------------------------------
      * Indica si ya se inicialicó la aplicación
-     * -------------------------------------------------------------------------
      */
     $apped = false,
 
     /**
-     * -------------------------------------------------------------------------
      * Instancia de AmObject que tiene como propiedades los valores los arrays
      * respectivos.
-     * -------------------------------------------------------------------------
      */
     $server = null,
     $get = null,
@@ -182,9 +153,7 @@ final class Am{
     $env = null;
 
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve una texto con un determinado formato
-   * ---------------------------------------------------------------------------
    * @param  string $fmtKey formato a buscar
    * @return string         Texto formateado
    */
@@ -202,10 +171,8 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve un error con el mensaje obtenido del llamado del método Am::t con
    * los parámetros de esta función.
-   * ---------------------------------------------------------------------------
    * @params   Utilizados para generar el texto del mensaje
    * @return   Una instancia de la clase AmError con el mensaje del texto
    *           obtenido
@@ -217,9 +184,7 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Inicializa las variables de AmResponse
-   * ---------------------------------------------------------------------------
    */
   public static function start(){
 
@@ -233,19 +198,15 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve el método de la peticion.
-   * ---------------------------------------------------------------------------
    */
   public static function getMethod(){
     return strtolower(self::$server->REQUEST_METHOD);
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve la instancia de una clase existente. Sino existe la instancia se
    * crea una nueva.
-   * ---------------------------------------------------------------------------
    * @param   string  $className  Nombre de la clase de la que se desea obtener
    *                              la instancia.
    * @param   array   $params     Parámetros para instancia la clase.
@@ -267,9 +228,7 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Asigna un callback de un evento global.
-   * ---------------------------------------------------------------------------
    * @param   string    $action   Nombre del evento a atender.
    * @param   callback  $callback Callback a asociar con el evento.
    */
@@ -280,9 +239,7 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Llamar el callback de un evento global.
-   * ---------------------------------------------------------------------------
    * @param   string  $action   Nombre dle evento a llamar.
    * @param   ...               El resto de los parámetros son utilizados
    *                            como argumentos de la llamada del callback.
@@ -308,9 +265,7 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Agrega una extensión de las configuraciones.
-   * ---------------------------------------------------------------------------
    * Estas configuraciones son las tomadas inicialmente al momento de mezclar.
    * Las primeras configuraciones cargadas prevalecen sobre las nuevas.
    * @param   string  $property   Nombre de la propiedad a cargar.
@@ -334,9 +289,7 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Realiza la mezcla de una propiedad.
-   * ---------------------------------------------------------------------------
    * @param   string  $property   Nombre de la propiedad a cargar.
    */
   public static function mergeProperty($property){
@@ -394,9 +347,7 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve el valor de una propiedad de aplicación.
-   * ---------------------------------------------------------------------------
    * @param   string  $property   Nombre de la propiedad a cargar.
    * @param   any     $default    Valor por defecto a devolver sino existe un
    *                              valor para la propiedad.
@@ -418,9 +369,7 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Carga un archivo de configuración.
-   * ---------------------------------------------------------------------------
    * @param   string  $filename   Archivo de configuración a cargar.
    * 
    */
@@ -442,9 +391,7 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Carga los archivos de configuración de una propiedad.
-   * ---------------------------------------------------------------------------
    * @param   string  $property   Nombre de la propiedad a cargar.
    * 
    */
@@ -458,9 +405,7 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Agrega un directorio al entorno de la aplicación.
-   * ---------------------------------------------------------------------------
    * @param   string  $dir   Directorio a agregar.
    */
   public static function addDir($dir){
@@ -477,9 +422,7 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Agrega un directorio al tareas de la aplicación.
-   * ---------------------------------------------------------------------------
    * @param   string  $dir   Directorio a agregar.
    */
   public static function addTasksDir($dir){
@@ -490,10 +433,8 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve el valor de una propiedad global. Si la propiead no tiene valor
    * asignado se devuelve el valor por defacto ($default)
-   * ---------------------------------------------------------------------------
    * @param   string  $property   Nombre de la propiedad a consultar.
    * @param   mixed   $default    Valor por defecto en caso que la propiedad
    *                              aún no esté asignada.
@@ -508,11 +449,9 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Mueve un archivo a la papelera.
    * Este archivo se ubicará en la papelera relativo al directorio en común del
    * mismo con el directorio actual.
-   * ---------------------------------------------------------------------------
    * @param   string  $file   Archivo a mover a la papelera
    * @return  bool            Si se pudo mover o no el archivo.
    */
@@ -556,9 +495,7 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Asigna o sustituye un dispatcher a un tipo de ruta
-   * ---------------------------------------------------------------------------
    * @param   string    $type         Nombre del tipo al que se agrega el
    *                                  callback
    * @param   callback  $dispatcher   Despachador a agregar
@@ -570,9 +507,7 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Asigna un pre-procesador de rutas a un tipo
-   * ---------------------------------------------------------------------------
    * @param   string    $type           Nombre del tipo al que se agrega el
    *                                    callback
    * @param   callback  $preProcessor   Preprocesador 
@@ -584,9 +519,7 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Responde con un archivo indicado por parámetro.
-   * ---------------------------------------------------------------------------
    * @param   string    $file         Ruta del archivo con el que se responderá.
    * @param   bool      $attachment   Si la ruta se descarga o no.
    * @param   string    $name         Nombre con el que se entregará el archivo.
@@ -602,9 +535,7 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Responde la descarga de un archivo indicado por parámetro.
-   * ---------------------------------------------------------------------------
    * @param   string    $file       Ruta del archivo a descargar.
    * @param   string    $name       Nombre con el que se entregará el archivo.
    * @param   mimeType  $mimeType   Tipo mime para la descarga.
@@ -617,10 +548,8 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Busca una llamada como función, método estático de una clase o llamada
    * a controlador.
-   * ---------------------------------------------------------------------------
    * @param   string $callback  String que identifica el controlador a buscar.
    * @param   array  $env       Variables de entorno.
    * @param   array  $params    Argumentos obtenidos de la ruta.
@@ -634,9 +563,7 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Busca un template y lo renderiza.
-   * ---------------------------------------------------------------------------
    * @param   string  $tpl        Template a renderizar.
    * @param   array   $vars       Variables de la vista.
    * @param   array   $options    Opciones para la vista.
@@ -653,9 +580,7 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Redirigir a una URL.
-   * ---------------------------------------------------------------------------
    * @param   string $url   URL que se desea ir.
    */
   public static function go($url){
@@ -665,9 +590,7 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Redirigir a una URL formateandola con self::url.
-   * ---------------------------------------------------------------------------
    * @param   string $path  URL de la app que se desea redirigir.
    */
   public static function redirect($url){
@@ -677,9 +600,7 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Responde con un error 404
-   * ---------------------------------------------------------------------------
    * @param   string  $msg  Mensaje de error a mostrar
    * @return  any           Respuesta de manejador configurado.
    */
@@ -690,9 +611,7 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Responde con un error 403
-   * ---------------------------------------------------------------------------
    * @param   string  $msg  Mensaje de error a mostrar
    * @return  any           Respuesta de manejador configurado.
    */
@@ -703,9 +622,7 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Llamada de un controlador.
-   * ---------------------------------------------------------------------------
    * @param   string $action    String que identifica la acción a ejecutar.
    *                            Tiene el formato 'Controlador@action'
    * @param   array  $env       Variables de entorno.
@@ -720,9 +637,7 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Renderiza un a vista.
-   * ---------------------------------------------------------------------------
    * @param  string $__tpl      Template a renderizar.
    * @param  array  $__params   Parámetros para la vista.
    * @param  array  $__options  Opciones de la vista.
@@ -747,10 +662,8 @@ final class Am{
   // Urls y redicciones
   /////////////////////////////////////////////////////////////////////////////
   /**
-   * ---------------------------------------------------------------------------
    * Obtiene la petición realizada. Si se esta en la línea de comandos, entonces
    * la petición es vacía.
-   * ---------------------------------------------------------------------------
    * @return  string    Petición.
    */
   public static function getRequest(){
@@ -791,9 +704,7 @@ final class Am{
   }
   
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve la url base de la aplicación.
-   * ---------------------------------------------------------------------------
    * @return  string  URL Base de la aplicación.
    */
   public static function getUrlBase(){
@@ -825,9 +736,7 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Contruye una URL de la aplicación.
-   * ---------------------------------------------------------------------------
    * @param   string $url   URL de la app que se desea obtener.
    * @return  string        URL Construída
    */
@@ -838,9 +747,7 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Imprime una URL.
-   * ---------------------------------------------------------------------------
    * @param   string $url  URL de la app que se desea imprimir.
    */
   public static function eUrl($url = ''){
@@ -850,10 +757,8 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve una URL absoluta incluyendo el nombre del servidor y el protocolo
    * de conexión.
-   * ---------------------------------------------------------------------------
    * @param   string $url   URL de la app que se desea obtener.
    * @return  string        URL Construída.
    */
@@ -867,10 +772,8 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Imprime una URL absoluta incluyendo el nombre del servidor y el protocolo
    * de conexión.
-   * ---------------------------------------------------------------------------
    * @param   string $url   URL de la app que se desea imprimir.
    */
   public static function eServerUrl($url = ''){
@@ -880,9 +783,7 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Redirigir a una URL formateandola con self::url si $condition es verdadero
-   * ---------------------------------------------------------------------------
    * @param   bool    $condition  Resultado de la condición evaluada.
    * @param   string  $url        URL de la app que se desea redirigir.
    */
@@ -894,9 +795,7 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Redirigir a una URL formateandola con self::url si $condition es falsa.
-   * ---------------------------------------------------------------------------
    * @param   bool    $condition  Resultado de la condición evaluada.
    * @param   string  $url        URL de la app que se desea redirigir.
    */
@@ -911,13 +810,11 @@ final class Am{
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * ---------------------------------------------------------------------------
    * Carga un extensión indicada por parámetro. Devuelve verdadero o false 
    * dependiendo de si se logró cargar o no la extensión. La carga de la
    * extensión se realiza verificando la existencia del archivo "{$file}.php"
    * que indica una extención simple, o la existencia de archivo
    * "{$file}.conf.php" que indica una extensión compuesta.
-   * ---------------------------------------------------------------------------
    * @param   string  $file   Ruta de la extensión que se desea cargar.
    * @return  bool            Si se cargo o no la extensión.
    */
@@ -1003,11 +900,9 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Carga una o varias extensión. Antes de cargar se verifica si el nombre
    * recibido por parámetro es un alias de otra extensión. Si la extensión no
    * existe se busca en cada uno de los directorios del entorno
-   * ---------------------------------------------------------------------------
    * @param   string/string array() $name Nombre o alias de la extensión que se
    *                                desea cargar.
    */
@@ -1051,9 +946,7 @@ final class Am{
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve la instancia del manejador de credenciales.
-   * ---------------------------------------------------------------------------
    * @return object   Instancia del manejador de credenciales.
    */
   public static function getCredentialsHandler(){
@@ -1063,9 +956,7 @@ final class Am{
   }
   
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve las credenciales actuales.
-   * ---------------------------------------------------------------------------
    * @return  object  Instancia de las credenciales actuales.
    */
   public static function getCredentials(){
@@ -1080,9 +971,7 @@ final class Am{
   }
   
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve si está autenticado un usuario.
-   * ---------------------------------------------------------------------------
    * @return bool
    */
   public static function isAuth(){
@@ -1092,10 +981,8 @@ final class Am{
   }
   
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve si hay un usuario autenticado y si tiene las credenciales
    * recividas por parámetro
-   * ---------------------------------------------------------------------------
    * @param   string/string array   $credential String o array de strings con
    *                                            las credenciales a consultar
    * @return  bool
@@ -1112,11 +999,9 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Ejecuta una tarea.
    * Si la tarea tiene configurado targets, y no se indica el target a ejecutar,
    * Se ejecutará todos los targets con los argumentos del array $argv.
-   * ---------------------------------------------------------------------------
    * @param  string $task Comando a ejecutar y target a utilizar
    *                      Ejemplo: copy:app, implica que se ejecutará la función
    *                      task_copy con el target indicado en app.
@@ -1296,9 +1181,7 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Ejecuta de una tarea  e imprime su resultado
-   * ---------------------------------------------------------------------------
    * @param  string $task Nombre de la tarea a ejecutar y/o target/
    * @param         ...  El resto de los parámetros son los argumentos para la
    *                     tarea a ejecutar.
@@ -1316,9 +1199,7 @@ final class Am{
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * ---------------------------------------------------------------------------
    * Realiza incializaciones para el manejo de session
-   * ---------------------------------------------------------------------------
    */
   // PENDIENTE: Revisar
   public static function startSession(){
@@ -1343,10 +1224,8 @@ final class Am{
   /////////////////////////////////////////////////////////////////////////////
   
   /**
-   * ---------------------------------------------------------------------------
    * Carga todas las dependencia de una aplicación, y carga el scrit de inicio
    * si este existe.
-   * ---------------------------------------------------------------------------
    * @param  string $appRoot directorio raíz de la aplicación.
    */
   public static function app($appRoot = '../app'){
@@ -1390,13 +1269,11 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Procede a despachar la petición. Si es una petición HTTP procede a evaluar
    * la ruta. Si se ejecuta por linea de comandos con argumentos se ejecuta como
    * comando de Amathista. Por último sino es ninguno de los casos anteriores se
    * entrara en el intérprete de php con todas las dependencias de la
    * aplicación cargadas.
-   * ---------------------------------------------------------------------------
    */
   public static function run(){
 
@@ -1453,9 +1330,7 @@ final class Am{
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * ---------------------------------------------------------------------------
    * Busca la primera ocurrencia de un archivo dentro de array de directorios.
-   * ---------------------------------------------------------------------------
    * @param  string $file Archivo que se desea buscar.
    * @return string       Dirección del primer archivo encontrado
    */
@@ -1466,10 +1341,8 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Busca la primera ocurrencia de un tarea dentro del array de directorios de
    * tareas.
-   * ---------------------------------------------------------------------------
    * @param  string $task Tarea a buscar.
    * @return string       Dirección del primer archivo tarea encontrado.
    */
@@ -1480,9 +1353,7 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve el tipo MIME de un archivo según su extensión.
-   * ---------------------------------------------------------------------------
    * @param  string $filename Nombre del archivo del cual se desea obtener el 
    *                          Tipo MIME
    * @return String           Tipo mime del archivo según la extensión o falso
@@ -1508,10 +1379,8 @@ final class Am{
 }
 
 /**
- * -----------------------------------------------------------------------------
  * Se linkea los callbacks responde con archivo y responder con descargar de
  * archivo.
- * -----------------------------------------------------------------------------
  */
 Am::on('render.template',   'Am::render');
 

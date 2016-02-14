@@ -1,5 +1,14 @@
 <?php
+/**
+ * Amathista - PHP Framework
+ *
+ * @author Alex J. Rondón <arondn2@gmail.com>
+ * 
+ */
 
+/**
+ * Clase para conexión con BD en MySQL
+ */
 class MysqlScheme extends AmScheme{
 
 

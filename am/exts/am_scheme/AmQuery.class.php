@@ -1,5 +1,14 @@
 <?php
+/**
+ * Amathista - PHP Framework
+ *
+ * @author Alex J. Rondón <arondn2@gmail.com>
+ * 
+ */
 
+/**
+ * Clase los querys a las BD
+ */
 class AmQuery extends AmObject{
 
   // Propidades

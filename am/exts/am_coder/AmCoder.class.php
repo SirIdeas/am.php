@@ -7,17 +7,12 @@
  */
 
 /**
- * -----------------------------------------------------------------------------
  * Codificador/decodificador de arrays.
- * -----------------------------------------------------------------------------
  */
-
 class AmCoder{
 
   /**
-   * ---------------------------------------------------------------------------
    * Decodifica un archivo de configuracion con el mismo formato.
-   * ---------------------------------------------------------------------------
    * La decodificación se basa solo en obtener lo retornado en el archivo.
    * @param   string      $file     Ruta del archivo a decodificar.
    * @param   any         $default  Valor por defecto a devolver si el archivo
@@ -37,9 +32,7 @@ class AmCoder{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Leer el archivo.
-   * ---------------------------------------------------------------------------
    * @param   string      $file     Ruta del archivo a decodificar.
    * @param   any         $default  Valor por defecto a devolver si el archivo
    *                                no existe.
@@ -58,9 +51,7 @@ class AmCoder{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Indica si el archivo existe.
-   * ---------------------------------------------------------------------------
    * @param   string  $file   Ruta del archivo que desean consultar.
    * @return  bool            Si el archivo existe.
    */
@@ -69,9 +60,7 @@ class AmCoder{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Escribir contenido del archivo.
-   * ---------------------------------------------------------------------------
    * @param   string    $file     Ruta del archivo que desean escribir.
    * @param   array     $data     Array con la información a escribir.
    * @param   bool      $prepare  Indic asi se preparará o no la información.
@@ -91,9 +80,7 @@ class AmCoder{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Guarda una configuración en archivo.
-   * ---------------------------------------------------------------------------
    * @param   string  $path   Archivo donde se guardará la configuración.
    * @param   hash    $conf   Hash con la configuración q se guadará.
    * @param   bool    $rw     Indica si el archivo se debe sobreescribir en el
@@ -110,9 +97,7 @@ class AmCoder{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Preparación de la información para escribir en el archivo.
-   * ---------------------------------------------------------------------------
    * Consiste en crear array anidados en aquellas posiciones cuya key tenga el
    * caractere _
    * @param   array   $data   Array con la información a preparar.
@@ -131,9 +116,7 @@ class AmCoder{
   }
   
   /**
-   * ---------------------------------------------------------------------------
    * Función auxiliar para preparar la data.
-   * ---------------------------------------------------------------------------
    * @param   array   $data   Array con la información a preparar.
    * @param   string  $path   Lista de keys que indica la ruta donde se
    *                          sae encuentra actualmente dentro del array.
@@ -172,9 +155,7 @@ class AmCoder{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Método que codifica la data.
-   * ---------------------------------------------------------------------------
    * @param   array   $data   Array a codificar.
    * @return  string          Resultado de la codificación.
    */
@@ -210,9 +191,7 @@ class AmCoder{
   }
 
   // /**
-  //  * ---------------------------------------------------------------------------
   //  * Algoritmo para codificar la data.
-  //  * ---------------------------------------------------------------------------
   //  * @param   array   $data     Array a codificar.
   //  * @param   string  $prefix   Prefijo de elemento. Sirve para ir colocando el
   //  *                            margen.

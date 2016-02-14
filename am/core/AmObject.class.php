@@ -7,24 +7,18 @@
  */
 
 /**
- * -----------------------------------------------------------------------------
  * Clase para objetos en Amathista
- * -----------------------------------------------------------------------------
  */
 class AmObject implements Iterator, Countable, ArrayAccess{
 
   /**
-   * ---------------------------------------------------------------------------
    * Lista de propiedades creados dinamicamente
-   * ---------------------------------------------------------------------------
    */
   private $_f = array();
 
   /**
-   * ---------------------------------------------------------------------------
    * Llamada del constructor. Inicializa los atributos indicados en el array
    * data
-   * ---------------------------------------------------------------------------
    * @param coleccion $data Colleción de pares atributo=>valor.
    */
   public function __construct($data = null){
@@ -34,9 +28,7 @@ class AmObject implements Iterator, Countable, ArrayAccess{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Extiende los atributos del objeto
-   * ---------------------------------------------------------------------------
    * @param coleccion $data Colleción de pares atributo=>valor.
    */
   protected function extend($data = null){
@@ -51,9 +43,7 @@ class AmObject implements Iterator, Countable, ArrayAccess{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve si un attributo es publico o no
-   * ---------------------------------------------------------------------------
    * @param  string  $name Nombre del atributo consultado
    * @return boolean
    */
@@ -64,9 +54,7 @@ class AmObject implements Iterator, Countable, ArrayAccess{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Indica si el objeto tiene o no un atributo
-   * ---------------------------------------------------------------------------
    * @param  string $name Nombre del atributo a consultar
    * @return bool         
    */
@@ -78,10 +66,8 @@ class AmObject implements Iterator, Countable, ArrayAccess{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Llamada para obtener el valor de un atributo del objeto: $this->name.
    * Devuelve el valor si este es público.
-   * ---------------------------------------------------------------------------
    * @param  [string $name Nombre del atributo a conultar
    * @return mixed         Valor del atributo o null si este no existe.
    */
@@ -101,10 +87,8 @@ class AmObject implements Iterator, Countable, ArrayAccess{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Llamada de la asignacion a una propiedad: $this->name = $value.
    * Asigna un valor a un atributo si este es público.
-   * ---------------------------------------------------------------------------
    * @param  string $name   Nombre de la propiedad a setear.
    * @param  mixed  $value  Valor a asignar.
    **/
@@ -124,10 +108,8 @@ class AmObject implements Iterator, Countable, ArrayAccess{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Llamada de isset a un atributo del objeto: isset($this->name).
    * Devuelve el resultado la llamada isset al atributo si este es público.
-   * ---------------------------------------------------------------------------
    * @param  string   $name   Nombre de la propiedad a consultar.
    * @return boolean
    */
@@ -142,9 +124,7 @@ class AmObject implements Iterator, Countable, ArrayAccess{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Llamada de 'unset' a una propiedad: unset($this->name)
-   * ---------------------------------------------------------------------------
    * @param  string   $name   Nombre de la propiedad a consultar.
    **/
   public function __unset($name){
@@ -160,9 +140,7 @@ class AmObject implements Iterator, Countable, ArrayAccess{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Llamada de consulta del objeto como un array: $this[$name]
-   * ---------------------------------------------------------------------------
    **/
   public function offsetGet($name){
 
@@ -171,9 +149,7 @@ class AmObject implements Iterator, Countable, ArrayAccess{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Llamada de la asignacion de valores como un array: $this[$name] = $value
-   * ---------------------------------------------------------------------------
    **/
   public function offsetSet($name, $value){
 
@@ -182,10 +158,8 @@ class AmObject implements Iterator, Countable, ArrayAccess{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Llamada de la funcion isset sobre el objeto utilizado como un array:
    * isset($this[$name])
-   * ---------------------------------------------------------------------------
    **/
   public function offsetExists($name){
 
@@ -194,10 +168,8 @@ class AmObject implements Iterator, Countable, ArrayAccess{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Llamada de la funcion unset sobre el objeto como un array:
    * unset($this[$name])
-   * ---------------------------------------------------------------------------
    **/
   public function offsetUnset($name){
 
@@ -206,9 +178,7 @@ class AmObject implements Iterator, Countable, ArrayAccess{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Mueve el puntero al primer elemento de la collecion: rewind($this)
-   * ---------------------------------------------------------------------------
    **/
   public function rewind() {
 
@@ -219,9 +189,7 @@ class AmObject implements Iterator, Countable, ArrayAccess{
 
 
   /**
-   * ---------------------------------------------------------------------------
    * Obtiene el valor actual de la coleccion: current($this)
-   * ---------------------------------------------------------------------------
    **/
   public function current() {
 
@@ -231,7 +199,6 @@ class AmObject implements Iterator, Countable, ArrayAccess{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Mueve el puntero de la collecion al ultimo elemento: end($this)
    **/
   public function end() {
@@ -242,9 +209,7 @@ class AmObject implements Iterator, Countable, ArrayAccess{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Obtiene el indice del la posicion actual de la coleccion: key($this)
-   * ---------------------------------------------------------------------------
    **/
   public function key() {
 
@@ -253,9 +218,7 @@ class AmObject implements Iterator, Countable, ArrayAccess{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Mueve el puntero de la coleccion al siguiente elemento: next($this)
-   * ---------------------------------------------------------------------------
    **/
   public function next() {
 
@@ -265,9 +228,7 @@ class AmObject implements Iterator, Countable, ArrayAccess{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Mueve el puntero de la coleccion al elemento previoo: prev($this)
-   * ---------------------------------------------------------------------------
    **/
   public function prev() {
 
@@ -277,9 +238,7 @@ class AmObject implements Iterator, Countable, ArrayAccess{
    }
 
   /**
-   * ---------------------------------------------------------------------------
    * Indica si el elemento actual de la collecion es valido: isValid($this)
-   * ---------------------------------------------------------------------------
    **/
   public function valid() {
 
@@ -289,18 +248,14 @@ class AmObject implements Iterator, Countable, ArrayAccess{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve el numero de objetos de la coleccion: count($this)
-   * ---------------------------------------------------------------------------
    **/
   public function count() {
     return count($this->_f);
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve un hash con los valores de los atributos dinamicos
-   * ---------------------------------------------------------------------------
    **/
   public function toArray(){
     $ret = array();
@@ -321,11 +276,9 @@ class AmObject implements Iterator, Countable, ArrayAccess{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Convierte una coleción (stdClass, AmObject) a un array. Si la colleción
    * No es un array ni es una instancia de stdClass o AmObject, retorna un
    * array vacío.
-   * ---------------------------------------------------------------------------
    **/
   public static function parse($collection){
 
@@ -346,9 +299,7 @@ class AmObject implements Iterator, Countable, ArrayAccess{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve los valores $arr con los keys $properties
-   * ---------------------------------------------------------------------------
    */
   public static function mask(array $arr, array $properties){
     $ret = array();

@@ -7,19 +7,14 @@
  */
 
 /**
- * -----------------------------------------------------------------------------
  * Clase para la evaluación de las rutas
- * -----------------------------------------------------------------------------
  */
-
 final class AmRoute{
 
   protected static
     
     /**
-     * -------------------------------------------------------------------------
      * Tipos de parámetros que puede tener la ruta
-     * -------------------------------------------------------------------------
      */
     $types = array(
       'id'            => '[a-zA-Z_][a-zA-Z0-9_-]*', // Identificador
@@ -30,46 +25,34 @@ final class AmRoute{
     ),
 
     /**
-     * -------------------------------------------------------------------------
      * Callbacks de preprocesamiento
-     * -------------------------------------------------------------------------
      */
     $preProcessors = array(),
 
     /**
-     * -------------------------------------------------------------------------
      * Callbacks de atención
-     * -------------------------------------------------------------------------
      */
     $dispatchers = array();
 
   protected
 
     /**
-     * -------------------------------------------------------------------------
      * Ruta solicitada.
-     * -------------------------------------------------------------------------
      */
     $route = null,
     
     /**
-     * -------------------------------------------------------------------------
      * Regex de evaluación correspondiente a la ruta.
-     * -------------------------------------------------------------------------
      */
     $regex = null,
 
     /**
-     * -------------------------------------------------------------------------
      * Parámetros detectados de la ruta
-     * -------------------------------------------------------------------------
      */
     $params = array();
 
   /**
-   * ---------------------------------------------------------------------------
    * Instanciación de una ruta.
-   * ---------------------------------------------------------------------------
    * @param string $route Ruta a evaluar
    */
   public function __construct($route){
@@ -82,9 +65,7 @@ final class AmRoute{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Evalua la ruta hace match con una petición.
-   * ---------------------------------------------------------------------------
    * @param  string     $request  URL de la petición
    * @return array/bool           Si la URL de una petición concuerda con la
    *                              ruta devuelve un array de pares
@@ -111,9 +92,7 @@ final class AmRoute{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Construye la regex para una ruta.
-   * ---------------------------------------------------------------------------
    * @param  string   $route  Ruta de la que se desea obtener la regex.
    * @return array(2)         Array de dos posiciones. la primera es la regex
    *                          obtenia para la ruta, la segunda un array con
@@ -140,10 +119,8 @@ final class AmRoute{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve una regex correspondiente para una ruta dividiendo los párametros
    * y obteniendo el tipo para cada uno.
-   * ---------------------------------------------------------------------------
    * @param  string   $route  Ruta de la que se desea obtener la regex.
    * @param  &array   $params Array donde se appilarán los nombres de los
    *                          parámetros deectados en la ruta.
@@ -182,11 +159,9 @@ final class AmRoute{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Agrega un callback para preprocesar las rutas.
    * El objetivo es que otras extensiones puedan modificar la estructuras de las
    * rutas configuradas antes de que estas sean comparadas con la petición.
-   * ---------------------------------------------------------------------------
    * @param   callback  $callback  Callback a agregar
    * 
    */
@@ -200,11 +175,9 @@ final class AmRoute{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Agrega un callback para atender las rutas.
    * El objetivo es que otras extensiones puedan personalizar como atender las
    * rutas si lka misma tiene determinado key
-   * ---------------------------------------------------------------------------
    * @param   string    $to         Key el cual atenderá el callback
    * @param   callback  $callback   Callback a agregar
    * 
@@ -216,9 +189,7 @@ final class AmRoute{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Realiza el llamado de todos los pre calls de rutas
-   * ---------------------------------------------------------------------------
    * @param  &array &$routes Array con las rutas a evaluar
    */
   public static function callPreProcessors($routes){
@@ -236,9 +207,7 @@ final class AmRoute{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Callback para evaluar las rutas.
-   * ---------------------------------------------------------------------------
    * @param   string  $request  Petición para la que se desea obtener la
    *                            respuesta correspondiente.
    * @return  bool              Si se encontró o no una respuesta para la
@@ -259,10 +228,8 @@ final class AmRoute{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Método busca la ruta con la que conincide con una petición realiza el 
    * llamado correspondiente.
-   * ---------------------------------------------------------------------------
    * @param  string $request  Petición a resolver
    * @param  array  $routes   Rutas configuradas
    * @param  array  $env      Variables de entorno configuradas

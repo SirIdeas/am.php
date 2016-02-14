@@ -1,5 +1,14 @@
 <?php
+/**
+ * Amathista - PHP Framework
+ *
+ * @author Alex J. Rondón <arondn2@gmail.com>
+ * 
+ */
 
+/**
+ * Clase para representar las tablas de las BD
+ */
 class AmTable extends AmQuery{
 
   protected static

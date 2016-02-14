@@ -7,9 +7,7 @@
  */
 
 /**
- * -----------------------------------------------------------------------------
  * Configuración de eventos globales que atenderá la extensión.
- * -----------------------------------------------------------------------------
  */
 // Despachar rutas.
 Am::on('route.evaluate', 'AmRoute::evaluate');
@@ -19,9 +17,7 @@ Am::on('route.addPreProcessor', 'AmRoute::addPreProcessor');
 Am::on('route.addDispatcher', 'AmRoute::addDispatcher');
 
 /**
- * -----------------------------------------------------------------------------
  * Agregar algunos de los métodos que atenderán cierto tipo de rutas.
- * -----------------------------------------------------------------------------
  */
 Am::addRouteDispatcher('file',        'Am::file');
 Am::addRouteDispatcher('download',    'Am::download');

@@ -7,19 +7,14 @@
  */
 
 /**
- * -----------------------------------------------------------------------------
  * Clase para controlador estandar. 
- * -----------------------------------------------------------------------------
  */
-
 class AmController extends AmResponse{
 
   private static
 
     /**
-     * -------------------------------------------------------------------------
      * Callbacks para mezclar atributos.
-     * -------------------------------------------------------------------------
      */
     $mergeFunctions = array(
       'paths'   => 'merge_unique',
@@ -30,9 +25,7 @@ class AmController extends AmResponse{
     );
 
   /**
-   * ---------------------------------------------------------------------------
    * Asigna el nombre de la vista a setView.
-   * ---------------------------------------------------------------------------
    * Es un Alias de la funcion setRender que agrega .php al final del valor
    * recibido.
    * @param   String  $view   Nombre de la vista que se desea asignar.
@@ -44,9 +37,7 @@ class AmController extends AmResponse{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Indica si una accion esta permitida o no para cierto request method.
-   * ---------------------------------------------------------------------------
    * Si las acciones permitidas no tiene el item correspondiente a la acción
    * solicitada entonces se asume que esta permitida la acción.
    * @param   string    $action   Nombre de la acción que se desea consultar.
@@ -77,9 +68,7 @@ class AmController extends AmResponse{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Revisa si una accion esta permitida para cierto request method.
-   * ---------------------------------------------------------------------------
    * Si la acción no está permitida devuelve un error 403.
    * @param   string    $action   Nombre de la acción que se desea consultar.
    * @param   string    $method   Metodo para el que se quiere consultar.
@@ -95,9 +84,7 @@ class AmController extends AmResponse{
 
 
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve el prefijo para determinado elemento
-   * ---------------------------------------------------------------------------
    * @param   string  $key  Nombre del elemento del que se quiere obtener el
    *                        prefijo.
    * @return  string        Prefijo de elemento.
@@ -109,9 +96,7 @@ class AmController extends AmResponse{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Agregar un filtro.
-   * ---------------------------------------------------------------------------
    * @param   string  $name       Nombre del filtro a agregar,
    * @param   string  $when       Cuando se ejecutará el filtro: before, after,
    *                              before_get, after_get, ...
@@ -176,9 +161,7 @@ class AmController extends AmResponse{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Ejecuta los filtros correspondiente para un método.
-   * ---------------------------------------------------------------------------
    * @param   string  $when     Indica el estado que se ejecutara: before,
    *                            before_get, bofore_post, after, after_get,
    *                            after_post.
@@ -258,9 +241,7 @@ class AmController extends AmResponse{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Ejecuta una acción, con un método y unos parámetros.
-   * ---------------------------------------------------------------------------
    * @param   string  $action   Nombre de la acción a ejecutar.
    * @param   string  $method   Nombre del método como se ejecuta.
    * @param   array   $params   Parámetros para ejecutar la acción.
@@ -282,7 +263,7 @@ class AmController extends AmResponse{
     $return = null;
     // Para guardar métodos ejecutados.
     $executed = array();
-    // -------------------------------------------------------------------------
+    
     // Ejecutar el método action
     if(method_exists($this, $actionMethod = 'action')){
 
@@ -298,7 +279,6 @@ class AmController extends AmResponse{
       "before_{$method}" => $this->getPrefix("{$method}Actions") . $action
     );
 
-    // -----------------------------------------------------------------------
     foreach ($methodsToExec as $when => $actionMethod) {
 
       // Ejecutar filtros before
@@ -327,14 +307,12 @@ class AmController extends AmResponse{
 
     }
 
-    // -------------------------------------------------------------------------
     // Ejecutar filtros before para el request method
     $ret = $this->executeFilters("before_{$method}", $action, $params);
 
     // Si retorno falso o un respuesta devolverlo
     if($ret === false || $ret instanceof parent) return $ret;
 
-    // -------------------------------------------------------------------------
     // Ejecutar la acción para el request method
     
     // Obtener le nombre del método
@@ -358,7 +336,6 @@ class AmController extends AmResponse{
         
     }
 
-    // -------------------------------------------------------------------------
     // Ejecutar filtros after
     foreach (array("after_{$method}", 'after') as $when) {
       
@@ -377,9 +354,7 @@ class AmController extends AmResponse{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve un array de los paths de ámbito del controlador.
-   * ---------------------------------------------------------------------------
    * @return  array   Listado de los directorios donde se buscará la vista.
    */
   final protected function getPaths(){
@@ -408,9 +383,7 @@ class AmController extends AmResponse{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Obtener el nombre de la vista actual.
-   * ---------------------------------------------------------------------------
    * @return string         Nombre de la vista actual.
    */
   final protected function getView(){
@@ -420,9 +393,7 @@ class AmController extends AmResponse{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Asignar la vista actual.
-   * ---------------------------------------------------------------------------
    * @param   string  $view   Nombre de la vista
    * @return  setView   */
   final protected function setRender($view){
@@ -432,9 +403,7 @@ class AmController extends AmResponse{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Renderizar la vista.
-   * ---------------------------------------------------------------------------
    * @param   string      $view   Vista a renderizar. Si no se indica se tomará
    *                              La asignada en la propiedad 'view'.
    * @return  AmResponse          Respuesta para renderizar la vista.
@@ -464,9 +433,7 @@ class AmController extends AmResponse{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Responder como servicio.
-   * ---------------------------------------------------------------------------
    * @param   array/object  $content  Contenido de la respuesta.
    * @return  AmResponse              Respuesta
    */
@@ -503,9 +470,7 @@ class AmController extends AmResponse{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Para despachar la petición.
-   * ---------------------------------------------------------------------------
    */
   final public function make(){
 
@@ -536,9 +501,7 @@ class AmController extends AmResponse{
   }
   
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve el nombre de la vista a renderizar para una acción.
-   * ---------------------------------------------------------------------------
    * @param   $action   string  Nombre de la acción de la que se desea obtener
    *                            la vista.
    * @return  string            Nombre de la vista
@@ -550,9 +513,7 @@ class AmController extends AmResponse{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Método para mezclar dos configuraciones.
-   * ---------------------------------------------------------------------------
    * La mezcla se basa en los parámetros de 
    * @param   array  $confToRewrite   Configuración a sobreescribir.
    * @param   array  $conf            Configuración a agregar.
@@ -582,9 +543,7 @@ class AmController extends AmResponse{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Incluye un controlador.
-   * ---------------------------------------------------------------------------
    * @param   string   $control   Nombre del controlador a incluir.
    * @return  array               Configuración del controlador
    */
@@ -667,9 +626,7 @@ class AmController extends AmResponse{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Obtiene el controlador y la accion de un cadena de caracteres.
-   * ---------------------------------------------------------------------------
    * @param  string       $actionStr  String con la accion en formato
    *                                  'controlador@accion'
    * @return false/array              Hash con el controlador y la acción. Si
@@ -689,9 +646,7 @@ class AmController extends AmResponse{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Pre procesador de rutas.
-   * ---------------------------------------------------------------------------
    * Verifica y transforma la ruta del formato 'controlador@acction'.
    * @param  array  $route  Ruta a evaluar.
    * @return array          Ruta transformada.
@@ -721,9 +676,7 @@ class AmController extends AmResponse{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Manejador para el evento response.controller.
-   * ---------------------------------------------------------------------------
    * Funcion para atender las respuestas por controlador. Recive , un array con
    * el entorno y un array con los parámetros obtenidos de la ruta.
    * @param   string  $action   La acción a ejecutar en formato del controlador

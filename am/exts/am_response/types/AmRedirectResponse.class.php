@@ -7,17 +7,12 @@
  */
 
 /**
- * -----------------------------------------------------------------------------
  * Clase para respuestas de redirección a otra URL.
- * -----------------------------------------------------------------------------
  */
-
 class AmRedirectResponse extends AmResponse{
 
   /**
-   * ---------------------------------------------------------------------------
    * Constructor de la Clase.
-   * ---------------------------------------------------------------------------
    */
   public function __construct($data = null){
     parent::__construct();
@@ -34,9 +29,7 @@ class AmRedirectResponse extends AmResponse{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Asignar URL
-   * ---------------------------------------------------------------------------
    * @param  bool   $url   URL a la que se redirigirá
    * @return this
    */
@@ -46,9 +39,7 @@ class AmRedirectResponse extends AmResponse{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Acción de la respuesta: Redirigir a la URL
-   * ---------------------------------------------------------------------------
    */
   public function make(){
     parent::make();

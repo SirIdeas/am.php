@@ -7,17 +7,12 @@
  */
 
 /**
- * -----------------------------------------------------------------------------
  * Clase para crear respuestas con archivos
- * -----------------------------------------------------------------------------
  */
-
 class AmFileResponse extends AmResponse{
 
   /**
-   * ---------------------------------------------------------------------------
    * Constructor de la Clase.
-   * ---------------------------------------------------------------------------
    */
   public function __construct($data = null){
     parent::__construct();
@@ -57,9 +52,7 @@ class AmFileResponse extends AmResponse{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Asignar nombre con el que se descargará el archivo
-   * ---------------------------------------------------------------------------
    * @param  string   $filename   Ruta del archivo a devolver.
    * @return this
    */
@@ -69,9 +62,7 @@ class AmFileResponse extends AmResponse{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Asignar el archivo a descargar
-   * ---------------------------------------------------------------------------
    * @param  string   $filename   Ruta del archivo a devolver.
    * @return this
    */
@@ -81,9 +72,7 @@ class AmFileResponse extends AmResponse{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Asignar si se descarga o no el archivo.
-   * ---------------------------------------------------------------------------
    * @param  bool   $attachment   Si se descarga o no el archivo.
    * @return this
    */
@@ -93,9 +82,7 @@ class AmFileResponse extends AmResponse{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Asignar tipo MIME
-   * ---------------------------------------------------------------------------
    * @param  bool   $mimeType   Tipo MIME a asignar
    * @return this
    */
@@ -105,9 +92,7 @@ class AmFileResponse extends AmResponse{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Indica si la petición se puede resolver o no.
-   * ---------------------------------------------------------------------------
    * Se sobreescribe el método para saber si el archivo existe o no.
    * @return  boolean   Indica si la petición se puede resolver o no.
    */
@@ -116,9 +101,7 @@ class AmFileResponse extends AmResponse{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Acción de la respuesta: Leer el archivo
-   * ---------------------------------------------------------------------------
    * @return  AmResponse  Si el archivo que se intenta devolver no existe 
    *                      se devuelve una respuesta 404. De lo contario retorna
    *                      null
