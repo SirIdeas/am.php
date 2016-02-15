@@ -246,17 +246,9 @@ class MysqlScheme extends AmScheme{
 
   }
 
-  // Obtener el SQL para una consulta de inserción
-  public function sqlInsertQuery($values, $table, array $fields = array()){
+  public function sqlInsertValues($values){
 
-    // Si es una consulta
-    if($values instanceof AmQuery){
-
-      // Los valores a insertar son el SQL de la consulta
-      $strValues = $values->sql();
-
-    // Si los valores es un array con al menos un registro
-    }elseif(is_array($values) && count($values)>0){
+    if(is_array($values) && count($values)>0){
 
       // Preparar registros para crear SQL
       foreach($values as $i => $v)
@@ -267,35 +259,33 @@ class MysqlScheme extends AmScheme{
       $values = implode(",", $values);
 
       // Obtener Str para los valores
-      $strValues = "VALUES $values";
+      $values = "VALUES $values";
 
     }
 
-    // Si el Str de valores no está vacío
-    if(!empty($strValues)){
+    return $values;
 
-      // Obtener nombre de la tabla
-      $tableName = $this->getParseObjectDatabaseName($table);
+  }
 
-      // Obtener el listado de campos
-      foreach ($fields as $key => $field)
-        $fields[$key] = $this->getParseName($field);
+  public function sqlInsertFields(array $fields){
 
-      // Unir campos
-      if(empty($fields))
-        $fields = '';
+    // Unir campos
+    if(!empty($fields))
+      return '(' . implode(',', $fields) . ')';
 
-      else
-        $fields = '(' . implode(',', $fields) . ')';
-      
+    return '';
 
-      // Generar SQL
-      return "INSERT INTO $tableName{$fields} $strValues";
+  }
 
-    }
+  // Obtener el SQL para una consulta de inserción
+  public function sqlInsertQuery($values, $model, array $fields = array()){
 
-    // Consulta invalida
-    return "";
+    list($sqlValues, $sqlTable, $sqlFields) = $this->prepareInsertInto(
+      $values, $model, $fields
+    );
+
+    // Generar SQL
+    return "INSERT INTO $sqlTable{$sqlFields} $sqlValues";
 
   }
 

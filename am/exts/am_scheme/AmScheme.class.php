@@ -977,7 +977,7 @@ abstract class AmScheme extends AmObject{
    * @param  array  $fields [description]
    * @return [type]         [description]
    */
-  public function insertInto($values, $model, array $fields = array()){
+  public function prepareInsertInto($values, $model, array $fields = array()){
 
     $table = $model;
 
@@ -1052,20 +1052,38 @@ abstract class AmScheme extends AmObject{
 
     }
 
-    // Obtener el SQL para saber si es valido
-    $sql = $this->sqlInsertQuery($values, $table, $fields);
+    // Si es una consulta
+    if($values instanceof AmQuery){
 
-    // Si el SQL está vacío o si se genera un error en la insercion
-    // se devuelve falso
-    if(trim($sql) == '' || $this->execute($sql) === false)
-      return false;
+      // Los valores a insertar son el SQL de la consulta
+      $values = $values->sql();
 
-    // Obtener el ultimo ID insertado
-    $id = $this->getLastInsertedId();
+    }
 
-    // Se retorna el el último id insertado o true en
-    // el caso de que se hayan insertado varios registros
-    return $id === 0 ? true : $id;
+    // Obtener el listado de campos
+    foreach ($fields as $key => $field)
+      $fields[$key] = $this->getParseName($field);
+
+    return array(
+      'table' => $this->getParseObjectDatabaseName($table),
+      'values' => $this->sqlInsertValues($values),
+      'fields' => $this->sqlInsertFields($fields),
+    );
+
+    // // Obtener el SQL para saber si es valido
+    // $sql = $this->sqlInsertQuery($values, $table, $fields);
+
+    // // Si el SQL está vacío o si se genera un error en la insercion
+    // // se devuelve falso
+    // if(trim($sql) == '' || $this->execute($sql) === false)
+    //   return false;
+
+    // // Obtener el ultimo ID insertado
+    // $id = $this->getLastInsertedId();
+
+    // // Se retorna el el último id insertado o true en
+    // // el caso de que se hayan insertado varios registros
+    // return $id === 0 ? true : $id;
 
   }
 
@@ -1418,6 +1436,20 @@ abstract class AmScheme extends AmObject{
    * @return [type]     [description]
    */
   abstract public function sqlSelectQuery(AmQuery $q);
+
+  /**
+   * [sqlInsertValues description]
+   * @param  [type] $values [description]
+   * @return [type]         [description]
+   */
+  abstract public function sqlInsertValues($values);
+
+  /**
+   * [sqlInsertFields description]
+   * @param  array  $fields [description]
+   * @return [type]         [description]
+   */
+  abstract public function sqlInsertFields(array $fields);
 
   // Consulta insert
   /**
