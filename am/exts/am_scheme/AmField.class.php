@@ -117,7 +117,7 @@ class AmField extends AmObject{
 
   /**
    * Devuelve el nombre.
-   * @return  string  Nombre.
+   * @return string Nombre.
    */
   public function getName(){
 
@@ -127,7 +127,7 @@ class AmField extends AmObject{
 
   /**
    * Devuelve el tipo.
-   * @return  string  Tipo.
+   * @return string Tipo.
    */
   public function getType(){
 
@@ -137,7 +137,7 @@ class AmField extends AmObject{
 
   /**
    * Devuelve el Tamaño.
-   * @return  integer   Tamaño.
+   * @return int Tamaño.
    */
   public function getLen(){
 
@@ -147,7 +147,7 @@ class AmField extends AmObject{
 
   /**
    * Devuelve la precisión de enteros de campos float.
-   * @return  integer   Precisión de enteros de campos float.
+   * @return int Precisión de enteros de campos float.
    */
   public function getPrecision(){
 
@@ -157,7 +157,7 @@ class AmField extends AmObject{
 
   /**
    * Devuelve la precisión de decimales de campos float.
-   * @return  integer   Precición de decimales de campos float.
+   * @return int Precición de decimales de campos float.
    */
   public function getScale(){
 
@@ -166,8 +166,8 @@ class AmField extends AmObject{
   }
 
   /**
-   * Devuelve el tipo.
-   * @return  any  Tipo.
+   * Devuelve el valor por defecto.
+   * @return any Valor por defecto.
    */
   public function getDefaultValue(){
 
@@ -177,7 +177,7 @@ class AmField extends AmObject{
 
   /**
    * Devuelve si permite o no valores null.
-   * @return  boolean   Si permite o no valores nullos.
+   * @return bool Si permite o no valores nullos.
    */
   public function allowNull(){
 
@@ -187,7 +187,7 @@ class AmField extends AmObject{
 
   /**
    * Devuelve si es un campo autoincrementable.
-   * @return  boolean   Si es un campo autoincrementable.
+   * @return bool Si es un campo autoincrementable.
    */
   public function isAutoIncrement(){
 
@@ -197,7 +197,7 @@ class AmField extends AmObject{
 
   /**
    * Devuelve si es un campo sin signo.
-   * @return  boolean   Si es un campos sin signo.
+   * @return bool Si es un campos sin signo.
    */
   public function isUnsigned(){
 
@@ -207,7 +207,7 @@ class AmField extends AmObject{
 
   /**
    * Devuelve si se rrellenan con ceros.
-   * @return  boolean  Si se rellena con ceros.
+   * @return bool Si se rellena con ceros.
    */
   public function isZerofill(){
 
@@ -217,7 +217,7 @@ class AmField extends AmObject{
 
   /**
    * Devuelve si es parte de la clave primaria de la tabla a la que pertenece.
-   * @return  boolean  Si es parte de la clave primaria.
+   * @return bool Si es parte de la clave primaria.
    */
   public function isPk(){
 
@@ -227,7 +227,7 @@ class AmField extends AmObject{
 
   /**
    * Devuelve el charset.
-   * @return  string  Charset.
+   * @return string Charset.
    */
   public function getCharset(){
 
@@ -237,7 +237,7 @@ class AmField extends AmObject{
 
   /**
    * Devuelve el collage.
-   * @return  string  Collage.
+   * @return string Collage.
    */
   public function getCollage(){
 
@@ -247,7 +247,7 @@ class AmField extends AmObject{
 
   /**
    * Devuelve las configuraciones extras.
-   * @return  string  Configuraciones extras.
+   * @return string Configuraciones extras.
    */
   public function getExtra(){
 
@@ -257,7 +257,7 @@ class AmField extends AmObject{
 
   /**
    * Realizar casting a un valor por el tipo de datos del campo.
-   * @return  any   Valor parseado.
+   * @return any Valor parseado.
    */
   public function parseValue($value){
 
@@ -268,7 +268,7 @@ class AmField extends AmObject{
 
   /**
    * Convertir el campo a array.
-   * @return  array   Campo convertir en array.
+   * @return array Campo convertir en array.
    */
   public function toArray(){
 

@@ -53,8 +53,8 @@ class AmFileResponse extends AmResponse{
 
   /**
    * Asignar nombre con el que se descargará el archivo
-   * @param  string   $filename   Ruta del archivo a devolver.
-   * @return this
+   * @param  string $filename Ruta del archivo a devolver.
+   * @return $this
    */
   public function name($name){
     $this->__p->name = $name;
@@ -63,8 +63,8 @@ class AmFileResponse extends AmResponse{
 
   /**
    * Asignar el archivo a descargar
-   * @param  string   $filename   Ruta del archivo a devolver.
-   * @return this
+   * @param  string $filename Ruta del archivo a devolver.
+   * @return $this
    */
   public function filename($filename){
     $this->__p->filename = $filename;
@@ -73,8 +73,8 @@ class AmFileResponse extends AmResponse{
 
   /**
    * Asignar si se descarga o no el archivo.
-   * @param  bool   $attachment   Si se descarga o no el archivo.
-   * @return this
+   * @param  bool  $attachment Si se descarga o no el archivo.
+   * @return $this
    */
   public function attachment($attachment = true){
     $this->__p->attachment = $attachment;
@@ -82,9 +82,9 @@ class AmFileResponse extends AmResponse{
   }
 
   /**
-   * Asignar tipo MIME
-   * @param  bool   $mimeType   Tipo MIME a asignar
-   * @return this
+   * Asignar tipo MIME.
+   * @param  bool  $mimeType Tipo MIME a asignar.
+   * @return $this
    */
   public function mimeType($mimeType){
     $this->__p->mimeType = $mimeType;
@@ -94,17 +94,16 @@ class AmFileResponse extends AmResponse{
   /**
    * Indica si la petición se puede resolver o no.
    * Se sobreescribe el método para saber si el archivo existe o no.
-   * @return  boolean   Indica si la petición se puede resolver o no.
+   * @return bool Indica si la petición se puede resolver o no.
    */
   public function isResolved(){
     return parent::isResolved() && is_file($this->__p->ilename);
   }
 
   /**
-   * Acción de la respuesta: Leer el archivo
-   * @return  AmResponse  Si el archivo que se intenta devolver no existe 
-   *                      se devuelve una respuesta 404. De lo contario retorna
-   *                      null
+   * Acción de la respuesta: Leer el archivo.
+   * @return AmResponse Si el archivo que se intenta devolver no existe se
+   *                    devuelve una respuesta 404. De lo contario retorna null.
    */
   public function make(){
     parent::make();

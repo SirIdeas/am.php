@@ -29,9 +29,9 @@ class AmRedirectResponse extends AmResponse{
   }
 
   /**
-   * Asignar URL
-   * @param  bool   $url   URL a la que se redirigirá
-   * @return this
+   * Asignar URL.
+   * @param  bool  $url URL a la que se redirigirá.
+   * @return $this
    */
   public function url($url){
     $this->__p->url = $url;

@@ -162,7 +162,7 @@ final class AmRoute{
    * Agrega un callback para preprocesar las rutas.
    * El objetivo es que otras extensiones puedan modificar la estructuras de las
    * rutas configuradas antes de que estas sean comparadas con la petición.
-   * @param   callback  $callback  Callback a agregar
+   * @param  callback $callback  Callback a agregar
    * 
    */
   public static function addPreProcessor($key, $callback){
@@ -177,9 +177,9 @@ final class AmRoute{
   /**
    * Agrega un callback para atender las rutas.
    * El objetivo es que otras extensiones puedan personalizar como atender las
-   * rutas si lka misma tiene determinado key
-   * @param   string    $to         Key el cual atenderá el callback
-   * @param   callback  $callback   Callback a agregar
+   * rutas si lka misma tiene determinado key.
+   * @param string   $to       Key el cual atenderá el callback.
+   * @param callback $callback Callback a agregar.
    * 
    */
   public static function addDispatcher($to, $callback){
@@ -189,8 +189,8 @@ final class AmRoute{
   }
 
   /**
-   * Realiza el llamado de todos los pre calls de rutas
-   * @param  &array &$routes Array con las rutas a evaluar
+   * Realiza el llamado de todos los pre calls de rutas.
+   * @param array $routes Array con las rutas a evaluar.
    */
   public static function callPreProcessors($routes){
 
@@ -208,10 +208,9 @@ final class AmRoute{
 
   /**
    * Callback para evaluar las rutas.
-   * @param   string  $request  Petición para la que se desea obtener la
-   *                            respuesta correspondiente.
-   * @return  bool              Si se encontró o no una respuesta para la
-   *                            petición
+   * @param  string $request Petición para la que se desea obtener la respuesta
+   *                         correspondiente.
+   * @return bool            Si se encontró o no una respuesta para la petición.
    */
   public static function evaluate($request){
       
@@ -230,13 +229,13 @@ final class AmRoute{
   /**
    * Método busca la ruta con la que conincide con una petición realiza el 
    * llamado correspondiente.
-   * @param  string $request  Petición a resolver
-   * @param  array  $routes   Rutas configuradas
-   * @param  array  $env      Variables de entorno configuradas
-   * @param  array  $parent   Ruta padre
-   * @return bool/string      Retorna verdadero si logra despachar la ruta,
-   *                          falso o un string con un mensaje de error de lo
-   *                          contario
+   * @param  string      $request Petición a resolver.
+   * @param  array       $routes  Rutas configuradas.
+   * @param  array       $env     Variables de entorno configuradas.
+   * @param  array       $parent  Ruta padre.
+   * @return bool/string          Retorna verdadero si logra despachar la ruta,
+   *                              falso o un string con un mensaje de error de
+   *                              lo contario.
    */
   private static function evalMatch($request, array $routes, array $env = array(), array $parent = array()){
 

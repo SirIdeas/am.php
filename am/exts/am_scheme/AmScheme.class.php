@@ -99,7 +99,7 @@ abstract class AmScheme extends AmObject{
     
   /**
    * Devuelve el nombre del esquema a la que referencia.
-   * @return  string  Nombre del esquema.
+   * @return string Nombre del esquema.
    */
   public function getName(){
     
@@ -109,7 +109,7 @@ abstract class AmScheme extends AmObject{
     
   /**
    * Devuelve el prefijo para los modelos del esquema.
-   * @return  string  Prefijo para clases.
+   * @return string Prefijo para clases.
    */
   
   public function getPrefix(){
@@ -120,7 +120,7 @@ abstract class AmScheme extends AmObject{
     
   /**
    * Devuelve el nombre driver de conexión.
-   * @return  string  Nombre del driver.
+   * @return string Nombre del driver.
    */
   public function getDriver(){
     
@@ -130,7 +130,7 @@ abstract class AmScheme extends AmObject{
     
   /**
    * Devuelve el nombre de la base de datos.
-   * @return  string  Nombre de la base de datos.
+   * @return string Nombre de la base de datos.
    */
   public function getDatabase(){
     
@@ -140,7 +140,7 @@ abstract class AmScheme extends AmObject{
     
   /**
    * Devuelve el nombre o dirección del servidor.
-   * @return  string  Nombre o dirección del servidor.
+   * @return string Nombre o dirección del servidor.
    */
   public function getServer(){
     
@@ -150,7 +150,7 @@ abstract class AmScheme extends AmObject{
     
   /**
    * Devuelve el Número del puerto para la conexión.
-   * @return  integer/string  Número de puerto para la conexión.
+   * @return int/string Número de puerto para la conexión.
    */
   public function getPort(){
     
@@ -160,7 +160,7 @@ abstract class AmScheme extends AmObject{
     
   /**
    * Devuelve el nombre de usuario para la conexión.
-   * @return  string  Nombre de usuario para la conexión.
+   * @return string Nombre de usuario para la conexión.
    */
   public function getUser(){
     
@@ -170,7 +170,7 @@ abstract class AmScheme extends AmObject{
     
   /**
    * Devuelve el password para la conexión.
-   * @return  string  Passwor para la conexión.
+   * @return string Password para la conexión.
    */
   public function getPass(){
     
@@ -180,7 +180,7 @@ abstract class AmScheme extends AmObject{
     
   /**
    * Devuelve el charset.
-   * @return  string  Charset.
+   * @return string Charset.
    */
   public function getCharset(){
     
@@ -190,7 +190,7 @@ abstract class AmScheme extends AmObject{
     
   /**
    * Devuelve el Collage.
-   * @return  string  Collage.
+   * @return string Collage.
    */
   public function getCollage(){
     
@@ -200,8 +200,8 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Agrega una tabla a la conexión.
-   * @param   AmTable   $table  Tabla a agregar.
-   * @return  $this
+   * @param  AmTable $table Tabla a agregar.
+   * @return $this
    */
   public function addTable(AmTable $table){
     
@@ -214,8 +214,8 @@ abstract class AmScheme extends AmObject{
   /**
    * Devuelve la instancia de una tabla correspondiente a un modelo. Si no
    * existe la instancia para dicho modelo devuelve null.
-   * @param   string    $model  Nombre del modelo.
-   * @return  AmTable           Devuelve la instancia de la tabla si existe.
+   * @param  string  $model Nombre del modelo.
+   * @return AmTable        Devuelve la instancia de la tabla si existe.
    */
   public function getTableInstance($model = null){
 
@@ -226,9 +226,9 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Devuelve si la instancia para un modelo está cargada.
-   * @param   string    $model  Nombre del modelo a consultar.
-   * @return  boolean           Indica si existe la instancia de la tabla para
-   *                            el modelo.
+   * @param  string $model  Nombre del modelo a consultar.
+   * @return bool           Indica si existe la instancia de la tabla para el
+   *                        modelo.
    */
   public function hasTableInstance($model){
 
@@ -239,7 +239,7 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Devuelve los modelos del esquema generados en la aplicación
-   * @return  array   array de strings con los nombres de los modelos.
+   * @return array Array de strings con los nombres de los modelos.
    */
   public function getGeneratedModels(){
 
@@ -265,7 +265,7 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Devuelve el directorio de modelos del schema actual.
-   * @return  string  Directorio de modelos de esquema.
+   * @return string Directorio de modelos de esquema.
    */
   public function getDir(){
 
@@ -281,8 +281,8 @@ abstract class AmScheme extends AmObject{
   /**
    * Devuelve la nombre del modelo para identificarlo dentro de todos los
    * esquemas de la aplicación. El formato es: :<schemeName>@<tableName>
-   * @param   string  $model  Nombre del modelo que se desea consultar.
-   * @return  string          Nombre del modelo.
+   * @param  string $model Nombre del modelo que se desea consultar.
+   * @return string        Nombre del modelo.
    */
   public function getSchemeModelName($model){
 
@@ -292,8 +292,8 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Devuelve el nombre de la clase del modelo.
-   * @param   string  $model  Nombre del modelo que se desea consultar.
-   * @return  string          Nombre de la clase del modelo.
+   * @param  string $model Nombre del modelo que se desea consultar.
+   * @return string        Nombre de la clase del modelo.
    */
   public function getBaseModelClassName($model){
 
@@ -303,8 +303,8 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Devuelve la dirección del archivo de configuración del modelo.
-   * @param   string  $model  Nombre del modelo que se desea consultar.
-   * @return  string          Dirección del archivo de configuración.
+   * @param  string $model Nombre del modelo que se desea consultar.
+   * @return string        Dirección del archivo de configuración.
    */
   public function getBaseModelConfFilename($model){
 
@@ -314,8 +314,8 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Devuelve la dirección de la clase base del model.
-   * @param   string  $model  Nombre del modelo que se desea consultar.
-   * @return  string          Dirección de la clase base del modelo.
+   * @param  string $model Nombre del modelo que se desea consultar.
+   * @return string        Dirección de la clase base del modelo.
    */
   public function getBaseModelClassFilename($model){
 
@@ -325,8 +325,8 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Indica si existe la clase base de un modelo y su configuración.
-   * @param   string  $model  Nombre del modelo que se desea consultar.
-   * @return  bool            Si existe o no el modelo.
+   * @param  string $model Nombre del modelo que se desea consultar.
+   * @return bool          Si existe o no el modelo.
    */
   public function existsBaseModel($model){
 
@@ -339,8 +339,8 @@ abstract class AmScheme extends AmObject{
   /**
    * Devuelve la configuración de un modelo base leída desde su archivo de
    * copnfiguración.
-   * @param   string  $model  Nombre del modelo que se desea consultar.
-   * @return  hash            Hash de propiedades del modelo.
+   * @param  string $model Nombre del modelo que se desea consultar.
+   * @return hash          Hash de propiedades del modelo.
    */
   public function getBaseModelConf($model){
   
@@ -355,8 +355,8 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Crea el archivo con la clase del modelo base basando en una tabla.
-   * @param   AmTable   $table  Tabla en el que se basará el modelo a generar.
-   * @return  bool              Si se generó o no el modelo.
+   * @param  AmTable $table Tabla en el que se basará el modelo a generar.
+   * @return bool           Si se generó o no el modelo.
    */
   public function generateBaseModelFile(AmTable $table){
 
@@ -377,9 +377,9 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Genera la clase base del modelo y su archivo de configuración.
-   * @param   AmTable   $table  Tabla en el que se basará el modelo a generar.
-   * @return  Hash              Resultado de la generación del archivo de
-   *                            configuración y el modelo.
+   * @param  AmTable $table Tabla en el que se basará el modelo a generar.
+   * @return Hash           Resultado de la generación del archivo de
+   *                        configuración y el modelo.
    */
   public function generateBaseModel(AmTable $table){
     return array(
@@ -398,7 +398,7 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Genera todos los modelos bases correspondientes a las tablas de un esquema.
-   * @return  Hash  Resultado de la generación de la configuración y el modelo.
+   * @return hash Resultado de la generación de la configuración y el modelo.
    */
   public function generateScheme(){
 
@@ -423,7 +423,7 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Devuelve el nombre de la BD para ser reconocida en el DBSM.
-   * @return  string  Nombre de la BD para ser utilizada dentro del DBSM.
+   * @return string Nombre de la BD para ser utilizada dentro del DBSM.
    */
   public function getParseDatabaseName(){
 
@@ -433,12 +433,12 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Devuelve el nombre de una tabla para ser reconocida en el DBSM
-   * @param   string/AmTable  $table  Tabla de la que se desea obtener le
-   *                                  nombre. Puede ser un string y una
-   *                                  instancia de AmTable.
-   * @param   boolean         $only   Si se devuelve el nombre de la tabla
-   *                                  relativo al nombre de la base de datos.
-   * @return  string                  Nombre de tabla obtenido.
+   * @param  string/AmTable $table Tabla de la que se desea obtener le
+   *                               nombre. Puede ser un string y una
+   *                               instancia de AmTable.
+   * @param  bool           $only  Si se devuelve el nombre de la tabla
+   *                               relativo al nombre de la base de datos.
+   * @return string                Nombre de tabla obtenido.
    */
   public function getParseObjectDatabaseName($table, $only = false){
 
@@ -465,10 +465,10 @@ abstract class AmScheme extends AmObject{
   /**
    * Obtiene la primera tabla de un Query y obtiene su nombre para ser
    * reconocido en el DBSM.
-   * @param   AmQuery   $q      Consulta
-   * @param   boolean   $only   Si el nombre de la tabla se devolverá con el
-   *                            nombre de la BD.
-   * @return  string            Nombre de tabla obtenido.
+   * @param  AmQuery $q    Consulta
+   * @param  bool    $only Si el nombre de la tabla se devolverá con el nombre
+   *                       de la BD.
+   * @return string        Nombre de tabla obtenido.
    */
   public function getParseTableNameOfView(AmQuery $q, $only = false){
 
@@ -491,7 +491,7 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Devuelve la cadena con la dirección del servidor y el puerto.
-   * @return  string  Dirección del servidor con el puertos
+   * @return string Dirección del servidor con el puertos
    */
   public function getServerString(){
 
@@ -507,7 +507,7 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Realiza la conexión.
-   * @return  Resource  Handle de conexión establecida o FALSE si falló.
+   * @return Resource Handle de conexión establecida o FALSE si falló.
    */
   public function connect(){
 
@@ -528,7 +528,7 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Función para reconectar. Desconecta y vuelve a conectar la DB.
-   * @return  Resource  Recurso generado por la nueva conexión.
+   * @return Resource Recurso generado por la nueva conexión.
    */
   public function reconnect(){
 
@@ -539,7 +539,7 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Seleciona la BD.
-   * @return  boolan  Si se pudo selecionar la BD.
+   * @return bool Si se pudo selecionar la BD.
    */
   public function select(){
 
@@ -550,7 +550,7 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Indica si la BD existe.
-   * @return  boolean  Si la BD existe.
+   * @return bool Si la BD existe.
    */
   public function exists(){
 
@@ -561,9 +561,9 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Crea una instancia de un AmQuery para la actual BD.
-   * @param   string/AmQuery  $from   From principal de la consulta.
-   * @param   string          $alias  Alias del from recibido.
-   * @return  AmQuery                 Instancia de l query creado.
+   * @param  string/AmQuery $from  From principal de la consulta.
+   * @param  string         $alias Alias del from recibido.
+   * @return AmQuery               Instancia de l query creado.
    */
   public function q($from = null, $alias = 'q'){
 
@@ -583,13 +583,12 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Ejecutar una consulta SQL desde el ámbito de la BD actual
-   * @param   string(SQL)/AmQuery   $q  SQL a ejecutar o instancia de AmQuery a
-   *                                    ejecutar.
-   * @return  boolean/int               Devuelve el resultado de la ejecución.
-   *                                    Puede ser un valor booleano que indica
-   *                                    si se ejecuto la consulta
-   *                                    satisfactoriamente, o un integer en el
-   *                                    caso de haberse ejecutatado un insert.
+   * @param  string/AmQuery $q SQL a ejecutar o instancia de AmQuery a ejecutar.
+   * @return bool/int          Devuelve el resultado de la ejecución.
+   *                           Puede ser un valor booleano que indica si se
+   *                           ejecuto la consulta satisfactoriamente, o un
+   *                           integer en el caso de haberse ejecutatado un
+   *                           insert.
    */
   public function execute($q){
 
@@ -616,9 +615,9 @@ abstract class AmScheme extends AmObject{
   }
 
   /**
-   * Setea el valor de una variable en el DBSM
-   * @param   string  $varName  Nombre de la variable
-   * @param   any     $value    Valor a asignar
+   * Setea el valor de una variable en el DBSM.
+   * @param string $varName Nombre de la variable.
+   * @param any    $value   Valor a asignar.
    */
   public function setServerVar($varName, $value){
 
@@ -628,11 +627,9 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Crea la BD.
-   * @param   boolean   $ifNotExists  Indica si se agrega la clausula IF NOT
-   *                                  EXISTS.
-   * @return  boolean                 Si se creó la BD. Si la BD ya existe y
-   *                                  el parámetro $ifNotExists == true,
-   *                                  retornará true.
+   * @param  bool $ifNotExists Indica si se agrega la clausula IF NOT EXISTS.
+   * @return bool              Si se creó la BD. Si la BD ya existe y el
+   *                           parámetro $ifNotExists == true, retornará true.
    */
   public function create($ifNotExists = true){
 
@@ -642,10 +639,10 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Elimina la BD.
-   * @param   boolean   $ifExists   Si se agrega la clausula IF EXISTS.
-   * @return  boolean               Si se eliminó la BD. Si la BD no existe y el
-   *                                parémetro $ifExists==true entonces retorna
-   *                                true.
+   * @param  bool $ifExists Si se agrega la clausula IF EXISTS.
+   * @return bool           Si se eliminó la BD. Si la BD no existe y el
+   *                        parémetro $ifExists==true entonces retorna
+   *                        true.
    */
   public function drop($ifExists = true){
 
@@ -655,7 +652,7 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Obtener la información de la BD.
-   * @return  hash  Hash con las propiedades de laBD
+   * @return hash Hash con las propiedades de laBD
    */
   public function getInfo(){
 
@@ -665,11 +662,11 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Crear tabla en la BD.
-   * @param   AmTable   $t            Tabla a crear
-   * @param   boolean   $ifNotExists  Se agrega el parémtro IS NOT EXISTS.
-   * @return  boolean                 Si se creó la tabla. Si la tabla existe y
-   *                                  el parámetro $ifNotExists == true,
-   *                                  retornará true.
+   * @param  AmTable $t            Tabla a crear
+   * @param  bool    $ifNotExists  Se agrega el parémtro IS NOT EXISTS.
+   * @return bool                  Si se creó la tabla. Si la tabla existe y el
+   *                               parámetro $ifNotExists == true, retornará
+   *                               true.
    *                                  
    */
   public function createTable(AmTable $t, $ifNotExists = true){
@@ -680,9 +677,9 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Crea todas las tablas de la BD basandose en los modelos bases generados.
-   * @param   boolean   $ifNotExists  Si la se creanran las tablas si no existe
-   * @return  hash                    Hash con un valor por cada tabla que
-   *                                  indica si se creó.
+   * @param  bool $ifNotExists Si la se creanran las tablas si no existe
+   * @return hash              Hash con un valor por cada tabla que indica si
+   *                           se creó.
    */
   public function createTables($ifNotExists = true){
 
@@ -702,12 +699,11 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Elimina una tabla.
-   * @param   string/AmTable  $table      Nombre o instancia de la tabla a
-   *                                      eliminar.
-   * @param   boolean         $ifExists   Si se agrega la clausula IF EXISTS.
-   * @return  boolean                     Si se eliminó la Tabla. Si la Tabla no
-   *                                      existe y el parémetro $ifExists==true
-   *                                      entonces retorna true.
+   * @param  string/AmTable $table    Nombre o instancia de la tabla a eliminar.
+   * @param  bool           $ifExists Si se agrega la clausula IF EXISTS.
+   * @return bool                     Si se eliminó la Tabla. Si la Tabla no
+   *                                  existe y el parémetro $ifExists==true
+   *                                  entonces retorna true.
    */
   public function dropTable($table, $ifExists = true){
 
@@ -717,8 +713,8 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Indica si la tabla existe.
-   * @param   string/AmTable  $table  Nombre o instancia de la tabla.
-   * @return  boolean                 Si la tabla existe.
+   * @param  string/AmTable $table Nombre o instancia de la tabla.
+   * @return bool                  Si la tabla existe.
    */
   public function existsTable($table){
 
@@ -730,10 +726,9 @@ abstract class AmScheme extends AmObject{
   /**
    * Eliminar todos los registros de una tabla y reinicia los campos
    * autoincrementables.
-   * @param  string/AmTable   $table      Nombre o instancia de la tabla.
-   * @param  boolean          $ignoreFk   Si se ingorará los Foreing Keys.
-   * @return boolean                      Si se vació la tabla
-   *                                      satisfactoriamente
+   * @param  string/AmTable $table    Nombre o instancia de la tabla.
+   * @param  bool           $ignoreFk Si se ingorará los Foreing Keys.
+   * @return bool                     Si se vació la tabla satisfactoriamente.
    */
   public function truncate($table, $ignoreFk = true){
 
@@ -743,7 +738,7 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Devuelve un array con el listado de tablas de la BD y su descripción.
-   * @return  array   Array de hash con las descripción de las tablas.
+   * @return array Array de hash con las descripción de las tablas.
    */
   public function getTables(){
 
@@ -754,8 +749,8 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Obtiene la descripción de una tabla en el BD.
-   * @param   string/AmTable  $table  Nombre o instancia de la tabla.
-   * @return  hash                    Hash con la descripcion de la tabla.
+   * @param  string/AmTable $table Nombre o instancia de la tabla.
+   * @return hash                  Hash con la descripcion de la tabla.
    */
   public function getTableDescription($table){
     
@@ -770,9 +765,9 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Obtener un listado de las columnas de una tabla.
-   * @param   string/AmTable  $table  Nombre o instancia de la tabla.
-   * @return  hash                    Array de hash con la descripcion de los
-   *                                  campos.
+   * @param  string/AmTable $table Nombre o instancia de la tabla.
+   * @return hash                  Array de hash con la descripcion de los
+   *                               campos.
    */
   public function getTableColumns($table){
 
@@ -783,9 +778,9 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Obtener un listado de las claves foráneas de una tabla.
-   * @param   string/AmTable  $table  Nombre o instancia de la tabla.
-   * @return  array                   Array de hash conla descripción de las
-   *                                  claves foráneas.
+   * @param  string/AmTable $table Nombre o instancia de la tabla.
+   * @return array                 Array de hash conla descripción de las
+   *                               claves foráneas.
    */
   public function getTableForeignKeys($table){
 
@@ -826,9 +821,9 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Obtener el listado de referencias a una tabla.
-   * @param   string/AmTable  $table  Nombre o instancia de la tabla.
-   * @return  array                   Array de hash con la descripción de las
-   *                                  referencias.
+   * @param  string/AmTable $table Nombre o instancia de la tabla.
+   * @return array                 Array de hash con la descripción de las
+   *                               referencias.
    */
   public function getTableReferences($table){
 
@@ -870,9 +865,9 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Obtener un listado de las claves restricciones únicas de una tabla.
-   * @param   string/AmTable  $table  Nombre o instancia de la tabla.
-   * @return  array                   Array de hash con la descripción de
-   *                                  claves únicas.
+   * @param  string/AmTable $table Nombre o instancia de la tabla.
+   * @return array                 Array de hash con la descripción de
+   *                               claves únicas.
    */
   public function getTableUniques($table){
 
@@ -894,8 +889,8 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Devuelve la descripción completa de una tabla incluyendo los campos.
-   * @param   string  $tableName  Nombre de la tabla.
-   * @return  AmTable             Instancia de la tabla.
+   * @param  string  $tableName Nombre de la tabla.
+   * @return AmTable            Instancia de la tabla.
    */
   public function getTableFromScheme($tableName){
 
@@ -927,9 +922,9 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Crea una vista.
-   * @param   AmQuery   $q        Instancia de la consulta a crear.
-   * @param   boolean   $replace  Si se debe agregar la clausula OR REPLACE.
-   * @return  boolean             Si se creó la vista.
+   * @param  AmQuery $q        Instancia de la consulta a crear.
+   * @param  bool    $replace  Si se debe agregar la clausula OR REPLACE.
+   * @return bool              Si se creó la vista.
    */
   public function createView(AmQuery $q, $replace = true){
 
@@ -939,10 +934,10 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Eliminar una vista.
-   * @param   string/AmQuery  $q    Nombre o instancia de la consulta a
-   *                                eliminar.
-   * @param   boolean   $ifExists   Si se debe agregar la clausula IF EXISTS.
-   * @return  boolean               Si se eliminó la vista
+   * @param  string/AmQuery $q        Nombre o instancia de la consulta a
+   *                                  eliminar.
+   * @param  bool           $ifExists Si se debe agregar la clausula IF EXISTS.
+   * @return bool                     Si se eliminó la vista
    */
   public function dropView($q, $ifExists = true){
 
@@ -952,8 +947,8 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Obtiene el SQL de una Query dependiendo de su tipo.
-   * @param   AmQuery   $q  Instancia de query.
-   * @return  string        SQL obtenido.
+   * @param  AmQuery $q Instancia de query.
+   * @return string     SQL obtenido.
    */
   public function sqlOf(AmQuery $q){
     $type = $q->getType();
@@ -982,17 +977,17 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Funcion para preparar la ejeción de un insert.
-   * @param   array/AmQuery   $values   Array hash de valores, array
-   *                                    de instancias de AmModels, array de
-   *                                    AmObjects o AmQuery con consulta select
-   *                                    a insertar.
-   * @param   string/AmTable  $model    Nombre del modelo o instancia de la
-   *                                    tabla donde se insertará los valores.
-   * @param   array           $fields   Campos que recibirán con los valores que
-   *                                    se insertarán.
-   * @return  hash                      Devuelve un hash que contiene el string
-   *                                    con el nombre de la tabla, string de
-   *                                    valores y el string de campos.
+   * @param  array/AmQuery  $values Array hash de valores, array
+   *                                de instancias de AmModels, array de
+   *                                AmObjects o AmQuery con consulta select
+   *                                a insertar.
+   * @param  string/AmTable $model  Nombre del modelo o instancia de la
+   *                                tabla donde se insertará los valores.
+   * @param  array          $fields Campos que recibirán con los valores que
+   *                                se insertarán.
+   * @return hash                   Devuelve un hash que contiene el string
+   *                                con el nombre de la tabla, string de
+   *                                valores y el string de campos.
    */
   protected function prepareInsert($values, $model, array $fields = array()){
 
@@ -1091,17 +1086,16 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Inserta registros en una tabla.
-   * @param   array/AmQuery   $values   Array hash de valores, array
-   *                                    de instancias de AmModels, array de
-   *                                    AmObjects o AmQuery con consulta select
-   *                                    a insertar.
-   * @param   string/AmTable  $model    Nombre del modelo o instancia de la
-   *                                    tabla donde se insertará los valores.
-   * @param   array           $fields   Campos que recibirán con los valores que
-   *                                    se insertarán.
-   * @return  boolean/int               Boolean se se logró insertar los
-   *                                    registros, o el id del registro
-   *                                    insertado en el caso de corresponda.
+   * @param  array/AmQuery  $values Array hash de valores, array de instancias
+   *                                de AmModels, array de AmObjects o AmQuery
+   *                                con consulta select a insertar.
+   * @param  string/AmTable $model  Nombre del modelo o instancia de la tabla
+   *                                donde se insertará los valores.
+   * @param  array          $fields Campos que recibirán con los valores que se
+   *                                insertarán.
+   * @return bool/int               Boolean se se logró insertar los registros,
+   *                                o el id del registro insertado en el caso
+   *                                de corresponda.
    */
   public function insertInto($values, $model, array $fields = array()){
 
@@ -1128,7 +1122,7 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Devuelve la carpeta destino para los modelos base de los esquemas.
-   * @return  string  Directorio de modelos base.
+   * @return string Directorio de modelos base.
    */
   public static function getSchemesDir(){
 
@@ -1138,8 +1132,8 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Incluye un archivo de la extensión se existe.
-   * @param   string    $file   Dirección relativa a la raíz de la extensión
-   *                            del archivo que se desea incluir.
+   * @param string $file Dirección relativa a la raíz de la extensión del
+   *                     archivo que se desea incluir.
    */
   public static function requireFile($file){
 
@@ -1156,8 +1150,8 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Devuelve la configuración de un determinado esquema.
-   * @param   string  $name   Nombre del esquema buscado.
-   * @return  hash            Configuración del esquema.
+   * @param  string $name Nombre del esquema buscado.
+   * @return hash         Configuración del esquema.
    */
   public static function getSchemeConf($name = ''){
 
@@ -1185,8 +1179,8 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Devuelve una instancia de una fuente.
-   * @param   string  $name   Nombre del esquema buscado.
-   * @return  AmScheme        Instancia del esquema.
+   * @param  string   $name Nombre del esquema buscado.
+   * @return AmScheme       Instancia del esquema.
    */
   public static function get($name = ''){
 
@@ -1214,8 +1208,8 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Incluye un driver de BD.
-   * @param   string  $driver   Nombre del driver a incluir.
-   * @return  string            Nombre de la clase del driver a incluir.
+   * @param  string $driver Nombre del driver a incluir.
+   * @return string         Nombre de la clase del driver a incluir.
    */
   public static function driver($driver){
 
@@ -1232,11 +1226,11 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Devuelve la instancia de una tabla en una fuente determinada
-   * @param   string  $tableName    Nombre de la tabla que se desea.
-   * @param   string  $schemeName   Nombre del esquema al que pertenece la
-   *                                tabla.
-   * @param   string  $model        Nombre del modelo de la tabla.
-   * @return  AmTable               Instancia de la tabla.
+   * @param  string  $tableName  Nombre de la tabla que se desea.
+   * @param  string  $schemeName Nombre del esquema al que pertenece la
+   *                             tabla.
+   * @param  string  $model      Nombre del modelo de la tabla.
+   * @return AmTable             Instancia de la tabla.
    */
   public static function table($tableName, $schemeName = '', $model = null){
 
@@ -1271,12 +1265,12 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Incluye un modelo.
-   * @param   string  $model  Nombre del modelo a insertar. Puede ser un modelo
-   *                          base :<modelName>@<schemeName> o el nombre del
-   *                          modelo dado por el usuario.
-   * @return  string/boolean  Si al final de la inclusión existe la clase
-   *                          correspondiente devuelve el nombre de la clase,
-   *                          de lo contrario devuelv falso.
+   * @param  string      $model Nombre del modelo a insertar. Puede ser un
+   *                            modelo base :<modelName>@<schemeName> o el
+   *                            nombre del modelo dado por el usuario.
+   * @return string/bool        Si al final de la inclusión existe la clase
+   *                            correspondiente devuelve el nombre de la clase,
+   *                            de lo contrario devuelv falso.
    */
   public static function model($model){
 
@@ -1358,8 +1352,8 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Incluye un validador y devuelve el nombre de la clases correspondiente
-   * @param   satring   $validator  Nombre del validador a insertar.
-   * @return  string                Nombre de la clase del validador.
+   * @param  string $validator Nombre del validador a insertar.
+   * @return string            Nombre de la clase del validador.
    */
   public static function validator($validator){
 
@@ -1380,52 +1374,52 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Metodo para obtener el puerto por defecto para una conexión.
-   * @return  string/integer  Devuelve el nro del purto por defecto.
+   * @return string/int Devuelve el nro del purto por defecto.
    */
   abstract public function getDefaultPort();
 
   /**
    * Metodo para crear una conexion.
-   * @return  Resource  Manejador para la conexión 
+   * @return Resource Manejador para la conexión 
    */
   abstract protected function start();
 
   /**
    * Metodo para cerrar una conexión.
-   * @return  boolean   Resultado de la operación
+   * @return bool Resultado de la operación
    */
   abstract public function close();
 
   /**
    * Obtener el número del último error generado en la conexión.
-   * @return  int   Nro de error.
+   * @return int Nro de error.
    */
   abstract public function getErrNo();
 
   /**
    * Obtener la descripcion del último error generado en la conexión
-   * @return  string  Descripción del error.
+   * @return string Descripción del error.
    */
   abstract public function getError();
 
   /**
    * Obtiene una cade con un valor seguro para el manejador de DBSM.
-   * @param   any     $value  Valor que se desea procesar.
-   * @return  string          Valor procesado.
+   * @param  any    $value Valor que se desea procesar.
+   * @return string        Valor procesado.
    */
   abstract public function realScapeString($value);
 
   /**
    * Realizar una consulta SQL.
-   * @param   string      $sql  SQL a ejecutar.
-   * @return  boolean/int       Resultado de la operación.
+   * @param  string   $sql SQL a ejecutar.
+   * @return bool/int      Resultado de la operación.
    */
   abstract protected function query($sql);
 
   /**
    * Obtener el siguiente registro de un resultado
-   * @param   Resourse  $result   Manejador del resultado.
-   * @return  hash                Hash de valores del registro.
+   * @param  Resourse $result Manejador del resultado.
+   * @return hash             Hash de valores del registro.
    */
   abstract public function getFetchAssoc($result);
 
@@ -1433,15 +1427,15 @@ abstract class AmScheme extends AmObject{
    * Obtener el ID del ultimo registro insertado. En el caso que el último
    * query ejecutado sea un insert de un solo elemento en una tabla con un solo
    * campo autonumérico.
-   * @return  null/int   Null o valor autonumérico insertado.
+   * @return null/int Null o valor autonumérico insertado.
    */
   abstract public function getLastInsertedId();
 
   /**
    * Procesa un hash de propiedades de una columna de una tabla para
    * convertirlo en una forma estandar.
-   * @param   hash   $column  Hash de atributos de la columna sin procesar.
-   * @return  hash            Hash de atributos de la columna procesado.
+   * @param  hash $column Hash de atributos de la columna sin procesar.
+   * @return hash         Hash de atributos de la columna procesado.
    */
   abstract public function sanitize(array $column);
 
@@ -1522,7 +1516,7 @@ abstract class AmScheme extends AmObject{
   /**
    * [sqlSelect description]
    * @param  AmQuery $q    [description]
-   * @param  boolean $with [description]
+   * @param  bool $with [description]
    * @return [type]        [description]
    */
   abstract public function sqlSelect(AmQuery $q, $with = true);
@@ -1530,7 +1524,7 @@ abstract class AmScheme extends AmObject{
   /**
    * [sqlSelect description]
    * @param  AmQuery $q    [description]
-   * @param  boolean $with [description]
+   * @param  bool $with [description]
    * @return [type]        [description]
    */
   abstract public function sqlFrom(AmQuery $q, $with = true);
@@ -1545,7 +1539,7 @@ abstract class AmScheme extends AmObject{
   /**
    * [sqlSelect description]
    * @param  AmQuery $q    [description]
-   * @param  boolean $with [description]
+   * @param  bool $with [description]
    * @return [type]        [description]
    */
   abstract public function sqlWhere(AmQuery $q, $with = true);
@@ -1553,7 +1547,7 @@ abstract class AmScheme extends AmObject{
   /**
    * [sqlSelect description]
    * @param  AmQuery $q    [description]
-   * @param  boolean $with [description]
+   * @param  bool $with [description]
    * @return [type]        [description]
    */
   abstract public function sqlGroups(AmQuery $q, $with = true);
@@ -1561,7 +1555,7 @@ abstract class AmScheme extends AmObject{
   /**
    * [sqlSelect description]
    * @param  AmQuery $q    [description]
-   * @param  boolean $with [description]
+   * @param  bool $with [description]
    * @return [type]        [description]
    */
   abstract public function sqlOrders(AmQuery $q, $with = true);
@@ -1569,7 +1563,7 @@ abstract class AmScheme extends AmObject{
   /**
    * [sqlSelect description]
    * @param  AmQuery $q    [description]
-   * @param  boolean $with [description]
+   * @param  bool $with [description]
    * @return [type]        [description]
    */
   abstract public function sqlLimit(AmQuery $q, $with = true);
@@ -1577,7 +1571,7 @@ abstract class AmScheme extends AmObject{
   /**
    * [sqlSelect description]
    * @param  AmQuery $q    [description]
-   * @param  boolean $with [description]
+   * @param  bool $with [description]
    * @return [type]        [description]
    */
   abstract public function sqlOffSet(AmQuery $q, $with = true);
@@ -1585,7 +1579,7 @@ abstract class AmScheme extends AmObject{
   /**
    * [sqlSelect description]
    * @param  AmQuery $q    [description]
-   * @param  boolean $with [description]
+   * @param  bool $with [description]
    * @return [type]        [description]
    */
   abstract public function sqlSets(AmQuery $q, $with = true);
@@ -1666,7 +1660,7 @@ abstract class AmScheme extends AmObject{
   /**
    * [sqlCreateTable description]
    * @param  AmTable $t           [description]
-   * @param  boolean $ifNotExists [description]
+   * @param  bool $ifNotExists [description]
    * @return [type]               [description]
    */
   abstract public function sqlCreateTable(AmTable $t, $ifNotExists = true);
@@ -1674,7 +1668,7 @@ abstract class AmScheme extends AmObject{
   /**
    * [sqlDropTable description]
    * @param  [type]  $table    [description]
-   * @param  boolean $ifExists [description]
+   * @param  bool $ifExists [description]
    * @return [type]            [description]
    */
   abstract public function sqlDropTable($table, $ifExists = true);
@@ -1682,7 +1676,7 @@ abstract class AmScheme extends AmObject{
   /**
    * [sqlTruncate description]
    * @param  [type]  $table    [description]
-   * @param  boolean $ignoreFk [description]
+   * @param  bool $ignoreFk [description]
    * @return [type]            [description]
    */
   abstract public function sqlTruncate($table, $ignoreFk = true);
@@ -1690,7 +1684,7 @@ abstract class AmScheme extends AmObject{
   /**
    * [sqlCreateView description]
    * @param  AmQuery $q       [description]
-   * @param  boolean $replace [description]
+   * @param  bool $replace [description]
    * @return [type]           [description]
    */
   abstract public function sqlCreateView(AmQuery $q, $replace = true);
@@ -1698,7 +1692,7 @@ abstract class AmScheme extends AmObject{
   /**
    * [sqlDropView description]
    * @param  [type]  $q        [description]
-   * @param  boolean $ifExists [description]
+   * @param  bool $ifExists [description]
    * @return [type]            [description]
    */
   abstract public function sqlDropView($q, $ifExists = true);

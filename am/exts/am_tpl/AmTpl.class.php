@@ -86,8 +86,8 @@ final class AmTpl extends AmObject{
 
   /**
    * Constructor de la vista
-   * @param   string  $file     Nombre de la vista a buscar.
-   * @param   array   $options  Opciones de la vista.
+   * @param string $file    Nombre de la vista a buscar.
+   * @param array  $options Opciones de la vista.
    */
   public function __construct($file, array $options = array()){
     parent::__construct($options);
@@ -143,9 +143,9 @@ final class AmTpl extends AmObject{
    * Determina la ruta de un archivo.
    * Busca un archivo en los directorios de la propiedad $this->paths y de
    * vuelve la primera aparición.
-   * @param   string  $file   Nombre del archivo a buscar
-   * @return  string          Devuelve la ruta del primera aparición del $file
-   *                          dentro de los directorios de $this->paths
+   * @param  string $file Nombre del archivo a buscar
+   * @return string       Devuelve la ruta del primera aparición del $file
+   *                      dentro de los directorios de $this->paths
    */
   public function findView($file){
 
@@ -168,12 +168,12 @@ final class AmTpl extends AmObject{
 
   /**
    * Compilar la vista.
-   * @param   string  $child      Contenido de la vista hija
-   * @param   array   $sections   Array de secciones heredadas
-   * @return  array               Se retorna en un array el resultado de la
-   *                              renderización de la vista, las secciones
-   *                              generadas, el entorno de la aplicación y los
-   *                              errores generados.
+   * @param  string $child    Contenido de la vista hija
+   * @param  array  $sections Array de secciones heredadas
+   * @return array            Se retorna en un array el resultado de la
+   *                          renderización de la vista, las secciones
+   *                          generadas, el entorno de la aplicación y los
+   *                          errores generados.
    */
   public function compile($child = null, array $sections = array()){
 
@@ -247,8 +247,8 @@ final class AmTpl extends AmObject{
 
   /**
    * Devuelve la instancia de una vista pasando como opciones la vista actual.
-   * @param   string  $name   Nombre del archivo a buscar
-   * @return  AmTpl           Instancia de AmTpl con la nueva vista
+   * @param  string $name Nombre del archivo a buscar
+   * @return AmTpl        Instancia de AmTpl con la nueva vista
    */
   public function getSubView($name){
 
@@ -270,7 +270,7 @@ final class AmTpl extends AmObject{
   /**
    * Imprimir una vista.
    * Crea la instancia de una subvista y e imprime su contenido.
-   * @param   string  $view   Nombre de la vista a renderizar.
+   * @param string $view Nombre de la vista a renderizar.
    */
   public function place($name){
     // Instancia la subvista.
@@ -290,7 +290,7 @@ final class AmTpl extends AmObject{
 
   /**
    * Imprimir una sección.
-   * @param   string  $name   Nombre de la sección a imprimir.
+   * @param string $name Nombre de la sección a imprimir.
    */
   public function put($name){
     // Obtener la sección si existe e imprimirla
@@ -300,7 +300,7 @@ final class AmTpl extends AmObject{
 
   /**
    * Abrir una sección.
-   * @param   string  $name  Nombre que se le dará a la nueva sección.
+   * @param string $name Nombre que se le dará a la nueva sección.
    */
   public function section($name){
     $this->openSections[] = $name;
@@ -383,7 +383,7 @@ final class AmTpl extends AmObject{
 
   /**
    * Devuelve las variables de entorno.
-   * @return    array   Array de las variables de entorno.
+   * @return hash Hash de las variables de entorno.
    */
   public function getEnv(){
     return $this->env;
@@ -391,7 +391,7 @@ final class AmTpl extends AmObject{
 
   /**
    * Vistas de las que depende.
-   * @return  array  Lista de todos las subvista que se incluyen en la vista.
+   * @return array Lista de todos las subvista que se incluyen en la vista.
    */
   public function dependences(){
 
@@ -426,7 +426,7 @@ final class AmTpl extends AmObject{
 
   /**
    * Indica si se generó un error durante el compilado de la vista.
-   * @return  bool   Si tiene o no errores
+   * @return bool Si tiene o no errores
    */
   public function hasError(){
     return count($this->errors)>0;
@@ -434,10 +434,10 @@ final class AmTpl extends AmObject{
 
   /**
    * Manejador para el evento render.template.
-   * @param   string  $tpl      Nombre de la vista a renderizar
-   * @param   array   $vars     Variables para el renderizado.
-   * @param   array   $options  Opciones para la vista.
-   * @return  bool              Si se generó o no errores en el renderizado.
+   * @param  string $tpl     Nombre de la vista a renderizar
+   * @param  array  $vars    Variables para el renderizado.
+   * @param  array  $options Opciones para la vista.
+   * @return bool            Si se generó o no errores en el renderizado.
    */
   public static function renderize($tpl, array $vars = array(),
                                    array $options = array()){

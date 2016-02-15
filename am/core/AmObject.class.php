@@ -45,7 +45,7 @@ class AmObject implements Iterator, Countable, ArrayAccess{
   /**
    * Devuelve si un attributo es publico o no
    * @param  string  $name Nombre del atributo consultado
-   * @return boolean
+   * @return bool
    */
   public function isPublicAttr($name){
 
@@ -68,8 +68,8 @@ class AmObject implements Iterator, Countable, ArrayAccess{
   /**
    * Llamada para obtener el valor de un atributo del objeto: $this->name.
    * Devuelve el valor si este es público.
-   * @param  [string $name Nombre del atributo a conultar
-   * @return mixed         Valor del atributo o null si este no existe.
+   * @param  string $name Nombre del atributo a conultar
+   * @return mixed        Valor del atributo o null si este no existe.
    */
   public function __get($name){
 
@@ -89,8 +89,8 @@ class AmObject implements Iterator, Countable, ArrayAccess{
   /**
    * Llamada de la asignacion a una propiedad: $this->name = $value.
    * Asigna un valor a un atributo si este es público.
-   * @param  string $name   Nombre de la propiedad a setear.
-   * @param  mixed  $value  Valor a asignar.
+   * @param string $name  Nombre de la propiedad a setear.
+   * @param mixed  $value Valor a asignar.
    **/
   public function __set($name, $value){
 
@@ -110,8 +110,8 @@ class AmObject implements Iterator, Countable, ArrayAccess{
   /**
    * Llamada de isset a un atributo del objeto: isset($this->name).
    * Devuelve el resultado la llamada isset al atributo si este es público.
-   * @param  string   $name   Nombre de la propiedad a consultar.
-   * @return boolean
+   * @param  string  $name Nombre de la propiedad a consultar.
+   * @return bool
    */
   public function __isset($name){
 
@@ -125,7 +125,7 @@ class AmObject implements Iterator, Countable, ArrayAccess{
 
   /**
    * Llamada de 'unset' a una propiedad: unset($this->name)
-   * @param  string   $name   Nombre de la propiedad a consultar.
+   * @param string $name Nombre de la propiedad a consultar.
    **/
   public function __unset($name){
 
@@ -267,7 +267,13 @@ class AmObject implements Iterator, Countable, ArrayAccess{
     return $ret;
   }
 
-  public function cp(array $params){
+  /**
+   * Crea una copia del objeto actual agregando las propiedades,
+   * @param  hash     $params Hash de propiedades a agregar.
+   * @return Any              Copia del objeto actual con las propiedades
+   *                          modificadas.
+   */
+  public function cp(array $params = array()){
 
     $className = get_class($this);
 

@@ -43,9 +43,9 @@ class AmCallResponse extends AmResponse{
   }
 
   /**
-   * Asignar callback
-   * @param  array/string   $callback   Callback a ser llamado
-   * @return this
+   * Asignar callback.
+   * @param  callback $callback Callback a ser llamado.
+   * @return $this
    */
   public function callback($callback){
     $this->__p->callback = $callback;
@@ -57,9 +57,9 @@ class AmCallResponse extends AmResponse{
   }
 
   /**
-   * Asignar variables de entorno
-   * @param  array   $env   Variables de entorno
-   * @return this
+   * Asignar variables de entorno.
+   * @param  array $env Variables de entorno.
+   * @return $this
    */
   public function env(array $env){
     $this->__p->env = $env;
@@ -67,15 +67,19 @@ class AmCallResponse extends AmResponse{
   }
 
   /**
-   * Asignar parámetros de la llamada
-   * @param  array   $args   Parámetros de la llamada
-   * @return this
+   * Asignar parámetros de la llamada.
+   * @param  array $args Parámetros de la llamada.
+   * @return $this
    */
   public function params(array $params){
     $this->__p->params = $params;
     return $this;
   }
 
+  /**
+   * Obtiene el callback real de la respuesta.
+   * @return array Callback válido.
+   */
   private function getCallback(){
 
     $c = $this->__p->callback;
@@ -105,16 +109,16 @@ class AmCallResponse extends AmResponse{
   /**
    * Indica si la petición se puede resolver o no.
    * Se sobreescribe el método para saber si el callback existe o no.
-   * @return  boolean   Indica si la petición se puede resolver o no.
+   * @return bool Indica si la petición se puede resolver o no.
    */
   public function isResolved(){
     return parent::isResolved() && $this->__p->realCallback !== false;
   }
 
   /**
-   * Acción de la respuesta: Realizar llamado del callback
-   * @return  AmResponse  Si el callback a ejecutar no existe se devuelve una
-   *                      respuesta 404. De lo contario retorna null
+   * Acción de la respuesta: Realizar llamado del callback.
+   * @return AmResponse Si el callback a ejecutar no existe se devuelve una
+   *                    respuesta 404. De lo contario retorna null.
    */
   public function make(){
     parent::make();

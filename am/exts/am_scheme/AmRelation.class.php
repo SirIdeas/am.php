@@ -47,7 +47,7 @@ class AmRelation extends AmObject{
     
   /**
    * Devuelve el nombre del esquema a la que referencia.
-   * @return  string  Nombre del esquema.
+   * @return string Nombre del esquema.
    */
   public function getScheme(){
     
@@ -57,7 +57,7 @@ class AmRelation extends AmObject{
 
   /**
    * Devuelve el nombre de la tabla a la que referencia.
-   * @return  string  Nombre de la tabla.
+   * @return string Nombre de la tabla.
    */
   public function getTable(){
     
@@ -67,7 +67,7 @@ class AmRelation extends AmObject{
 
   /**
    * Devuelve el hash con las columnas relacionadas.
-   * @return  hash  Hash con las columnas relacionadas.
+   * @return hash Hash con las columnas relacionadas.
    */
   public function getColumns(){
     
@@ -77,9 +77,9 @@ class AmRelation extends AmObject{
 
   /**
    * Generador de la consulta para la relación basado en un modelo.
-   * @param   AmModel   $model  Instancia de AmModel a la que se quiere obtener
-   *                            la relación.
-   * @return  AmQuery           Consulta generada.
+   * @param  AmModel $model Instancia de AmModel a la que se quiere obtener
+   *                        la relación.
+   * @return AmQuery        Consulta generada.
    */
   public function getQuery(AmModel $model){
 
@@ -96,7 +96,7 @@ class AmRelation extends AmObject{
 
   /**
    * Devuelve una array con los datos de la relación.
-   * @return  array   Relación como un array.
+   * @return array Relación como un array.
    */
   public function toArray(){
 

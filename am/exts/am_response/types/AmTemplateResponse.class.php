@@ -41,8 +41,8 @@ class AmTemplateResponse extends AmResponse{
 
   /**
    * Asignar callback.
-   * @param  array/string   $callback   Callback a ser llamado
-   * @return this
+   * @param  callback $callback Callback a ser llamado.
+   * @return $this
    */
   public function tpl($tpl){
     $this->__p->tpl = $tpl;
@@ -51,8 +51,8 @@ class AmTemplateResponse extends AmResponse{
 
   /**
    * Indicar si se tiene que verificar o no la existencia de la vista.
-   * @param  array/string   $callback   Callback a ser llamado
-   * @return this
+   * @param  callback $callback Callback a ser llamado.
+   * @return $this
    */
   public function checkView($checkView){
     $this->__p->checkView = $checkView;
@@ -61,10 +61,10 @@ class AmTemplateResponse extends AmResponse{
 
   /**
    * Agregar variables de la llamada.
-   * @param  array  $vars   Parámetros de la llamada.
-   * @param  bool   $rw     Indica si las variables nuevas sobreescriben las
-   *                        anteriores.
-   * @return this
+   * @param  array $vars Parámetros de la llamada.
+   * @param  bool  $rw   Indica si las variables nuevas sobreescriben las
+   *                     anteriores.
+   * @return $this
    */
   public function vars(array $vars, $rw = false){
     if($rw)
@@ -76,9 +76,9 @@ class AmTemplateResponse extends AmResponse{
 
   /**
    * Agrega una variable.
-   * @param   string    $varName  Nombre de la variable a agregar.
-   * @param   strning   $value    Valor de la varible.
-   * @return  this
+   * @param  string  $varName Nombre de la variable a agregar.
+   * @param  strning $value   Valor de la varible.
+   * @return $this
    */
   public function with($varName, $value){
     $this->__p->vars[$varName] = $value;
@@ -87,10 +87,10 @@ class AmTemplateResponse extends AmResponse{
 
   /**
    * Agregar opciones para la vista.
-   * @param  array  $options  Opciones a agregar.
-   * @param  bool   $rw       Indica si las opciones nuevas sobreescriben las
-   *                          anteriores.
-   * @return this
+   * @param  array $options Opciones a agregar.
+   * @param  bool  $rw      Indica si las opciones nuevas sobreescriben las
+   *                        anteriores.
+   * @return $this
    */
   public function options(array $options, $rw = false){
     if($rw)
@@ -103,7 +103,7 @@ class AmTemplateResponse extends AmResponse{
   /**
    * Indica si la petición se puede resolver o no.
    * Se sobreescribe el método para saber si el template existe o no.
-   * @return  boolean   Indica si la petición se puede resolver o no.
+   * @return bool Indica si la petición se puede resolver o no.
    */
   public function isResolved(){
     return parent::isResolved() && is_file($this->__p->tpl);
@@ -111,8 +111,8 @@ class AmTemplateResponse extends AmResponse{
 
   /**
    * Acción de la respuesta: Realizar llamado del callback
-   * @return  AmResponse  Si el callback a ejecutar no existe se devuelve una
-   *                      respuesta 404. De lo contario retorna null
+   * @return AmResponse Si el callback a ejecutar no existe se devuelve una
+   *                    respuesta 404. De lo contario retorna null
    */
   public function make(){
     parent::make();

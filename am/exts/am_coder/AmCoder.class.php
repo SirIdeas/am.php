@@ -14,11 +14,11 @@ class AmCoder{
   /**
    * Decodifica un archivo de configuracion con el mismo formato.
    * La decodificación se basa solo en obtener lo retornado en el archivo.
-   * @param   string      $file     Ruta del archivo a decodificar.
-   * @param   any         $default  Valor por defecto a devolver si el archivo
-   *                                no existe.
-   * @return  any/array             Retorno del archivo, sino el archivo no
-   *                                existe devuelve el valor por defecto.
+   * @param  string    $file    Ruta del archivo a decodificar.
+   * @param  any       $default Valor por defecto a devolver si el archivo no
+   *                            existe.
+   * @return any/array          Retorno del archivo, sino el archivo no existe
+   *                            devuelve el valor por defecto.
    */
   public static function decode($file, $default = array()){
 
@@ -33,11 +33,11 @@ class AmCoder{
 
   /**
    * Leer el archivo.
-   * @param   string      $file     Ruta del archivo a decodificar.
-   * @param   any         $default  Valor por defecto a devolver si el archivo
-   *                                no existe.
-   * @return  any/array             Retorno del archivo, sino el archivo no
-   *                                existe devuelve el valor por defecto.
+   * @param  string    $file    Ruta del archivo a decodificar.
+   * @param  any       $default Valor por defecto a devolver si el archivo no
+   *                            existe.
+   * @return any/array          Retorno del archivo, sino el archivo no existe
+   *                            devuelve el valor por defecto.
    */
   public static function read($file, $default = array()) {
 
@@ -52,8 +52,8 @@ class AmCoder{
 
   /**
    * Indica si el archivo existe.
-   * @param   string  $file   Ruta del archivo que desean consultar.
-   * @return  bool            Si el archivo existe.
+   * @param  string $file Ruta del archivo que desean consultar.
+   * @return bool         Si el archivo existe.
    */
   public static function exists($file){
     return is_file($file);
@@ -61,9 +61,9 @@ class AmCoder{
 
   /**
    * Escribir contenido del archivo.
-   * @param   string    $file     Ruta del archivo que desean escribir.
-   * @param   array     $data     Array con la información a escribir.
-   * @param   bool      $prepare  Indic asi se preparará o no la información.
+   * @param string $file    Ruta del archivo que desean escribir.
+   * @param array  $data    Array con la información a escribir.
+   * @param bool   $prepare Indica si se preparará o no la información.
    */
   public static function write($file, array $data, $prepare = true) {
 
@@ -81,11 +81,11 @@ class AmCoder{
 
   /**
    * Guarda una configuración en archivo.
-   * @param   string  $path   Archivo donde se guardará la configuración.
-   * @param   hash    $conf   Hash con la configuración q se guadará.
-   * @param   bool    $rw     Indica si el archivo se debe sobreescribir en el
-   *                          caso de que no exista.
-   * @return  hash            Hash de propiedades del modelo.
+   * @param  string $path Archivo donde se guardará la configuración.
+   * @param  hash   $conf Hash con la configuración q se guadará.
+   * @param  bool   $rw   Indica si el archivo se debe sobreescribir en el caso
+   *                      de que no exista.
+   * @return hash         Hash de propiedades del modelo.
    */
   public static function generate($path, $conf, $rw = true){
 
@@ -100,8 +100,8 @@ class AmCoder{
    * Preparación de la información para escribir en el archivo.
    * Consiste en crear array anidados en aquellas posiciones cuya key tenga el
    * caractere _
-   * @param   array   $data   Array con la información a preparar.
-   * @return  array           Data preparada.
+   * @param  array $data Array con la información a preparar.
+   * @return array       Data preparada.
    */
   public static function prepare(array $data){
 
@@ -117,10 +117,10 @@ class AmCoder{
   
   /**
    * Función auxiliar para preparar la data.
-   * @param   array   $data   Array con la información a preparar.
-   * @param   string  $path   Lista de keys que indica la ruta donde se
-   *                          sae encuentra actualmente dentro del array.
-   * @return  int
+   * @param  array  $data Array con la información a preparar.
+   * @param  string $path Lista de keys que indica la ruta donde se encuentra
+   *                      actualmente dentro del array.
+   * @return int
    */
   private static function _prepare(array &$data, array $path, $value){
 
@@ -156,8 +156,8 @@ class AmCoder{
 
   /**
    * Método que codifica la data.
-   * @param   array   $data   Array a codificar.
-   * @return  string          Resultado de la codificación.
+   * @param  array  $data Array a codificar.
+   * @return string       Resultado de la codificación.
    */
   public static function encode($data){
     

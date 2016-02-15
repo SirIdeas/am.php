@@ -9,11 +9,11 @@
 /**
  * Devuelve el valor del $arr en la posición $index si existe, de lo contrario
  * devuelve $def.
- * @param   string  $index  Indice que se desea consultar.
- * @param   array   $arr    Array de donde se desea obtener el valor.
- * @param   mixed   $def    Valor a devolver si $arr no contiene la posicion
- *                          $index.
- * @return  mixed           Valor en el array de la posición consultada o $def.
+ * @param  string $index Indice que se desea consultar.
+ * @param  array  $arr   Array de donde se desea obtener el valor.
+ * @param  mixed  $def   Valor a devolver si $arr no contiene la posición
+ *                       $index.
+ * @return mixed         Valor en el array de la posición consultada o $def.
  */
 function itemOr($index, array $arr, $def = null){
 
@@ -23,7 +23,8 @@ function itemOr($index, array $arr, $def = null){
 
 /**
  * Devuelve si un $callback es un callback válido o no.
- * @param   callback $callback Callback a verificar
+ * @param  callback $callback Callback a verificar
+ * @return bool               Si existe el callback.
  */
 function isValidCallback($callback){
 
@@ -75,8 +76,8 @@ function findFileIn($file, array $paths, $reverse = true){
 
 /**
  * Devuelve si es un hash o no.
- * @param   array $arr  Array a virificar si es un hash.
- * @return  bool        Si $arr es o no un hash.
+ * @param  array $arr Array a virificar si es un hash.
+ * @return bool       Si $arr es o no un hash.
  */
 function isHash(array $arr){
 
@@ -92,8 +93,8 @@ function isHash(array $arr){
 
 /**
  * Devuelve un array con los valores únicos de la mezcla de dos arrays.
- * @param array $arr1
- * @param array $arr2
+ * @param  array $arr0
+ * @param  array $arr2
  * @return array        
  */
 function merge_unique(array $arr1, array $arr2){
@@ -103,8 +104,8 @@ function merge_unique(array $arr1, array $arr2){
 /**
  * Devuelve la mezcla de dos array si ambos parámetros son arrays, de lo
  * contrario devuelve el segundo parámetro ($arr2).
- * @param mixed $arr1
- * @param mixed $arr2
+ * @param  mixed $arr1
+ * @param  mixed $arr2
  * @return mixed
  */
 function merge_if_are_array($arr1, $arr2){
@@ -116,8 +117,8 @@ function merge_if_are_array($arr1, $arr2){
 /**
  * Devuelve la mezcla recursiva de dos array si ambos parámetros son arrays, de
  * lo contrario devuelve el segundo parámetro ($arr2).
- * @param mixed $arr1
- * @param mixed $arr2
+ * @param  mixed $arr1
+ * @param  mixed $arr2
  * @return mixed
  */
 function merge_r_if_are_array($arr1, $arr2){
@@ -130,8 +131,8 @@ function merge_r_if_are_array($arr1, $arr2){
  * Devuelve la mezcla de dos array si el segundo array en la posición 0 
  * ($arr[0]) es diferente de falso, de lo contrario devuelve el segundo
  * array ($arr2).
- * @param array $arr1
- * @param array $arr2
+ * @param  array $arr1
+ * @param  array $arr2
  * @return array
  */
 function merge_if_snd_first_not_false(array $arr1, array $arr2){
@@ -143,8 +144,8 @@ function merge_if_snd_first_not_false(array $arr1, array $arr2){
 /**
  * Deveulve la mezcla dos arrays con merge_if_snd_first_not_false y elimina los
  * valores duplicados.
- * @param array $arr1
- * @param array $arr2
+ * @param  array $arr1
+ * @param  array $arr2
  * @return array
  */
 function merge_if_snd_first_not_false_unique(array $arr1, array $arr2){
@@ -155,8 +156,8 @@ function merge_if_snd_first_not_false_unique(array $arr1, array $arr2){
  * Devuelve la mezcla recursiva de dos arrays si el segundo array en la
  * posición 0 ($arr[0]) es diferente de falso (false), de lo contrario devuelve
  * el segundo array ($arr2).
- * @param array $arr1
- * @param array $arr2
+ * @param  array $arr1
+ * @param  array $arr2
  * @return array
  */
 function merge_r_if_snd_first_not_false(array $arr1, array $arr2){
@@ -168,8 +169,8 @@ function merge_r_if_snd_first_not_false(array $arr1, array $arr2){
 /**
  * Devuelve la mezcla de dos arrays con merge_if_snd_first_not_false si ambos
  * son arrays, de lo contrario devuelve el segundo parámetro ($arr2).
- * @param mixed $arr1
- * @param mixed $arr2
+ * @param  mixed $arr1
+ * @param  mixed $arr2
  * @return mixed
  */
 function merge_if_are_array_and_snd_first_not_false($arr1, $arr2){
@@ -181,8 +182,8 @@ function merge_if_are_array_and_snd_first_not_false($arr1, $arr2){
 /**
  * Devuelve la mezcla de dos arrays con merge_r_if_snd_first_not_false si ambos
  * son arrays, de lo contrario devuelve el segundo parámetro ($arr2).
- * @param mixed $arr1
- * @param mixed $arr2
+ * @param  mixed $arr1
+ * @param  mixed $arr2
  * @return mixed
  */
 function merge_r_if_are_array_and_snd_first_not_false($arr1, $arr2){
@@ -195,8 +196,8 @@ function merge_r_if_are_array_and_snd_first_not_false($arr1, $arr2){
  * Mezcla recursivamente dos arrays. Si una posición existe en ambos arrays se
  * mezclan recursivamente si ambos son arrays, de lo contrario prevalece el del
  * segundo array.
- * @param array $arr1
- * @param array $arr2
+ * @param  array $arr1
+ * @param  array $arr2
  * @return array
  */
 function merge_if_both_are_array(array $arr1, array $arr2){
