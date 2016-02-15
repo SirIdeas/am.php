@@ -281,7 +281,7 @@ class MysqlScheme extends AmScheme{
   }
 
   // Obtener el SQL para una consulta de inserción
-  public function sqlInsertQuery($values, $model, array $fields = array()){
+  public function sqlInsert($values, $model, array $fields = array()){
 
     list($sqlValues, $sqlTable, $sqlFields) = $this->prepareInsert(
       $values, $model, $fields

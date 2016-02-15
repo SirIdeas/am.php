@@ -31,8 +31,12 @@ class Main extends AmController{
     
     // -------------------------------------------------------------------------
     // $sch = AmScheme::get();
+    // var_dump($sch->getTables());
+    // var_dump($sch->generateScheme());
+    // var_dump($sch->getGeneratedModels());
     // var_dump($sch->drop());
     // var_dump($sch->create());
+    exit;
 
     // -------------------------------------------------------------------------
     // // Crear tabla sin model

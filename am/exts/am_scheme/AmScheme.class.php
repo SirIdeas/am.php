@@ -959,9 +959,7 @@ abstract class AmScheme extends AmObject{
 
     // Consulta de inserción
     if($type == 'insert')
-      return $this->sqlInsertQuery(
-        $q, $q->getInsertTable(), $q->getInsertFields()
-      );
+      return $this->sqlInsert($q, $q->getInsertTable(), $q->getInsertFields());
 
     // Consulta de actualización
     if($type == 'update')
@@ -1100,7 +1098,7 @@ abstract class AmScheme extends AmObject{
   public function insertInto($values, $model, array $fields = array()){
 
     // Obtener el SQL para saber si es valido
-    $sql = $this->sqlInsertQuery($values, $table, $fields);
+    $sql = $this->sqlInsert($values, $table, $fields);
 
     // Si el SQL está vacío o si se genera un error en la insercion
     // se devuelve falso
@@ -1451,35 +1449,40 @@ abstract class AmScheme extends AmObject{
   abstract public function getParseName($name);
 
   /**
-   * Consulta select.
-   * @param  AmQuery $q [description]
-   * @return [type]     [description]
+   * Obener el SQL de una query.
+   * @param  AmQuery $q Query.
+   * @return string     SQL de query.
    */
   abstract public function sqlSelectQuery(AmQuery $q);
 
   /**
-   * [sqlInsertValues description]
-   * @param  [type] $values [description]
-   * @return [type]         [description]
+   * SQL de valores para ejecutar un query insert.
+   * @param  array/AmQuery $values Array de hash de valores, object y/o
+   *                               instancias de AmModels o implementaciones.
+   *                               También puede puede ser un consulta select.
+   * @return string                SQL para los valores.
    */
   abstract protected function sqlInsertValues($values);
 
   /**
-   * [sqlInsertFields description]
-   * @param  array  $fields [description]
-   * @return [type]         [description]
+   * SQL para campos para ejecutar un query insert.
+   * @param  array  $fields Array con los nombres de los campos.
+   * @return string         SQL con los nombres de los campos.
    */
   abstract protected function sqlInsertFields(array $fields);
 
-  // Consulta insert
   /**
-   * [sqlInsertQuery description]
-   * @param  [type] $values [description]
-   * @param  [type] $table  [description]
-   * @param  array  $fields [description]
-   * @return [type]         [description]
+   * SQL para una query insert.
+   * @param  array/AmQuery  $values Array de hash de valores, object y/o
+   *                                instancias de AmModels o implementaciones.
+   *                                También puede puede ser un consulta select.
+   * @param  string/AmTable $table  Nombre o instancia de la tabla donde, o
+   *                                nombre del modelo donde se desea insertar
+   *                                los valores.
+   * @param  array          $fields Listado de campos.
+   * @return string                 SQL de la query insert.
    */
-  abstract public function sqlInsertQuery($values, $table, array $fields = array());
+  abstract public function sqlInsert($values, $table, array $fields = array());
 
   // Consulta update
   /**
