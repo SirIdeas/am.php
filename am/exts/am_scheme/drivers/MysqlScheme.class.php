@@ -82,12 +82,12 @@ class MysqlScheme extends AmScheme{
     $handler = null; // Identificador de la conexion
 
   // Devuelve un nombre entre comillas simples entendibles por el gesto
-  public function getParseName($identifier){
+  public function getParseName($name){
 
-    if(preg_match("/[`\\.]/", $identifier))
-      return $identifier;
+    if(preg_match("/[`\\.]/", $name))
+      return $name;
 
-    return "`$identifier`";
+    return "`$name`";
 
   }
 
@@ -246,7 +246,10 @@ class MysqlScheme extends AmScheme{
 
   }
 
-  public function sqlInsertValues($values){
+  protected function sqlInsertValues($values){
+
+    if(empty($values))
+      return '';
 
     if(is_array($values) && count($values)>0){
 
@@ -267,7 +270,7 @@ class MysqlScheme extends AmScheme{
 
   }
 
-  public function sqlInsertFields(array $fields){
+  protected function sqlInsertFields(array $fields){
 
     // Unir campos
     if(!empty($fields))
@@ -280,9 +283,12 @@ class MysqlScheme extends AmScheme{
   // Obtener el SQL para una consulta de inserción
   public function sqlInsertQuery($values, $model, array $fields = array()){
 
-    list($sqlValues, $sqlTable, $sqlFields) = $this->prepareInsertInto(
+    list($sqlValues, $sqlTable, $sqlFields) = $this->prepareInsert(
       $values, $model, $fields
     );
+
+    if(empty($sqlValues))
+      return '';
 
     // Generar SQL
     return "INSERT INTO $sqlTable{$sqlFields} $sqlValues";

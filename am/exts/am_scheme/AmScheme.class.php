@@ -79,6 +79,16 @@ abstract class AmScheme extends AmObject{
     $tables = array();
 
   /**
+   * Constructor. Se conecta en el contructor.
+   */
+  public function __construct($params = array()){
+    parent::__construct($params);
+
+    $schemes->connect(); // Conectar la fuente
+
+  }
+
+  /**
    * El destructor del objecto cierra la conexión
    */
   public function __destruct() {
@@ -351,7 +361,7 @@ abstract class AmScheme extends AmObject{
   public function generateBaseModelFile(AmTable $table){
 
     // Incluir la clase para generar
-    AmScheme::requireFile('AmGenerator.class.php');
+    self::requireFile('AmGenerator.class.php');
 
     // Obtener el nombre del archivo destino
     $path = $this->getBaseModelClassFilename($table->getTableName());
@@ -971,13 +981,20 @@ abstract class AmScheme extends AmObject{
   }
 
   /**
-   * Ejecuta una consulta de insercion para los
-   * @param  [type] $values [description]
-   * @param  [type] $model  [description]
-   * @param  array  $fields [description]
-   * @return [type]         [description]
+   * Funcion para preparar la ejeción de un insert.
+   * @param   array/AmQuery   $values   Array hash de valores, array
+   *                                    de instancias de AmModels, array de
+   *                                    AmObjects o AmQuery con consulta select
+   *                                    a insertar.
+   * @param   string/AmTable  $model    Nombre del modelo o instancia de la
+   *                                    tabla donde se insertará los valores.
+   * @param   array           $fields   Campos que recibirán con los valores que
+   *                                    se insertarán.
+   * @return  hash                      Devuelve un hash que contiene el string
+   *                                    con el nombre de la tabla, string de
+   *                                    valores y el string de campos.
    */
-  public function prepareInsertInto($values, $model, array $fields = array()){
+  protected function prepareInsert($values, $model, array $fields = array()){
 
     $table = $model;
 
@@ -1070,31 +1087,48 @@ abstract class AmScheme extends AmObject{
       'fields' => $this->sqlInsertFields($fields),
     );
 
-    // // Obtener el SQL para saber si es valido
-    // $sql = $this->sqlInsertQuery($values, $table, $fields);
+  }
 
-    // // Si el SQL está vacío o si se genera un error en la insercion
-    // // se devuelve falso
-    // if(trim($sql) == '' || $this->execute($sql) === false)
-    //   return false;
+  /**
+   * Inserta registros en una tabla.
+   * @param   array/AmQuery   $values   Array hash de valores, array
+   *                                    de instancias de AmModels, array de
+   *                                    AmObjects o AmQuery con consulta select
+   *                                    a insertar.
+   * @param   string/AmTable  $model    Nombre del modelo o instancia de la
+   *                                    tabla donde se insertará los valores.
+   * @param   array           $fields   Campos que recibirán con los valores que
+   *                                    se insertarán.
+   * @return  boolean/int               Boolean se se logró insertar los
+   *                                    registros, o el id del registro
+   *                                    insertado en el caso de corresponda.
+   */
+  public function insertInto($values, $model, array $fields = array()){
 
-    // // Obtener el ultimo ID insertado
-    // $id = $this->getLastInsertedId();
+    // Obtener el SQL para saber si es valido
+    $sql = $this->sqlInsertQuery($values, $table, $fields);
 
-    // // Se retorna el el último id insertado o true en
-    // // el caso de que se hayan insertado varios registros
-    // return $id === 0 ? true : $id;
+    // Si el SQL está vacío o si se genera un error en la insercion
+    // se devuelve falso
+    if(trim($sql) == '' || $this->execute($sql) === false)
+      return false;
+
+    // Obtener el ultimo ID insertado
+    $id = $this->getLastInsertedId();
+
+    // Se retorna el el último id insertado o true en
+    // el caso de que se hayan insertado varios registros
+    return $id === 0 ? true : $id;
 
   }
 
-  /////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
   // Metodos Abstractos que deben ser definidos en las implementaciones
-  /////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
 
-  // Devuelve la carpeta destino para los orm
   /**
-   * [getSchemesDir description]
-   * @return [type] [description]
+   * Devuelve la carpeta destino para los modelos base de los esquemas.
+   * @return  string  Directorio de modelos base.
    */
   public static function getSchemesDir(){
 
@@ -1102,18 +1136,17 @@ abstract class AmScheme extends AmObject{
 
   }
 
-  // Incluye un archivo dentro buscado dentro de la
-  // carpeta de la libreria
   /**
-   * [requireFile description]
-   * @param  [type]  $file         [description]
-   * @param  boolean $onCurrentDir [description]
-   * @return [type]                [description]
+   * Incluye un archivo de la extensión se existe.
+   * @param   string    $file   Dirección relativa a la raíz de la extensión
+   *                            del archivo que se desea incluir.
    */
-  public static function requireFile($file, $onCurrentDir = true){
+  public static function requireFile($file){
 
-    $path = ($onCurrentDir? dirname(__FILE__).'/' : '') . $file;
+    // Obtener el path real.
+    $path = realpath(dirname(__FILE__).'/' . $file);
 
+    // Si no existe el archivo se genera un error.
     if(!is_file($path))
       throw Am::e('AMSCHEME_FILE_NOT_FOUND', $path);
 
@@ -1121,41 +1154,39 @@ abstract class AmScheme extends AmObject{
 
   }
 
-  // Devuelve la configuracion de una determinada fuente de datos
   /**
-   * [getSchemeConf description]
-   * @param  string $schemeName [description]
-   * @return [type]             [description]
+   * Devuelve la configuración de un determinado esquema.
+   * @param   string  $name   Nombre del esquema buscado.
+   * @return  hash            Configuración del esquema.
    */
-  public static function getSchemeConf($schemeName = ''){
+  public static function getSchemeConf($name = ''){
 
     // Obtener configuraciones para las fuentes
     $schemes = Am::getProperty('schemes', array());
 
     // Si no existe una configuración para el nombre de fuente
-    if(!isset($schemes[$schemeName]))
+    if(!isset($schemes[$name]))
       return null;
 
     // Asignar valores por defecto
-    $schemes[$schemeName] = array_merge(
+    $schemes[$name] = array_merge(
       array(
-        'database'  => $schemeName,
+        'database'  => $name,
         'driver'    => null,
       ),
-      $schemes[$schemeName]
+      $schemes[$name]
     );
 
-    $schemes[$schemeName]['name'] = $schemeName;
+    $schemes[$name]['name'] = $name;
 
     return $schemes[$schemeName];
 
   }
 
-  // Devuelve una instancia de una fuente
   /**
-   * [get description]
-   * @param  string $name [description]
-   * @return [type]       [description]
+   * Devuelve una instancia de una fuente.
+   * @param   string  $name   Nombre del esquema buscado.
+   * @return  AmScheme        Instancia del esquema.
    */
   public static function get($name = ''){
 
@@ -1166,8 +1197,8 @@ abstract class AmScheme extends AmObject{
     // Obtener la configuración de la fuente
     $schemeConf = self::getSchemeConf($name);
 
-    // Si no existe una configuración para el nombre de fuente
-    // solicitado se retorna NULL
+    // Si no existe una configuración para el nombre de fuente solicitado se
+    // retorna NULL
     if($schemeConf === null)
       throw Am::e('AMSCHEME_SCHEMECONF_NOT_FOUND', $name);
 
@@ -1176,17 +1207,15 @@ abstract class AmScheme extends AmObject{
 
     // Crear instancia de la fuente
     $schemes = new $driverClassName($schemeConf);
-    $schemes->connect(); // Conectar la fuente
 
     return self::$schemes[$name] = $schemes;
 
   }
 
-  // Incluye un driver de BD
   /**
-   * [driver description]
-   * @param  [type] $driver [description]
-   * @return [type]         [description]
+   * Incluye un driver de BD.
+   * @param   string  $driver   Nombre del driver a incluir.
+   * @return  string            Nombre de la clase del driver a incluir.
    */
   public static function driver($driver){
 
@@ -1201,13 +1230,13 @@ abstract class AmScheme extends AmObject{
 
   }
 
-  // Devuelve la instancia de una tabla en una fuente determinada
   /**
-   * [table description]
-   * @param  [type] $tableName  [description]
-   * @param  string $schemeName [description]
-   * @param  [type] $model      [description]
-   * @return [type]             [description]
+   * Devuelve la instancia de una tabla en una fuente determinada
+   * @param   string  $tableName    Nombre de la tabla que se desea.
+   * @param   string  $schemeName   Nombre del esquema al que pertenece la
+   *                                tabla.
+   * @param   string  $model        Nombre del modelo de la tabla.
+   * @return  AmTable               Instancia de la tabla.
    */
   public static function table($tableName, $schemeName = '', $model = null){
 
@@ -1229,9 +1258,10 @@ abstract class AmScheme extends AmObject{
       'model' => $model
     ));
 
-    // Incluir modelo
+    // Obtener la dirección real del modelo correspondiente
     $modelPath = realpath($scheme->getBaseModelClassFilename($tableName));
     
+    // Incluir modelo si existe
     if(is_file($modelPath))
       require_once $modelPath;
 
@@ -1240,9 +1270,13 @@ abstract class AmScheme extends AmObject{
   }
 
   /**
-   * [model description]
-   * @param  [type] $model [description]
-   * @return [type]        [description]
+   * Incluye un modelo.
+   * @param   string  $model  Nombre del modelo a insertar. Puede ser un modelo
+   *                          base :<modelName>@<schemeName> o el nombre del
+   *                          modelo dado por el usuario.
+   * @return  string/boolean  Si al final de la inclusión existe la clase
+   *                          correspondiente devuelve el nombre de la clase,
+   *                          de lo contrario devuelv falso.
    */
   public static function model($model){
 
@@ -1322,11 +1356,10 @@ abstract class AmScheme extends AmObject{
 
   }
 
-  // Incluye un validator y devuelve el nombre de la clases correspondiente
   /**
-   * [validator description]
-   * @param  [type] $validator [description]
-   * @return [type]            [description]
+   * Incluye un validador y devuelve el nombre de la clases correspondiente
+   * @param   satring   $validator  Nombre del validador a insertar.
+   * @return  string                Nombre de la clase del validador.
    */
   public static function validator($validator){
 
@@ -1345,93 +1378,86 @@ abstract class AmScheme extends AmObject{
   // Metodos Abstractos que deben ser definidos en las implementaciones
   //////////////////////////////////////////////////////////////////////////////
 
-  // Metodo para obtener el puerto por defecto para una conexión
   /**
-   * [getDefaultPort description]
-   * @return [type] [description]
+   * Metodo para obtener el puerto por defecto para una conexión.
+   * @return  string/integer  Devuelve el nro del purto por defecto.
    */
   abstract public function getDefaultPort();
 
-  // Metodo para crear una conexion
   /**
-   * [start description]
-   * @return [type] [description]
+   * Metodo para crear una conexion.
+   * @return  Resource  Manejador para la conexión 
    */
   abstract protected function start();
 
-  // Metodo para cerrar una conexión
   /**
-   * [start description]
-   * @return [type] [description]
+   * Metodo para cerrar una conexión.
+   * @return  boolean   Resultado de la operación
    */
   abstract public function close();
 
-  // Obtener el número del último error generado en la conexión
   /**
-   * [start description]
-   * @return [type] [description]
+   * Obtener el número del último error generado en la conexión.
+   * @return  int   Nro de error.
    */
   abstract public function getErrNo();
 
-  // Obtener la descripcion del último error generado en la conexión
   /**
-   * [start description]
-   * @return [type] [description]
+   * Obtener la descripcion del último error generado en la conexión
+   * @return  string  Descripción del error.
    */
   abstract public function getError();
 
-  // Devuelve una cadena con un valor valido en el gesto de BD
   /**
-   * [realScapeString description]
-   * @param  [type] $value [description]
-   * @return [type]        [description]
+   * Obtiene una cade con un valor seguro para el manejador de DBSM.
+   * @param   any     $value  Valor que se desea procesar.
+   * @return  string          Valor procesado.
    */
   abstract public function realScapeString($value);
 
-  // Realizar una consulta SQL
   /**
-   * [query description]
-   * @param  [type] $sql [description]
-   * @return [type]      [description]
+   * Realizar una consulta SQL.
+   * @param   string      $sql  SQL a ejecutar.
+   * @return  boolean/int       Resultado de la operación.
    */
   abstract protected function query($sql);
 
-  // Obtener el siguiente registro de un resultado
   /**
-   * [getFetchAssoc description]
-   * @param  [type] $result [description]
-   * @return [type]         [description]
+   * Obtener el siguiente registro de un resultado
+   * @param   Resourse  $result   Manejador del resultado.
+   * @return  hash                Hash de valores del registro.
    */
   abstract public function getFetchAssoc($result);
 
-  // Obtener el ID del ultimo registro insertado
   /**
-   * [getLastInsertedId description]
-   * @return [type] [description]
+   * Obtener el ID del ultimo registro insertado. En el caso que el último
+   * query ejecutado sea un insert de un solo elemento en una tabla con un solo
+   * campo autonumérico.
+   * @return  null/int   Null o valor autonumérico insertado.
    */
   abstract public function getLastInsertedId();
 
-  // Devuelve un tipo de datos en el gestor de BD
   /**
-   * [sanitize description]
-   * @param  array  $column [description]
-   * @return [type]         [description]
+   * Procesa un hash de propiedades de una columna de una tabla para
+   * convertirlo en una forma estandar.
+   * @param   hash   $column  Hash de atributos de la columna sin procesar.
+   * @return  hash            Hash de atributos de la columna procesado.
    */
   abstract public function sanitize(array $column);
 
-  // Metodo para obtener los SQL a ejecutar
+  //////////////////////////////////////////////////////////////////////////////
+  // Metodo para obtener los SQL a ejecutar.
+  //////////////////////////////////////////////////////////////////////////////
 
-  // Devuelve un nombre entre comillas simples entendibles por el gesto
   /**
-   * [getParseName description]
-   * @param  [type] $identifier [description]
-   * @return [type]             [description]
+   * Devuelve un nombre de un objeto de BD entendible para el DBSM.
+   * @param   string  $name   Nombre que se desea obtener.
+   * @return  [type]          Identificador válido.
    */
-  abstract public function getParseName($identifier);
+  abstract public function getParseName($name);
 
-  // Consulta select
   /**
-   * [sqlSelectQuery description]
+   * Consulta select.
    * @param  AmQuery $q [description]
    * @return [type]     [description]
    */
@@ -1442,14 +1468,14 @@ abstract class AmScheme extends AmObject{
    * @param  [type] $values [description]
    * @return [type]         [description]
    */
-  abstract public function sqlInsertValues($values);
+  abstract protected function sqlInsertValues($values);
 
   /**
    * [sqlInsertFields description]
    * @param  array  $fields [description]
    * @return [type]         [description]
    */
-  abstract public function sqlInsertFields(array $fields);
+  abstract protected function sqlInsertFields(array $fields);
 
   // Consulta insert
   /**
