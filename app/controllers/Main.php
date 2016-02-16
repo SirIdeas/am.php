@@ -36,7 +36,7 @@ class Main extends AmController{
     // var_dump($sch->getGeneratedModels());
     // var_dump($sch->drop());
     // var_dump($sch->create());
-    exit;
+    // exit;
 
     // -------------------------------------------------------------------------
     // // Crear tabla sin model

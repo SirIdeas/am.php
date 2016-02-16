@@ -84,7 +84,7 @@ abstract class AmScheme extends AmObject{
   public function __construct($params = array()){
     parent::__construct($params);
 
-    $schemes->connect(); // Conectar la fuente
+    $this->connect(); // Conectar la fuente
 
   }
 
@@ -1098,7 +1098,7 @@ abstract class AmScheme extends AmObject{
   public function insertInto($values, $model, array $fields = array()){
 
     // Obtener el SQL para saber si es valido
-    $sql = $this->sqlInsert($values, $table, $fields);
+    $sql = $this->sqlInsert($values, $model, $fields);
 
     // Si el SQL está vacío o si se genera un error en la insercion
     // se devuelve falso
@@ -1171,7 +1171,7 @@ abstract class AmScheme extends AmObject{
 
     $schemes[$name]['name'] = $name;
 
-    return $schemes[$schemeName];
+    return $schemes[$name];
 
   }
 
@@ -1444,7 +1444,7 @@ abstract class AmScheme extends AmObject{
   /**
    * Devuelve un nombre de un objeto de BD entendible para el DBSM.
    * @param   string  $name   Nombre que se desea obtener.
-   * @return  [type]          Identificador válido.
+   * @return  string          Identificador válido.
    */
   abstract public function getParseName($name);
 
@@ -1484,219 +1484,208 @@ abstract class AmScheme extends AmObject{
    */
   abstract public function sqlInsert($values, $table, array $fields = array());
 
-  // Consulta update
   /**
-   * [sqlUpdateQuery description]
-   * @param  AmQuery $q [description]
-   * @return [type]     [description]
+   * SQL para query update.
+   * @param  AmQuery $q Query de la que se desea obtener el SQL.
+   * @return string     SQL del query.
    */
   abstract public function sqlUpdateQuery(AmQuery $q);
 
-  // Consulta delete
   /**
-   * [sqlDeleteQuery description]
+   * SQL para un query delete.
    * @param  AmQuery $q [description]
-   * @return [type]     [description]
+   * @return string     [description]
    */
   abstract public function sqlDeleteQuery(AmQuery $q);
 
-  // Setear un valor a una variable de servidor
   /**
-   * [sqlSetServerVar description]
-   * @param  [type] $varName [description]
-   * @param  [type] $value   [description]
-   * @return [type]          [description]
+   * SQL para setear una variable del DBSM
+   * @param  string $varName Nombre de la variable a setear.
+   * @param  string $value   Valor a asignar.
+   * @return string          SQL para la operación.
    */
   abstract public function sqlSetServerVar($varName, $value);
 
-  // SQL para seleccionar la BD
   /**
-   * [sqlSelectDatabase description]
-   * @return [type] [description]
+   * SQL para seleccionar la BD
+   * @return string SQL para la operación.
    */
   abstract public function sqlSelectDatabase();
 
   /**
-   * [sqlSelect description]
-   * @param  AmQuery $q    [description]
-   * @param  bool $with [description]
-   * @return [type]        [description]
+   * SQL para la clausula SELECT de una query de selección.
+   * @param  AmQuery $q Query del que se desea obtener la clausula.
+   * @return string     SQL de la clausula.
    */
-  abstract public function sqlSelect(AmQuery $q, $with = true);
+  abstract public function sqlSelect(AmQuery $q);
   
   /**
-   * [sqlSelect description]
-   * @param  AmQuery $q    [description]
-   * @param  bool $with [description]
-   * @return [type]        [description]
+   * SQL para la clausula FROM de una query de selección o actualización.
+   * @param  AmQuery $q Query del que se desea obtener la clausula.
+   * @return string     SQL de la clausula.
    */
-  abstract public function sqlFrom(AmQuery $q, $with = true);
+  abstract public function sqlFrom(AmQuery $q);
   
   /**
-   * [sqlJoins description]
-   * @param  AmQuery $q [description]
-   * @return [type]     [description]
+   * SQL para la clausulas JOINS de una query de selección o actualización.
+   * @param  AmQuery $q Query del que se desea obtener la clausula.
+   * @return string     SQL de la clausula.
    */
   abstract public function sqlJoins(AmQuery $q);
   
   /**
-   * [sqlSelect description]
-   * @param  AmQuery $q    [description]
-   * @param  bool $with [description]
-   * @return [type]        [description]
+   * SQL para la clausula WHERE de una query de selección, actualización o
+   * eliminación.
+   * @param  AmQuery $q Query del que se desea obtener la clausula.
+   * @return string     SQL de la clausula.
    */
-  abstract public function sqlWhere(AmQuery $q, $with = true);
+  abstract public function sqlWhere(AmQuery $q);
   
   /**
-   * [sqlSelect description]
-   * @param  AmQuery $q    [description]
-   * @param  bool $with [description]
-   * @return [type]        [description]
+   * SQL para la clausula GROUP BY de una query de selección.
+   * @param  AmQuery $q Query del que se desea obtener la clausula.
+   * @return string     SQL de la clausula.
    */
-  abstract public function sqlGroups(AmQuery $q, $with = true);
+  abstract public function sqlGroups(AmQuery $q);
   
   /**
-   * [sqlSelect description]
-   * @param  AmQuery $q    [description]
-   * @param  bool $with [description]
-   * @return [type]        [description]
+   * SQL para la clausula ORDER BY de una query de selección.
+   * @param  AmQuery $q Query del que se desea obtener la clausula.
+   * @return string     SQL de la clausula.
    */
-  abstract public function sqlOrders(AmQuery $q, $with = true);
+  abstract public function sqlOrders(AmQuery $q);
   
   /**
-   * [sqlSelect description]
-   * @param  AmQuery $q    [description]
-   * @param  bool $with [description]
-   * @return [type]        [description]
+   * SQL para la clausula LIMIT de una query de selección.
+   * @param  AmQuery $q Query del que se desea obtener la clausula.
+   * @return string     SQL de la clausula.
    */
-  abstract public function sqlLimit(AmQuery $q, $with = true);
+  abstract public function sqlLimit(AmQuery $q);
   
   /**
-   * [sqlSelect description]
-   * @param  AmQuery $q    [description]
-   * @param  bool $with [description]
-   * @return [type]        [description]
+   * SQL para la clausula OFFSET de una query de selección.
+   * @param  AmQuery $q Query del que se desea obtener la clausula.
+   * @return string     SQL de la clausula.
    */
-  abstract public function sqlOffSet(AmQuery $q, $with = true);
+  abstract public function sqlOffSet(AmQuery $q);
   
   /**
-   * [sqlSelect description]
-   * @param  AmQuery $q    [description]
-   * @param  bool $with [description]
-   * @return [type]        [description]
+   * SQL para la clausula SET de una query de actualización.
+   * @param  AmQuery $q Query del que se desea obtener la clausula.
+   * @return string     SQL de la clausula.
    */
-  abstract public function sqlSets(AmQuery $q, $with = true);
+  abstract public function sqlSets(AmQuery $q);
 
-  // Devuelve un String con el SQL para crear la base de datos
+  /**
+   * SQL para crear una BD.
+   * @param  boolean $ifNotExists Si se agregará o no la clausula IF NOT EXISTS.
+   * @return string               SQL para la operación.
+   */
   abstract public function sqlCreate($ifNotExists = true);
   
   /**
-   * [sqlDrop description]
-   * @return [type] [description]
+   * SQL para remover una BD.
+   * @return string SQL para la operación.
    */
   abstract public function sqlDrop();
   
   /**
-   * [sqlDrop description]
-   * @return [type] [description]
+   * SQL para obtener la información de una BD.
+   * @return string SQL para la operación.
    */
   abstract public function sqlGetInfo();
 
-  // SQL para obtener el listado de tablas
   /**
-   * [sqlDrop description]
-   * @return [type] [description]
+   * SQL para obtener la descripción de las tablas del esquema.
+   * @return string SQL para la operación.
    */
   abstract public function sqlGetTables();
   
   /**
-   * [sqlGetTableColumns description]
-   * @param  [type] $table [description]
-   * @return [type]        [description]
+   * SQL para obtener la descripción de las columnas de una tabla.
+   * @param  string $table Nombre de la tabla.
+   * @return string        SQL para la operación.
    */
   abstract public function sqlGetTableColumns($table);
   
   /**
-   * [sqlGetTableColumns description]
-   * @param  [type] $table [description]
-   * @return [type]        [description]
+   * SQL para obtener la descripción de las claves unicas de una tabla.
+   * @param  string $table Nombre de la tabla.
+   * @return string        SQL para la operación.
    */
   abstract public function sqlGetTableUniques($table);
   
   /**
-   * [sqlGetTableColumns description]
-   * @param  [type] $table [description]
-   * @return [type]        [description]
+   * SQL para obtener la descripción de las claves foráneas de una tabla.
+   * @param  string $table Nombre de la tabla.
+   * @return string        SQL para la operación.
    */
   abstract public function sqlGetTableForeignKeys($table);
   
   /**
-   * [sqlGetTableColumns description]
-   * @param  [type] $table [description]
-   * @return [type]        [description]
+   * SQL para obtener la descripción de las referencias a una tabla.
+   * @param  string $table Nombre de la tabla.
+   * @return string        SQL para la operación.
    */
   abstract public function sqlGetTableReferences($table);
 
-  // Set de Caracteres
-  
   /**
-   * [sqlCharset description]
-   * @return [type] [description]
+   * SQL para indicar el set de caracteres.
+   * @return string SQL de la clausula.
    */
   abstract public function sqlCharset();
 
-  // Colecion de caracteres
-  
   /**
-   * [sqlCharset description]
-   * @return [type] [description]
+   * SQL para indicar la coleción de caracteres.
+   * @return string SQL de la clausula.
    */
   abstract public function sqlCollage();
 
   /**
-   * [sqlField description]
-   * @param  AmField $field [description]
-   * @return [type]         [description]
+   * SQL para un campo para un query create table.
+   * @param  AmField $field Campo del que se desea obtener el SQL.
+   * @return string         SQL correspondiente.
    */
   abstract public function sqlField(AmField $field);
 
   /**
-   * [sqlCreateTable description]
-   * @param  AmTable $t           [description]
-   * @param  bool $ifNotExists [description]
-   * @return [type]               [description]
+   * SQL para crear una tabla.
+   * @param  AmTable $t           Instancia de la tabla que se desea crear.
+   * @param  bool    $ifNotExists Si se agregará la clausula IF NOT EXISTS.
+   * @return string               SQL para la operación.
    */
   abstract public function sqlCreateTable(AmTable $t, $ifNotExists = true);
 
   /**
-   * [sqlDropTable description]
-   * @param  [type]  $table    [description]
-   * @param  bool $ifExists [description]
-   * @return [type]            [description]
+   * SQL para eliminar una tabla.
+   * @param  string $table    Nombre de la tabla a eliminar.
+   * @param  bool   $ifExists Si se agregará la clausula IF EXISTS
+   * @return string           SQL para la operación.
    */
   abstract public function sqlDropTable($table, $ifExists = true);
 
   /**
-   * [sqlTruncate description]
-   * @param  [type]  $table    [description]
-   * @param  bool $ignoreFk [description]
-   * @return [type]            [description]
+   * SQL para truncar(vaciar) una tabla.
+   * @param  string $table    Nombre de la tabla que se desea truncar.
+   * @param  bool   $ignoreFk Si se deben ignorar los foreign keys.
+   * @return string           SQL para la operación.
    */
   abstract public function sqlTruncate($table, $ignoreFk = true);
 
   /**
-   * [sqlCreateView description]
-   * @param  AmQuery $q       [description]
-   * @param  bool $replace [description]
-   * @return [type]           [description]
+   * SQL para crear una vista.
+   * @param  AmQuery $t       Instancia del query del cual se desea crear la
+   *                          vista.
+   * @param  bool    $replace Si se agregará la clausula OR REPLACE.
+   * @return string           SQL para la operación.
    */
   abstract public function sqlCreateView(AmQuery $q, $replace = true);
 
   /**
-   * [sqlDropView description]
-   * @param  [type]  $q        [description]
-   * @param  bool $ifExists [description]
-   * @return [type]            [description]
+   * SQL para eliminar una vista.
+   * @param  string $q        Nombre de la vista a eliminar.
+   * @param  bool   $ifExists Si se agregará la clausula IF EXISTS
+   * @return string           SQL para la operación.
    */
   abstract public function sqlDropView($q, $ifExists = true);
 

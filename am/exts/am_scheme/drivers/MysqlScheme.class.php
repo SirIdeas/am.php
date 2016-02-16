@@ -234,14 +234,14 @@ class MysqlScheme extends AmScheme{
 
     return !empty($q->sql) ? $q->sql :
       trim(implode(" ", array(
-      trim($this->sqlSelect($q, true)),
-      trim($this->sqlFrom($q, true)),
+      trim($this->sqlSelect($q)),
+      trim($this->sqlFrom($q)),
       trim($this->sqlJoins($q)),
-      trim($this->sqlWhere($q, true)),
-      trim($this->sqlGroups($q, true)),
-      trim($this->sqlOrders($q, true)),
-      trim($this->sqlLimit($q, true)),
-      trim($this->sqlOffSet($q, true))
+      trim($this->sqlWhere($q)),
+      trim($this->sqlGroups($q)),
+      trim($this->sqlOrders($q)),
+      trim($this->sqlLimit($q)),
+      trim($this->sqlOffSet($q))
     )));
 
   }
@@ -283,15 +283,15 @@ class MysqlScheme extends AmScheme{
   // Obtener el SQL para una consulta de inserción
   public function sqlInsert($values, $model, array $fields = array()){
 
-    list($sqlValues, $sqlTable, $sqlFields) = $this->prepareInsert(
+    $q = $this->prepareInsert(
       $values, $model, $fields
     );
 
-    if(empty($sqlValues))
+    if(empty($q['values']))
       return '';
 
     // Generar SQL
-    return "INSERT INTO $sqlTable{$sqlFields} $sqlValues";
+    return "INSERT INTO {$q['table']}{$q['fields']} {$q['values']}";
 
   }
 
@@ -321,7 +321,7 @@ class MysqlScheme extends AmScheme{
   }
 
   // Obtener el SQL para la clausula SELECT
-  public function sqlSelect(AmQuery $q, $with = true){
+  public function sqlSelect(AmQuery $q){
 
     $selectsOri = $q->getSelects();  // Obtener argmuentos en la clausula SELECT
     $distinct = $q->getDistinct();
@@ -340,18 +340,18 @@ class MysqlScheme extends AmScheme{
     }
 
     // Unir campos
-    $selects = implode(", ", $selects);
+    $selects = trim(implode(', ', $selects));
 
     // Si no se seleccionó ningun campo entonces se tomaran todos
-    $selects = (empty($selects) ? "*" : $selects);
+    $selects = empty($selects) ? '*' : $selects;
 
     // Agregar SELECT
-    return trim(($with ? "SELECT ".($distinct ? "DISTINCT " : "") : "").$selects);
+    return 'SELECT '.trim(($distinct ? 'DISTINCT ' : '').$selects);
 
   }
 
   // Obtener el SQL para la clausula FROM
-  public function sqlFrom(AmQuery $q, $with = true){
+  public function sqlFrom(AmQuery $q){
 
     $fromsOri = $q->getFroms();   // Listado de argumentos de la clausula FROM
     $froms = array();             // Listado de retorno
@@ -378,18 +378,19 @@ class MysqlScheme extends AmScheme{
     }
 
     // Unir argumentos procesados
-    $froms = implode(", ", $froms);
+    $froms = trim(implode(', ', $froms));
 
     // Agregar FROM
-    return trim(empty($froms) ? "" : (($with ? "FROM " : "").$froms));
+    return (empty($froms) ? '' : "FROM {$froms}");
 
   }
 
   // Obtener SQL para la clausula WHERE de una consulta
-  public function sqlWhere(AmQuery $q, $with = true){
+  public function sqlWhere(AmQuery $q){
 
-    $where = $this->parseWhere($q->getWheres());
-    return trim(empty($where) ? "" : (($with ? "WHERE " : "").$where));
+    $where = trim($this->parseWhere($q->getWheres()));
+
+    return (empty($where) ? '' : "WHERE {$where}");
 
   }
 
@@ -435,7 +436,7 @@ class MysqlScheme extends AmScheme{
     }
 
     // Unir todas las partes
-    return trim(implode(" ", $joinsResult));
+    return trim(implode(' ', $joinsResult));
 
   }
 
@@ -451,32 +452,32 @@ class MysqlScheme extends AmScheme{
     }
 
     // Unir resultado
-    $orders = implode(", ", $orders);
+    $orders = trim(implode(', ', $orders));
 
     // Agregar ORDER BY
-    return trim(empty($orders) ? "" : (($with ? "ORDER BY " : "").$orders));
+    return (empty($orders) ? '' : "ORDER BY {$orders}");
 
   }
 
   // Obtener el SQL de una clasula GROUP BY
-  public function sqlGroups(AmQuery $q, $with = true){
+  public function sqlGroups(AmQuery $q){
 
     // Unir grupos
-    $groups = implode(", ", $q->getGroups());
+    $groups = trim(implode(', ', $q->getGroups()));
 
     // Agregar GROUP BY
-    return trim(empty($groups) ? "" : (($with ? "GROUP BY " : "").$groups));
+    return (empty($groups) ? '' : "GROUP BY {$groups}");
 
   }
 
   // Obtener SQL para la clausula LIMIT
-  public function sqlLimit(AmQuery $q, $with = true){
+  public function sqlLimit(AmQuery $q){
 
     // Obtener limite
-    $limit = $q->getLimit();
+    $limit = trim($q->getLimit());
 
     // Agregar LIMIT
-    return trim(!isset($limit) ? "" : (($with ? "LIMIT " : "").$limit));
+    return (empty($limit) ? '' : "LIMIT {$limit}");
 
   }
 
@@ -488,12 +489,12 @@ class MysqlScheme extends AmScheme{
     $limit = $q->getLimit();
 
     // Agregar OFFSET
-    return trim(!isset($offset) || !isset($limit) ? "" : (($with ? "OFFSET " : "").$offset));
+    return (!isset($offset) || !isset($limit) ? '' : "OFFSET {$offset}");
 
   }
 
   // Obtener el SQL para la clausula SET de una consulta UPDATE
-  public function sqlSets(AmQuery $q, $with = true){
+  public function sqlSets(AmQuery $q){
 
     // Obtener sets
     $setsOri = $q->getSets();
@@ -502,7 +503,7 @@ class MysqlScheme extends AmScheme{
     // Recorrer los sets
     foreach($setsOri as $set){
 
-      $value = $set["value"];
+      $value = $set['value'];
 
       // Acrear asignacion
       if($value === null){
@@ -516,10 +517,10 @@ class MysqlScheme extends AmScheme{
     }
 
     // Unir resultado
-    $sets = implode(",", $sets);
+    $sets = implode(',', $sets);
 
     // Agregar SET
-    return ($with? "SET " : "") . $sets;
+    return "SET {$sets}";
 
   }
 
@@ -532,9 +533,9 @@ class MysqlScheme extends AmScheme{
 
     // El el argumento esta vacío retornar cadena vacia
     if(empty($charset))
-      return "";
+      return '';
 
-    $charset = empty($charset) ? "" : " CHARACTER SET {$charset}";
+    $charset = empty($charset) ? '' : " CHARACTER SET {$charset}";
 
     return $charset;
 
@@ -551,7 +552,7 @@ class MysqlScheme extends AmScheme{
     if(empty($collage))
       return "";
 
-    $collage = empty($collage) ? "" : " COLLATE {$collage}";
+    $collage = empty($collage) ? '' : " COLLATE {$collage}";
 
     return $collage;
 
@@ -581,9 +582,9 @@ class MysqlScheme extends AmScheme{
 
       $default = $field->parseValue($default);
 
-      if(in_array($type, array("text", "char", "varchar", "bit")) ||
-        (in_array($type, array("date", "datetime", "timestamp", "time")) &&
-          $default != "CURRENT_TIMESTAMP"
+      if(in_array($type, array('text', 'char', 'varchar', 'bit')) ||
+        (in_array($type, array('date', 'datetime', 'timestamp', 'time')) &&
+          $default != 'CURRENT_TIMESTAMP'
         )
       )
         $default = "'{$default}'";

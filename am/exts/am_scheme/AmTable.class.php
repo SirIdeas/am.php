@@ -401,7 +401,7 @@ class AmTable extends AmQuery{
     }
 
     if(is_array($field))
-      $field = new AmField($field);
+      $field = new AmField(array_merge(array('name' => $name), $field));
 
     $name = $field->getName();
 
