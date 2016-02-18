@@ -13,62 +13,162 @@ class AmQuery extends AmObject{
 
   // Propidades
   protected
-    $model = 'array',         // Formato de respuesta del los registros
-    $formater = null,         // Formateador el resultado de la consulta
-    $type = 'select',         // Tipo de consulta
-    $scheme = null,           // Fuente de datos
-    $name = null,             // Nombre de la fuente
-    $result = null,           // Manejador para el resultado de la consulta
     
-    $selects = array(),       // Lista de campos para la clausula SELECT
-    $distinct = false,        // Para solo obtener los registros diferentes
-    $froms = array(),         // Lista de tablas para la clausula FROM
-    $wheres = array(),        // Lista de condiciones para la clausula WHERE
-    $joins = array(),         // Lista de tablas para la clausula JOIN
-    $orders = array(),        // Lista de campos para la clausula ORDER BY
-    $groups = array(),        // Lista de campos para la clausula GROUP BY
-    $limit = null,            // Cantidad de registro: LIMIT
-    $offset = null,           // Posicion de inicio: OFFSET
-    $insertIntoTable = null,  // Tabla donde se insertará los valores
-    $insertIntoFields = null, // Campos para el insert
-    $sets = array();          // Lista de cambios SETS para consultas UPDATE
+    /**
+     * Formato de respuesta del los registros
+     */
+    $model = 'array',
+    
+    /**
+     * Formateador el resultado de la consulta
+     */
+    $formater = null,
+    
+    /**
+     * Tipo de consulta
+     */
+    $type = 'select',
+    
+    /**
+     * Fuente de datos
+     */
+    $scheme = null,
+    
+    /**
+     * Nombre de la fuente
+     */
+    $name = null,
+    
+    /**
+     * Manejador para el resultado de la consulta
+     */
+    $result = null,
+    
+    
+   /**
+    * Lista de campos para la clausula SELECT
+    */
+    $selects = array(),
+    
+   /**
+    * Para solo obtener los registros diferentes
+    */
+    $distinct = false,
+    
+   /**
+    * Lista de tablas para la clausula FROM
+    */
+    $froms = array(),
+    
+   /**
+    * Lista de condiciones para la clausula WHERE
+    */
+    $wheres = array(),
+    
+   /**
+    * Lista de tablas para la clausula JOIN
+    */
+    $joins = array(),
+    
+   /**
+    * Lista de campos para la clausula ORDER BY
+    */
+    $orders = array(),
+    
+   /**
+    * Lista de campos para la clausula GROUP BY
+    */
+    $groups = array(),
+    
+   /**
+    * Cantidad de registro: LIMIT
+    */
+    $limit = null,
+    
+   /**
+    * Posicion de inicio: OFFSET
+    */
+    $offset = null,
+    
+   /**
+    * Tabla donde se insertará los valores
+    */
+    $insertIntoTable = null,
+    
+   /**
+    * Campos para el insert
+    */
+    $insertIntoFields = null,
+    
+   /**
+    * Lista de cambios SETS para consultas UPDATE
+    */
+    $sets = array();
 
+  /**
+   * [getModel description]
+   * @return [type] [description]
+   */
   public function getModel(){
 
     return $this->model;
 
   }
 
+  /**
+   * [getFormater description]
+   * @return [type] [description]
+   */
   public function getFormater(){
 
     return $this->formater;
 
   }
 
+  /**
+   * [getType description]
+   * @return [type] [description]
+   */
   public function getType(){
 
     return $this->type;
 
   }
 
+  /**
+   * [getScheme description]
+   * @return [type] [description]
+   */
   public function getScheme(){
 
     return $this->scheme;
 
   }
 
+  /**
+   * [getName description]
+   * @return [type] [description]
+   */
   public function getName(){
 
     return $this->name;
 
   }
 
+  /**
+   * [getSelects description]
+   * @return [type] [description]
+   */
   public function getSelects(){
 
     return $this->selects;
 
   }
 
+  /**
+   * [getFroms description]
+   * @return [type] [description]
+   */
   public function getFroms(){
 
     return $this->froms;
@@ -76,6 +176,11 @@ class AmQuery extends AmObject{
   }
 
   // GET para los joins
+  /**
+   * [getJoins description]
+   * @param  [type] $type [description]
+   * @return [type]       [description]
+   */
   public function getJoins($type = null){
 
     // Se solicito los joins de un tipo
@@ -87,54 +192,90 @@ class AmQuery extends AmObject{
 
   }
 
+  /**
+   * [getWheres description]
+   * @return [type] [description]
+   */
   public function getWheres(){
 
     return $this->wheres;
 
   }
 
+  /**
+   * [getOrders description]
+   * @return [type] [description]
+   */
   public function getOrders(){
 
     return $this->orders;
 
   }
 
+  /**
+   * [getGroups description]
+   * @return [type] [description]
+   */
   public function getGroups(){
 
     return $this->groups;
 
   }
 
+  /**
+   * [getLimit description]
+   * @return [type] [description]
+   */
   public function getLimit(){
 
     return $this->limit;
 
   }
 
+  /**
+   * [getOffset description]
+   * @return [type] [description]
+   */
   public function getOffset(){
 
     return $this->offset;
 
   }
 
+  /**
+   * [getSets description]
+   * @return [type] [description]
+   */
   public function getSets(){
 
     return $this->sets;
 
   }
 
+  /**
+   * [getDistinct description]
+   * @return [type] [description]
+   */
   public function getDistinct(){
 
     return $this->distinct;
 
   }
 
+  /**
+   * [getInsertTable description]
+   * @return [type] [description]
+   */
   public function getInsertTable(){
 
     return $this->insertIntoTable;
 
   }
 
+  /**
+   * [getInsertFields description]
+   * @return [type] [description]
+   */
   public function getInsertFields(){
 
     return $this->insertIntoFields;
@@ -143,6 +284,11 @@ class AmQuery extends AmObject{
 
   // Método para asignar array de valores por un metodo
   // Destinado al metodo ->select y ->from
+  /**
+   * [setArrayAttribute description]
+   * @param [type] $method [description]
+   * @param [type] $args   [description]
+   */
   private function setArrayAttribute($method, $args){
 
     // Agregar cada argmento
@@ -163,6 +309,10 @@ class AmQuery extends AmObject{
   }
 
   // Métodos SET para algunas propiedades
+  /**
+   * [setFormater description]
+   * @param [type] $value [description]
+   */
   public function setFormater($value){
 
     if(isValidCallback($value))
@@ -172,6 +322,10 @@ class AmQuery extends AmObject{
     
   }
 
+  /**
+   * [setModel description]
+   * @param [type] $value [description]
+   */
   public function setModel($value){
 
     $this->model = $value;
@@ -180,6 +334,10 @@ class AmQuery extends AmObject{
   }
 
   // Métodos SET para algunas propiedades
+  /**
+   * [setScheme description]
+   * @param [type] $value [description]
+   */
   public function setScheme($value){
 
     $this->scheme = $value;
@@ -187,6 +345,10 @@ class AmQuery extends AmObject{
     
   }
 
+  /**
+   * [setSelects description]
+   * @param array $value [description]
+   */
   public function setSelects(array $value){
 
     $this->selects = $value;
@@ -194,6 +356,10 @@ class AmQuery extends AmObject{
 
   }
 
+  /**
+   * [setFrom description]
+   * @param array $value [description]
+   */
   public function setFrom(array $value){
 
     $this->froms = $value;
@@ -202,6 +368,10 @@ class AmQuery extends AmObject{
   }
 
   // Asignar signar la clausula distint
+  /**
+   * [distinct description]
+   * @return [type] [description]
+   */
   public function distinct(){
 
     $this->distinct = true;
@@ -209,6 +379,10 @@ class AmQuery extends AmObject{
 
   }
   
+  /**
+   * [noDistinct description]
+   * @return [type] [description]
+   */
   public function noDistinct(){
 
     $this->distinct = false;
@@ -217,6 +391,10 @@ class AmQuery extends AmObject{
   }
 
   // Devuelve otra instancia de la consulta actual
+  /**
+   * [copy description]
+   * @return [type] [description]
+   */
   public function copy(){
 
     return clone($this);
@@ -224,6 +402,11 @@ class AmQuery extends AmObject{
   }
 
   // Devuelve una copia aislada de la consulta actual
+  /**
+   * [encapsulate description]
+   * @param  string $alias [description]
+   * @return [type]        [description]
+   */
   public function encapsulate($alias = 'q'){
 
     return $this->getScheme()->q($this, $alias);
@@ -231,6 +414,10 @@ class AmQuery extends AmObject{
   }
 
   // Metodos para obtener el SQL los diferentes tipos de consulta
+  /**
+   * [sql description]
+   * @return [type] [description]
+   */
   public function sql(){
     
     return $this->getScheme()->sqlOf($this);
@@ -238,6 +425,10 @@ class AmQuery extends AmObject{
   }
 
   // Ejecuta la consulta SQL
+  /**
+   * [execute description]
+   * @return [type] [description]
+   */
   public function execute(){
 
     // Ejecutar desde el driver
@@ -246,18 +437,32 @@ class AmQuery extends AmObject{
   }
 
   // Conver a Cadena de caracteres implica devolver el SQL de la consulta
+  /**
+   * [__toString description]
+   * @return string [description]
+   */
   public function __toString(){
     
     return $this->sql();
 
   }
 
+  /**
+   * [create description]
+   * @param  boolean $orReplace [description]
+   * @return [type]             [description]
+   */
   public function create($orReplace = true){
 
     return $this->getScheme()->createView($this, $orReplace);
 
   }
 
+  /**
+   * [drop description]
+   * @param  boolean $ifExists [description]
+   * @return [type]            [description]
+   */
   public function drop($ifExists = true){
 
     return $this->getScheme()->dropView($this, $ifExists);
@@ -266,6 +471,12 @@ class AmQuery extends AmObject{
 
 
   // Insertar los registros resultantes de la consulta en una table
+  /**
+   * [insertInto description]
+   * @param  [type] $table  [description]
+   * @param  array  $fields [description]
+   * @return [type]         [description]
+   */
   public function insertInto($table, array $fields = array()){
 
     $this->type = 'insert';
@@ -278,6 +489,10 @@ class AmQuery extends AmObject{
   }
 
   // Eliminar registros selecionados
+  /**
+   * [delete description]
+   * @return [type] [description]
+   */
   public function delete(){
 
     $this->type = 'delete';
@@ -286,6 +501,11 @@ class AmQuery extends AmObject{
 
   }
 
+  /**
+   * [getTable description]
+   * @param  boolean $returnTableInstance [description]
+   * @return [type]                       [description]
+   */
   public function getTable($returnTableInstance = false){
 
     // Obtener los froms de la consulta
@@ -315,6 +535,10 @@ class AmQuery extends AmObject{
   }
 
   // Eliminar registros selecionados
+  /**
+   * [update description]
+   * @return [type] [description]
+   */
   public function update(){
 
 
@@ -337,6 +561,10 @@ class AmQuery extends AmObject{
   }
 
   // Asignar los selects
+  /**
+   * [select description]
+   * @return [type] [description]
+   */
   public function select(){
 
     return $this->setArrayAttribute('selectAs', func_get_args());
@@ -344,6 +572,12 @@ class AmQuery extends AmObject{
   }
 
   // Método para agregar clausula SELECT
+  /**
+   * [selectAs description]
+   * @param  [type] $field [description]
+   * @param  [type] $alias [description]
+   * @return [type]        [description]
+   */
   public function selectAs($field, $alias = null){
 
     $this->type = 'select';
@@ -370,6 +604,10 @@ class AmQuery extends AmObject{
   }
 
   // Asignar los selects
+  /**
+   * [from description]
+   * @return [type] [description]
+   */
   public function from(){
 
     return $this->setArrayAttribute('fromAs', func_get_args());
@@ -377,6 +615,12 @@ class AmQuery extends AmObject{
   }
 
   // Método para agregar clausula FROM
+  /**
+   * [fromAs description]
+   * @param  [type] $from  [description]
+   * @param  [type] $alias [description]
+   * @return [type]        [description]
+   */
   public function fromAs($from, $alias = null){
 
     // Asignacion del from
@@ -410,6 +654,11 @@ class AmQuery extends AmObject{
   }
 
   // Preparar las condiciones para agregarlas al array de condiciones
+  /**
+   * [parseWhere description]
+   * @param  [type] $conditions [description]
+   * @return [type]             [description]
+   */
   protected function parseWhere($conditions){
 
     // Si no es un array de retornar tal cual
@@ -461,6 +710,10 @@ class AmQuery extends AmObject{
   }
 
   // Metodo para agregar condiciones
+  /**
+   * [where description]
+   * @return [type] [description]
+   */
   public function where(){
 
     $args = $this->parseWhere(func_get_args());
@@ -474,12 +727,20 @@ class AmQuery extends AmObject{
   }
 
   // Agregar condiciones con AND y OR
+  /**
+   * [andWhere description]
+   * @return [type] [description]
+   */
   public function andWhere(){
 
     return $this->where('and', func_get_args());
 
   }
 
+  /**
+   * [orWhere description]
+   * @return [type] [description]
+   */
   public function orWhere(){
 
     return $this->where('or', func_get_args());
@@ -487,6 +748,10 @@ class AmQuery extends AmObject{
   }
 
   // Eliminar todas las condiciones
+  /**
+   * [clearWhere description]
+   * @return [type] [description]
+   */
   public function clearWhere(){
 
     $this->conditions = array();
@@ -495,6 +760,14 @@ class AmQuery extends AmObject{
   }
 
   // Agregar un join
+  /**
+   * [join description]
+   * @param  [type] $table [description]
+   * @param  [type] $on    [description]
+   * @param  [type] $as    [description]
+   * @param  string $type  [description]
+   * @return [type]        [description]
+   */
   public function join($table, $on, $as, $type = 'inner'){
 
     // Convertir a mayusculas
@@ -512,24 +785,51 @@ class AmQuery extends AmObject{
   }
 
   // INNER, LEFT y RIGHT Join
+  /**
+   * [innerJoin description]
+   * @param  [type] $table [description]
+   * @param  [type] $on    [description]
+   * @param  [type] $as    [description]
+   * @return [type]        [description]
+   */
   public function innerJoin($table, $on = null, $as = null){
 
     return $this->join($table, $on, $as, 'inner');
 
   }
 
+  /**
+   * [leftJoin description]
+   * @param  [type] $table [description]
+   * @param  [type] $on    [description]
+   * @param  [type] $as    [description]
+   * @return [type]        [description]
+   */
   public function leftJoin($table, $on = null, $as = null){
 
     return $this->join($table, $on, $as, 'left');
 
   }
 
+  /**
+   * [rigthJoin description]
+   * @param  [type] $table [description]
+   * @param  [type] $on    [description]
+   * @param  [type] $as    [description]
+   * @return [type]        [description]
+   */
   public function rigthJoin($table, $on = null, $as = null){
 
     return $this->join($table, $on, $as, 'right');
 
   }
   // Agregar campos para ordenar por en un sentido determinado
+  /**
+   * [orderBy description]
+   * @param  [type] $orders [description]
+   * @param  string $dir    [description]
+   * @return [type]         [description]
+   */
   public function orderBy($orders, $dir = 'ASC'){
 
     if(!is_array($orders))
@@ -549,6 +849,10 @@ class AmQuery extends AmObject{
   }
 
   // Agregar campos de orden Ascendiente
+  /**
+   * [orderByAsc description]
+   * @return [type] [description]
+   */
   public function orderByAsc(){
 
     return $this->orderBy('ASC', func_get_args());
@@ -556,6 +860,10 @@ class AmQuery extends AmObject{
   }
 
   // Agregar campos de orden Descendiente
+  /**
+   * [orderByDesc description]
+   * @return [type] [description]
+   */
   public function orderByDesc(){
 
     return $this->orderBy('DESC', func_get_args());
@@ -563,6 +871,11 @@ class AmQuery extends AmObject{
   }
 
   // Agregar campos para agrupar
+  /**
+   * [groups description]
+   * @param  array  $groups [description]
+   * @return [type]         [description]
+   */
   public function groups(array $groups){
 
     // Elimintar los campos que se agregaran de los existentes
@@ -578,6 +891,10 @@ class AmQuery extends AmObject{
   }
 
   // Agregar un campos para agrupar
+  /**
+   * [groupBy description]
+   * @return [type] [description]
+   */
   public function groupBy(){
 
     return $this->groups(func_get_args());
@@ -585,6 +902,11 @@ class AmQuery extends AmObject{
   }
 
   // Agregar un límite a la consulta
+  /**
+   * [limit description]
+   * @param  [type] $limit [description]
+   * @return [type]        [description]
+   */
   public function limit($limit){
 
     $this->limit = $limit;
@@ -593,6 +915,11 @@ class AmQuery extends AmObject{
   }
 
   // Agregar punto de inicio para la consulta
+  /**
+   * [offSet description]
+   * @param  [type] $offset [description]
+   * @return [type]         [description]
+   */
   public function offSet($offset){
 
     $this->offset = $offset;
@@ -602,6 +929,12 @@ class AmQuery extends AmObject{
 
   // Agregar un SET a la consulta. Es tomado en cuenta cuando se realiza una
   // actualizacio sobre la consulta
+  /**
+   * [set description]
+   * @param [type]  $field [description]
+   * @param [type]  $value [description]
+   * @param boolean $const [description]
+   */
   public function set($field, $value, $const = true){
 
     $this->type = 'update';
@@ -616,6 +949,10 @@ class AmQuery extends AmObject{
   }
 
   // Obtener la cantidad de registros que devolverá la consulta
+  /**
+   * [count description]
+   * @return [type] [description]
+   */
   public function count(){
 
     // Crear la consulta para contar
@@ -630,6 +967,12 @@ class AmQuery extends AmObject{
   }
 
   // Obtener un registro del resultado de la consulta
+  /**
+   * [row description]
+   * @param  [type] $as       [description]
+   * @param  [type] $formater [description]
+   * @return [type]           [description]
+   */
   public function row($as = null, $formater = null){
     
     // Obtener la fuente de datos
@@ -710,6 +1053,12 @@ class AmQuery extends AmObject{
   }
 
   // Devuelve un array con los registros resultantes de la consulta
+  /**
+   * [get description]
+   * @param  [type] $as       [description]
+   * @param  [type] $formater [description]
+   * @return [type]           [description]
+   */
   public function get($as = null, $formater = null){
 
     // Crear consulta
@@ -727,6 +1076,11 @@ class AmQuery extends AmObject{
   }
 
   // Devuelve una columna de la consulta.
+  /**
+   * [col description]
+   * @param  [type] $field [description]
+   * @return [type]        [description]
+   */
   public function col($field){
 
     // Crear la consulta
@@ -744,6 +1098,10 @@ class AmQuery extends AmObject{
 
   }
 
+  /**
+   * [haveNextPage description]
+   * @return [type] [description]
+   */
   public function haveNextPage(){
 
     return !!$this->copy()

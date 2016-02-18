@@ -12,6 +12,12 @@
 final class AmGenerator{
 
   // Generar clase base para un model
+  /**
+   * [classBaseModel description]
+   * @param  AmScheme $scheme [description]
+   * @param  AmTable  $table  [description]
+   * @return [type]           [description]
+   */
   public final static function classBaseModel(AmScheme $scheme, AmTable $table){
 
     $existMethods = get_class_methods('AmModel');

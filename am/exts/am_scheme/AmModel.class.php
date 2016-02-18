@@ -13,26 +13,90 @@ class AmModel extends AmObject{
 
   // Propiedades
   protected
-    $schemeName = '',         // Nombre del esquema a la que pertenece el model
-    $tableName = null,        // Nombre de la tabla a la que pertenece el model
-    $fields = null,           // Definición de campos
-    $createdAtField = false,  // Nombre del campo para la fecha de creación
-    $updatedAtField = false,  // Nombre del campo para la fecha de actualización
-    $referencesTo = null,     // Definición de relaciones a otras clases
-    $referencesBy = null,     // Definición de relaciones de otras clases
-    $uniques = null,          // Configuraciones de uniques
-
-    $table = null,            // Instancia de la tabla
-    $isNew = true,            // Indica si es un registro nuevo
-    $errors = array(),        // Listados de errores
-    $realValues = array(),    // Valores reales
-    $rawValues = array(),     // Indica si el valor que contiene la propieda
+    
+    /**
+     * Nombre del esquema a la que pertenece el model
+     */
+    $schemeName = '',
+    
+    /**
+     * Nombre de la tabla a la que pertenece el model
+     */
+    $tableName = null,
+    
+    /**
+     * Definición de campos
+     */
+    $fields = null,
+    
+    /**
+     * Nombre del campo para la fecha de creación
+     */
+    $createdAtField = false,
+    
+    /**
+     * Nombre del campo para la fecha de actualización
+     */
+    $updatedAtField = false,
+    
+    /**
+     * Definición de relaciones a otras clases
+     */
+    $referencesTo = null,
+    
+    /**
+     * Definición de relaciones de otras clases
+     */
+    $referencesBy = null,
+    
+    /**
+     * Configuraciones de uniques
+     */
+    $uniques = null,
+    
+    /**
+     * Instancia de la tabla
+     */
+    $table = null,
+    
+    /**
+     * Indica si es un registro nuevo
+     */
+    $isNew = true,
+    
+    /**
+     * Listados de errores
+     */
+    $errors = array(),
+    
+    /**
+     * Valores reales
+     */
+    $realValues = array(),
+    
+    /**
+     * Indica si el valor que contiene la propieda
+     */
+    $rawValues = array(),
                               // Es un valor crudo
-    $validators = null,       // Validators del modelo
-    $errorsCount = 0;         // Cantidad de errores
+    
+    /**
+     * Validators del modelo
+     */
+    $validators = null,
+    
+    /**
+     * Cantidad de errores
+     */
+    $errorsCount = 0;
 
   // El constructor se encarga de asignar la instancia de la tabla
   // correspondiente al model
+  /**
+   * [__construct description]
+   * @param array   $params [description]
+   * @param boolean $isNew  [description]
+   */
   final public function __construct($params = array(), $isNew = true) {
 
     // Inicializar la tabla si no ha sido inicializada
@@ -123,33 +187,57 @@ class AmModel extends AmObject{
   }
 
   // Inicializacion de la tabla
+  /**
+   * [start description]
+   * @return [type] [description]
+   */
   protected function start(){
 
   }
 
   // Funcion para preparar los valores del model antes de guardar
+  /**
+   * [prepare description]
+   * @return [type] [description]
+   */
   public function prepare(){
 
   }
 
   // Método redefinido el usuario para inicializaciones customizadas
+  /**
+   * [init description]
+   * @return [type] [description]
+   */
   public function init(){
 
   }
 
   // Métodos GET para algunas pripiedades
+  /**
+   * [getTable description]
+   * @return [type] [description]
+   */
   public function getTable(){
 
     return $this->table;
 
   }
 
+  /**
+   * [isNew description]
+   * @return boolean [description]
+   */
   public function isNew(){
 
     return $this->isNew;
 
   }
 
+  /**
+   * [errorsCount description]
+   * @return [type] [description]
+   */
   public function errorsCount(){
 
     return $this->errorsCount;
@@ -157,6 +245,10 @@ class AmModel extends AmObject{
   }
 
   // Devuelve raw values
+  /**
+   * [getRealValues description]
+   * @return [type] [description]
+   */
   public function getRealValues(){
 
     return $this->realValues;
@@ -164,12 +256,21 @@ class AmModel extends AmObject{
   }
 
   // Devuelve raw values
+  /**
+   * [getRawValues description]
+   * @return [type] [description]
+   */
   public function getRawValues(){
 
     return $this->rawValues;
 
   }
 
+  /**
+   * [getRealValue description]
+   * @param  [type] $name [description]
+   * @return [type]       [description]
+   */
   public function getRealValue($name){
 
     return isset($this->realValues[$name]) ? $this->realValues[$name] : null;
@@ -177,6 +278,11 @@ class AmModel extends AmObject{
   }
 
   // Devuelve todos lo validators de la tabla o los de un campo
+  /**
+   * [getValidators description]
+   * @param  [type] $name [description]
+   * @return [type]       [description]
+   */
   public function getValidators($name = null){
 
     if(isset($name))
@@ -187,6 +293,12 @@ class AmModel extends AmObject{
   }
 
   // Devuelve un validator en especifico
+  /**
+   * [getValidator description]
+   * @param  [type] $name          [description]
+   * @param  [type] $validatorName [description]
+   * @return [type]                [description]
+   */
   public function getValidator($name, $validatorName){
 
     return isset($this->validators->$name[$validatorName])?
@@ -195,6 +307,12 @@ class AmModel extends AmObject{
   }
 
   // Metodo para eliminar validator
+  /**
+   * [dropValidator description]
+   * @param  [type] $name          [description]
+   * @param  [type] $validatorName [description]
+   * @return [type]                [description]
+   */
   public function dropValidator($name, $validatorName = null){
 
     if(isset($this->validators->$name[$validatorName])){
@@ -209,6 +327,13 @@ class AmModel extends AmObject{
   }
 
   // Agrega un validator a la tabla
+  /**
+   * [setValidator description]
+   * @param [type] $name          [description]
+   * @param [type] $validatorName [description]
+   * @param [type] $validator     [description]
+   * @param array  $options       [description]
+   */
   public function setValidator($name, $validatorName, $validator = null,
     $options = array()){
 
@@ -275,6 +400,11 @@ class AmModel extends AmObject{
   // Devuelve el valor de un campo. Si existe un metodo get para dicho campo
   // se obtiene el valor mediante este. De lo contrario se obtiene
   // directamente.
+  /**
+   * [getFieldValue description]
+   * @param  [type] $field [description]
+   * @return [type]        [description]
+   */
   public function getFieldValue($field){
 
     // Obtener el valor del campo
@@ -283,6 +413,12 @@ class AmModel extends AmObject{
   }
 
   // Devuelve todos los errores del model, los errores de un campo, o un error especifico
+  /**
+   * [getErrors description]
+   * @param  [type] $field     [description]
+   * @param  [type] $errorName [description]
+   * @return [type]            [description]
+   */
   public function getErrors($field = null, $errorName = null){
 
     // Se retorna todo los errores
@@ -307,6 +443,10 @@ class AmModel extends AmObject{
   }
 
   // Limpiar los errores
+  /**
+   * [clearErrors description]
+   * @return [type] [description]
+   */
   public function clearErrors(){
 
     $this->errors = array(); // Resetear los errores
@@ -315,6 +455,12 @@ class AmModel extends AmObject{
   }
 
   // Agregar error
+  /**
+   * [addError description]
+   * @param [type] $field     [description]
+   * @param [type] $errorName [description]
+   * @param [type] $errorMsg  [description]
+   */
   public function addError($field, $errorName, $errorMsg){
 
     // Se asigna el error
@@ -325,6 +471,10 @@ class AmModel extends AmObject{
   }
 
   // Método get para asignar si es o no un registro nuevo
+  /**
+   * [setIsNew description]
+   * @param [type] $value [description]
+   */
   public function setIsNew($value){
 
     return $this->isNew = $value;
@@ -332,6 +482,12 @@ class AmModel extends AmObject{
   }
 
   // Asignar valores a un campo por modelo
+  /**
+   * [setValue description]
+   * @param [type]  $field [description]
+   * @param [type]  $value [description]
+   * @param boolean $isRaw [description]
+   */
   public function setValue($field, $value, $isRaw = false){
 
     $this->$field = $value;
@@ -342,6 +498,11 @@ class AmModel extends AmObject{
   }
 
   // Funcion para signar valores a los atributos en lote
+  /**
+   * [setValues description]
+   * @param [type] $values [description]
+   * @param array  $fields [description]
+   */
   public function setValues($values, array $fields = array()){
 
     // Obtener la tabla
@@ -380,6 +541,11 @@ class AmModel extends AmObject{
 
   // Método que indica si un campo ha cambiado o no de valor desde
   // su inicialización
+  /**
+   * [hasChanged description]
+   * @param  [type]  $name [description]
+   * @return boolean       [description]
+   */
   public function hasChanged($name){
 
     return $this->getRealValue($name) != $this->$name;
@@ -387,6 +553,10 @@ class AmModel extends AmObject{
   }
 
   // Obtener los campos los cambios de los campos que se ha realizado
+  /**
+   * [getChanges description]
+   * @return [type] [description]
+   */
   public function getChanges(){
 
     $changes = array(); // Para el retorno
@@ -407,6 +577,10 @@ class AmModel extends AmObject{
   }
 
   // Devuelve el indice correspondiente al registro
+  /**
+   * [index description]
+   * @return [type] [description]
+   */
   public function index(){
 
     $ret = array(); // Para el retorno
@@ -424,6 +598,11 @@ class AmModel extends AmObject{
   }
 
   // Devuelve un array con los valores de los campos de la tabla
+  /**
+   * [dataToArray description]
+   * @param  boolean $withAI [description]
+   * @return [type]          [description]
+   */
   public function dataToArray($withAI = true){
 
     // Obtener la tabla
@@ -451,6 +630,11 @@ class AmModel extends AmObject{
   }
 
   // Obtener lo valores de un registro en forma de array
+  /**
+   * [getValues description]
+   * @param  boolean $mask [description]
+   * @return [type]        [description]
+   */
   public function getValues($mask = false){
 
     $ret = $this->toArray();
@@ -466,6 +650,12 @@ class AmModel extends AmObject{
   }
 
   // Devuelve una consulta que selecciona el registro actual
+  /**
+   * [getQuerySelectItem description]
+   * @param  string  $alias      [description]
+   * @param  boolean $withFields [description]
+   * @return [type]              [description]
+   */
   public function getQuerySelectItem($alias = 'q', $withFields = false){
 
     return $this->getTable()->findById($this->index(), $alias, $withFields);
@@ -473,6 +663,10 @@ class AmModel extends AmObject{
   }
 
   // Devuelve una consulta para realizar los campos realizados en el modelo
+  /**
+   * [getQueryUpdate description]
+   * @return [type] [description]
+   */
   protected function getQueryUpdate(){
 
     $table = $this->getTable();
@@ -503,6 +697,10 @@ class AmModel extends AmObject{
   }
 
   // Validar todo el modelo
+  /**
+   * [validate description]
+   * @return [type] [description]
+   */
   public function validate(){
 
     // Limpiar los errores
@@ -521,6 +719,11 @@ class AmModel extends AmObject{
   }
 
   // Ejecuta las validaciones para un campo
+  /**
+   * [validateField description]
+   * @param  [type] $field [description]
+   * @return [type]        [description]
+   */
   public function validateField($field){
     // Obtener validator del campo
     $validators = $this->getValidators($field);
@@ -539,6 +742,11 @@ class AmModel extends AmObject{
 
   }
 
+  /**
+   * [isValid description]
+   * @param  [type]  $field [description]
+   * @return boolean        [description]
+   */
   public function isValid($field = null){
 
     // Si se indico un campo
@@ -564,6 +772,10 @@ class AmModel extends AmObject{
   // Si no es un registro nuevo entonces
   // Se intentará actualziar los datos del registro
   // imagen en la tabla
+  /**
+   * [save description]
+   * @return [type] [description]
+   */
   public function save(){
 
     // Si todos los campos del registro son válidos
@@ -643,24 +855,40 @@ class AmModel extends AmObject{
 
   }
 
+  /**
+   * [insertInto description]
+   * @return [type] [description]
+   */
   public function insertInto(){
 
     return $this->getTable()->insertInto(array($this));
 
   }
 
+  /**
+   * [update description]
+   * @return [type] [description]
+   */
   public function update(){
 
     return !!$this->getQueryUpdate()->update();
 
   }
 
+  /**
+   * [delete description]
+   * @return [type] [description]
+   */
   public function delete(){
 
     return !!$this->getQuerySelectItem()->delete();
 
   }
 
+  /**
+   * [me description]
+   * @return [type] [description]
+   */
   public static function me(){
 
     $className = get_called_class();
@@ -672,11 +900,18 @@ class AmModel extends AmObject{
   }
 
   // GET QUERY TO ALL RECORDS
+  /**
+   * [all description]
+   * @param  string  $alias      [description]
+   * @param  boolean $withFields [description]
+   * @return [type]              [description]
+   */
   public static function all($alias = 'q', $withFields = false){
 
     return self::me()->all($alias, $withFields);
 
   }
+  
   // // Convirte el ID del registro en un string con cada uno de sus valores
   // // separados por '/'
   // public function pkToString($encode = false){
@@ -685,13 +920,5 @@ class AmModel extends AmObject{
   //     $ret[] = ($encode===true)? urlencode($index) : $index;
   //   return implode('/', $ret);
   // }
-
-  // // Convertir el registro en string implica obtener una cadena de su ID
-  // public function __toString() {
-  //   return $this->pkToString();
-  // }
-
-  // // PENDIENTE DESARROLLAR
-  // public static function export(){}
 
 }
