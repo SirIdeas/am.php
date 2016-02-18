@@ -199,6 +199,25 @@ abstract class AmScheme extends AmObject{
   }
 
   /**
+   * Carga la instancia de una tabla.
+   * @param  string/AmTable $table Nombre o instancia de la tabla. 
+   * @return AmTable               Instancia de la tabla solicitada.
+   */
+  public function loadTable($table){
+    
+    // Instanciar la tabla si el parámetro es un string.
+    if(is_string($table))
+      $table = self::table($table, $this->getName());
+
+    // Agregar tabla
+    $this->addTable($table);
+
+    // Retornar tabla
+    return $table;
+
+  }
+
+  /**
    * Agrega una tabla a la conexión.
    * @param  AmTable $table Tabla a agregar.
    * @return $this
@@ -433,14 +452,19 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Devuelve el nombre de una tabla para ser reconocida en el DBSM
-   * @param  string/AmTable $table Tabla de la que se desea obtener le
-   *                               nombre. Puede ser un string y una
-   *                               instancia de AmTable.
-   * @param  bool           $only  Si se devuelve el nombre de la tabla
-   *                               relativo al nombre de la base de datos.
-   * @return string                Nombre de tabla obtenido.
+   * @param  string/AmTable/AmQuey $table Tabla de la que se desea obtener le
+   *                                      nombre. Puede ser un string y una
+   *                                      instancia de AmTable.
+   * @param  bool                  $only  Si se devuelve el nombre de la tabla
+   *                                      relativo al nombre de la base de
+   *                                      datos.
+   * @return string                       Nombre de tabla obtenido.
    */
   public function getParseObjectDatabaseName($table, $only = false){
+
+    // Si es una instancia de AmTable se debe obtener el nombre
+    if($table instanceof AmQuery)
+      $table = $table->getTable();
 
     // Si es una instancia de AmTable se debe obtener el nombre
     if($table instanceof AmTable)
@@ -461,34 +485,7 @@ abstract class AmScheme extends AmObject{
     }
 
   }
-
-  /**
-   * Obtiene la primera tabla de un Query y obtiene su nombre para ser
-   * reconocido en el DBSM.
-   * @param  AmQuery $q    Consulta
-   * @param  bool    $only Si el nombre de la tabla se devolverá con el nombre
-   *                       de la BD.
-   * @return string        Nombre de tabla obtenido.
-   */
-  public function getParseTableNameOfView(AmQuery $q, $only = false){
-
-    // Obtener los froms de la consulta
-    $froms = $q->getFroms();
-
-    foreach ($froms as $from) {
-
-      // Si es una tabla obtener el nombre
-      if($from instanceof AmTable)
-        $from = $from->getTableName();
-
-      // Si tiene un nombre válido retornar el nombre de la tabla
-      if(isNameValid($from))
-        return $this->getParseObjectDatabaseName($from, $only);
-      
-    }
-
-  }
-
+  
   /**
    * Devuelve la cadena con la dirección del servidor y el puerto.
    * @return string Dirección del servidor con el puertos

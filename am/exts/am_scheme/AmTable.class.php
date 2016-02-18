@@ -9,31 +9,108 @@
 /**
  * Clase para representar las tablas de las BD
  */
-class AmTable extends AmQuery{
+class AmTable extends AmObject{
 
   protected static
+    
+    /**
+     * [$defCreatedAtFieldName description]
+     */
     $defCreatedAtFieldName = 'created_at',
+    
+    /**
+     * [$defCreatedAtFieldName description]
+     */
     $defUpdatedAtFieldName = 'updated_at';
 
 
-  // Propiedades de la tabla
   protected
-    $createdAtField = null,   // Nombre del campo para la fecha de creación
-    $updatedAtField = null,   // Nombre del campo para la fecha de actualización
-    $schemeName = '',         // Nombre del esquema de conexión BD
-    $tableName = null,        // Nombre en la BD
-    $fields = null,           // Lista de campos
-    $schemeStruct = false,    // Lista de campos
-    $validators = null,       // Validadores
-    $engine = null,           // Motor
-    $charset = null,          // Set de caracteres
-    $collage = null,          // Coleción de caracteres
-    $pks = array(),           // Array de nombres de campos que forman el PK
-    $referencesTo = array(),  // Tablas a las que hace referencia
-    $referencesBy = array(),  // Tablas que le hacen referencia
-    $uniques = array();       // Array de indeces unicos
+    
+    /**
+     * Formato de respuesta del los registros
+     */
+    $model = 'array',
+    
+    /**
+     * Nombre del campo para la fecha de creación
+     */
+    $createdAtField = null,
+    
+    /**
+     * Nombre del campo para la fecha de actualización
+     */
+    $updatedAtField = null,
+    
+    /**
+     * Instancia del esquema
+     */
+    $scheme = '',
+    
+    /**
+     * Nombre del esquema de conexión BD
+     */
+    $schemeName = '',
+    
+    /**
+     * Nombre en la BD
+     */
+    $tableName = null,
+    
+    /**
+     * Lista de campos
+     */
+    $fields = null,
+    
+    /**
+     * Lista de campos
+     */
+    $schemeStruct = false,
+    
+    /**
+     * Validadores
+     */
+    $validators = null,
+    
+    /**
+     * Motor
+     */
+    $engine = null,
+    
+    /**
+     * Set de caracteres
+     */
+    $charset = null,
+    
+    /**
+     * Coleción de caracteres
+     */
+    $collage = null,
+    
+    /**
+     * Array de nombres de campos que forman el PK
+     */
+    $pks = array(),
+    
+    /**
+     * Tablas a las que hace referencia
+     */
+    $referencesTo = array(),
+    
+    /**
+     * Tablas que le hacen referencia
+     */
+    $referencesBy = array(),
+    
+    /**
+     * Array de indeces unicos
+     */
+    $uniques = array();
 
   // Constructor para la clase
+  /**
+   * [__construct description]
+   * @param [type] $params [description]
+   */
   public function __construct($params = null){
 
     // Obtener los parametros parseados
@@ -54,7 +131,7 @@ class AmTable extends AmQuery{
     // Si se pudo obtener la configuración mazclarla con la recibida por
     // parámetros
     if($conf)
-      $params = array_merge($conf, $params, array('sctructScheme' => true));
+      $params = array_merge($conf, $params, array('schemeStruct' => true));
 
     // Aaignar modelo
     $params['scheme'] = $scheme;
@@ -104,18 +181,51 @@ class AmTable extends AmQuery{
 
   }
 
+  /**
+   * [getModel description]
+   * @return [type] [description]
+   */
+  public function getModel(){
+
+    return $this->model;
+
+  }
+
+  /**
+   * [getTableName description]
+   * @return [type] [description]
+   */
   public function getTableName(){
 
     return $this->tableName;
 
   }
 
+  /**
+   * [getSchemeName description]
+   * @return [type] [description]
+   */
   public function getSchemeName(){
 
     return $this->schemeName;
 
   }
 
+  /**
+   * [getScheme description]
+   * @return [type] [description]
+   */
+  public function getScheme(){
+
+    return $this->scheme;
+
+  }
+
+
+  /**
+   * [setModel description]
+   * @param [type] $value [description]
+   */
   public function setModel($value){
 
     $table = $this;
@@ -140,36 +250,60 @@ class AmTable extends AmQuery{
   }
 
 
+  /**
+   * [getReferencesTo description]
+   * @return [type] [description]
+   */
   public function getReferencesTo(){
 
     return $this->referencesTo;
 
   }
   
+  /**
+   * [getReferencesBy description]
+   * @return [type] [description]
+   */
   public function getReferencesBy(){
 
     return $this->referencesBy;
 
   }
   
+  /**
+   * [getUniques description]
+   * @return [type] [description]
+   */
   public function getUniques(){
 
     return $this->uniques;
 
   }
 
+  /**
+   * [getPks description]
+   * @return [type] [description]
+   */
   public function getPks(){
 
     return $this->pks;
 
   }
   
+  /**
+   * [getValidators description]
+   * @return [type] [description]
+   */
   public function getValidators(){
 
     return $this->validators;
 
   }
 
+  /**
+   * [isSchemeStruct description]
+   * @return boolean [description]
+   */
   public function isSchemeStruct(){
 
     return $this->schemeStruct;
@@ -177,54 +311,92 @@ class AmTable extends AmQuery{
   }
 
 
+  /**
+   * [getEngine description]
+   * @return [type] [description]
+   */
   public function getEngine(){
 
     return $this->engine;
 
   }
 
+  /**
+   * [getCharset description]
+   * @return [type] [description]
+   */
   public function getCharset(){
 
     return $this->charset;
 
   }
 
+  /**
+   * [getCollage description]
+   * @return [type] [description]
+   */
   public function getCollage(){
 
     return $this->collage;
 
   }
   
+  /**
+   * [getFields description]
+   * @return [type] [description]
+   */
   public function getFields(){
 
     return $this->fields;
 
   }
   
+  /**
+   * [getField description]
+   * @param  [type] $name [description]
+   * @return [type]       [description]
+   */
   public function getField($name){
 
     return itemOr($name, $this->fields, null);
 
   }
 
+  /**
+   * [hasField description]
+   * @param  [type]  $name [description]
+   * @return boolean       [description]
+   */
   public function hasField($name){
 
     return isset($this->fields[$name]);
     
   }
 
+  /**
+   * [getCreatedAtField description]
+   * @return [type] [description]
+   */
   public function getCreatedAtField(){
 
     return $this->createdAtField;
 
   }
 
+  /**
+   * [getUpdatedAtField description]
+   * @return [type] [description]
+   */
   public function getUpdatedAtField(){
 
     return $this->updatedAtField;
 
   }
 
+  /**
+   * [setCreatedAtField description]
+   * @param [type] $value [description]
+   */
   public function setCreatedAtField($value){
 
     $this->createdAtField = $value; return $this;
@@ -232,6 +404,10 @@ class AmTable extends AmQuery{
 
   }
 
+  /**
+   * [setUpdatedAtField description]
+   * @param [type] $value [description]
+   */
   public function setUpdatedAtField($value){
 
     $this->updatedAtField = $value; return $this;
@@ -239,18 +415,30 @@ class AmTable extends AmQuery{
 
   }
 
+  /**
+   * [hasCreatedAtField description]
+   * @return boolean [description]
+   */
   public function hasCreatedAtField(){
 
     return $this->hasField($this->getCreatedAtField());
 
   }
 
+  /**
+   * [hasUpdatedAtField description]
+   * @return boolean [description]
+   */
   public function hasUpdatedAtField(){
 
     return $this->hasField($this->getUpdatedAtField());
 
   }
 
+  /**
+   * [addCreatedAtField description]
+   * @param [type] $name [description]
+   */
   public function addCreatedAtField($name = null){
 
     if(!isset($name))
@@ -262,6 +450,10 @@ class AmTable extends AmQuery{
 
   }
 
+  /**
+   * [addUpdatedAtField description]
+   * @param [type] $name [description]
+   */
   public function addUpdatedAtField($name = null){
 
     if(!isset($name))
@@ -273,6 +465,11 @@ class AmTable extends AmQuery{
 
   }
 
+  /**
+   * [addCreatedAndUpdateAtFields description]
+   * @param [type] $createAtFieldName [description]
+   * @param [type] $updateAtFieldName [description]
+   */
   public function addCreatedAndUpdateAtFields($createAtFieldName = null,
     $updateAtFieldName = null){
 
@@ -283,6 +480,10 @@ class AmTable extends AmQuery{
   }
 
   // Agregar fecha al campo de fecha de creacion
+  /**
+   * [setAutoCreatedAt description]
+   * @param [type] $values [description]
+   */
   public function setAutoCreatedAt($values){
 
     // Si la tabla tiene un campo llamado 'created_at'
@@ -296,6 +497,10 @@ class AmTable extends AmQuery{
   }
 
   // Agregar fecha al campo de fecha de mpdificacion
+  /**
+   * [setAutoUpdatedAt description]
+   * @param [type] $values [description]
+   */
   public function setAutoUpdatedAt($values){
 
     // Si la tabla tiene un campo llamado 'updated_at'
@@ -308,6 +513,11 @@ class AmTable extends AmQuery{
 
   }
 
+  /**
+   * [setNowDateValueToAllRecordsInField description]
+   * @param [type] $values [description]
+   * @param [type] $field  [description]
+   */
   private static function setNowDateValueToAllRecordsInField($values, $field){
 
     $now = date('c');
@@ -331,8 +541,25 @@ class AmTable extends AmQuery{
     }
 
   }
+
+  // Métodos SET para algunas propiedades
+  /**
+   * [setScheme description]
+   * @param [type] $value [description]
+   */
+  public function setScheme($value){
+
+    $this->scheme = $value;
+    return $this;
+    
+  }
   
   // Indica su un campo forma o no parte del primary key de la tabla
+  /**
+   * [isPk description]
+   * @param  [type]  $fieldName [description]
+   * @return boolean            [description]
+   */
   public function isPk($fieldName){
 
     return in_array($fieldName, $this->getPks());
@@ -341,6 +568,10 @@ class AmTable extends AmQuery{
 
   // Agregar el nombre del campo a la lista de
   // claves primarias
+  /**
+   * [addPk description]
+   * @param [type] $fieldName [description]
+   */
   public function addPk($fieldName){
 
     // Agregar el campo a la lista de campos
@@ -349,30 +580,54 @@ class AmTable extends AmQuery{
       $this->pks[] = $fieldName;
 
     // Marcar el campo como primario
-    $this->getField($fieldName)->isPk(true);
+    $field = $this->getField($fieldName);
+
+    if(isset($field) && !$field->isPk())
+      $this->fields[$fieldName] = $this->fields[$fieldName]->cp(array(
+        'pk' => true
+      ));
 
     return $this;
 
   }
 
+  /**
+   * [create description]
+   * @param  boolean $isNotExists [description]
+   * @return [type]               [description]
+   */
   public function create($isNotExists = true){
 
     return $this->getScheme()->createTable($this, $isNotExists);
 
   }
 
+  /**
+   * [drop description]
+   * @param  boolean $isExists [description]
+   * @return [type]            [description]
+   */
   public function drop($isExists = true){
 
     return $this->getScheme()->dropTable($this, $isExists);
 
   }
 
+  /**
+   * [exists description]
+   * @return [type] [description]
+   */
   public function exists(){
 
     return $this->getScheme()->existsTable($this);
 
   }
 
+  /**
+   * [truncate description]
+   * @param  boolean $ignoreFK [description]
+   * @return [type]            [description]
+   */
   public function truncate($ignoreFK = false){
 
     return $this->getScheme()->truncate($this, $ignoreFK);
@@ -380,6 +635,12 @@ class AmTable extends AmQuery{
   }
 
   // Insertar valores
+  /**
+   * [insertInto description]
+   * @param  [type] $values [description]
+   * @param  array  $fields [description]
+   * @return [type]         [description]
+   */
   public function insertInto($values, array $fields = array()){
 
     return $this->getScheme()->insertInto($values, $this, $fields);
@@ -387,6 +648,11 @@ class AmTable extends AmQuery{
   }
 
   // Agregar una campo a la lista de campos
+  /**
+   * [addField description]
+   * @param [type] $name  [description]
+   * @param [type] $field [description]
+   */
   public function addField($name = null, $field = null){
 
     if(is_string($field))
@@ -421,6 +687,12 @@ class AmTable extends AmQuery{
   }
 
   // Devuelve un Query que devuelve todos los registros de la Tabla
+  /**
+   * [all description]
+   * @param  string  $alias      [description]
+   * @param  boolean $withFields [description]
+   * @return [type]              [description]
+   */
   public function all($alias = 'q', $withFields = false){
 
     // por si se obvio el primer parametro
@@ -448,23 +720,16 @@ class AmTable extends AmQuery{
     return $q;
 
   }
-  
-  public function q($limit = null, $offset = null, $alias = 'q',
-    $withFields = false){
-
-    $q = $this->all($alias, $withFields);
-
-    if($limit)
-      $q->limit($limit);
-
-    if($limit && $offset)
-      $q->offset($offset);
-
-    return $q;
-
-  }
 
   // Obtener consulta para buscar por un campos
+  /**
+   * [findBy description]
+   * @param  [type]  $field      [description]
+   * @param  [type]  $value      [description]
+   * @param  string  $alias      [description]
+   * @param  boolean $withFields [description]
+   * @return [type]              [description]
+   */
   public function findBy($field, $value, $alias = 'q', $withFields = false){
 
     return $this->all($alias, $withFields)->where("{$field}='{$value}'");
@@ -472,6 +737,14 @@ class AmTable extends AmQuery{
   }
 
   // Obtener todos los registros de buscar por un campos
+  /**
+   * [findAllBy description]
+   * @param  [type]  $field      [description]
+   * @param  [type]  $value      [description]
+   * @param  [type]  $type       [description]
+   * @param  boolean $withFields [description]
+   * @return [type]              [description]
+   */
   public function findAllBy($field, $value, $type = null, $withFields = false){
 
     return $this->findBy($field, $value, $withFields)->get($type);
@@ -479,6 +752,14 @@ class AmTable extends AmQuery{
   }
 
   // Obtener el primer registro de la busqueda por un campo
+  /**
+   * [findOneBy description]
+   * @param  [type]  $field      [description]
+   * @param  [type]  $value      [description]
+   * @param  [type]  $type       [description]
+   * @param  boolean $withFields [description]
+   * @return [type]              [description]
+   */
   public function findOneBy($field, $value, $type = null, $withFields = false){
 
     return $this->findBy($field, $value, $withFields)->row($type);
@@ -486,6 +767,13 @@ class AmTable extends AmQuery{
   }
 
   // Obtener la consulta para encontrar el registro con un determinado ID
+  /**
+   * [findById description]
+   * @param  [type]  $id         [description]
+   * @param  string  $alias      [description]
+   * @param  boolean $withFields [description]
+   * @return [type]              [description]
+   */
   public function findById($id, $alias = 'q', $withFields = false){
 
     // Obtener consultar para obtener todos los registros
@@ -532,6 +820,13 @@ class AmTable extends AmQuery{
   }
 
   // Regresa un objeto con AmModel con el registro solicitado
+  /**
+   * [find description]
+   * @param  [type]  $id         [description]
+   * @param  [type]  $type       [description]
+   * @param  boolean $withFields [description]
+   * @return [type]              [description]
+   */
   public function find($id, $type = null, $withFields = false){
 
     $q = $this->findById($id, $withFields);
@@ -541,7 +836,25 @@ class AmTable extends AmQuery{
 
   }
 
+  /**
+   * [prepare description]
+   * @param  array  $r [description]
+   * @return [type]    [description]
+   */
+  public function prepare(array $r){
+
+    foreach ($this->fields as $key => $field)
+      $r[$key] = $field->parseValue(itemOr($key, $r));
+
+    return $r;
+
+  }
+
   // Convertir la tabla a Array
+  /**
+   * [toArray description]
+   * @return [type] [description]
+   */
   public function toArray(){
 
     // Convertir campos

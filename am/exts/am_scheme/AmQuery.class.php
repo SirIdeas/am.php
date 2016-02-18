@@ -286,6 +286,34 @@ class AmQuery extends AmObject{
 
   }
 
+  public function getTable($returnTableInstance = false){
+
+    // Obtener los froms de la consulta
+    $froms = $this->getFroms();
+
+    foreach ($froms as $from) {
+
+      // Si es un query
+      if($from instanceof AmQuery)
+        $from = $from->getTable($returnTableInstance);
+
+      // Si es una tabla obtener el nombre
+      if($from instanceof AmTable){
+        if($returnTableInstance)
+          return $from;
+        $from = $from->getTableName();
+      }
+
+      // Si tiene un nombre válido retornar el nombre de la tabla
+      if(isNameValid($from))
+        return $from;
+      
+    }
+
+    return null;
+
+  }
+
   // Eliminar registros selecionados
   public function update(){
 
@@ -627,6 +655,17 @@ class AmQuery extends AmObject{
     // Si no existe mas registros
     if(false === $r)
       return false;
+
+    // Preparar valores del array mediante los campos de la tabla.
+    
+    // Obtner la tabla
+    $table = $this->getTable(true);
+    if(is_string($table))
+      $table = $scheme->loadTable($table);
+
+    // Preparar valores si se logró obtener la instancia de la tabla.
+    if($table instanceof AmTable)
+      $r = $table->prepare($r);
 
     if($as == 'array'){
       // Retornar como erray

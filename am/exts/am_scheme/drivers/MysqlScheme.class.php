@@ -300,7 +300,7 @@ class MysqlScheme extends AmScheme{
 
     return implode(" ", array(
       "UPDATE",
-      trim($this->getParseTableNameOfView($q)),
+      trim($this->getParseObjectDatabaseName($q)),
       trim($this->sqlJoins($q)),
       trim($this->sqlSets($q)),
       trim($this->sqlWhere($q))
@@ -314,7 +314,7 @@ class MysqlScheme extends AmScheme{
     // Agregar DELETE FROM
     return implode(" ", array(
       "DELETE FROM",
-      trim($this->getParseTableNameOfView($q)),
+      trim($this->getParseObjectDatabaseName($q)),
       trim($this->sqlWhere($q))
     ));
 
