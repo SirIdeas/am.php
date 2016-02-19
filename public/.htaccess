@@ -2,7 +2,7 @@
 
   Options +FollowSymLinks
   RewriteEngine On
-  # RewriteBase /
+  RewriteBase /git/am/docs/public/
 
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteRule . bootfile.php [L]

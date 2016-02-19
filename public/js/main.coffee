@@ -5,7 +5,6 @@ $ () ->
     cls = $(this).attr('data-class')
 
     if scrollTop is value
-      console.log(this, cls)
       $(this).addClass(cls)
     else
       $(this).removeClass(cls)
@@ -15,7 +14,6 @@ $ () ->
     cls = $(this).attr('data-class')
 
     if scrollTop isnt value
-      console.log(this, cls)
       $(this).addClass(cls)
     else
       $(this).removeClass(cls)
@@ -26,7 +24,6 @@ $ () ->
 
     if target.length>0
       if scrollTop >= target.outerHeight()
-        console.log(this, cls)
         $(this).addClass(cls)
       else
         $(this).removeClass(cls)

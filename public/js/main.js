@@ -6,7 +6,6 @@
       value = eval($(this).attr('data-equal'));
       cls = $(this).attr('data-class');
       if (scrollTop === value) {
-        console.log(this, cls);
         return $(this).addClass(cls);
       } else {
         return $(this).removeClass(cls);
@@ -17,7 +16,6 @@
       value = eval($(this).attr('data-not-equal'));
       cls = $(this).attr('data-class');
       if (scrollTop !== value) {
-        console.log(this, cls);
         return $(this).addClass(cls);
       } else {
         return $(this).removeClass(cls);
@@ -29,7 +27,6 @@
       cls = $(this).attr('data-class');
       if (target.length > 0) {
         if (scrollTop >= target.outerHeight()) {
-          console.log(this, cls);
           return $(this).addClass(cls);
         } else {
           return $(this).removeClass(cls);

@@ -1,0 +1,26 @@
+{
+  "name": "amathista-docs",
+  "version": "0.0.1",
+  "description": "Amathista - PHP Framework",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SirIdeas/amathista.php.git"
+  },
+  "author": "arondn2@gmail.com (Alex J. Rondon)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/SirIdeas/amathista.php/issues"
+  },
+  "homepage": "https://github.com/SirIdeas/amathista.php#readme"
+}
