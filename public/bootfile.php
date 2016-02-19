@@ -13,10 +13,7 @@
  * helpers escenciales, manejo de errores personalizado.
  * 
  */
-if(is_file('../am/start.php'))
-  include '../am/start.php';
-else
-  include '../../am/start.php';
+include '../../am/start.php';
 
 /**
  * -----------------------------------------------------------------------------
