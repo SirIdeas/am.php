@@ -861,7 +861,14 @@ class AmModel extends AmObject{
    */
   public function insertInto(){
 
-    return $this->getTable()->insertInto(array($this));
+    // Si se inserta satisfactoriamente
+    if($this->getTable()->insertInto(array($this)))
+
+      // Devolver el último id insertado.
+      return $this->getTable()->getScheme()->getLastInsertedId();
+
+    // De lo contrario devolver falso.
+    return false;
 
   }
 

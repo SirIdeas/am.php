@@ -659,11 +659,11 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Crear tabla en la BD.
-   * @param  AmTable $t            Tabla a crear
-   * @param  bool    $ifNotExists  Se agrega el parémtro IS NOT EXISTS.
-   * @return bool                  Si se creó la tabla. Si la tabla existe y el
-   *                               parámetro $ifNotExists == true, retornará
-   *                               true.
+   * @param  AmTable $t           Tabla a crear
+   * @param  bool    $ifNotExists Se agrega el parémtro IS NOT EXISTS.
+   * @return bool                 Si se creó la tabla. Si la tabla existe y el
+   *                              parámetro $ifNotExists == true, retornará
+   *                              true.
    *                                  
    */
   public function createTable(AmTable $t, $ifNotExists = true){
@@ -1097,17 +1097,13 @@ abstract class AmScheme extends AmObject{
     // Obtener el SQL para saber si es valido
     $sql = $this->sqlInsert($values, $model, $fields);
 
-    // Si el SQL está vacío o si se genera un error en la insercion
-    // se devuelve falso
+    // Si el SQL está vacío o si se genera un error en la inserción devuelve
+    // falso
     if(trim($sql) == '' || $this->execute($sql) === false)
       return false;
-
-    // Obtener el ultimo ID insertado
-    $id = $this->getLastInsertedId();
-
-    // Se retorna el el último id insertado o true en
-    // el caso de que se hayan insertado varios registros
-    return $id === 0 ? true : $id;
+    
+    // De lo contrario retornar verdadero.
+    return true;
 
   }
 
