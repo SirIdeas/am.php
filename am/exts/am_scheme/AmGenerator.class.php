@@ -11,12 +11,11 @@
  */
 final class AmGenerator{
 
-  // Generar clase base para un model
   /**
-   * [classBaseModel description]
-   * @param  AmScheme $scheme [description]
-   * @param  AmTable  $table  [description]
-   * @return [type]           [description]
+   * Generar clase base para un modelo
+   * @param  AmScheme $scheme Esquema del modelo.
+   * @param  AmTable  $table  Tabla del model.
+   * @return string           Código de la clase.
    */
   public final static function classBaseModel(AmScheme $scheme, AmTable $table){
 
