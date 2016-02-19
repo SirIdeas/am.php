@@ -7,19 +7,14 @@
  */
 
 /**
- * -----------------------------------------------------------------------------
  * Clase principal de Amathista
- * -----------------------------------------------------------------------------
  */
-
 final class Am{
 
   protected static
 
     /**
-     * -------------------------------------------------------------------------
      * Callbacks de eventos globales del sistema.
-     * -------------------------------------------------------------------------
      */
     $callbacks = array(
 
@@ -27,25 +22,34 @@ final class Am{
       'route.evaluate' => null, // $request
 
       // Agregar un pre procesador de rutas
-      'route.addPreCallback' => null, // $callback
+      'route.addPreProcessor' => null, // $type, $callback
 
       // Agregar un despachador de ruta en base su key
-      'route.addAttendCallback' => null, // $key, $callback
+      'route.addDispatcher' => null, // $type, $callback
       
       // Responder con archivo
-      'response.file' => null, // $file
-
-      // Responder con descarga de archivo
-      'response.download' => null, // $file
+      'response.file' => null, // $filename, $attachment, $name, $mimeType
 
       // Responder con una llamada
-      'response.call' => null, // $destiny, $env, $params
+      'response.call' => null, // $callback, $env, $params
+
+      // Responde con el renderizado de una vista
+      'response.template' => array(), // $tpl, $vars, $options, $checkView
+
+      // Responder con una redirección
+      'response.go' => null, // $url
+
+      // Responder con un error 404
+      'response.e404' => null, // $msg
+
+      // Responder con un error 403
+      'response.e403' => null, // $msg
 
       // Responder con controlador
-      'response.control' => null, // $control, $action, $params, $env
+      'response.controller' => null, // $action, $params, $env
 
-      // Renderizar vista
-      'render.template' => array(), // $templete, $options
+      // Renderiza de una vista
+      'render.template' => array(), // $__tpl, $__vars, $__options
       
       // PENDIENTE: Volver a agregar cuando se agrege una extensión que las use
       
@@ -73,146 +77,146 @@ final class Am{
     ),
 
     /**
-     * -------------------------------------------------------------------------
      * Definición de callbacks a utilizar para mezclar atributos.
-     * -------------------------------------------------------------------------
      */
     $mergeFunctions = array(
       'requires' => 'merge_if_snd_first_not_false',
       'env' => 'merge_if_both_are_array',
       'tasks' => 'array_merge_recursive',
+      'formats' => 'array_merge'
     ),
 
     // PENDIENTE: Revisar
     /**
-     * -------------------------------------------------------------------------
      * Exteciones manejadoras de session
-     * -------------------------------------------------------------------------
      */
     $aliasExts = array(
       'normalSession' => 'exts/am_normal_session/'
     ),
 
     /**
-     * -------------------------------------------------------------------------
      * Array de extensiones cargadas
-     * -------------------------------------------------------------------------
      */
     $loadedExts = array(),
 
     /**
-     * -------------------------------------------------------------------------
      * Instancias unicas de clases
-     * -------------------------------------------------------------------------
      */
     $instances = array(),
 
     /**
-     * -------------------------------------------------------------------------
      * Directorios de entorno
-     * -------------------------------------------------------------------------
      * Este es un array que contiene d
      */
     $dirs = array(),
 
     /**
-     * -------------------------------------------------------------------------
      * Directorios de tareas
-     * -------------------------------------------------------------------------
      * Este es un array que contiene d
      */
     $tasksDirs = array(),
 
     /**
-     * -------------------------------------------------------------------------
      * Archivos de configuración cargados
-     * -------------------------------------------------------------------------
      */
-    $confsLoaded = array(),  
+    $confsLoaded = array(),
 
     /**
-     * -------------------------------------------------------------------------
      * Propiedades/Configuraciones globales cargadas
-     * -------------------------------------------------------------------------
      */
     $confs = array(),
 
     /**
-     * -------------------------------------------------------------------------
      * URL base de la aplicación
-     * -------------------------------------------------------------------------
      */
     $urlBase = null,
 
     /**
-     * -------------------------------------------------------------------------
      * Petición realizada
-     * -------------------------------------------------------------------------
      */
-    $request = null,
+    $requestStr = null,
 
     /**
-     * -------------------------------------------------------------------------
-     * Formatos de cadenas
-     * -------------------------------------------------------------------------
+     * Indica si ya se inicialicó la aplicación
      */
-    $formats = array(
-      'NOT_FOUND' => 'Am: Not Found',
-      'NOT_FOUND_EXTS' => 'Am: No se encontró la extensión "%s"',
-      'NOT_FOUND_FILE_EXTS' => 'Am: No se encontró el archivo "%s" de la extensión "%s"',
-      'NOT_FOUND_ATTEND' => 'Am: No se encontró quién atendiera %s : %s',
-      'NOT_FOUND_COMMAND' => 'Am: No se encontró el comando %s',
-      'ARGS_MUST_BE_ARRAY' => 'El parámetro "args" del comando "%s" debe ser un array',
-      'CANNOT_ACCESS_PROPERTY' => 'Am: No puede acceder al atributo protegido/privado %s::$%s',
-    );
+    $apped = false,
+
+    /**
+     * Instancia de AmObject que tiene como propiedades los valores los arrays
+     * respectivos.
+     */
+    $server = null,
+    $get = null,
+    $post = null,
+    $cookie = null,
+    $request = null,
+    $env = null;
 
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve una texto con un determinado formato
-   * ---------------------------------------------------------------------------
    * @param  string $fmtKey formato a buscar
    * @return string         Texto formateado
    */
   public static function t($fmtKey /* Parametros */){
 
     $params = func_get_args();
+
+    $formats = self::getProperty('formats', array());
     
     // Obtener formato si existe
-    $params[0] = itemOr($fmtKey, self::$formats, $fmtKey);
+    $params[0] = itemOr($fmtKey, $formats, $fmtKey);
 
     return call_user_func_array('sprintf', $params);
 
   }
 
   /**
-   * ---------------------------------------------------------------------------
-   * Devuelve las attributos públicos de un objeto.
-   * ---------------------------------------------------------------------------
-   * @param  object $object Objecto del que se desea obtener las propiedades
-   *                        públicas.
-   * @return array          Array de pares attributo=>valor.
+   * Devuelve un error con el mensaje obtenido del llamado del método Am::t con
+   * los parámetros de esta función.
+   * @params   Utilizados para generar el texto del mensaje
+   * @return   Una instancia de la clase AmError con el mensaje del texto
+   *           obtenido
    */
-  public static function getObjectVars($object){
+  public static function e(/* Parametros */){
 
-    return get_object_vars($object);
+    return new AmError(call_user_func_array(array('Am', 't'), func_get_args()));
 
   }
 
   /**
-   * ---------------------------------------------------------------------------
+   * Inicializa las variables de AmResponse
+   */
+  public static function start(){
+
+    self::$server = new AmObject($_SERVER);
+    self::$get = new AmObject($_GET);
+    self::$post = new AmObject($_POST);
+    self::$cookie = new AmObject($_COOKIE);
+    self::$request = new AmObject($_REQUEST);
+    self::$env = new AmObject($_ENV);
+
+  }
+
+  /**
+   * Devuelve el método de la peticion.
+   */
+  public static function getMethod(){
+    return strtolower(self::$server->REQUEST_METHOD);
+  }
+
+  /**
    * Devuelve la instancia de una clase existente. Sino existe la instancia se
    * crea una nueva.
-   * ---------------------------------------------------------------------------
-   * @param   string  $className  Nombre de la clase de la que se desea obtener
-   *                              la instancia.
-   * @param   array   $params     Parámetros para instancia la clase.
-   * @return  object              Objeto instanciado
+   * @param  string $className Nombre de la clase de la que se desea obtener
+   *                           la instancia.
+   * @param  array  $params    Parámetros para instancia la clase.
+   * @return object            Objeto instanciado
    */
-  public final static function getInstance($className, array $params = array()){
+  public static function getInstance($className, array $params = array()){
 
     // Si la clase no existe devolver error
     if(!class_exists($className))
-      return null;
+      throw Am::e('AM_CLASS_NOT_FOUND', $className);
 
     // Si la instancia existe se devuelve
     if(isset(self::$instances[$className]))
@@ -224,11 +228,9 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Asigna un callback de un evento global.
-   * ---------------------------------------------------------------------------
-   * @param   string    $action   Nombre del evento a atender.
-   * @param   callback  $callback Callback a asociar con el evento.
+   * @param string   $action   Nombre del evento a atender.
+   * @param callback $callback Callback a asociar con el evento.
    */
   public static function on($action, $callback){
 
@@ -237,15 +239,13 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Llamar el callback de un evento global.
-   * ---------------------------------------------------------------------------
-   * @param   string  $action   Nombre dle evento a llamar.
-   * @param   ...               El resto de los parámetros son utilizados
-   *                            como argumentos de la llamada del callback.
-   * @return  mixed             Lo retornado por el callback correspondiente.
+   * @param  string $action Nombre dle evento a llamar.
+   * @param  ...            El resto de los parámetros son utilizados como
+   *                        argumentos de la llamada del callback.
+   * @return mixed          Lo retornado por el callback correspondiente.
    */
-  public static function call($action /* Resto de los parametros*/){
+  public static function ring($action /* Resto de los parametros*/){
     
     // Obtener los parámetros
     $options = func_get_args();
@@ -265,142 +265,165 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
-   * Mezcla nuevos valores ($value) a una propiedad global ($propiedad). Si
-   * $extend es verdadero, entonces los valores nuevos no sobrescriben los
-   * anteriores.
-   * ---------------------------------------------------------------------------
-   * @param   string  $property   Nombre de la propiedad a asignar.
-   * @param   string  $value      Valor a asignar a la propiedad
-   * @param   bool    $extend     Indica si se extenderá los valores o si se
-   *                              sobreescribirán
+   * Agrega una extensión de las configuraciones.
+   * Estas configuraciones son las tomadas inicialmente al momento de mezclar.
+   * Las primeras configuraciones cargadas prevalecen sobre las nuevas.
+   * @param string $property Nombre de la propiedad a cargar.
    */
-  public static function mergeProperty($property, $value, $extend = false){
+  public static function extendProperties(array $conf, $from){
+
+    // Recorrer la configuracion para ir agregandolas a la extensión.
+    foreach ($conf as $property => $propertyValue) {
+
+      // Inicializar la propiedad si no existe.
+      if(!isset(self::$confsLoaded[$property]))
+        self::$confsLoaded[$property] = array();
+
+      // Empilar la configuración.
+      array_unshift(self::$confsLoaded[$property], $propertyValue);
+
+    }
+
+    // Reiniciar las configuraciones globales
+    self::$confs = array();
+  }
+
+  /**
+   * Realiza la mezcla de una propiedad.
+   * @param string $property Nombre de la propiedad a cargar.
+   */
+  public static function mergeProperty($property){
+
+    // Si ya esta mezclado el valor retornar 
+    if(isset(self::$confs[$property]))
+      return;
+
+    // Obtener las configuraciones iniciales
+    $confs = itemOr($property, self::$confsLoaded, array());
+
+    // Recorrer cada uno de las carpetas en el path
+    foreach(self::$dirs as $path){
+      // Buscar en el archivo de configuración am y en el correspondiente a la
+      // propiedad
+      foreach(array_unique(array('am', $property)) as $file){
+        // Obtener el nombre real del archivo
+        $filename = realpath("{$path}/{$file}.conf.php");
+        // Si tiene una configuración cargada
+        if(isset(self::$confsLoaded[$filename])){
+          // Si no es una configuración de am se toma la configuración completa
+          if($file !== 'am'){
+            $confs[] = self::$confsLoaded[$filename];
+          // De lo contrario se toma solo la propiedad deseada si es que existe
+          }elseif(isset(self::$confsLoaded[$filename][$property])){
+            $confs[] = self::$confsLoaded[$filename][$property];
+          }
+        }
+      }
+    }
+
+    // Si no se obtuvo alguna configuración se sale
+    if(empty($confs))
+      return;
 
     // Obtener funcion callback para mezclar la propiedad solicitada
-    $mergeFunctions = itemOr($property, self::$mergeFunctions);
+    $mergeFunction = itemOr($property, self::$mergeFunctions);
 
-    // Si exite la funcion y existe un valor previo se mezcla a partir de la
-    // funcion designada
-    if($mergeFunctions !== null && isset(self::$confs[$property])){
+    // Si s obtuvo una sola configuración o no existe una función de mezclado
+    // se devuelve la ultima configuración cargada.
+    if(count($confs) === 1 || $mergeFunction === null){
+      $conf = end($confs);
 
-      // Si se desea extender. Entonces los valores nuevos son sobreescritos por
-      // los viejos
-      if($extend === true)
-        $params = array($value, self::$confs[$property]);
+    }else{
+      // Proceder a mezclar
+      $conf = array();
 
-      // De lo contrario los valores nuevos sobre escriben a los viejos
-      else
-        $params = array(self::$confs[$property], $value);
+      foreach($confs as $newConf)
+        $conf = call_user_func_array($mergeFunction, array($conf, $newConf));
 
-      self::$confs[$property] = call_user_func_array($mergeFunctions, $params);
+    }
 
-    // Si no existe el callback se devolvera el ultimo valor
-    }else
-      self::$confs[$property] = $value;
+    self::$confs[$property] = $conf;
 
   }
 
   /**
-   * ---------------------------------------------------------------------------
-   * Mezcla un conjunto de propieades globales indicadas en $properties. Si
-   * $extend es verdadero, entonces los valores nuevos no sobrescriben los
-   * anteriores.
-   * ---------------------------------------------------------------------------
-   * @param   array $properties Array de pares propiedad=>valor a asignar.
-   * @param   bool  $extend     Indica si se extenderá los valores o si se
-   *                            sobreescribirán
+   * Devuelve el valor de una propiedad de aplicación.
+   * @param  string $property Nombre de la propiedad a cargar.
+   * @param  any    $default  Valor por defecto a devolver sino existe un valor
+   *                          para la propiedad.
+   * @return any              Valor de la propiedad evaluada recursivamente
+   *                          después de incluir los archivos de configuración
+   *                          adecuados.
    */
-  public static function mergeProperties(array $properties, $extend = false){
+  public static function getProperty($property, $default = null){
 
-    // Recorrer elementos obtenidos para ir
-    foreach ($properties as $property => $value)
-      self::mergeProperty($property, $value, $extend);
+    // Cargar las configuraciones de las propiedad
+    self::loadAllConfFilesOfProperty($property);
+
+    // Realizar la mezcla de las propiedades
+    self::mergeProperty($property);
+
+    // Devolver propiedad
+    return itemOr($property, self::$confs, $default);
 
   }
 
   /**
-   * ---------------------------------------------------------------------------
-   * Carga la configuración de un archivo. Si $property es recibida entonces la
-   * configuración se cargará en dicha propiedad, de lo contrario se recorrerá
-   * se mezclará en propiedades separadas
-   * ---------------------------------------------------------------------------
-   * @param   string  $filename   Nombre del archivo de configuración a cargar.
-   * @param   string  $property   Nombre de la propiedad a asignar.
-   * @param   bool    $extend     Indica si se extenderá los valores o si se
-   *                              sobreescribirán
+   * Carga un archivo de configuración.
+   * @param string $filename Archivo de configuración a cargar.
+   * 
    */
-  public static function mergePropertiesFromFile($filename,
-                                                 $property = null,
-                                                 $extend = false){
+  public static function loadConfFile($filename){
 
     // Obtener el nombre real del archivo
     $filename = realpath($filename);
 
     // Si el archivo no existe salir
-    if(!is_file($filename) || in_array($filename, self::$confsLoaded))
+    if(!is_file($filename) || isset(self::$confsLoaded[$filename]))
       return;
-
-    // Agregar el archivo a la lita de archivos de configuracion cargados
-    self::$confsLoaded[] = $filename;
 
     // Cargar archivo de configuracion
     $conf = require $filename;
 
-    // Si la configuración esta destinada a una propiedad especifica
-    // mezclar con dicha configuracion
-    if(isset($property))
-      self::mergeProperty($property, $conf, $extend);
-
-    else
-      // Sino se debe agregar las configuraciones una por una.
-      self::mergeProperties($conf, $extend);
+    // Agregar el archivo a la lita de archivos de configuracion cargados
+    self::$confsLoaded[$filename] = $conf;
 
   }
 
   /**
-   * ---------------------------------------------------------------------------
-   * Carga las configuraciones de un archivo buscando en cada una de las
-   * carpetas del entorno. Si $property es recibida entonces la
-   * configuración se cargará en dicha propiedad, de lo contrario se recorrerá
-   * se mezclará en propiedades separadas. Si $extend es verdadero, entonces
-   * los valores nuevos no sobrescriben los anteriores.
-   * ---------------------------------------------------------------------------
-   * @param   string  $filename   Nombre del archivo de configuración a cargar.
-   * @param   string  $property   Nombre de la propiedad a asignar.
-   * @param   bool    $extend     Indica si se extenderá los valores o si se
-   *                              sobreescribirán
+   * Carga los archivos de configuración de una propiedad.
+   * @param string $property Nombre de la propiedad a cargar.
+   * 
    */
-  public static function mergePropertiesFromAllFiles($filename = 'am',
-                                                     $property = null,
-                                                     $extend = false){
+  public static function loadAllConfFilesOfProperty($property = 'am'){
 
     // Recorrer cada uno de las carpetas en el path
-    foreach (self::$dirs as $path)
+    foreach(self::$dirs as $path)
       // Si el archivo cargar la configuracion en la posicion path/property
-      self::mergePropertiesFromFile("{$path}/{$filename}.conf.php",
-                                    $property, $extend);
+      self::loadConfFile("{$path}/{$property}.conf.php");
 
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Agrega un directorio al entorno de la aplicación.
-   * ---------------------------------------------------------------------------
-   * @param   string  $dir   Directorio a agregar.
+   * @param string $dir Directorio a agregar.
    */
   public static function addDir($dir){
 
     self::$dirs[] = realpath($dir);
     self::$dirs = array_unique(self::$dirs);
 
+    // Cargar configuraciones de am.conf.file
+    self::loadAllConfFilesOfProperty();
+
+    // Reiniciar configuraciones globales.
+    self::$confs = array();
+
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Agrega un directorio al tareas de la aplicación.
-   * ---------------------------------------------------------------------------
-   * @param   string  $dir   Directorio a agregar.
+   * @param string $dir Directorio a agregar.
    */
   public static function addTasksDir($dir){
 
@@ -410,17 +433,15 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve el valor de una propiedad global. Si la propiead no tiene valor
    * asignado se devuelve el valor por defacto ($default)
-   * ---------------------------------------------------------------------------
-   * @param   string  $property   Nombre de la propiedad a consultar.
-   * @param   mixed   $default    Valor por defecto en caso que la propiedad
-   *                              aún no esté asignada.
-   * @return  mixed               Valor de la propiedad o valor por defecto si
-   *                              la primera no existe.
+   * @param  string $property Nombre de la propiedad a consultar.
+   * @param  mixed  $default  Valor por defecto en caso que la propiedad aún no
+   *                          esté asignada.
+   * @return mixed            Valor de la propiedad o valor por defecto si la
+   *                          primera no existe.
    */
-  public static function getProperty($property, $default = null){
+  public static function getProperty2($property, $default = null){
 
     self::mergePropertiesFromAllFiles($property, $property);
     return itemOr($property, self::$confs, $default);
@@ -428,13 +449,11 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Mueve un archivo a la papelera.
    * Este archivo se ubicará en la papelera relativo al directorio en común del
    * mismo con el directorio actual.
-   * ---------------------------------------------------------------------------
-   * @param   string  $file   Archivo a mover a la papelera
-   * @return  bool            Si se pudo mover o no el archivo.
+   * @param  string $file Archivo a mover a la papelera
+   * @return bool         Si se pudo mover o no el archivo.
    */
   public static function sendToTrash($file){
 
@@ -476,101 +495,163 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
+   * Asigna o sustituye un dispatcher a un tipo de ruta
+   * @param  string   $type       Nombre del tipo al que se agrega el callback.
+   * @param  callback $dispatcher Despachador a agregar
+   * @return any                  Valor devuelvo por el manejador del evento.
+   */
+  public static function addRouteDispatcher($type, $dispatcher){
+    return Am::ring('route.addDispatcher', $type, $dispatcher);
+  }
+
+  /**
+   * Asigna un pre-procesador de rutas a un tipo
+   * @param  string   $type         Nombre del tipo al que se agrega el
+   *                                callback.
+   * @param  callback $preProcessor Preprocesador.
+   * @return any                    Valor devuelvo por el manejador del evento.
+   */
+  public static function addRoutePreProcessor($type, $preProcessor)  {
+    return Am::ring('route.addPreProcessor', $type, $preProcessor);
+  }
+
+  /**
    * Responde con un archivo indicado por parámetro.
-   * ---------------------------------------------------------------------------
-   * @param   string  $file Ruta del archivo con el que se responderá
-   * @return  bool          Si encontró o no el archivo
+   * @param  string   $file       Ruta del archivo con el que se responderá.
+   * @param  bool     $attachment Si la ruta se descarga o no.
+   * @param  string   $name       Nombre con el que se entregará el archivo.
+   * @param  mimeType $mimeType   Tipo mime para la descarga.
+   * @return any                  Respuesta de manejador configurado.
    */
-  public static function responseFile($file){
+  public static function file($filename, $attachment = false, $name = null,
+    $mimeType = null){
 
-    return self::respondeWithFile(self::findFile($file));
+    return self::ring('response.file', self::findFile($filename), $attachment,
+      $name, $mimeType);
 
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Responde la descarga de un archivo indicado por parámetro.
-   * ---------------------------------------------------------------------------
-   * @param   string  $file Ruta del archivo a descargar
-   * @return  bool          Si encontró o no el archivo
+   * @param  string   $file     Ruta del archivo a descargar.
+   * @param  string   $name     Nombre con el que se entregará el archivo.
+   * @param  mimeType $mimeType Tipo mime para la descarga.
+   * @return any                Respuesta de manejador configurado.
    */
-  public static function responseDownload($file){
+  public static function download($file, $name = null, $mimeType = null){
 
-    return self::respondeWithFile(self::findFile($file), null, null, true);
+    return self::file($file, true, $name, $mimeType);
 
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Busca una llamada como función, método estático de una clase o llamada
    * a controlador.
-   * ---------------------------------------------------------------------------
-   * @param  string $destiny  String que identifica el controlador a buscar.
+   * @param  string $callback String que identifica el controlador a buscar.
    * @param  array  $env      Variables de entorno.
-   * @param  array  $params   Parámetros obtenidos de la ruta.
-   * @return bool             Verdadero si encuentra el controlador
-   *                          correspondiente.
+   * @param  array  $params   Argumentos obtenidos de la ruta.
+   * @return any              Respuesta de manejador configurado.
    */
-  public static function responseCall($destiny, array $env, array $params){
+  public static function call($callback, array $env = array(),
+                              array $params = array()){
 
-    // Responder como una función como controlador
-    if(function_exists($destiny)){
-
-      // Llamar funcion
-      $params[] = $env;
-      call_user_func_array($destiny, $params);
-      return true;
-
-    // Responder con un método estático como controlador
-    }elseif(preg_match('/^(.*)::(.*)$/', $destiny, $a)){
-      array_shift($a);
-
-      if(call_user_func_array('method_exists', $a)){
-        $params[] = $env;
-        call_user_func_array($a, $params);
-        return true;
-      }
-
-    }elseif(preg_match('/^(.*)@(.*)$/', $destiny, $a)){
-      array_shift($a);
-
-      // Despachar con controlador
-      if(Am::call('response.control', $a[0], $a[1], $params, $env) === true)
-        return true;
-
-    }
-
-    // El callback no existe
-    return false;
+    return self::ring('response.call', $callback, $env, $params);
 
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Busca un template y lo renderiza.
-   * ---------------------------------------------------------------------------
-   * @param  string $destiny  Template a renderizar.
-   * @param  array  $options  Opciones de la vista.
-   * @return bool             Verdadero si encuentra el template.
+   * @param  string $tpl       Template a renderizar.
+   * @param  array  $vars      Variables de la vista.
+   * @param  array  $options   Opciones para la vista.
+   * @param  array  $checkView Indica si se desea o no chequear si la vista
+   *                           existe.
+   * @return any               Respuesta de manejador configurado.
    */
-  public static function renderTemplate($__tpl, array $__vars){
+  public static function template($tpl, array $vars = array(),
+                                  array $options = array(), $checkView = true){
 
-    $__tpl = findFileIn($__tpl, merge_unique(
-      itemOr('paths', $__vars, array()),
-      array_reverse(self::$dirs)
-    ));
+    return self::ring('response.template',
+      Am::findFile($tpl), $vars, $options, $checkView);
 
-    if(is_file($__tpl)){
+  }
 
-      extract($__vars);
+  /**
+   * Redirigir a una URL.
+   * @param string $url URL que se desea ir.
+   */
+  public static function go($url){
 
-      require $__tpl;
+    return self::ring('response.go', $url);
 
-      return true;
-    }
+  }
 
-    return false;
+  /**
+   * Redirigir a una URL formateandola con self::url.
+   * @param string $path URL de la app que se desea redirigir.
+   */
+  public static function redirect($url){
+
+    return self::go(self::url($url));
+
+  }
+
+  /**
+   * Responde con un error 404.
+   * @param  string $msg Mensaje de error a mostrar
+   * @return any         Respuesta de manejador configurado.
+   */
+  public static function e404($msg = null){
+
+    return self::ring('response.e404', $msg);
+
+  }
+
+  /**
+   * Responde con un error 403.
+   * @param  string $msg Mensaje de error a mostrar
+   * @return any         Respuesta de manejador configurado.
+   */
+  public static function e403($msg = null){
+
+    return self::ring('response.e403', $msg);
+
+  }
+
+  /**
+   * Llamada de un controlador.
+   * @param  string $action String que identifica la acción a ejecutar. Tiene
+   *                        el formato 'Controlador@action'
+   * @param  array  $env    Variables de entorno.
+   * @param  array  $params Argumentos obtenidos de la ruta.
+   * @return any            Respuesta de manejador configurado.
+   */
+  public static function controller($action, array $env = array(),
+                                    array $params = array()){
+
+    return self::ring('response.controller', $action, $env, $params);
+
+  }
+
+  /**
+   * Renderiza un a vista.
+   * @param string $__tpl     Template a renderizar.
+   * @param array  $__params  Parámetros para la vista.
+   * @param array  $__options Opciones de la vista.
+   */
+  public static function render($__tpl, array $__vars = array(),
+                                array $__options = array()){
+    
+    self::$__tpl = self::findFile(self::$__tpl);
+
+    // Generar error si la vista no existe
+    if(!is_file(self::$__tpl))
+      return false;
+
+    extract(array_merge($__vars, $__options));
+    require self::$__tpl;
+
+    return true;
 
   }
 
@@ -578,15 +659,13 @@ final class Am{
   // Urls y redicciones
   /////////////////////////////////////////////////////////////////////////////
   /**
-   * ---------------------------------------------------------------------------
    * Obtiene la petición realizada. Si se esta en la línea de comandos, entonces
    * la petición es vacía.
-   * ---------------------------------------------------------------------------
-   * @return  string    Petición.
+   * @return string Petición.
    */
   public static function getRequest(){
 
-    if(!self::$request){
+    if(!self::$requestStr){
 
       // Variable global de argumentos
       global $argv;
@@ -613,19 +692,17 @@ final class Am{
 
       }
 
-      self::$request = $request;
+      self::$requestStr = $request;
 
     }
 
-    return self::$request;
+    return self::$requestStr;
 
   }
   
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve la url base de la aplicación.
-   * ---------------------------------------------------------------------------
-   * @return  string  URL Base de la aplicación.
+   * @return string URL Base de la aplicación.
    */
   public static function getUrlBase(){
 
@@ -656,11 +733,9 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Contruye una URL de la aplicación.
-   * ---------------------------------------------------------------------------
-   * @param   string $url   URL de la app que se desea obtener.
-   * @return  string        URL Construída
+   * @param  string $url URL de la app que se desea obtener.
+   * @return string      URL Construída
    */
   public static function url($url = ''){
 
@@ -669,10 +744,8 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Imprime una URL.
-   * ---------------------------------------------------------------------------
-   * @param   string $url  URL de la app que se desea imprimir.
+   * @param string $url  URL de la app que se desea imprimir.
    */
   public static function eUrl($url = ''){
 
@@ -681,12 +754,10 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve una URL absoluta incluyendo el nombre del servidor y el protocolo
    * de conexión.
-   * ---------------------------------------------------------------------------
-   * @param   string $url   URL de la app que se desea obtener.
-   * @return  string        URL Construída.
+   * @param  string $url URL de la app que se desea obtener.
+   * @return string      URL Construída.
    */
   public static function serverUrl($url = ''){
 
@@ -698,11 +769,9 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Imprime una URL absoluta incluyendo el nombre del servidor y el protocolo
    * de conexión.
-   * ---------------------------------------------------------------------------
-   * @param   string $url   URL de la app que se desea imprimir.
+   * @param string $url URL de la app que se desea imprimir.
    */
   public static function eServerUrl($url = ''){
 
@@ -711,60 +780,25 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
-   * Redirigir a una URL.
-   * ---------------------------------------------------------------------------
-   * @param   string $url   URL que se desea ir.
-   */
-  public static function gotoUrl($url){
-
-    if(!empty($url)){
-      header('location: '. $url);
-      exit();
-    }
-
-    return true;
-
-  }
-
-  /**
-   * ---------------------------------------------------------------------------
-   * Redirigir a una URL formateandola con self::url.
-   * ---------------------------------------------------------------------------
-   * @param   string $path  URL de la app que se desea redirigir.
-   */
-  public static function redirect($url){
-
-    self::gotoUrl(self::url($url));
-
-    return true;
-
-  }
-
-  /**
-   * ---------------------------------------------------------------------------
    * Redirigir a una URL formateandola con self::url si $condition es verdadero
-   * ---------------------------------------------------------------------------
-   * @param   bool    $condition  Resultado de la condición evaluada.
-   * @param   string  $url        URL de la app que se desea redirigir.
+   * @param bool   $condition Resultado de la condición evaluada.
+   * @param string $url       URL de la app que se desea redirigir.
    */
   public static function redirectIf($condition, $url){
 
     if($condition)
-      $this->redirect($url);
+      return self::redirect($url);
 
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Redirigir a una URL formateandola con self::url si $condition es falsa.
-   * ---------------------------------------------------------------------------
-   * @param   bool    $condition  Resultado de la condición evaluada.
-   * @param   string  $url        URL de la app que se desea redirigir.
+   * @param bool   $condition Resultado de la condición evaluada.
+   * @param string $url       URL de la app que se desea redirigir.
    */
   public static function redirectUnless($condition, $url){
 
-    self::redirectIf(!$condition, $url);
+    return self::redirectIf(!$condition, $url);
 
   }
 
@@ -773,15 +807,13 @@ final class Am{
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * ---------------------------------------------------------------------------
    * Carga un extensión indicada por parámetro. Devuelve verdadero o false 
    * dependiendo de si se logró cargar o no la extensión. La carga de la
    * extensión se realiza verificando la existencia del archivo "{$file}.php"
    * que indica una extención simple, o la existencia de archivo
    * "{$file}.conf.php" que indica una extensión compuesta.
-   * ---------------------------------------------------------------------------
-   * @param   string  $file   Ruta de la extensión que se desea cargar.
-   * @return  bool            Si se cargo o no la extensión.
+   * @param  string $file Ruta de la extensión que se desea cargar.
+   * @return bool         Si se cargo o no la extensión.
    */
   public static function load($file){
 
@@ -807,33 +839,38 @@ final class Am{
     if(is_file($realFile = $realFileConf)){
 
       // Obtener la configuracion de la extencion
-      $conf = require_once $realFile;
+      $conf = require_once($realFile);
 
-      // Obtener las funciones para mezclar que s definirán
-      $mergeFunctions = itemOr('mergeFunctions', $conf, array());
+      // Si el valor devuelto es un array
+      if(is_array($conf)){
 
-      // Los items nuevos no sobreescriben los anteriores
-      self::$mergeFunctions = array_merge($mergeFunctions, self::$mergeFunctions);
+        // Obtener las funciones para mezclar que se definirán
+        $mergeFunctions = itemOr('mergeFunctions', $conf, array());
 
-      // Obtener dependencias
-      $requires = itemOr('requires', $conf, array());
+        // Los items nuevos no sobreescriben los anteriores
+        self::$mergeFunctions = array_merge($mergeFunctions, self::$mergeFunctions);
 
-      // Incluir las dependencias
-      self::requireExt($requires);
+        // Obtener dependencias
+        $requires = itemOr('requires', $conf, array());
 
-      // Extender propiedades por defecto
-      $extend = itemOr('extend', $conf, array());
-      self::mergeProperties($extend, true);
+        // Incluir las dependencias
+        self::requireExt($requires);
 
-      // Obtener archivos a agregar de la extencion
-      $files = itemOr('files', $conf, array());
+        // Extender propiedades por defecto
+        $extend = itemOr('extend', $conf, array());
+        self::extendProperties($extend, $realFile);
 
-      // Llamar archivo de iniciacion en la carpeta si existe.
-      foreach ($files as $item)
-        if(is_file($realFile = "{$file}/{$item}.php"))
-          require_once $realFile;
-        else
-          throw new Exception(Am::t('NOT_FOUND_FILE_EXTS', $realFile, $file));
+        // Obtener archivos a agregar de la extencion
+        $files = itemOr('files', $conf, array());
+
+        // Llamar archivo de iniciacion en la carpeta si existe.
+        foreach($files as $item)
+          if(is_file($realFile = "{$file}/{$item}.php"))
+            require_once $realFile;
+          else
+            throw Am::e('AM_NOT_FOUND_FILE_EXTS', $realFile, $file);
+
+        }
 
     }
 
@@ -844,7 +881,7 @@ final class Am{
       $init = require_once($realFile);
       // Si es un array entonces representan parametros que extender del conf global.
       if(is_array($init))
-        self::mergeProperties($init, true);
+        self::extendProperties($init);
 
     }
 
@@ -860,13 +897,11 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Carga una o varias extensión. Antes de cargar se verifica si el nombre
    * recibido por parámetro es un alias de otra extensión. Si la extensión no
    * existe se busca en cada uno de los directorios del entorno
-   * ---------------------------------------------------------------------------
-   * @param   string/string array() $name Nombre o alias de la extensión que se
-   *                                desea cargar.
+   * @param string/array $name Nombre o alias de la extensión que se desea
+   *                          cargar.
    */
   public static function requireExt($name){
 
@@ -874,7 +909,7 @@ final class Am{
     if(is_array($name)){
 
       // Incluir dependencias recursivamente
-      foreach ($name as $value)
+      foreach($name as $value)
         self::requireExt($value);
 
       return;
@@ -899,7 +934,7 @@ final class Am{
         return;
 
     // No se agregó la extension
-    throw new Exception(Am::t('NOT_FOUND_EXTS', $name));
+    throw Am::e('AM_NOT_FOUND_EXT', $name);
 
   }
 
@@ -908,22 +943,18 @@ final class Am{
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve la instancia del manejador de credenciales.
-   * ---------------------------------------------------------------------------
-   * @return object   Instancia del manejador de credenciales.
+   * @return object Instancia del manejador de credenciales.
    */
   public static function getCredentialsHandler(){
 
-    return self::call('credentials.handler');
+    return self::ring('credentials.handler');
 
   }
   
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve las credenciales actuales.
-   * ---------------------------------------------------------------------------
-   * @return  object  Instancia de las credenciales actuales.
+   * @return object Instancia de las credenciales actuales.
    */
   public static function getCredentials(){
 
@@ -937,10 +968,8 @@ final class Am{
   }
   
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve si está autenticado un usuario.
-   * ---------------------------------------------------------------------------
-   * @return bool
+   * @return bool Si esta autenticado o no.
    */
   public static function isAuth(){
 
@@ -949,13 +978,12 @@ final class Am{
   }
   
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve si hay un usuario autenticado y si tiene las credenciales
    * recividas por parámetro
-   * ---------------------------------------------------------------------------
-   * @param   string/string array   $credential String o array de strings con
-   *                                            las credenciales a consultar
-   * @return  bool
+   * @param  string/array $credential String o array de strings con las
+   *                                  credenciales a consultar
+   * @return bool                     Si el usuario autenticado tiene las
+   *                                  credenciales consultadas.
    */
   public static function hasCredentials($credential){
 
@@ -969,11 +997,9 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Ejecuta una tarea.
    * Si la tarea tiene configurado targets, y no se indica el target a ejecutar,
    * Se ejecutará todos los targets con los argumentos del array $argv.
-   * ---------------------------------------------------------------------------
    * @param  string $task Comando a ejecutar y target a utilizar
    *                      Ejemplo: copy:app, implica que se ejecutará la función
    *                      task_copy con el target indicado en app.
@@ -1003,12 +1029,8 @@ final class Am{
     // Procesar preprar argumentos, si la configuración existe
     if(isset($options['args'])){
 
-      // Si no es un array generar error
-      if(!is_array($options['args']))
-        throw new Exception(Am::t('ARGS_MUST_BE_ARRAY', $task));
-
       $params = array();
-      foreach ($options['args'] as $paramName => $value){
+      foreach($options['args'] as $paramName => $value){
 
         // Obtener tipo y valor por defecto de la configuración
         $value = explode(':', $value);
@@ -1062,7 +1084,7 @@ final class Am{
       }
 
       // Cargar valores restantes y convertir al tipo de dato adecuado.
-      foreach ($params as $paramName => $value){
+      foreach($params as $paramName => $value){
 
         // Si no se ha asignado valor al parametro, se toma el siguiente valor
         // de los argumentos recibiso ($argv);
@@ -1098,7 +1120,7 @@ final class Am{
 
       $ret = array();
       // Ejecutar cada comando
-      foreach ($options['compound'] as $key => $compoundTask)
+      foreach($options['compound'] as $key => $compoundTask)
         $ret[$key] = self::taskArray($compoundTask['task'],
                              array_merge($argv, $compoundTask['args']));
 
@@ -1117,7 +1139,7 @@ final class Am{
 
       // Si la funcion no existe mostrar error
       if(!function_exists($functionName))
-        throw new Exception(Am::t('NOT_FOUND_COMMAND', $task));
+        throw Am::e('AM_NOT_FOUND_COMMAND', $task);
 
       // Si el target esta indicado
       if(isset($target) && isset($options['targets'][$target])
@@ -1157,11 +1179,9 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Ejecuta de una tarea  e imprime su resultado
-   * ---------------------------------------------------------------------------
-   * @param  string $task Nombre de la tarea a ejecutar y/o target/
-   * @param         ...  El resto de los parámetros son los argumentos para la
+   * @param string $task Nombre de la tarea a ejecutar y/o target/
+   * @param        ...   El resto de los parámetros son los argumentos para la
    *                     tarea a ejecutar.
    */
   public static function task($task /*, ... */){
@@ -1177,9 +1197,7 @@ final class Am{
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * ---------------------------------------------------------------------------
    * Realiza incializaciones para el manejo de session
-   * ---------------------------------------------------------------------------
    */
   // PENDIENTE: Revisar
   public static function startSession(){
@@ -1200,41 +1218,21 @@ final class Am{
   }
 
   /////////////////////////////////////////////////////////////////////////////
-  // Responder con error 404
-  /////////////////////////////////////////////////////////////////////////////
-  
-  /**
-   * ---------------------------------------------------------------------------
-   * Agrega las cabeceras para indicar un error 404 a la respuesta.
-   * ---------------------------------------------------------------------------
-   * @param   string  $msg  $mensaje para el error a 404.
-   */
-  public static function e404($msg = null){
-
-    if(!$msg)
-      $msg = Am::t('NOT_FOUND');
-
-    header("HTTP/1.0 404 {$msg}");
-    header("Status: 404 {$msg}");
-
-  }
-
-  /////////////////////////////////////////////////////////////////////////////
   // Inicio de Amathista
   /////////////////////////////////////////////////////////////////////////////
   
   /**
-   * ---------------------------------------------------------------------------
    * Carga todas las dependencia de una aplicación, y carga el scrit de inicio
    * si este existe.
-   * ---------------------------------------------------------------------------
-   * @param  string $appRoot directorio raíz de la aplicación.
+   * @param string $appRoot directorio raíz de la aplicación.
    */
-  public static function app($appRoot = null){
+  public static function app($appRoot = '../app'){
 
     // Preparar petición
     self::getUrlBase();
     self::getRequest();
+
+    self::$apped = true;
 
     // Cambiar directorio de trabajo si este fue asignado
     if(isset($appRoot)){
@@ -1249,17 +1247,17 @@ final class Am{
     }
 
     // Obtener las configuraciones
-    self::mergePropertiesFromAllFiles();
+    self::loadAllConfFilesOfProperty();
 
     // Obtener el valor
     $errorReporting = self::getProperty('errorReporting');
     @error_reporting($errorReporting);
-
+    
     // Incluir extensiones para peticiones archivos requeridos
     self::requireExt(self::getProperty('requires', array()));
     $files = self::getProperty('files', array());
 
-    foreach ($files as $file)
+    foreach($files as $file)
       require_once self::findFile("{$file}.php");
 
     // Include init file at app root if exists
@@ -1269,18 +1267,20 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Procede a despachar la petición. Si es una petición HTTP procede a evaluar
    * la ruta. Si se ejecuta por linea de comandos con argumentos se ejecuta como
    * comando de Amathista. Por último sino es ninguno de los casos anteriores se
    * entrara en el intérprete de php con todas las dependencias de la
    * aplicación cargadas.
-   * ---------------------------------------------------------------------------
    */
   public static function run(){
 
     // Variable global de argumentos
     global $argv;
+
+    // Inicializar aplicación si no ha sido inicializada
+    if(!self::$apped)
+      self::app();
 
     // Es una peticion desde la consola
     if(isset($argv)){
@@ -1317,7 +1317,7 @@ final class Am{
     }else{
 
       // Llamado de accion para evaluar ruta
-      self::call('route.evaluate', self::getRequest());
+      self::ring('route.evaluate', self::getRequest());
       
     }
 
@@ -1328,9 +1328,7 @@ final class Am{
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * ---------------------------------------------------------------------------
    * Busca la primera ocurrencia de un archivo dentro de array de directorios.
-   * ---------------------------------------------------------------------------
    * @param  string $file Archivo que se desea buscar.
    * @return string       Dirección del primer archivo encontrado
    */
@@ -1341,10 +1339,8 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Busca la primera ocurrencia de un tarea dentro del array de directorios de
    * tareas.
-   * ---------------------------------------------------------------------------
    * @param  string $task Tarea a buscar.
    * @return string       Dirección del primer archivo tarea encontrado.
    */
@@ -1355,20 +1351,18 @@ final class Am{
   }
 
   /**
-   * ---------------------------------------------------------------------------
    * Devuelve el tipo MIME de un archivo según su extensión.
-   * ---------------------------------------------------------------------------
    * @param  string $filename Nombre del archivo del cual se desea obtener el 
    *                          Tipo MIME
    * @return String           Tipo mime del archivo según la extensión o falso
    *                          si no concuerda con ninguna extensión.
    */
-  public final static function mimeType($filename) {
+  public static function mimeType($filename) {
 
     $mimePath = self::findFile('rsc/mime.types');
     $fileext = substr(strrchr($filename, '.'), 1);
-    if (empty($fileext)) return (false);
-    $regex = '/^([\w\+\-\.\/]+)\s+(\w+\s)*($fileext\s)/i';
+    if (empty($fileext)) return false;
+    $regex = "/^([\w\+\-\.\/]+)\s+(\w+\s)*({$fileext}\s)/i";
     $lines = file($mimePath);
     foreach($lines as $line) {
       if (substr($line, 0, 1) == '#') continue; // skip comments
@@ -1376,63 +1370,16 @@ final class Am{
       if (!preg_match($regex, $line, $matches)) continue; // no match to the extension
       return ($matches[1]);
     }
-    return (false); // no match at all
-
-  }
-
-  /**
-   * ---------------------------------------------------------------------------
-   * Responde una petición HTTP con un determinado archivo.
-   * ---------------------------------------------------------------------------
-   * @param  string  $file       Archivo con el que se desea responder.
-   * @param  string  $mimeType   Tipo MIME con el que se responderá.
-   * @param  string  $name       Nombre que contendrá el archivo de respuesta.
-   * @param  boolean $attachment Para forzar la descarga del archivo en lulgar
-   *                             de verlo en el explorador.
-   * @return bool                Si se encotró o nó el archivo.
-   */
-  public static function respondeWithFile($file, $mimeType = null, $name = null,
-                                          $attachment = false){
-
-    // Si el archivo no esite retornar false
-    if(!is_file($file)) return false;
-
-    // Obtener el mime-type del archivo con el que se responderá
-    if(!isset($mimeType))
-      $mimeType = self::mimeType($file);
-
-    if(!isset($name))
-      $name = basename($file);
-
-    $attachment = $attachment ? 'attachment;' : '';
-
-    // Colocar cabeceras
-    header("content-type: {$mimeType}");
-    header("Content-Disposition: {$attachment} filename=\"{$name}\"");
-    header('Content-Transfer-Encoding: binary');
-    header('Expires: 0');
-    header('Cache-Control: must-revalidate');
-    header('Pragma: public');
-    header('Content-Length: ' . filesize($file));
-
-    // Leer archivo
-    readfile($file);
-
-    return true;
+    return false; // no match at all
 
   }
 
 }
 
 /**
- * -----------------------------------------------------------------------------
  * Se linkea los callbacks responde con archivo y responder con descargar de
  * archivo.
- * -----------------------------------------------------------------------------
  */
-Am::on('response.file',     'Am::responseFile');
-Am::on('response.download', 'Am::responseDownload');
-Am::on('response.call',     'Am::responseCall');
-Am::on('render.template',   'Am::renderTemplate');
+Am::on('render.template',   'Am::render');
 
 Am::addTasksDir(dirname(__FILE__).'/tasks/');

@@ -5,7 +5,7 @@ class A extends AmObject{
   protected $b = 2;
   public $c = 3;
   public function t(){
-    return Am::getObjectVars($this);//get_class_vars(get_class($this));
+    return get_object_vars($this);//get_class_vars(get_class($this));
   }
 }
 
@@ -14,7 +14,7 @@ $o = new A(array('d' => 4));
 
 var_dump($o);
 var_dump($o->t());
-var_dump(Am::getObjectVars($o));
+var_dump(get_object_vars($o));
 var_dump(get_class_vars(get_class($o)));
 
 // $o->a = 11;

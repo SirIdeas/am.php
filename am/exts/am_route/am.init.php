@@ -7,55 +7,46 @@
  */
 
 /**
- * -----------------------------------------------------------------------------
  * Configuración de eventos globales que atenderá la extensión.
- * -----------------------------------------------------------------------------
  */
 // Despachar rutas.
 Am::on('route.evaluate', 'AmRoute::evaluate');
 // Agregar precallbakcs.
-Am::on('route.addPreCallback', 'AmRoute::addPreCallback');
+Am::on('route.addPreProcessor', 'AmRoute::addPreProcessor');
 // Agregar métodos de atención a tipos de rutas.
-Am::on('route.addAttendCallback', 'AmRoute::addAttendCallback');
+Am::on('route.addDispatcher', 'AmRoute::addDispatcher');
 
 /**
- * -----------------------------------------------------------------------------
  * Agregar algunos de los métodos que atenderán cierto tipo de rutas.
- * -----------------------------------------------------------------------------
  */
-AmRoute::addAttendCallback('file',     'Am::respondeFile');
-AmRoute::addAttendCallback('download', 'Am::downloadFile');
-AmRoute::addAttendCallback('redirect', 'Am::redirect');
-AmRoute::addAttendCallback('goto',     'Am::gotoUrl');
-AmRoute::addAttendCallback('call',     'Am::responseCall');
-AmRoute::addAttendCallback('template', 'Am::renderTemplate');
+Am::addRouteDispatcher('file',        'Am::file');
+Am::addRouteDispatcher('download',    'Am::download');
+Am::addRouteDispatcher('redirect',    'Am::redirect');
+Am::addRouteDispatcher('go',          'Am::go');
+Am::addRouteDispatcher('call',        'Am::call');
+Am::addRouteDispatcher('template',    'Am::template');
+Am::addRouteDispatcher('controller',  'Am::controller');
 
 // PENDIENTE Esto debe pasar a la extensión AmResource
-function resourcePrecall($routes){
+function resourcePrecall($route){
 
-  // Si se indicó la ruta como un recurso
-  if(isset($routes['resource'])){
-    $routes['control'] = $routes['resource'];
-    $routes['routes'] = array_merge(
-      itemOr('routes', $routes, array()),
-      array(
-        ''            => 'control => @index',
-        '/new'        => 'control => @new',
-        '/data.json'  => 'control => @data',
-        '/:id/detail' => 'control => @detail',
-        '/:id/edit'   => 'control => @edit',
-        '/:id/delete' => 'control => @delete',
-        '/cou'        => 'control => @cou',
-        '/search'     => 'control => @search',
-      )
-    );
-    // Se elimina el parametro resource para que no pueda vuelva a entrar en
-    // esta condicion
-    unset($routes['resource']);
-  }
+  $route['control'] = $route['resource'];
+  $route['routes'] = array_merge(
+    itemOr('routes', $route, array()),
+    array(
+      ''            => 'control => @index',
+      '/new'        => 'control => @new',
+      '/data.json'  => 'control => @data',
+      '/:id/detail' => 'control => @detail',
+      '/:id/edit'   => 'control => @edit',
+      '/:id/delete' => 'control => @delete',
+      '/cou'        => 'control => @cou',
+      '/search'     => 'control => @search',
+    )
+  );
 
-  return $routes;
+  return $route;
 
 }
 
-Am::call('route.addPreCallback', 'resourcePrecall');
+Am::addRoutePreProcessor('resource', 'resourcePrecall');

@@ -7,28 +7,89 @@
  */
 
 /**
- * -----------------------------------------------------------------------------
  * Clase para renderizar Templates
- * -----------------------------------------------------------------------------
  */
-
 final class AmTpl extends AmObject{
 
   protected
-    $file = null,             // Vista a buscar
-    $content = '',            // Contenido del archivo
-    $env = array(),           // Entorno
-    $parent = null,           // Vista padre
-    $openSections = array(),  // Lista de secciones abiertas
-    $sections = array(),      // Lista de secciones y su contenido
-    $child = null,            // Contenido de la vista hija
-    $dependences = array(),   // Lista de vistas de las que depende (padre, hijas y anidadas)
-    $paths = array(),         // Lista de directorios donde se buscará la vista
-    $ignore = true,           // Bandera que indica si se ignoran las vistas inexistentes sin generar error
-    $errors = array(),        // Indica si se generó o no un error durante el renderizado
-    $options = array();       // Guarda los parametros con los que se inicializó la vista
 
-  public function __construct($file, $options = array()){
+    /**
+     * Nombre de la vista a renderizar.
+     */
+    $file = null,
+
+    /**
+     * Ruta real de la vista a renderizar.
+     */
+    $realFile = null,
+
+
+    /**
+     * Contenido del archivo.
+     */
+    $content = '',
+
+    /**
+     * Variables de entorno.
+     */
+    $env = array(),
+
+    /**
+     * Vista padre.
+     */
+    $parent = null,
+
+    /**
+     * Listado de nonmbres de secciones abiertas.
+     */
+    $openSections = array(),
+
+    /**
+     * Contenido de las secciones.
+     */
+    $sections = array(),
+
+    /**
+     * Contenido de la vista hija.
+     */
+    $child = null,
+
+    /**
+     * Indica si se imprimó el contenido de la vista hija
+     */
+    $printedChild = false,
+
+    /**
+     * Lista de vista de las que depende la vista actual: Padre y anidadas.
+     */
+    $dependences = array(),
+
+    /**
+     * Lista de directorios donde se buscará la vista.
+     */
+    $paths = array(),
+
+    /**
+     * Bandera que indica si se ignoran o no las vistas inexistentes.
+     */
+    $ignore = true,
+
+    /**
+     * Errores generados.
+     */
+    $errors = array(),
+
+    /**
+     * Parámetros con los que se inicializó la vista.
+     */
+    $options = array();
+
+  /**
+   * Constructor de la vista
+   * @param string $file    Nombre de la vista a buscar.
+   * @param array  $options Opciones de la vista.
+   */
+  public function __construct($file, array $options = array()){
     parent::__construct($options);
 
     // setear paths
@@ -38,6 +99,8 @@ final class AmTpl extends AmObject{
     // Asignar atributos
     $this->options = $options;
     $this->file = $file;
+
+    // Determinar ruta real de la vista
     $this->realFile = $this->findView($file);
 
     // Leer archivo
@@ -45,52 +108,73 @@ final class AmTpl extends AmObject{
       $this->content = file_get_contents($this->realFile);
 
     // Obtener padre
-    preg_match_all('/\(:: parent:(.*) :\)/', $this->content, $parents);
-    $this->parent = array_pop($parents[1]);
+    preg_match_all('/\(::[ ]*parent:(.*):\)/', $this->content, $parents);
+    $this->parent = trim(array_pop($parents[1]));
 
     // Quitar sentencias de padres
     $this->content = implode('',
-      preg_split('/\(:: parent:(.*) :\)/',
+      preg_split('/\(::[ ]*parent:(.*):\)/',
       $this->content)
     );
 
     // Obtener lista de hijos en comandos place
-    preg_match_all('/\(:: (place:(.*)|put:.* = (.*)) :\)/',
+    preg_match_all('/\(::[ ]*place:(.*):\)/',
       $this->content, $dependences1);
 
     // Obtener lista de hijos en comandos put
-    $this->dependences = array_merge($dependences1[2], $dependences1[3]);
-    if(!empty($this->dependences))
-      $this->dependences = array_keys(array_filter(
-        array_combine($this->dependences, $this->dependences)
-      ));
+    $dependences = $dependences1[1];
 
     // Instanciar padre dentro de las dependencias
-    if(null !== $this->parent)
-      array_unshift($this->dependences, $this->parent);
+    if(!empty($this->parent))
+      array_unshift($dependences, $this->parent);
 
-    // Convertir el array de dependencias a un array asociativo
-    // donde todos los valores sean false
-    if(0<count($this->dependences)){
-      $this->dependences = array_combine(
-        $this->dependences,
-        array_fill(0, count($this->dependences), false)
-      );
+    $this->dependences = array();
+
+    // Inicializar las dependencias'
+    foreach ($dependences as $views){
+      $views = trim($views);
+      if(!empty($views))
+        $this->dependences[$views] = false;
     }
 
   }
 
-  // Busca una vista en los paths definidos
+  /**
+   * Determina la ruta de un archivo.
+   * Busca un archivo en los directorios de la propiedad $this->paths y de
+   * vuelve la primera aparición.
+   * @param  string $file Nombre del archivo a buscar
+   * @return string       Devuelve la ruta del primera aparición del $file
+   *                      dentro de los directorios de $this->paths
+   */
   public function findView($file){
+
     // Si no existe la vista mostrar error
-    if(false === ($fileRet = findFileIn($file, $this->paths))){
-      $this->errors[] = "Am: No existe view '{$file}.'";
-      $this->ignore or die(implode(',', $this->errors));
+    if(false === ($fileRet = findFileIn($file, $this->paths, false))){
+
+      // Instanciar el error
+      $error = Am::t('AMTPL_VIEW_NOT_FOUND', $file);
+      $this->errors[] = $error;
+
+      // Ignorar el error
+      if(!$this->ignore)
+        throw $error;
+
     }
+
     return $fileRet;
+
   }
 
-  // Compilar la vista
+  /**
+   * Compilar la vista.
+   * @param  string $child    Contenido de la vista hija
+   * @param  array  $sections Array de secciones heredadas
+   * @return array            Se retorna en un array el resultado de la
+   *                          renderización de la vista, las secciones
+   *                          generadas, el entorno de la aplicación y los
+   *                          errores generados.
+   */
   public function compile($child = null, array $sections = array()){
 
     // Asignar secciones recibidas
@@ -98,10 +182,10 @@ final class AmTpl extends AmObject{
     $this->child = $child;  // Contenido de un vista hija
 
     // Dividir por comandos
-    $parts = preg_split('/\(:: (.*) :\)/', $this->content);
+    $parts = preg_split('/\(::(.*):\)/', $this->content);
 
     // Obtener comando
-    preg_match_all('/\(:: (.*) :\)/', $this->content, $cmds);
+    preg_match_all('/\(::(.*):\)/', $this->content, $cmds);
     $cmds = $cmds[1];
 
     ob_start(); // Para optener todo lo que se imprima durante el compilad
@@ -112,17 +196,13 @@ final class AmTpl extends AmObject{
       if(isset($cmds[$i])){ // Si existe un comando en la misma posicion
 
         // Obtener parametros del comando
-        $cmds[$i] = explode(':', $cmds[$i]);
+        $cmds[$i] = explode(':', trim($cmds[$i]));
         $method = array_shift($cmds[$i]);
         $params = $cmds[$i];
 
         // Si no existe un metodo con el mismo nombre del comando mostrar error
-        method_exists($this, $method) or die("Am: unknow method AmTemplate->{$method}");
-
-        // Si el metodo es set
-        if($method == 'set')
-          // Se divide el argumento en dos parametros
-          $params = explode('=', implode(':', $params));
+        if(!method_exists($this, $method))
+          throw Am::e('AMTPL_METHOD_NOT_FOUND', $method);
 
         // Llamado el metodo
         call_user_func_array(array($this, $method), $params);
@@ -135,21 +215,26 @@ final class AmTpl extends AmObject{
     $content = ob_get_clean();
 
     $content = preg_replace('/\(:\/:\)/', '<?php echo Am::url() ?>', $content);
-    $content = preg_replace('/\(: (.*) :\)/', '<?php ${1} ?>', $content);
-    $content = preg_replace('/\(:= (.*) :\)/', '<?php echo ${1} ?>', $content);
+    $content = preg_replace('/\(:=[ ]*(.*):\)/', '<?php echo ${1} ?>', $content);
+    $content = preg_replace('/\(:(.*):\)/', '<?php ${1} ?>', $content);
 
     // Si la vista tiene un padre
-    if(null !== $this->parent){
+    if(!empty($this->parent)){
       // Obtener instancia de vista del padre
       $parentView = $this->getSubView($this->parent)
         // Compilar padre
         ->compile($content, $this->sections);
 
       // Mezclar generadas en el padre con las definidas en la vista acutal
-      $this->env = $parentView['env'] = array_merge($parentView['env'], $this->env);
+      $this->env = $parentView['env'] = array_merge(
+        $parentView['env'], $this->env);
       $this->errors = array_merge($this->errors, $parentView['errors']);
       return $parentView;
     }
+
+    // Si no se imprimió el resultado del hijo se agrega al final de la vista.
+    if(!$this->printedChild)
+      $content .= $this->child;
 
     return array(
       'content'   => $content,        // Todo lo impreso
@@ -160,53 +245,76 @@ final class AmTpl extends AmObject{
 
   }
 
-  // Obtiene una vista con el mismo entorno de la vista actual
+  /**
+   * Devuelve la instancia de una vista pasando como opciones la vista actual.
+   * @param  string $name Nombre del archivo a buscar
+   * @return AmTpl        Instancia de AmTpl con la nueva vista
+   */
   public function getSubView($name){
+
     // Si no esta definida la dependiencia mostrar error
-    isset($this->dependences[$name]) or die("Am: not found subview \"{$name}\" in \"{$this->realFile}\"");
+    if(!isset($this->dependences[$name]))
+      throw Am::e('AMTPL_SUBVIEW_NOT_FOUND', $name, $this->realFile);
+
     // Si la dependencia no es una instancia de AmView
     if(!$this->dependences[$name] instanceof self){
       // Se instancia la vista
       $this->dependences[$name] = new self($name, $this->options);
     }
+
     // Devolver instancia de la vista
     return $this->dependences[$name];
+
   }
 
-  // Inserta una vista anidada
-  public function place($view){
-    $view = $this->getSubView($view)->compile('', $this->sections);
+  /**
+   * Imprimir una vista.
+   * Crea la instancia de una subvista y e imprime su contenido.
+   * @param string $view Nombre de la vista a renderizar.
+   */
+  public function place($name){
+    // Instancia la subvista.
+    $view = $this->getSubView($name)->compile('', $this->sections);
+
+    // Imprimir su contenido
     echo $view['content'];
+
+    // Mezclar las seciones definidas en la subvista con las de la vista actual
     $this->sections = array_merge($view['sections'], $this->sections);
+
+    // Mezclar tamvien el entorno y los errores
     $this->env = array_merge($view['env'], $this->env);
     $this->errors  = array_merge($this->errors, $view['errors']);
+
   }
 
-  // Imprimir una seccion
+  /**
+   * Imprimir una sección.
+   * @param string $name Nombre de la sección a imprimir.
+   */
   public function put($name){
-    // Si tiene una vista por defecto se carga
-    if(preg_match('/(.*) = (.*)/', $name, $m)){
-
-      array_shift($m);
-      list($name, $path) = $m;
-      $this->place($path);
-    }
-
+    // Obtener la sección si existe e imprimirla
     $section = isset($this->sections[$name])? $this->sections[$name] : '';
     echo $section;
-
   }
 
-  // Abrir una seccion
+  /**
+   * Abrir una sección.
+   * @param string $name Nombre que se le dará a la nueva sección.
+   */
   public function section($name){
     $this->openSections[] = $name;
     ob_start();
   }
 
-  // Cerrar seccion
+  /**
+   * Cerrar sección
+   */
   public function endSection(){
+
     // Si no existen secciones abiertas entonces mostrar error
-    !empty($this->openSections) or die('Am: closing section unopened');
+    if(empty($this->openSections))
+      throw Am::e('AMTPL_UNOPENED_SECTION');
 
     // Obtener lo impreso hasta hora
     $content = ob_get_clean();
@@ -224,37 +332,67 @@ final class AmTpl extends AmObject{
     if(!isset($this->sections[$name]))
       $this->sections[$name] = '';
 
-    // No se recibió comandos
-    if(empty($start) && empty($end))
-      $this->sections[$name] = $content;
-
     // Agregar al principio
     if($start === '+')
       $this->sections[$name] = $content . $this->sections[$name];
 
     // Agregar al final
-    if($end === '+')
+    elseif($end === '+')
       $this->sections[$name] = $this->sections[$name] . $content;
+
+    else
+      $this->sections[$name] = $content;
 
   }
 
-  // Imprimir el contenido de la vista hija
+  /**
+   * Imprime el contenido de la vista hija
+   */
   public function child(){
+    $this->printedChild = true;
     echo $this->child;
   }
 
-  // Agregar variable
+  /**
+   * Agrega una variable de entorno.
+   * Puede recibir un string con el formato varname=valor, o dos string donde el
+   * primero el el varname y el segundo el valor.
+   */
   public function set(){
-    extract($this->getEnv());
-    eval('$this->env[\''.func_get_arg(0).'\'] = '.func_get_arg(1).';');
+    $args = func_get_args();
+
+    if(count($args)!=2)
+      $args = explode('=', implode(':', $args));
+
+    if(count($args)!=2)
+      throw Am::e('AMTPL_SET_BAD_ARGS_NUMBER');
+    
+    $this->_set($args[0], $args[1]);
+    
   }
 
-  // Obtener variables de la vista. Cinluye el entorno + las variables definidas en la vista
+  /**
+   * Callback de la asignación de la variable de entorno
+   */
+  private function _set(){
+    extract($this->getEnv());
+    eval('$this->env[\''.
+      trim(func_get_arg(0)).'\'] = '.
+      trim(func_get_arg(1)).';');
+  }
+
+  /**
+   * Devuelve las variables de entorno.
+   * @return hash Hash de las variables de entorno.
+   */
   public function getEnv(){
     return $this->env;
   }
 
-  // Obtener lista de dependencas
+  /**
+   * Vistas de las que depende.
+   * @return array Lista de todos las subvista que se incluyen en la vista.
+   */
   public function dependences(){
 
     // La primera dependencia es el archivo pripio de la vista
@@ -269,7 +407,9 @@ final class AmTpl extends AmObject{
 
   }
 
-  // Generar vista
+  /**
+   * Renderiza compila la vista e imprime el contenido.
+   */
   public function render(){
 
     // Obtener contenido compilado de la vista
@@ -279,28 +419,35 @@ final class AmTpl extends AmObject{
     $this->result['content'] = trim($this->result['content']);
     if(!empty($this->result['content'])){
       extract($this->getEnv());  // Crear variables
-      // ob_start();
       eval("?> {$this->result['content']}");
-      // $ret = trim(ob_get_clean());
-      // $end = substr($ret, strlen($ret)-2);
-      // $ret = substr($ret, 0, strlen($ret)-2);
-      // echo $ret;
     }
 
   }
 
-  // Método que indica si se generó algun error al renderizar la vista
+  /**
+   * Indica si se generó un error durante el compilado de la vista.
+   * @return bool Si tiene o no errores
+   */
   public function hasError(){
     return count($this->errors)>0;
   }
 
-  // Funcion para atender el llamado de render.tempalte
-  public static function renderize($file, array $env = array(), array $params = array()){
+  /**
+   * Manejador para el evento render.template.
+   * @param  string $tpl     Nombre de la vista a renderizar
+   * @param  array  $vars    Variables para el renderizado.
+   * @param  array  $options Opciones para la vista.
+   * @return bool            Si se generó o no errores en el renderizado.
+   */
+  public static function renderize($tpl, array $vars = array(),
+                                   array $options = array()){
+
+    // Determinar las variables de entorno
+    // Mazclar las que viene enlas opciones con las recibidas por parámetro
+    $options['env'] = array_merge(itemOr('env', $vars, array()), $vars);
 
     // Instancia vista
-    $view = new self($file, array(
-      'env' => array_merge($env, $params),
-    ));
+    $view = new self($tpl, $options);
 
     // Compilar y guardar
     $view->render();

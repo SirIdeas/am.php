@@ -7,14 +7,12 @@
  */
 
 /**
- * -----------------------------------------------------------------------------
  * Copia los archivos.
- * -----------------------------------------------------------------------------
- * @param  string  $origin  De donde se tomarán los archivo.
- * @param  string  $destiny Donde se copiará los archivos.
- * @param  array   $regexs  Listado de regex para selecionar los archivos a
- *                          copiar.
- * @param  boolean $rewrite si se reescribiran los archivos.
+ * @param string $origin  De donde se tomarán los archivo.
+ * @param string $destiny Donde se copiará los archivos.
+ * @param array  $regexs  Listado de regex para selecionar los archivos a
+ *                        copiar.
+ * @param bool   $rewrite si se reescribiran los archivos.
  */
 function task_copy($origin, $destiny, array $regexs, $rewrite = false, $vervose = false){
 
