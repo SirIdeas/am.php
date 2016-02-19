@@ -1,1 +1,0 @@
-'/rutaConRedirecion' => 'redirect => /otraRuta',
