@@ -14,12 +14,12 @@ class AmTable extends AmObject{
   protected static
     
     /**
-     * [$defCreatedAtFieldName description]
+     * Nombre por defecto para el campo que guarda el momento de creación.
      */
     $defCreatedAtFieldName = 'created_at',
     
     /**
-     * [$defCreatedAtFieldName description]
+     * Nombre por defecto para el campo que guarda el momento de actualización.
      */
     $defUpdatedAtFieldName = 'updated_at';
 
@@ -27,89 +27,88 @@ class AmTable extends AmObject{
   protected
     
     /**
-     * Formato de respuesta del los registros
+     * Nombre del modelo de la tabla.
      */
     $model = 'array',
     
     /**
-     * Nombre del campo para la fecha de creación
+     * Nombre del campo para la momento de creación.
      */
     $createdAtField = null,
     
     /**
-     * Nombre del campo para la fecha de actualización
+     * Nombre del campo para la momento de actualización.
      */
     $updatedAtField = null,
     
     /**
-     * Instancia del esquema
+     * Instancia del esquema.
      */
     $scheme = '',
     
     /**
-     * Nombre del esquema de conexión BD
+     * Nombre del esquema.
      */
     $schemeName = '',
     
     /**
-     * Nombre en la BD
+     * Nombre en la tabla en la BD.
      */
     $tableName = null,
     
     /**
-     * Lista de campos
+     * Hash de campos.
      */
     $fields = null,
     
     /**
-     * Lista de campos
+     * Indica si la tabla cargó la estructura de la BD.
      */
     $schemeStruct = false,
     
     /**
-     * Validadores
+     * Hash de validadores.
      */
     $validators = null,
     
     /**
-     * Motor
+     * Motor de la tabla en la BD.
      */
     $engine = null,
     
     /**
-     * Set de caracteres
+     * Set de caracteres de la tabla en la BD.
      */
     $charset = null,
     
     /**
-     * Coleción de caracteres
+     * Coleción de caracteres de la tala en la BD.
      */
     $collage = null,
     
     /**
-     * Array de nombres de campos que forman el PK
+     * Lista de campos PKs.
      */
     $pks = array(),
     
     /**
-     * Tablas a las que hace referencia
+     * Hash de referencias a otras tablas.
      */
     $referencesTo = array(),
     
     /**
-     * Tablas que le hacen referencia
+     * Hash de referencias a esta tabla.
      */
     $referencesBy = array(),
     
     /**
-     * Array de indeces unicos
+     * Array de índices únicos.
      */
     $uniques = array();
 
-  // Constructor para la clase
   /**
-   * [__construct description]
-   * @param [type] $params [description]
+   * Constructor para la clase.
+   * @param any $params Hash de valores iniciales para el objeto.
    */
   public function __construct($params = null){
 
@@ -128,8 +127,7 @@ class AmTable extends AmObject{
     // Obtener configuracion del modelo
     $conf = $scheme->getBaseModelConf($params['tableName']);
 
-    // Si se pudo obtener la configuración mazclarla con la recibida por
-    // parámetros
+    // Si se pudo obtener la configuración se mezcla con la recibida
     if($conf)
       $params = array_merge($conf, $params, array('schemeStruct' => true));
 
@@ -143,13 +141,15 @@ class AmTable extends AmObject{
     if(!$this->getModel())
       $this->model = $scheme->getSchemeModelName($params['tableName']);
 
-    // Preparar campos
+    // Obtener los campos y primary keys
     $fields = $this->fields;
     $pks = $this->pks;
 
+    // Luego recetearlos para prepararlos
     $this->pks = array();
     $this->fields = array();
 
+    // Preparar los campos
     if(is_array($fields))
       foreach($fields as $fieldName => $column)
         // Agregar instancia del campo
@@ -158,32 +158,37 @@ class AmTable extends AmObject{
           array('pk' => in_array($fieldName, $pks))
         ));
 
-    $this->pks = merge_unique($this->pks, $pks);
-
-    // Preparar referencias
+    // Preparar los primary keys.
+    if(is_array($pks))
+      foreach($pks as $pk)
+        $this->addPk($pk);
+      
+    // Preparar referencias a
     if(!is_array($this->referencesTo))
       $this->referencesTo = array();
 
+    // Preparar referencias a
     foreach($this->referencesTo as $name => $relation)
       if(!$relation instanceof AmRelation)
         $this->referencesTo[$name] = new AmRelation($relation);
 
-    // Preparar referencias a
+    // Preparar referencias de
     if(!is_array($this->referencesBy))
       $this->referencesBy = array();
 
+    // Preparar referencias de
     foreach($this->referencesBy as $name => $relation)
       if(!$relation instanceof AmRelation)
         $this->referencesBy[$name] = new AmRelation($relation);
 
-    // Asignar tabla
+    // Agregar tabla al esquema
     $scheme->addTable($this);
 
   }
 
   /**
-   * [getModel description]
-   * @return [type] [description]
+   * Devuelve el modelo de la tabla.
+   * @return string Nombre del modelo.
    */
   public function getModel(){
 
@@ -192,8 +197,8 @@ class AmTable extends AmObject{
   }
 
   /**
-   * [getTableName description]
-   * @return [type] [description]
+   * Devuelve el nombre de la tabla.
+   * @return string Nombre de la tabla.
    */
   public function getTableName(){
 
@@ -202,8 +207,8 @@ class AmTable extends AmObject{
   }
 
   /**
-   * [getSchemeName description]
-   * @return [type] [description]
+   * Devuelve el nombre del esquema.
+   * @return string Nombre del esquema.
    */
   public function getSchemeName(){
 
@@ -212,8 +217,8 @@ class AmTable extends AmObject{
   }
 
   /**
-   * [getScheme description]
-   * @return [type] [description]
+   * Devuelve la instancia del esquema.
+   * @return AmScheme Instancia del esquema.
    */
   public function getScheme(){
 
@@ -223,36 +228,8 @@ class AmTable extends AmObject{
 
 
   /**
-   * [setModel description]
-   * @param [type] $value [description]
-   */
-  public function setModel($value){
-
-    $table = $this;
-
-    if(isset($this->model) && isset($value) && $this->model !== $value){
-
-      $model = $this->model;
-      $this->model = $value;
-      $table = clone($this);
-      $this->model = $model;
-
-    }elseif(!isset($this->model) && isset($value)){
-      $this->model = $value;
-
-    }
-
-    // Asignar tabla
-    $table->getScheme()->addTable($table);
-
-    return $table;
-
-  }
-
-
-  /**
-   * [getReferencesTo description]
-   * @return [type] [description]
+   * Devuelve la Hash de referencias a otras tablas.
+   * @return Hash Hash de referencias a otras tablas.
    */
   public function getReferencesTo(){
 
@@ -261,8 +238,8 @@ class AmTable extends AmObject{
   }
   
   /**
-   * [getReferencesBy description]
-   * @return [type] [description]
+   * Devuelve la Hash de referencias de otras tablas.
+   * @return hash Hash de referencias de otras tablas.
    */
   public function getReferencesBy(){
 
@@ -271,8 +248,8 @@ class AmTable extends AmObject{
   }
   
   /**
-   * [getUniques description]
-   * @return [type] [description]
+   * Devuelve el listado de claves únicas.
+   * @return array Listado de clavees únicas.
    */
   public function getUniques(){
 
@@ -281,18 +258,29 @@ class AmTable extends AmObject{
   }
 
   /**
-   * [getPks description]
-   * @return [type] [description]
+   * Devuelve el listado de nombre de campos del primary keys de la tabla.
+   * @return array Listado de nombre del PK.
    */
   public function getPks(){
 
     return $this->pks;
 
   }
+
+  /**
+   * Indica su un campo forma o no parte del primary key de la tabla
+   * @param  string  $fieldName Nombr del campo consultado.
+   * @return boolean            Si forma parte del PK.
+   */
+  public function isPk($fieldName){
+
+    return in_array($fieldName, $this->getPks());
+    
+  }
   
   /**
-   * [getValidators description]
-   * @return [type] [description]
+   * Devuelve el Hash de validadores.
+   * @return hash Hash de validadores.
    */
   public function getValidators(){
 
@@ -301,8 +289,8 @@ class AmTable extends AmObject{
   }
 
   /**
-   * [isSchemeStruct description]
-   * @return boolean [description]
+   * Devuelve a la tabla se le cargó la estructura de la BD.
+   * @return boolean Si tiene la estructura de la BD.
    */
   public function isSchemeStruct(){
 
@@ -312,8 +300,8 @@ class AmTable extends AmObject{
 
 
   /**
-   * [getEngine description]
-   * @return [type] [description]
+   * Devuelve el nombre del motor de la tabla en la BD.
+   * @return string Nombre del motor de la tabla en la BD.
    */
   public function getEngine(){
 
@@ -322,8 +310,8 @@ class AmTable extends AmObject{
   }
 
   /**
-   * [getCharset description]
-   * @return [type] [description]
+   * Devuelve el Set de caracteres.
+   * @return string Set de caracteres.
    */
   public function getCharset(){
 
@@ -332,8 +320,8 @@ class AmTable extends AmObject{
   }
 
   /**
-   * [getCollage description]
-   * @return [type] [description]
+   * Devuelve la coleción de caracteres.
+   * @return string Devuelve la coleción de caracteres.
    */
   public function getCollage(){
 
@@ -342,8 +330,8 @@ class AmTable extends AmObject{
   }
   
   /**
-   * [getFields description]
-   * @return [type] [description]
+   * Devuelve el Hash de campos.
+   * @return hash Hash de campos.
    */
   public function getFields(){
 
@@ -352,9 +340,9 @@ class AmTable extends AmObject{
   }
   
   /**
-   * [getField description]
-   * @param  [type] $name [description]
-   * @return [type]       [description]
+   * Devuelve el campo correspondiente a un nombre.
+   * @param  string  $name Nombre del campo que se desea obtener.
+   * @return AmField       Instancia del campo o null si no existe.
    */
   public function getField($name){
 
@@ -363,9 +351,9 @@ class AmTable extends AmObject{
   }
 
   /**
-   * [hasField description]
-   * @param  [type]  $name [description]
-   * @return boolean       [description]
+   * Devuelve si existe un campo con el nombre especificado.
+   * @param  string  $name Nombre del campo.
+   * @return boolean       Si el campo existe.
    */
   public function hasField($name){
 
@@ -374,8 +362,9 @@ class AmTable extends AmObject{
   }
 
   /**
-   * [getCreatedAtField description]
-   * @return [type] [description]
+   * Devuelve el nombre del campo destinado a guardar el momento de creación de
+   * un registro.
+   * @return string Nombre del campo.
    */
   public function getCreatedAtField(){
 
@@ -384,8 +373,9 @@ class AmTable extends AmObject{
   }
 
   /**
-   * [getUpdatedAtField description]
-   * @return [type] [description]
+   * Devuelve le nombre del campo destinado a guardar el momento de la
+   * actualizaciónde un registro.
+   * @return string Nombre del campo.
    */
   public function getUpdatedAtField(){
 
@@ -393,31 +383,68 @@ class AmTable extends AmObject{
 
   }
 
+
   /**
-   * [setCreatedAtField description]
-   * @param [type] $value [description]
+   * Asigna el modelo a una tabla.
+   * Si ya tiene un modleoa asignado y es diferente al actual entonces se clona
+   * la instancia de la tabla y se asigna el nuevo modelo a esta.
+   * @param string   $value Nombre del modelo.
+   * @return AmTabla        Si el model cambia devuelve la tabla nueva, del
+   *                        contrario devuelve la tabla actual.
+   */
+  public function setModel($value){
+
+    $table = $this;
+
+    if(isset($this->model) && isset($value) && $this->model !== $value){
+
+      // Clonar la tabla actual
+      $model = $this->model;
+      $this->model = $value;
+      $table = clone($this);
+      $this->model = $model;
+
+      // Agregar la tabla al esquema.
+      $table->getScheme()->addTable($table);
+
+    }elseif(!isset($this->model) && isset($value)){
+      
+      $this->model = $value;
+
+    }
+    
+    return $table;
+
+  }
+
+  /**
+   * Asigna el nombre del campo de momento de creación del registro.
+   * @param  string $value Nombre del campo.
+   * @return $this
    */
   public function setCreatedAtField($value){
 
-    $this->createdAtField = $value; return $this;
+    $this->createdAtField = $value;
     return $this;
 
   }
 
   /**
-   * [setUpdatedAtField description]
-   * @param [type] $value [description]
+   * Asigna el nombre del campo de momento de actualización del registro.
+   * @param  string $value Nombre del campo.
+   * @return $this
    */
   public function setUpdatedAtField($value){
 
-    $this->updatedAtField = $value; return $this;
+    $this->updatedAtField = $value;
     return $this;
 
   }
 
   /**
-   * [hasCreatedAtField description]
-   * @return boolean [description]
+   * Devuelve si existe un campo con el nombre asignado de campo de creación de
+   * registro.
+   * @return boolean Si existe el campo.
    */
   public function hasCreatedAtField(){
 
@@ -426,8 +453,9 @@ class AmTable extends AmObject{
   }
 
   /**
-   * [hasUpdatedAtField description]
-   * @return boolean [description]
+   * Devuelve si existe un campo con el nombre asignado de campo de
+   * actualización de registro.
+   * @return boolean Si existe el campo.
    */
   public function hasUpdatedAtField(){
 
@@ -436,41 +464,50 @@ class AmTable extends AmObject{
   }
 
   /**
-   * [addCreatedAtField description]
-   * @param [type] $name [description]
+   * Agrega el campo de creación de registro con el nombre pasado por parámetro.
+   * @param string $name Nombre del campo a agregar.
+   * @return $this
    */
   public function addCreatedAtField($name = null){
 
+    // Si no se recibió el nombre del campo se toma el nombre por defecto.
     if(!isset($name))
       $name = self::$defCreatedAtFieldName;
     
+    // Asignar el nombre del campo
     $this->setCreatedAtField($name);
 
+    // Agregar campo como datatime.
     return $this->addField($name, 'datetime');
 
   }
 
   /**
-   * [addUpdatedAtField description]
-   * @param [type] $name [description]
+   * Agrega el campo de creación de registro con el nombre pasado por parámetro.
+   * @param string $name Nombre del campo a agregar.
+   * @return $this
    */
   public function addUpdatedAtField($name = null){
 
+    // Si no se recibió el nombre del campo se toma el nombre por defecto.
     if(!isset($name))
       $name = self::$defUpdatedAtFieldName;
     
+    // Asignar el nombre del campo
     $this->setUpdatedAtField($name);
 
+    // Agregar campo como datatime.
     return $this->addField($name, 'datetime');
 
   }
 
   /**
-   * [addCreatedAndUpdateAtFields description]
-   * @param [type] $createAtFieldName [description]
-   * @param [type] $updateAtFieldName [description]
+   * Agrega los campos de creación y actualización.
+   * @param string $createAtFieldName Nombre del campo de creación.
+   * @param string $updateAtFieldName Nombre del campo de actualización.
+   * @return $this
    */
-  public function addCreatedAndUpdateAtFields($createAtFieldName = null,
+  public function addCreatedAtAndUpdateAtFields($createAtFieldName = null,
     $updateAtFieldName = null){
 
     return $this
@@ -479,15 +516,15 @@ class AmTable extends AmObject{
 
   }
 
-  // Agregar fecha al campo de fecha de creacion
   /**
-   * [setAutoCreatedAt description]
-   * @param [type] $values [description]
+   * Agregar fecha al campo de fecha de creacion.
+   * @param  array/AmQuery $values Array de modelos o una instancia de AmQuery.
+   * @return $this
    */
   public function setAutoCreatedAt($values){
 
-    // Si la tabla tiene un campo llamado 'created_at'
-    // Se asigna a todos los valores la fecha now
+    // Si la tabla tiene un campo llamado 'created_at' se asigna a todos los
+    // valores la fecha now
     if($this->hasCreatedAtField())
       self::setNowDateValueToAllRecordsInField($values,
         $this->getCreatedAtField());
@@ -496,10 +533,10 @@ class AmTable extends AmObject{
 
   }
 
-  // Agregar fecha al campo de fecha de mpdificacion
   /**
-   * [setAutoUpdatedAt description]
-   * @param [type] $values [description]
+   * Agregar fecha al campo de fecha de mpdificacion
+   * @param  array/AmQuery $values Array de modelos o una instancia de AmQuery.
+   * @return $this
    */
   public function setAutoUpdatedAt($values){
 
@@ -514,16 +551,20 @@ class AmTable extends AmObject{
   }
 
   /**
-   * [setNowDateValueToAllRecordsInField description]
-   * @param [type] $values [description]
-   * @param [type] $field  [description]
+   * Asigna el valor valor de NOW a los modelos o consulta AmQuery en un
+   * determinado campo.
+   * @param array/AmQuery $values Array de modelos o una instancia de AmQuery.
+   * @param string        $field  Nombre del campo donde se asignará.
    */
   private static function setNowDateValueToAllRecordsInField($values, $field){
 
+    // Fecha a signar.
     $now = date('c');
 
+    // Si es una instancia de AmQuery
     if($values instanceof AmQuery){
 
+      // Si es una consulta de actualización.
       if($values->getType() == 'update')
         $values->set($field, $now);
 
@@ -533,7 +574,6 @@ class AmTable extends AmObject{
 
     }elseif(is_array($values)){
 
-
       // Agregar created_ad a cada registro
       foreach (array_keys($values) as $i)
         $values[$i][$field] = $now;
@@ -542,35 +582,10 @@ class AmTable extends AmObject{
 
   }
 
-  // Métodos SET para algunas propiedades
   /**
-   * [setScheme description]
-   * @param [type] $value [description]
-   */
-  public function setScheme($value){
-
-    $this->scheme = $value;
-    return $this;
-    
-  }
-  
-  // Indica su un campo forma o no parte del primary key de la tabla
-  /**
-   * [isPk description]
-   * @param  [type]  $fieldName [description]
-   * @return boolean            [description]
-   */
-  public function isPk($fieldName){
-
-    return in_array($fieldName, $this->getPks());
-    
-  }
-
-  // Agregar el nombre del campo a la lista de
-  // claves primarias
-  /**
-   * [addPk description]
-   * @param [type] $fieldName [description]
+   * Agregar el nombre del campo a la lista de laves primarias.
+   * @param string $fieldName Nombre del campo.
+   * @return $this
    */
   public function addPk($fieldName){
 
@@ -582,6 +597,8 @@ class AmTable extends AmObject{
     // Marcar el campo como primario
     $field = $this->getField($fieldName);
 
+    // Si el campo ya existe y no es un campo de la PK se debe crear una copia
+    // marcandolo como PK.
     if(isset($field) && !$field->isPk())
       $this->fields[$fieldName] = $this->fields[$fieldName]->cp(array(
         'pk' => true
@@ -592,9 +609,74 @@ class AmTable extends AmObject{
   }
 
   /**
-   * [create description]
-   * @param  boolean $isNotExists [description]
-   * @return [type]               [description]
+   * Agregar una campo a la lista de campos.
+   * @param string               $name  Nombre del campo a insertar.
+   * @param array/AmField/string $field Hash de atributos del campo o instancia
+   *                             de AmField o tipo de datos del campo.
+   * @return $this
+   */
+  public function addField($name = null, $field = null){
+
+    // Si en $field se recibe solo el tipo de datos.
+    if(is_string($field))
+      // Se convierte en array.
+      $field = array('type' => $field);
+
+    // Si el primer parametro es una instanca de AmFiel o un array
+    // se tomará como el campo
+    if($name instanceof AmField || is_array($name)){
+      $field = $name;
+
+      // Obtener el nombre del campo.
+      if($name instanceof AmField)
+        $name = $field->getName();
+      else
+        $name = itemOr('name', $field);
+
+    }
+
+    // Si el campo es una rray se convierte en una instancia de AmField.
+    if(is_array($field))
+      $field = new AmField(array_merge(array('name' => $name), $field));
+
+    // Obtener el nombre del campo.
+    $name = $field->getName();
+
+    // Si ya existe un campo con el mismo nombre generar una excepción.
+    if($this->hasField($name))
+      throw Am::e('AMSCHEMA_TABLE_ALREADY_HAVE_A_FIELD_NAMED',
+        $this->getTableName(), $name);
+
+    // Agregar el campo
+    $this->fields[$name] = $field;
+
+    // Si es campo primario se agrega a la lista de campos primarios
+    if($field->isPk())
+      $this->addPk($name);
+
+    return $this;
+
+  }
+
+  /**
+   * Parse los campos de un hash de valores mediante los campos de la tabla.
+   * @param  hash $r Hash de valores
+   * @return hash    Hash de valores parseado.
+   */
+  public function prepare(array $r){
+
+    foreach ($this->fields as $key => $field)
+      $r[$key] = $field->parseValue(itemOr($key, $r));
+
+    return $r;
+
+  }
+
+  /**
+   * Crea la tabla en la BD.
+   * @param  bool $ifNotExists Se agrega el parémtro IS NOT EXISTS.
+   * @return bool              Si se creó la tabla. Si la tabla existe y el
+   *                           parámetro $ifNotExists == true, retornará true.
    */
   public function create($isNotExists = true){
 
@@ -603,9 +685,10 @@ class AmTable extends AmObject{
   }
 
   /**
-   * [drop description]
-   * @param  boolean $isExists [description]
-   * @return [type]            [description]
+   * Elimina la tabla de la BD.
+   * @param  bool $ifExists Si se agrega la clausula IF EXISTS.
+   * @return bool           Si se eliminó la Tabla. Si la Tabla no existe y el
+   *                        parémetro $ifExists==true entonces retorna true.
    */
   public function drop($isExists = true){
 
@@ -614,8 +697,8 @@ class AmTable extends AmObject{
   }
 
   /**
-   * [exists description]
-   * @return [type] [description]
+   * Indica si existe la tabla en la BD.
+   * @return boolean Si existe la tabla.
    */
   public function exists(){
 
@@ -624,9 +707,9 @@ class AmTable extends AmObject{
   }
 
   /**
-   * [truncate description]
-   * @param  boolean $ignoreFK [description]
-   * @return [type]            [description]
+   * Vacía la tabla.
+   * @param  bool $ignoreFk Si se ingorará los Foreing Keys.
+   * @return bool           Si se vació la tabla satisfactoriamente.
    */
   public function truncate($ignoreFK = false){
 
@@ -634,12 +717,15 @@ class AmTable extends AmObject{
 
   }
 
-  // Insertar valores
   /**
-   * [insertInto description]
-   * @param  [type] $values [description]
-   * @param  array  $fields [description]
-   * @return [type]         [description]
+   * Insertar valores en una tabla.
+   * @param  array/AmQuery $values Array de modelos o AmQuery select con los
+   *                               calores a insertar.
+   * @param  array         $fields Lista de campos para la consulta insert.
+   * @return boolen/int            Si se realizó la inserción correstamente. Si
+   *                               Se inserta un solo elemento y la tabla
+   *                               contiene un único campo autoincrementable
+   *                               entonces devuelve este campo.
    */
   public function insertInto($values, array $fields = array()){
 
@@ -647,51 +733,12 @@ class AmTable extends AmObject{
 
   }
 
-  // Agregar una campo a la lista de campos
   /**
-   * [addField description]
-   * @param [type] $name  [description]
-   * @param [type] $field [description]
-   */
-  public function addField($name = null, $field = null){
-
-    if(is_string($field))
-      $field = array('type' => $field);
-
-    if($name instanceof AmField || is_array($name)){
-      $field = $name;
-      if($name instanceof AmField)
-        $name = $field->getName();
-      else
-        $name = itemOr('name', $field);
-    }
-
-    if(is_array($field))
-      $field = new AmField(array_merge(array('name' => $name), $field));
-
-    $name = $field->getName();
-
-    if($this->hasField($name))
-      throw Am::e('AMSCHEMA_TABLE_ALREADY_HAVE_A_FIELD_NAMED',
-        $this->getTableName(), $name);
-
-    $this->fields[$name] = $field;
-
-    // Si es campo primario se agrega a la
-    // lista de campos primarios
-    if($field->isPk())
-      $this->addPk($name);
-
-    return $this;
-
-  }
-
-  // Devuelve un Query que devuelve todos los registros de la Tabla
-  /**
-   * [all description]
-   * @param  string  $alias      [description]
-   * @param  boolean $withFields [description]
-   * @return [type]              [description]
+   * Devuelve un AmQuery de seleción de todos registros de la tabla
+   * @param  string  $alias      Alias de la tabla en el query.
+   * @param  boolean $withFields Si la clausula SELECT se genera con los campos
+   *                             de la tabla (true) o con * (false).
+   * @return AmQuery             Query select.
    */
   public function all($alias = 'q', $withFields = false){
 
@@ -701,15 +748,13 @@ class AmTable extends AmObject{
       $alias = 'q';
     }
 
-    $scheme = $this->getScheme();
-
     // Crear consultar
-    $q = $scheme->q($this, $alias);
+    $q = $this->getScheme()->q($this, $alias);
 
     // Obtener como retornará los resultados y asignarlo a la consulta
     $q->setModel($this->getModel());
 
-    // Asignar campos
+    // Asignar clausula SELECT
     if($withFields){
       $fields = array_keys($this->getFields());
       $fields = array_combine($fields, $fields);
@@ -717,18 +762,19 @@ class AmTable extends AmObject{
       
     }
 
+    // Devolver consulta
     return $q;
 
   }
 
-  // Obtener consulta para buscar por un campos
   /**
-   * [findBy description]
-   * @param  [type]  $field      [description]
-   * @param  [type]  $value      [description]
-   * @param  string  $alias      [description]
-   * @param  boolean $withFields [description]
-   * @return [type]              [description]
+   * Obtener consulta para buscar registro por un campo.
+   * @param  string  $field      Nombre del campo donde se buscará.
+   * @param  any     $value      Valor a buscar.
+   * @param  string  $alias      Alias de la tabla en el query.
+   * @param  boolean $withFields Si la clausula SELECT se genera con los campos
+   *                             de la tabla (true) o con * (false).
+   * @return AmQuery             Query select.
    */
   public function findBy($field, $value, $alias = 'q', $withFields = false){
 
@@ -739,26 +785,35 @@ class AmTable extends AmObject{
   // Obtener todos los registros de buscar por un campos
   /**
    * [findAllBy description]
-   * @param  [type]  $field      [description]
-   * @param  [type]  $value      [description]
-   * @param  [type]  $type       [description]
-   * @param  boolean $withFields [description]
-   * @return [type]              [description]
+   * @param  string  $field      Nombre del campo donde se buscará.
+   * @param  any     $value      Valor a buscar.
+   * @param  string  $as         String con el nombre del modelo o formato
+   *                             de retorno. Puede ser "array", "am", "object",
+   *                             nombre de una clase existente o identificador
+   *                             de un modelo.
+   * @param  boolean $withFields Si la clausula SELECT se genera con los campos
+   *                             de la tabla (true) o con * (false).
+   * @return AmQuery             Query select.
    */
-  public function findAllBy($field, $value, $type = null, $withFields = false){
+  public function findAllBy($field, $value, $as = null, $withFields = false){
 
-    return $this->findBy($field, $value, $withFields)->get($type);
+    return $this->findBy($field, $value, $withFields)->get($as);
 
   }
 
-  // Obtener el primer registro de la busqueda por un campo
   /**
-   * [findOneBy description]
-   * @param  [type]  $field      [description]
-   * @param  [type]  $value      [description]
-   * @param  [type]  $type       [description]
-   * @param  boolean $withFields [description]
-   * @return [type]              [description]
+   * Obtener el primer registro de la busqueda por un campo.
+   * @param  string  $field      Nombre del campo donde se buscará.
+   * @param  any     $value      Valor a buscar.
+   * @param  string  $as         String con el nombre del modelo o formato
+   *                             de retorno. Puede ser "array", "am", "object",
+   *                             nombre de una clase existente o identificador
+   *                             de un modelo.
+   * @param  boolean $withFields Si la clausula SELECT se genera con los campos
+   *                             de la tabla (true) o con * (false).
+   * @return any/boolean         El modelo en el formato especificado por el
+   *                             parámetro $as o false si no se consigió
+   *                             alguna coincidencia.
    */
   public function findOneBy($field, $value, $type = null, $withFields = false){
 
@@ -766,13 +821,16 @@ class AmTable extends AmObject{
     
   }
 
-  // Obtener la consulta para encontrar el registro con un determinado ID
   /**
-   * [findById description]
-   * @param  [type]  $id         [description]
-   * @param  string  $alias      [description]
-   * @param  boolean $withFields [description]
-   * @return [type]              [description]
+   * Obtener la consulta para encontrar el registro con un determinado ID.
+   * @param  string/int/array $id Id del registro. Si la tabla tiene un PK con
+   *                              un único campo entonces puede ser un int o
+   *                              string, si es un PK compuesto estonces debe
+   *                              ser un hash con los valores del id a buscar.
+   * @param  string  $alias       Alias de la tabla en el query.
+   * @param  boolean $withFields  Si la clausula SELECT se genera con los campos
+   *                              de la tabla (true) o con * (false).
+   * @return AmQuery              Query select.
    */
   public function findById($id, $alias = 'q', $withFields = false){
 
@@ -811,6 +869,7 @@ class AmTable extends AmObject{
       if($field)
         $fieldName = $field->getName();
 
+      // Agegar condición
       $q->where("{$fieldName}='{$id[$pk]}'");
 
     }
@@ -819,41 +878,36 @@ class AmTable extends AmObject{
 
   }
 
-  // Regresa un objeto con AmModel con el registro solicitado
   /**
-   * [find description]
-   * @param  [type]  $id         [description]
-   * @param  [type]  $type       [description]
-   * @param  boolean $withFields [description]
-   * @return [type]              [description]
+   * Devuelve un modelo con el registro solicitado.
+   * @param  string/int/array $id Id del registro. Si la tabla tiene un PK con
+   *                              un único campo entonces puede ser un int o
+   *                              string, si es un PK compuesto estonces debe
+   *                              ser un hash con los valores del id a buscar.
+   * @param  string  $alias       Alias de la tabla en el query.
+   * @param  string  $as          String con el nombre del modelo o formato
+   *                              de retorno. Puede ser "array", "am", "object",
+   *                              nombre de una clase existente o identificador
+   *                              de un modelo.
+   * @param  boolean $withFields  Si la clausula SELECT se genera con los campos
+   *                              de la tabla (true) o con * (false).
+   * @return any/boolean          El modelo en el formato especificado por el
+   *                              parámetro $as o false si no se consigió
+   *                              alguna coincidencia.
    */
-  public function find($id, $type = null, $withFields = false){
+  public function find($id, $as = null, $withFields = false){
 
+    // Obtener consulta de búsqueda por id.
     $q = $this->findById($id, $withFields);
-    $r = isset($q)? $q->row($type) : false;
 
-    return $r === false ? null : $r;
+    // Si se obtuno la consulta devolver obtener el primer registro.
+    return isset($q)? $q->row($as) : null;
 
   }
 
   /**
-   * [prepare description]
-   * @param  array  $r [description]
-   * @return [type]    [description]
-   */
-  public function prepare(array $r){
-
-    foreach ($this->fields as $key => $field)
-      $r[$key] = $field->parseValue(itemOr($key, $r));
-
-    return $r;
-
-  }
-
-  // Convertir la tabla a Array
-  /**
-   * [toArray description]
-   * @return [type] [description]
+   * Convertir la tabla en un Array.
+   * @return hash Hash de propiedades de la tabla.
    */
   public function toArray(){
 
