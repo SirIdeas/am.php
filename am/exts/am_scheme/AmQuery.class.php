@@ -1003,6 +1003,7 @@ class AmQuery extends AmObject{
     
     // Obtner la tabla
     $table = $this->getTable(true);
+
     if(is_string($table))
       $table = $scheme->loadTable($table);
 

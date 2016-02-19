@@ -5,15 +5,15 @@ class Usuario extends AmModel{
   protected
     $tableName = 'usuarios',
     $pks = array('id_user'),
-    // $fields = array(
-    //   'id_user' => array(
-    //     'type' => 'integer',
-    //     'autoIncrement' => true,
-    //   ),
-    //   'name' => 'varchar',
-    //   'email' => 'varchar',
-    //   'sueldo' => 'float',
-    // ),
+    $fields = array(
+      'id_user' => array(
+        'type' => 'integer',
+        'autoIncrement' => true,
+      ),
+      'name' => 'varchar',
+      'email' => 'varchar',
+      'sueldo' => 'float',
+    ),
     $createdAtField = true,
     $updatedAtField = true;
 
