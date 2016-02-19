@@ -15,99 +15,99 @@ class AmQuery extends AmObject{
   protected
     
     /**
-     * Formato de respuesta del los registros
+     * Nombre del modelo de la tabla.
      */
     $model = 'array',
     
     /**
-     * Formateador el resultado de la consulta
+     * Callback con el formateador del resultado del query.
      */
     $formater = null,
     
     /**
-     * Tipo de consulta
+     * Tipo de query: select, insert, update o delete.
      */
     $type = 'select',
     
     /**
-     * Fuente de datos
+     * Instancia del esquema.
      */
     $scheme = null,
     
     /**
-     * Nombre de la fuente
+     * Nombre del query.
      */
     $name = null,
     
     /**
-     * Manejador para el resultado de la consulta
+     * Manejador para el resultado del query.
      */
     $result = null,
     
     
    /**
-    * Lista de campos para la clausula SELECT
+    * Hash de campos para la cláusula SELECT.
     */
     $selects = array(),
     
    /**
-    * Para solo obtener los registros diferentes
+    * Para obtener solo los registros diferentes.
     */
     $distinct = false,
     
    /**
-    * Lista de tablas para la clausula FROM
+    * Hash de tablas para la cláusula FROM.
     */
     $froms = array(),
     
    /**
-    * Lista de condiciones para la clausula WHERE
+    * Array de condiciones para la cláusula WHERE.
     */
     $wheres = array(),
     
    /**
-    * Lista de tablas para la clausula JOIN
+    * Hash de tablas para la cláusula JOIN.
     */
     $joins = array(),
     
    /**
-    * Lista de campos para la clausula ORDER BY
+    * Hash de campos para la cláusula ORDER BY.
     */
     $orders = array(),
     
    /**
-    * Lista de campos para la clausula GROUP BY
+    * Hash de campos para la cláusula GROUP BY.
     */
     $groups = array(),
     
    /**
-    * Cantidad de registro: LIMIT
+    * Int con la cantidad de de registros. Cláusula LIMIT.
     */
     $limit = null,
     
    /**
-    * Posicion de inicio: OFFSET
+    * INt con la posicion de inicio. Cláusula OFFSET.
     */
     $offset = null,
     
    /**
-    * Tabla donde se insertará los valores
+    * Tabla donde se insertará los valores para queries INSERT.
     */
     $insertIntoTable = null,
     
    /**
-    * Campos para el insert
+    * Campos para el insert para queries INSERT.
     */
     $insertIntoFields = null,
     
    /**
-    * Lista de cambios SETS para consultas UPDATE
+    * Lista de cambios SETS para queries UPDATE.
     */
     $sets = array();
 
   /**
-   * [getModel description]
-   * @return [type] [description]
+   * Devuelve el modelo del query.
+   * @return string Nombre del modelo.
    */
   public function getModel(){
 
@@ -116,8 +116,8 @@ class AmQuery extends AmObject{
   }
 
   /**
-   * [getFormater description]
-   * @return [type] [description]
+   * Devuelve el callback con el formateador de resultado.
+   * @return callback Formateador del resultado.
    */
   public function getFormater(){
 
@@ -126,7 +126,7 @@ class AmQuery extends AmObject{
   }
 
   /**
-   * [getType description]
+   * Devuelve el tipo de query: select, insert, update o delete.
    * @return [type] [description]
    */
   public function getType(){
@@ -136,8 +136,8 @@ class AmQuery extends AmObject{
   }
 
   /**
-   * [getScheme description]
-   * @return [type] [description]
+   * Devuelve la instancia del esquema.
+   * @return AmScheme Instancia del esquema.
    */
   public function getScheme(){
 
@@ -146,8 +146,8 @@ class AmQuery extends AmObject{
   }
 
   /**
-   * [getName description]
-   * @return [type] [description]
+   * Devuelve el nombre del query.
+   * @return string Nombre del query.
    */
   public function getName(){
 
@@ -156,8 +156,8 @@ class AmQuery extends AmObject{
   }
 
   /**
-   * [getSelects description]
-   * @return [type] [description]
+   * Devuelve el hash de la cláusula SELECT.
+   * @return hash Hash de campos a selecionar.
    */
   public function getSelects(){
 
@@ -166,8 +166,8 @@ class AmQuery extends AmObject{
   }
 
   /**
-   * [getFroms description]
-   * @return [type] [description]
+   * Devuelve el hash de la cláusula FROM.
+   * @return hash con las tablas para la cláusula FROM.
    */
   public function getFroms(){
 
@@ -175,7 +175,6 @@ class AmQuery extends AmObject{
 
   }
 
-  // GET para los joins
   /**
    * [getJoins description]
    * @param  [type] $type [description]
@@ -367,7 +366,7 @@ class AmQuery extends AmObject{
 
   }
 
-  // Asignar signar la clausula distint
+  // Asignar signar la cláusula distint
   /**
    * [distinct description]
    * @return [type] [description]
@@ -390,7 +389,7 @@ class AmQuery extends AmObject{
 
   }
 
-  // Devuelve otra instancia de la consulta actual
+  // Devuelve otra instancia del query actual
   /**
    * [copy description]
    * @return [type] [description]
@@ -401,7 +400,7 @@ class AmQuery extends AmObject{
 
   }
 
-  // Devuelve una copia aislada de la consulta actual
+  // Devuelve una copia aislada del query actual
   /**
    * [encapsulate description]
    * @param  string $alias [description]
@@ -413,7 +412,7 @@ class AmQuery extends AmObject{
 
   }
 
-  // Metodos para obtener el SQL los diferentes tipos de consulta
+  // Metodos para obtener el SQL los diferentes tipos de queries
   /**
    * [sql description]
    * @return [type] [description]
@@ -424,7 +423,7 @@ class AmQuery extends AmObject{
 
   }
 
-  // Ejecuta la consulta SQL
+  // Ejecuta el query SQL
   /**
    * [execute description]
    * @return [type] [description]
@@ -436,7 +435,7 @@ class AmQuery extends AmObject{
 
   }
 
-  // Conver a Cadena de caracteres implica devolver el SQL de la consulta
+  // Conver a Cadena de caracteres implica devolver el SQL del query
   /**
    * [__toString description]
    * @return string [description]
@@ -470,7 +469,7 @@ class AmQuery extends AmObject{
   }
 
 
-  // Insertar los registros resultantes de la consulta en una table
+  // Insertar los registros resultantes del query en una table
   /**
    * [insertInto description]
    * @param  [type] $table  [description]
@@ -508,7 +507,7 @@ class AmQuery extends AmObject{
    */
   public function getTable($returnTableInstance = false){
 
-    // Obtener los froms de la consulta
+    // Obtener los froms del query
     $froms = $this->getFroms();
 
     foreach ($froms as $from) {
@@ -571,7 +570,7 @@ class AmQuery extends AmObject{
 
   }
 
-  // Método para agregar clausula SELECT
+  // Método para agregar cláusula SELECT
   /**
    * [selectAs description]
    * @param  [type] $field [description]
@@ -614,7 +613,7 @@ class AmQuery extends AmObject{
 
   }
 
-  // Método para agregar clausula FROM
+  // Método para agregar cláusula FROM
   /**
    * [fromAs description]
    * @param  [type] $from  [description]
@@ -628,7 +627,7 @@ class AmQuery extends AmObject{
 
       // Si no se indicó el parametro $alias
       if($from instanceof AmQuery){
-        // Si es una consulta se agrega al final
+        // Si es un query se agrega al final
         $this->froms[] = $from;
       }elseif($from instanceof AmTable){
         // Si es nua tabla se asigna en una posicion especifica
@@ -901,7 +900,7 @@ class AmQuery extends AmObject{
 
   }
 
-  // Agregar un límite a la consulta
+  // Agregar un límite al query
   /**
    * [limit description]
    * @param  [type] $limit [description]
@@ -914,7 +913,7 @@ class AmQuery extends AmObject{
 
   }
 
-  // Agregar punto de inicio para la consulta
+  // Agregar punto de inicio para el query
   /**
    * [offSet description]
    * @param  [type] $offset [description]
@@ -927,8 +926,8 @@ class AmQuery extends AmObject{
 
   }
 
-  // Agregar un SET a la consulta. Es tomado en cuenta cuando se realiza una
-  // actualizacio sobre la consulta
+  // Agregar un SET al query. Es tomado en cuenta cuando se realiza una
+  // actualizacio sobre el query
   /**
    * [set description]
    * @param [type]  $field [description]
@@ -948,14 +947,14 @@ class AmQuery extends AmObject{
 
   }
 
-  // Obtener la cantidad de registros que devolverá la consulta
+  // Obtener la cantidad de registros que devolverá el query
   /**
    * [count description]
    * @return [type] [description]
    */
   public function count(){
 
-    // Crear la consulta para contar
+    // Crear el query para contar
     $ret = $this->copy()
                 ->setSelects(array('count' => 'count(*)'))
                 ->row('array');
@@ -966,7 +965,7 @@ class AmQuery extends AmObject{
 
   }
 
-  // Obtener un registro del resultado de la consulta
+  // Obtener un registro del resultado del query
   /**
    * [row description]
    * @param  [type] $as       [description]
@@ -984,11 +983,11 @@ class AmQuery extends AmObject{
     if(!isset($formater))
       $formater = $this->getFormater();
 
-    // Se ejecuta la consulta si no se ha ejecutado la consulta
+    // Se ejecuta el query si no se ha ejecutado
     if(null === $this->result)
       $this->execute();
 
-    // Si se generó un error en la consulta retornar false
+    // Si se generó un error en el query retornar false
     if(false === $this->result)
       return false;
 
@@ -1049,7 +1048,7 @@ class AmQuery extends AmObject{
 
   }
 
-  // Devuelve un array con los registros resultantes de la consulta
+  // Devuelve un array con los registros resultantes del query
   /**
    * [get description]
    * @param  [type] $as       [description]
@@ -1058,7 +1057,7 @@ class AmQuery extends AmObject{
    */
   public function get($as = null, $formater = null){
 
-    // Crear consulta
+    // Clonar el query
     $q = $this->copy();
 
     // Array para retorno
@@ -1072,7 +1071,7 @@ class AmQuery extends AmObject{
 
   }
 
-  // Devuelve una columna de la consulta.
+  // Devuelve una columna del query.
   /**
    * [col description]
    * @param  [type] $field [description]
@@ -1080,8 +1079,11 @@ class AmQuery extends AmObject{
    */
   public function col($field){
 
-    // Crear la consulta
-    $q = $this->copy()->selectAs($field);
+    // Clonar el query
+    $q = $this->copy()
+
+      // Selecionar el campo.
+      ->selectAs($field);
 
     // Array para retorno
     $ret = array();
