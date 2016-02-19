@@ -1,0 +1,234 @@
+@import nib
+
+@import 'basics.styl'
+
+// -----------------------------------------------------------------------------
+// Llamadas
+// -----------------------------------------------------------------------------
+$primaryColor           = #673AB7
+
+$clear()
+$generateShadows()
+$generateGrid()
+$generateButton()
+
+$generatePallete('.primary', {
+  '-l5':   #EDE7F6,
+  '-l4':   #D1C4E9,
+  '-l3':   #B39DDB,
+  '-l2':   #9575CD,
+  '-l1':   #7E57C2,
+  '':      $primaryColor,
+  '-d1':   #5E35B1,
+  '-d2':   #512DA8,
+  '-d3':   #4527A0,
+  '-d4':   #311B92,
+  '-A100': #B388FF,
+  '-A200': #7C4DFF,
+  '-A400': #651FFF,
+  '-A700': #6200EA
+})
+
+$generatePallete('.secondary', {
+  '-l5':  #fafafa,
+  '-l4':  #f5f5f5,
+  '-l3':  #eeeeee,
+  '-l2':  #e0e0e0,
+  '-l1':  #bdbdbd,
+  '':     #9e9e9e,
+  '-d1':  #757575,
+  '-d2':  #616161,
+  '-d3':  #424242,
+  '-d4':  #212121
+})
+
+
+$generateTableStyles('.table', $primaryColor);
+
+.valign-middle
+  $verticalAlignChilds  middle
+
+.link
+  font-weight           bold
+  color                 $primaryColor
+
+.def-img
+  max-width             100%
+  display               block
+  margin                auto
+  
+// -----------------------------------------------------------------------------
+$toolbarHeight          = 60px
+$siteHeaderHeight       = $toolbarHeight
+$siteLogoHeaderPadding  = 7px
+$siteFooterHeight       = 35px
+$pageTitleMinHeight     = 200px
+$pageTitleH1Hmargin     = 18px
+$pageTitleH1Height      = 34px
+$logoHeight             = $pageTitleH1Hmargin*2 + $pageTitleH1Height + $toolbarHeight
+
+.logo-parent
+  img
+    max-height          $logoHeight
+    display             block
+    margin              0 auto
+    
+.sidebar-left-footer
+  absolute              left right bottom
+  h4
+    margin              10px 0 0 0
+  p
+    margin              5px 0 5px 0
+
+// Effecto ocultar 
+.dispel
+  transition            opacity linear 0.1s
+  opacity               1
+  &.on
+    opacity             0
+
+.site-header
+.site-footer
+  fixed                 left right
+  z-index               1
+  
+.site-header
+  top                   0
+  height                $siteHeaderHeight
+  .content
+    padding             0 10px
+    font-size           130%
+
+.site-footer
+  height                $siteFooterHeight
+  bottom                0
+  color                 #555
+  .content
+    padding             0 10px
+  .col
+    height              $siteFooterHeight
+  a
+    color               inherit
+    
+.site-sidebar
+  fixed                 top $siteHeaderHeight bottom $siteFooterHeight
+  .title-parent
+    absolute            top left right
+  .nav
+    absolute            bottom left right top $pageTitleMinHeight
+    &:hover
+      overflow          auto
+
+.site-body
+  absolute              left right
+  margin-bottom         $siteFooterHeight
+
+.page-title
+  margin-top            $siteHeaderHeight
+  position              relative
+  z-index               1
+  
+.header-logo
+  display               block
+  height                $siteHeaderHeight - $siteLogoHeaderPadding*2
+  margin                $siteLogoHeaderPadding auto
+  
+.sub-header-logo
+  display               block
+  height                160px
+  margin                20px auto 0 auto
+      
+.nav-item
+  line-height           40px
+  display               inline-block
+  vertical-align        top
+  padding-left          10px
+  
+.title-parent
+  position              relative
+  min-height            $pageTitleMinHeight
+  h1
+    absolute            bottom left right
+    margin              $pageTitleH1Hmargin 0
+    line-height         $pageTitleH1Height
+
+.wrapper
+  margin                $siteHeaderHeight 0 $siteFooterHeight 0
+
+.home-page-title
+  h1
+    margin              0
+    font-size           300%
+  img
+    max-height          300px
+
+ul.nav
+  margin                0
+  padding               20px 0  
+  ul
+    padding             0 10px
+  li
+    margin              0
+    list-style-type     none
+    font-size           95%
+    >a
+    >span
+      text-decoration   none
+      display           block
+      padding           0 15px
+      // &:hover
+      //   background-color rgba(158,158,158,0.2)
+  >li
+    padding-bottom      5px
+    >a
+    >span
+      padding           5px 15px
+      font-size         120%
+      font-weight       bold
+      color             $primaryColor
+
+.sub-nav
+  margin-bottom         20px
+
+.inner
+  h2
+  h3
+  h4
+    color               $primaryColor
+  h2
+    margin-top          30px
+    padding-top         15px
+    border-top          2px solid lightness($primaryColor, 90%)
+
+  pre.mb5
+    margin-bottom       5px
+    
+  .nested-list ul
+    padding-left        25px
+
+.code-row
+  margin-left           -5px
+  margin-bottom         5px
+  table
+    width               100%
+    border-collapse     collapse
+  td
+    position            relative
+    padding             0 0 0 5px
+    vertical-align      top
+    >div
+      absolute          top left 5px bottom right
+      background-color  #f5f2f0
+      z-index           -1
+    pre
+      margin            0
+      position          relative
+      z-index           0
+  
+.table
+  &.small
+    width               auto
+  .table-pre
+    margin              0
+    padding             3px 10px
+  

@@ -1,0 +1,1 @@
+'/rutaIndex' => 'template => views/index.php',

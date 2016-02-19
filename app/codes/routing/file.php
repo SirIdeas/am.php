@@ -1,0 +1,1 @@
+'/doc.pdf' => 'file => pdf/documento.pdf',
