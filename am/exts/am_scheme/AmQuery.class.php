@@ -1011,11 +1011,7 @@ class AmQuery extends AmObject{
     if($table instanceof AmTable)
       $r = $table->prepare($r);
 
-    if($as == 'array'){
-      // Retornar como erray
-      // $r = $r;
-
-    }elseif($as == 'object'){
+    if($as == 'object'){
       // Retornar como objeto
       $r = (object)$r;
 
@@ -1033,12 +1029,12 @@ class AmQuery extends AmObject{
         $r = new $as($r);
 
     // Si no se indicó como devolver el objeto
-    }elseif(!!($className = AmScheme::model($as))){
+    }elseif($as != 'array' && !!($className = AmScheme::model($as))){
 
       // Se encontró el modelo
       $r = new $className($r, false);  // Crear instancia del modelo
 
-    }else{
+    }elseif($as != 'array'){
 
       // Sino retornar null
       $r = new AmObject($r);
