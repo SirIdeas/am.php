@@ -11,77 +11,76 @@
  */
 class AmModel extends AmObject{
 
-  // Propiedades
   protected
     
     /**
-     * Nombre del esquema a la que pertenece el model
+     * Nombre del esquema a la que pertenece el modelo.
      */
     $schemeName = '',
     
     /**
-     * Nombre de la tabla a la que pertenece el model
+     * Nombre de la tabla a la que pertenece el modelo.
      */
     $tableName = null,
     
     /**
-     * Definición de campos
+     * Hahs con las definiciones de los campos.
      */
     $fields = null,
     
     /**
-     * Nombre del campo para la fecha de creación
+     * Nombre del campo para la fecha de creación.
      */
     $createdAtField = false,
     
     /**
-     * Nombre del campo para la fecha de actualización
+     * Nombre del campo para la fecha de actualización.
      */
     $updatedAtField = false,
     
     /**
-     * Definición de relaciones a otras clases
+     * Definición de relaciones a otros modelos.
      */
     $referencesTo = null,
     
     /**
-     * Definición de relaciones de otras clases
+     * Definición de relaciones de otros modelos.
      */
     $referencesBy = null,
     
     /**
-     * Configuraciones de uniques
+     * Definición de llaves únicas.
      */
     $uniques = null,
     
     /**
-     * Instancia de la tabla
+     * Instancia de la tabla del modelo.
      */
     $table = null,
     
     /**
-     * Indica si es un registro nuevo
+     * Indica si es un registro nuevo.
      */
     $isNew = true,
     
     /**
-     * Listados de errores
+     * Hash de errores.
      */
     $errors = array(),
     
     /**
-     * Valores reales
+     * Indica que valores de las propiedades de la instancia del objeto son
+     * nativos del BDMS.
+     */
+    $rawValues = array(),
+    
+    /**
+     * Valores reales.
      */
     $realValues = array(),
     
     /**
-     * Indica si el valor que contiene la propieda
-     */
-    $rawValues = array(),
-                              // Es un valor crudo
-    
-    /**
-     * Validators del modelo
+     * Validadores del modelo.
      */
     $validators = null,
     
@@ -90,24 +89,27 @@ class AmModel extends AmObject{
      */
     $errorsCount = 0;
 
-  // El constructor se encarga de asignar la instancia de la tabla
-  // correspondiente al model
   /**
-   * [__construct description]
-   * @param array   $params [description]
-   * @param boolean $isNew  [description]
+   * El constructor se encarga instancia la tabla correspondienteal modelo si
+   * esta aún no ha sido instanciada.
+   * @param array   $params Valores iniciales del modelo.
+   * @param boolean $isNew  Si es un resgistro nuevo.
    */
   final public function __construct($params = array(), $isNew = true) {
 
     // Inicializar la tabla si no ha sido inicializada
     $className = get_class($this);
 
+    // Obtener la instancia del modelo.
     $scheme = AmScheme::get($this->schemeName);
 
+    // Signar si es nuevo.
     $this->isNew = $isNew;
 
+    // Obtener la instancia de la tabla desde el esquema si esta cargada.
     $this->table = $scheme->getTableInstance($className);
 
+    // Si no esta cargada la tabla
     if(!$this->table){
 
       // Crear instancia anonima de la tabla
@@ -127,16 +129,17 @@ class AmModel extends AmObject{
 
       ));
 
-      if($this->createdAtField){
+      // Señalar campo createdAt si ha sido señalado.
+      if($this->createdAtField)
         $this->table->addCreatedAtField(
           $this->createdAtField===true? null : $this->createdAtField);
-      }
 
-      if($this->updatedAtField){
+      // Señalar campo updatedAt si ha sido señalado.
+      if($this->updatedAtField)
         $this->table->addUpdatedAtField(
           $this->updatedAtField===true? null : $this->updatedAtField);
-      }
 
+      // Obtener validadores de la tabla.
       $this->validators = $this->table->getValidators();
 
       // Inicializar los validators
@@ -186,37 +189,30 @@ class AmModel extends AmObject{
 
   }
 
-  // Inicializacion de la tabla
   /**
-   * [start description]
-   * @return [type] [description]
+   * Para la inizialización de los validadores de la tabla.
    */
   protected function start(){
 
   }
 
-  // Funcion para preparar los valores del model antes de guardar
   /**
-   * [prepare description]
-   * @return [type] [description]
+   * Funcion para preparar los valores del model antes de guardar.
    */
   public function prepare(){
 
   }
 
-  // Método redefinido el usuario para inicializaciones customizadas
   /**
-   * [init description]
-   * @return [type] [description]
+   * Método redefinido el usuario para inicializaciones customizadas del modelo.
    */
   public function init(){
 
   }
 
-  // Métodos GET para algunas pripiedades
   /**
-   * [getTable description]
-   * @return [type] [description]
+   * Devuelve la tabla del modelo.
+   * @return AmTable Instancia de la tabla.
    */
   public function getTable(){
 
@@ -225,8 +221,8 @@ class AmModel extends AmObject{
   }
 
   /**
-   * [isNew description]
-   * @return boolean [description]
+   * Devuelve si es una instancia del modelo nuevo o fué cargado desde la BD.
+   * @return boolean Si es una instancia del modelo nuevo.
    */
   public function isNew(){
 
@@ -235,8 +231,8 @@ class AmModel extends AmObject{
   }
 
   /**
-   * [errorsCount description]
-   * @return [type] [description]
+   * Cantidad de errores generados en los validadores.
+   * @return int Cantidad de errores.
    */
   public function errorsCount(){
 
@@ -244,21 +240,9 @@ class AmModel extends AmObject{
 
   }
 
-  // Devuelve raw values
   /**
-   * [getRealValues description]
-   * @return [type] [description]
-   */
-  public function getRealValues(){
-
-    return $this->realValues;
-
-  }
-
-  // Devuelve raw values
-  /**
-   * [getRawValues description]
-   * @return [type] [description]
+   * Devuelve le hash con los campos que poseen valores nativos del BDMS.
+   * @return hash Hash de booleans.
    */
   public function getRawValues(){
 
@@ -267,21 +251,31 @@ class AmModel extends AmObject{
   }
 
   /**
-   * [getRealValue description]
-   * @param  [type] $name [description]
-   * @return [type]       [description]
+   * Devuelve el hash de valores reales de la instancia del modelo.
+   * @return hash Hash de valores.
    */
-  public function getRealValue($name){
+  public function getRealValues(){
 
-    return isset($this->realValues[$name]) ? $this->realValues[$name] : null;
+    return $this->realValues;
 
   }
 
-  // Devuelve todos lo validators de la tabla o los de un campo
   /**
-   * [getValidators description]
-   * @param  [type] $name [description]
-   * @return [type]       [description]
+   * Dvuelve el valore real de un campo.
+   * @param  string $name Nombre del campo.
+   * @return any          Valore real del campo.
+   */
+  public function getRealValue($name){
+
+    return itemOr($name, $this->realValues);
+
+  }
+
+  /**
+   * Devuelve los validadores para un campo.
+   * @param  string $name Nombre del campo que se desea obtener.
+   * @return array        Array de los validators en el campo indicado. Si $name
+   *                      es null devuelve todos los validators.
    */
   public function getValidators($name = null){
 
@@ -292,9 +286,8 @@ class AmModel extends AmObject{
 
   }
 
-  // Devuelve un validator en especifico
   /**
-   * [getValidator description]
+   * Devuelve un validator de un campo especifico.
    * @param  [type] $name          [description]
    * @param  [type] $validatorName [description]
    * @return [type]                [description]
