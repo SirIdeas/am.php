@@ -12,13 +12,29 @@
 abstract class AmScheme extends AmObject{
 
   protected static
+
+    /**
+     * Tamaños por defecto par alos tipos de datos con la propiedad len.
+     */
     $defaultsLen = array(
       'bit' => 8,
       'char' => 64,
       'varchar' => 128,
     ),
+
+    /**
+     * Lista de modelos incluídos.
+     */
     $includedModels = array(),
+
+    /**
+     * Instancias de los esquemas cargados.
+     */
     $schemes = array(),
+
+    /**
+     * Directorio por defecto de los modelos base.
+     */
     $schemesDir = 'models';
 
   protected

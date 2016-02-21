@@ -13,6 +13,9 @@ class AmValidator extends AmObject{
 
   protected static
 
+    /**
+     * Configuraciones globales de los validadores.
+     */
     $conf = null;
 
   protected

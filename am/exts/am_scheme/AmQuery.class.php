@@ -11,7 +11,6 @@
  */
 class AmQuery extends AmObject{
 
-  // Propidades
   protected
     
     /**
