@@ -270,7 +270,7 @@ class AmTable extends AmObject{
   /**
    * Indica su un campo forma o no parte del primary key de la tabla
    * @param  string  $fieldName Nombr del campo consultado.
-   * @return boolean            Si forma parte del PK.
+   * @return bool               Si forma parte del PK.
    */
   public function isPk($fieldName){
 
@@ -290,7 +290,7 @@ class AmTable extends AmObject{
 
   /**
    * Devuelve a la tabla se le cargó la estructura de la BD.
-   * @return boolean Si tiene la estructura de la BD.
+   * @return bool Si tiene la estructura de la BD.
    */
   public function isSchemeStruct(){
 
@@ -353,7 +353,7 @@ class AmTable extends AmObject{
   /**
    * Devuelve si existe un campo con el nombre especificado.
    * @param  string  $name Nombre del campo.
-   * @return boolean       Si el campo existe.
+   * @return bool          Si el campo existe.
    */
   public function hasField($name){
 
@@ -444,7 +444,7 @@ class AmTable extends AmObject{
   /**
    * Devuelve si existe un campo con el nombre asignado de campo de creación de
    * registro.
-   * @return boolean Si existe el campo.
+   * @return bool Si existe el campo.
    */
   public function hasCreatedAtField(){
 
@@ -455,7 +455,7 @@ class AmTable extends AmObject{
   /**
    * Devuelve si existe un campo con el nombre asignado de campo de
    * actualización de registro.
-   * @return boolean Si existe el campo.
+   * @return bool Si existe el campo.
    */
   public function hasUpdatedAtField(){
 
@@ -465,7 +465,7 @@ class AmTable extends AmObject{
 
   /**
    * Agrega el campo de creación de registro con el nombre pasado por parámetro.
-   * @param string $name Nombre del campo a agregar.
+   * @param  string $name Nombre del campo a agregar.
    * @return $this
    */
   public function addCreatedAtField($name = null){
@@ -484,7 +484,7 @@ class AmTable extends AmObject{
 
   /**
    * Agrega el campo de creación de registro con el nombre pasado por parámetro.
-   * @param string $name Nombre del campo a agregar.
+   * @param  string $name Nombre del campo a agregar.
    * @return $this
    */
   public function addUpdatedAtField($name = null){
@@ -503,8 +503,8 @@ class AmTable extends AmObject{
 
   /**
    * Agrega los campos de creación y actualización.
-   * @param string $createAtFieldName Nombre del campo de creación.
-   * @param string $updateAtFieldName Nombre del campo de actualización.
+   * @param  string $createAtFieldName Nombre del campo de creación.
+   * @param  string $updateAtFieldName Nombre del campo de actualización.
    * @return $this
    */
   public function addCreatedAtAndUpdateAtFields($createAtFieldName = null,
@@ -584,7 +584,7 @@ class AmTable extends AmObject{
 
   /**
    * Agregar el nombre del campo a la lista de laves primarias.
-   * @param string $fieldName Nombre del campo.
+   * @param  string $fieldName Nombre del campo.
    * @return $this
    */
   public function addPk($fieldName){
@@ -698,7 +698,7 @@ class AmTable extends AmObject{
 
   /**
    * Indica si existe la tabla en la BD.
-   * @return boolean Si existe la tabla.
+   * @return bool Si existe la tabla.
    */
   public function exists(){
 
@@ -735,10 +735,10 @@ class AmTable extends AmObject{
 
   /**
    * Devuelve un AmQuery de seleción de todos registros de la tabla
-   * @param  string  $alias      Alias de la tabla en el query.
-   * @param  boolean $withFields Si la clausula SELECT se genera con los campos
-   *                             de la tabla (true) o con * (false).
-   * @return AmQuery             Query select.
+   * @param  string $alias      Alias de la tabla en el query.
+   * @param  bool   $withFields Si la clausula SELECT se genera con los campos
+   *                            de la tabla (true) o con * (false).
+   * @return AmQuery            Query select.
    */
   public function all($alias = 'q', $withFields = false){
 
@@ -769,12 +769,12 @@ class AmTable extends AmObject{
 
   /**
    * Obtener consulta para buscar registro por un campo.
-   * @param  string  $field      Nombre del campo donde se buscará.
-   * @param  any     $value      Valor a buscar.
-   * @param  string  $alias      Alias de la tabla en el query.
-   * @param  boolean $withFields Si la clausula SELECT se genera con los campos
-   *                             de la tabla (true) o con * (false).
-   * @return AmQuery             Query select.
+   * @param  string $field      Nombre del campo donde se buscará.
+   * @param  any    $value      Valor a buscar.
+   * @param  string $alias      Alias de la tabla en el query.
+   * @param  bool   $withFields Si la clausula SELECT se genera con los campos
+   *                            de la tabla (true) o con * (false).
+   * @return AmQuery            Query select.
    */
   public function findBy($field, $value, $alias = 'q', $withFields = false){
 
@@ -785,15 +785,15 @@ class AmTable extends AmObject{
   // Obtener todos los registros de buscar por un campos
   /**
    * [findAllBy description]
-   * @param  string  $field      Nombre del campo donde se buscará.
-   * @param  any     $value      Valor a buscar.
-   * @param  string  $as         String con el nombre del modelo o formato
-   *                             de retorno. Puede ser "array", "am", "object",
-   *                             nombre de una clase existente o identificador
-   *                             de un modelo.
-   * @param  boolean $withFields Si la clausula SELECT se genera con los campos
-   *                             de la tabla (true) o con * (false).
-   * @return AmQuery             Query select.
+   * @param  string $field      Nombre del campo donde se buscará.
+   * @param  any    $value      Valor a buscar.
+   * @param  string $as         String con el nombre del modelo o formato de
+   *                            retorno. Puede ser "array", "am", "object",
+   *                            nombre de una clase existente o identificador de
+   *                            un modelo.
+   * @param  bool   $withFields Si la clausula SELECT se genera con los campos
+   *                            de la tabla (true) o con * (false).
+   * @return AmQuery            Query select.
    */
   public function findAllBy($field, $value, $as = null, $withFields = false){
 
@@ -803,17 +803,17 @@ class AmTable extends AmObject{
 
   /**
    * Obtener el primer registro de la busqueda por un campo.
-   * @param  string  $field      Nombre del campo donde se buscará.
-   * @param  any     $value      Valor a buscar.
-   * @param  string  $as         String con el nombre del modelo o formato
-   *                             de retorno. Puede ser "array", "am", "object",
-   *                             nombre de una clase existente o identificador
-   *                             de un modelo.
-   * @param  boolean $withFields Si la clausula SELECT se genera con los campos
-   *                             de la tabla (true) o con * (false).
-   * @return any/boolean         El modelo en el formato especificado por el
-   *                             parámetro $as o false si no se consigió
-   *                             alguna coincidencia.
+   * @param  string $field      Nombre del campo donde se buscará.
+   * @param  any    $value      Valor a buscar.
+   * @param  string $as         String con el nombre del modelo o formato de
+   *                            retorno. Puede ser "array", "am", "object",
+   *                            nombre de una clase existente o identificador de
+   *                            un modelo.
+   * @param  bool   $withFields Si la clausula SELECT se genera con los campos
+   *                            de la tabla (true) o con * (false).
+   * @return any/boo            El modelo en el formato especificado por el
+   *                            parámetro $as o false si no se consigió alguna
+   *                            coincidencia.
    */
   public function findOneBy($field, $value, $type = null, $withFields = false){
 
@@ -823,14 +823,16 @@ class AmTable extends AmObject{
 
   /**
    * Obtener la consulta para encontrar el registro con un determinado ID.
-   * @param  string/int/array $id Id del registro. Si la tabla tiene un PK con
-   *                              un único campo entonces puede ser un int o
-   *                              string, si es un PK compuesto estonces debe
-   *                              ser un hash con los valores del id a buscar.
-   * @param  string  $alias       Alias de la tabla en el query.
-   * @param  boolean $withFields  Si la clausula SELECT se genera con los campos
-   *                              de la tabla (true) o con * (false).
-   * @return AmQuery              Query select.
+   * @param  string/int/array $id         Id del registro. Si la tabla tiene un
+   *                                      PK con un único campo entonces puede
+   *                                      ser un int o string, si es un PK
+   *                                      compuesto estonces debe ser un hash
+   *                                      con los valores del id a buscar.
+   * @param  string           $alias      Alias de la tabla en el query.
+   * @param  bool             $withFields Si la clausula SELECT se genera con
+   *                                      los campos de la tabla (true) o con *
+   *                                      (false).
+   * @return AmQuery                      Query select.
    */
   public function findById($id, $alias = 'q', $withFields = false){
 
@@ -880,20 +882,23 @@ class AmTable extends AmObject{
 
   /**
    * Devuelve un modelo con el registro solicitado.
-   * @param  string/int/array $id Id del registro. Si la tabla tiene un PK con
-   *                              un único campo entonces puede ser un int o
-   *                              string, si es un PK compuesto estonces debe
-   *                              ser un hash con los valores del id a buscar.
-   * @param  string  $alias       Alias de la tabla en el query.
-   * @param  string  $as          String con el nombre del modelo o formato
-   *                              de retorno. Puede ser "array", "am", "object",
-   *                              nombre de una clase existente o identificador
-   *                              de un modelo.
-   * @param  boolean $withFields  Si la clausula SELECT se genera con los campos
-   *                              de la tabla (true) o con * (false).
-   * @return any/boolean          El modelo en el formato especificado por el
-   *                              parámetro $as o false si no se consigió
-   *                              alguna coincidencia.
+   * @param  string/int/array $id         Id del registro. Si la tabla tiene un
+   *                                      PK con un único campo entonces puede
+   *                                      ser un int o string, si es un PK
+   *                                      compuesto estonces debe ser un hash
+   *                                      con los valores del id a buscar.
+   * @param  string           $alias      Alias de la tabla en el query.
+   * @param  string           $as         String con el nombre del modelo o
+   *                                      formato de retorno. Puede ser "array",
+   *                                      "am", "object", nombre de una clase
+   *                                      existente o identificador de un
+   *                                      modelo.
+   * @param  bool             $withFields Si la clausula SELECT se genera con
+   *                                      los campos de la tabla (true) o con *
+   *                                      (false).
+   * @return any/bool                     El modelo en el formato especificado
+   *                                      por el parámetro $as o false si no se
+   *                                      consigió alguna coincidencia.
    */
   public function find($id, $as = null, $withFields = false){
 

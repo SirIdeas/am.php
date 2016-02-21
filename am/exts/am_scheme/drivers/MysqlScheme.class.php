@@ -398,41 +398,38 @@ class MysqlScheme extends AmScheme{
   public function sqlJoins(AmQuery $q){
 
     // Resultado
-    $joinsOri = $q->getJoins();
+    $joins = $q->getJoins();
     $joinsResult = array();
 
-    //Recorrer cada tipo de join
-    foreach($joinsOri as $type => $joins){
-      // Recorrer cada join
-      foreach($joins as $join){
+    // Recorrer cada join
+    foreach($joins as $join){
 
-          // Declarar posiciones del array como variables
-          // Define $on, $as y $table
-          extract($join);
+        // Declarar posiciones del array como variables
+        // Define $on, $as y $table
+        extract($join);
 
-          // Eliminar espacios iniciales y finales
-          $on = trim($on);
-          $as = trim($as);
+        // Eliminar espacios iniciales y finales
+        $on = trim($on);
+        $as = trim($as);
 
-          // Si los parametros quedan vacios
-          if(!empty($on)) $on = " ON $on";
-          if(!empty($as)) $as = " AS $as";
+        // Si los parametros quedan vacios
+        if(!empty($on)) $on = " ON $on";
+        if(!empty($as)) $as = " AS $as";
 
-          if($table instanceof AmQuery){
-            // Si es una consulta insertar SQL dentro de parenteris
-            $table = "({$table->sql()})";
-          }elseif($table instanceof AmTable){
-            // Si es una tabla obtener el nombre
-            $table = $table->getTableName();
-          }
+        if($table instanceof AmQuery){
+          // Si es una consulta insertar SQL dentro de parenteris
+          $table = "({$table->sql()})";
+        }elseif($table instanceof AmTable){
+          // Si es una tabla obtener el nombre
+          $table = $table->getTableName();
+        }
 
-          // Agrgar parte de join
-          $joinsResult[] = " $type JOIN {$table}{$as}{$on}";
+        // Agrgar parte de join
+        $joinsResult[] = " $type JOIN {$table}{$as}{$on}";
 
-          // Liberar variables
-          unset($table, $as, $on);
+        // Liberar variables
+        unset($table, $as, $on);
 
-      }
     }
 
     // Unir todas las partes

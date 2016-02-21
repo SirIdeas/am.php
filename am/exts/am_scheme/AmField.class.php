@@ -57,13 +57,13 @@ class AmField extends AmObject{
     $defaultValue = null,
 
     /**
-     * Boolean que indica si es o no parte de la clave primaria de la tabla
-     * donde se encuentra.
+     * Bool que indica si es o no parte de la clave primaria de la tabla donde
+     * se encuentra.
      */
     $pk = false,
 
     /**
-     * Boolean si permite o no valores nulos.
+     * Bool si permite o no valores nulos.
      */
     $allowNull = true,
 
@@ -85,12 +85,12 @@ class AmField extends AmObject{
     $collage = null,
 
     /**
-     * Boolean que indica si en un campo numérico (integer o float) tiene signo.
+     * Bool que indica si en un campo numérico (integer o float) tiene signo.
      */
     $unsigned = null,
 
     /**
-     * Boolean que indica si es un integer o float indica si se rellenan los
+     * Bool que indica si es un integer o float indica si se rellenan los
      * espacio con ceros.
      */
     $zerofill = null,
@@ -106,7 +106,7 @@ class AmField extends AmObject{
     $scale = null,
 
     /**
-     * Boolean que indica si es un campo autoincrementable.
+     * Bool que indica si es un campo autoincrementable.
      */
     $autoIncrement = false,
 

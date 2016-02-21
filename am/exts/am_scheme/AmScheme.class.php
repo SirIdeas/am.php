@@ -565,11 +565,8 @@ abstract class AmScheme extends AmObject{
   public function q($from = null, $alias = 'q'){
 
     // Crear instancia
-    $q = new AmQuery;
+    $q = new AmQuery(array('scheme' => $this));
     
-    // Asignar fuente
-    $q->setScheme($this);
-
     // Asignar el from de la consulta
     if(!empty($from))
       $q->fromAs($from, $alias);
@@ -1571,8 +1568,8 @@ abstract class AmScheme extends AmObject{
 
   /**
    * SQL para crear una BD.
-   * @param  boolean $ifNotExists Si se agregará o no la clausula IF NOT EXISTS.
-   * @return string               SQL para la operación.
+   * @param  bool   $ifNotExists Si se agregará o no la clausula IF NOT EXISTS.
+   * @return string              SQL para la operación.
    */
   abstract public function sqlCreate($ifNotExists = true);
   

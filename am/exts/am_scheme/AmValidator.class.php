@@ -218,7 +218,7 @@ class AmValidator extends AmObject{
   /**
    * Devuelve si el modelo cumple con la validación actual.
    * @param  AmModel &$model Model que se validará.
-   * @return boolean         Si es válido o no.
+   * @return bool            Si es válido o no.
    */
   public function isValid(AmModel &$model){
 
@@ -245,7 +245,7 @@ class AmValidator extends AmObject{
    * Indica si el modelo cumple con el validador actual.
    * En este método se la implementaación de la validación para cada variante.
    * @param  AmModel &$model Model que se validará.
-   * @return boolean         Si es válido o no.
+   * @return bool            Si es válido o no.
    */
   protected function validate(AmModel &$model){
 
