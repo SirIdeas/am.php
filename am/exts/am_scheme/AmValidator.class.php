@@ -214,7 +214,7 @@ class AmValidator extends AmObject{
    */
   protected function value(AmModel $model){
 
-    return $model->getFieldValue($this->getFieldName());
+    return $model->getValue($this->getFieldName());
 
   }
 
