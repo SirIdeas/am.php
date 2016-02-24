@@ -11,79 +11,91 @@
  */
 class MysqlScheme extends AmScheme{
 
-
   // Puerto por defecto para la conexion
   const DEFAULT_PORT = 3306;
 
-  // Equivalencias entre los tipos de datos del Gesto de BD y el Lenguaje de programacion
+  // Equivalencias entre los tipos de datos del DBMS y PHP
   protected static
 
     $types = array(
       // Enteros
-      "tinyint"    => "integer",
-      "smallint"   => "integer",
-      "mediumint"  => "integer",
-      "int"        => "integer",
-      "bigint"     => "integer",
+      'tinyint'    => 'integer',
+      'smallint'   => 'integer',
+      'mediumint'  => 'integer',
+      'int'        => 'integer',
+      'bigint'     => 'integer',
 
       // Flotantes
-      "decimal"    => "float",
-      "float"      => "float",
-      "double"     => "float",
+      'decimal'    => 'float',
+      'float'      => 'float',
+      'double'     => 'float',
 
-      "bit"        => "bit",
+      'bit'        => 'bit',
 
       // Fechas
-      "date"       => "date",
-      "datetime"   => "datetime",
-      "timestamp"  => "timestamp",
-      "time"       => "time",
-      "year"       => "year",
+      'date'       => 'date',
+      'datetime'   => 'datetime',
+      'timestamp'  => 'timestamp',
+      'time'       => 'time',
+      'year'       => 'year',
 
       // Cadenas de caracteres
-      "char"       => "char",
-      "varchar"    => "varchar",
-      "tinytext"   => "text",
-      "text"       => "text",
-      "mediumtext" => "text",
-      "longtext"   => "text",
+      'char'       => 'char',
+      'varchar'    => 'varchar',
+      'tinytext'   => 'text',
+      'text'       => 'text',
+      'mediumtext' => 'text',
+      'longtext'   => 'text',
 
     ),
 
+    // Tamaños de enteros
     $integerBytes = array(
-      "tinyint"     => 1,
-      "smallint"    => 2,
-      "mediumint"   => 3,
-      "int"         => 4,
-      "bigint"      => 8,
+      'tinyint'     => 1,
+      'smallint'    => 2,
+      'mediumint'   => 3,
+      'int'         => 4,
+      'bigint'      => 8,
     ),
 
+    // Tamaños de punto flotante
     $floatBytes = array(
-      "decimal" => 0,
-      "float"   => 1,
-      "double"  => 2,
+      'decimal' => 0,
+      'float'   => 1,
+      'double'  => 2,
     ),
 
+    // Tamaños de textos
     $textBytes = array(
-      "tinytext"    => 1,
-      "text"        => 2,
-      "mediumtext"  => 3,
-      "longtext"    => 4,
+      'tinytext'    => 1,
+      'text'        => 2,
+      'mediumtext'  => 3,
+      'longtext'    => 4,
     ),
 
+    // Tipos por defectos
     $defaultsByte = array(
       'integer' => 'int',
       'float'   => 'float',
       'text'    => 'text'
     );
 
-  // Propiedades propias para el Driver
+  // Propiedades del driver
   protected
-    $handler = null; // Identificador de la conexion
 
-  // Devuelve un nombre entre comillas simples entendibles por el gesto
+    /**
+     * Identificador de la conexion
+     */
+    $handler = null;
+
+  /**
+   * Devuelve un nombre entre comillas simples entendibles por el gestor
+   * @param  string $name Nombre a parchar.
+   * @return string       Nombre parchado.
+   */
   public function getParseName($name){
 
+    // Verificar si ya no está parchado.
     if(preg_match("/[`\\.]/", $name))
       return $name;
 
@@ -91,16 +103,22 @@ class MysqlScheme extends AmScheme{
 
   }
 
-  // Obtener el puerto por defecto
+  /**
+   * Devuelve el puerto por defecto.
+   * @return int Puerto por defecto.
+   */
   public function getDefaultPort(){
 
     return self::DEFAULT_PORT;
 
   }
 
-  // Crear una conexión
+  /**
+   * Crear una conexión
+   * @return Resource Recurso (manejdador del recurso) para manejar la conexión.
+   */
   protected function start(){
-    // error_reporting(E_STRICT);
+
     return $this->handler = @mysql_connect(
       $this->getServerString(),
       $this->getUser(),
@@ -110,117 +128,146 @@ class MysqlScheme extends AmScheme{
     
   }
 
-  // Cerrar una conexion
+  /**
+   * Cierra la conexión.
+   * @return int Resultado de la operación.
+   */
   public function close() {
     
     return @mysql_close($this->handler);
 
   }
 
-  // Obtener el número del último error generado en la conexión
+  /**
+   * Obtener el número del último error generado en la conexión.
+   * @return int Nro del error.
+   */
   public function getErrNo(){
     
     return @mysql_errno($this->handler);
 
   }
 
-  // Obtener la descripcion del último error generado en la conexión
+  /**
+   * Obtener la descripción del último error generado en la conexión.
+   * @return string Mensaje del error.
+   */
   public function getError(){
     
     return @mysql_error($this->handler);
 
   }
 
-  // Devuelve una cadena con un valor valido en el gesto de BD
+  /**
+   * Devuelve una cadena con los caracteres especiales escapados para usar en
+   * una sentencia SQL.
+   * @param  string $value Cadena a escapar.
+   * @return string        Cadena escapada.
+   */
   public function realScapeString($value){
 
     $value = @mysql_real_escape_string($value);
     // Si no tiene valor asignar NULL
-    return isset($value)? "'$value'" : "NULL";
+    return isset($value)? "'$value'" : 'NULL';
 
   }
 
-  // Realizar una consulta SQL
+  /**
+   * Ejecuta un query SQL.
+   * @param  string $sql SQL del query a ejecutar.
+   * @return bool        Resultado de la operación.
+   */
   protected function query($sql){
     
     return @mysql_query($sql, $this->handler);
 
   }
 
-  // Obtener el siguiente registro de un resultado
+  /**
+   * Obtener el siguiente registro de un resultado de un query.
+   * @param  int  $result Puntero del resultado.
+   * @return hash         Hash de valores.
+   */
   public function getFetchAssoc($result){
 
     return @mysql_fetch_assoc($result);
 
   }
 
-  // Obtener el ID del ultimo registro insertado
+  /**
+   * Obtener el ID del ultimo registro insertado.
+   * @return int ID del último registro insertado.
+   */
   public function getLastInsertedId(){
 
     return @mysql_insert_id();
 
   }
 
-  // Devuelve el tipo de datos del gestor para un tipo de datos en el lenguaje
+  /**
+   * Prepara una columna para ser creada en una tabla de la BD.
+   * @param  array  $column Datos de una columna.
+   * @return string
+   */
   public function sanitize(array $column){
     // Si no se encuentra el tipo se retorna el tipo recibido
 
-    $nativeType = $column["type"];
-    $column["type"] = itemOr($column["type"], self::$types, $column["type"]);
+    $nativeType = $column['type'];
+    $column['type'] = itemOr($column['type'], self::$types, $column['type']);
 
     // Parse bool values
-    $column["pk"] = parseBool($column["pk"]);
-    $column["allowNull"]  = parseBool($column["allowNull"]);
+    $column['pk'] = parseBool($column['pk']);
+    $column['allowNull']  = parseBool($column['allowNull']);
 
     // Get len of field
     // if is a bit, char or varchar take len
-    if(in_array($nativeType, array("char", "varchar")))
-      $column["len"] = itemOr("len", $column);
+    if(in_array($nativeType, array('char', 'varchar')))
+      $column['len'] = itemOr('len', $column);
 
-    elseif($nativeType == "bit")
-      $column["len"] = itemOr("precision", $column);
+    elseif($nativeType == 'bit')
+      $column['len'] = itemOr('precision', $column);
 
     // else look len into bytes used for native byte
     else
-      $column["len"]  = itemOr($nativeType, array_merge(
+      $column['len']  = itemOr($nativeType, array_merge(
                 self::$integerBytes,
                 self::$floatBytes,
                 self::$textBytes
               ));
 
-    if(in_array($column["type"], array("integer", "float"))){
+    if(in_array($column['type'], array('integer', 'float'))){
 
-      $column["unsigned"] = preg_match("/unsigned/",
-        $column["columnType"]) != 0;
+      $column['unsigned'] = preg_match('/unsigned/',
+        $column['columnType']) != 0;
 
-      $column["zerofill"] = preg_match("/unsigned zerofill/",
-        $column["columnType"]) != 0;
+      $column['zerofill'] = preg_match('/unsigned zerofill/',
+        $column['columnType']) != 0;
 
-      $column["autoIncrement"] = preg_match("/auto_increment/",
-        $column["extra"]) != 0;
+      $column['autoIncrement'] = preg_match('/auto_increment/',
+        $column['extra']) != 0;
 
     }
 
     // Unset scale is not is a float
-    if($column["type"] != "float")
-      unset($column["precision"], $column["scale"]);
+    if($column['type'] != 'float')
+      unset($column['precision'], $column['scale']);
 
     else
-      $column["scale"] = itemOr("scale", $column, 0);
+      $column['scale'] = itemOr('scale', $column, 0);
 
     // Unset columnType an prescicion
-    unset($column["columnType"]);
+    unset($column['columnType']);
 
     // Drop auto_increment of extra param
-    $column["extra"] = trim(str_replace("auto_increment", "", $column["extra"]));
+    $column['extra'] = trim(str_replace('auto_increment', '', $column['extra']));
 
     // Eliminar campos vacios
     foreach(array(
-      "defaultValue",
-      "collage",
-      "charset",
-      "len",
-      "extra"
+      'defaultValue',
+      'collage',
+      'charset',
+      'len',
+      'extra'
     ) as $attr)
       if(!isset($column[$attr]) || trim($column[$attr])==="")
         unset($column[$attr]);
@@ -229,7 +276,11 @@ class MysqlScheme extends AmScheme{
     
   }
 
-  // Consulta select
+  /**
+   * Devuelve el SQL de un query SELECT
+   * @param  AmQuery $q Query.
+   * @return string     SQL del query.
+   */
   public function sqlSelectQuery(AmQuery $q){
 
     return !empty($q->sql) ? $q->sql :
@@ -246,6 +297,12 @@ class MysqlScheme extends AmScheme{
 
   }
 
+  /**
+   * Devuelve el SQL de la sección VALUES para un query INSERT.
+   * @param  array/string $values Array de hash con los valores a insertar o SQL
+   *                              ya preparado.
+   * @return string               SQL correspondiente.
+   */
   protected function sqlInsertValues($values){
 
     if(empty($values))
@@ -256,10 +313,10 @@ class MysqlScheme extends AmScheme{
       // Preparar registros para crear SQL
       foreach($values as $i => $v)
         // Unir todos los valores con una c
-        $values[$i] = "(" . implode(",", $v) . ")";
+        $values[$i] = '(' . implode(',', $v) . ')';
 
       // Unir todos los registros
-      $values = implode(",", $values);
+      $values = implode(',', $values);
 
       // Obtener Str para los valores
       $values = "VALUES $values";
@@ -270,6 +327,11 @@ class MysqlScheme extends AmScheme{
 
   }
 
+  /**
+   * Devuelve el SQL de la sección FIELDS para un query INSERT.
+   * @param  array  $fields Campos que se desea preparar.
+   * @return string         SQL correspondiente.
+   */
   protected function sqlInsertFields(array $fields){
 
     // Unir campos
@@ -280,7 +342,18 @@ class MysqlScheme extends AmScheme{
 
   }
 
-  // Obtener el SQL para una consulta de inserción
+  /**
+   * Devuelve el SQL de un query INSERT.
+   * @param  array/AmQuery  $values Array hash de valores, array
+   *                                de instancias de AmModels, array de
+   *                                AmObjects o AmQuery con consulta select
+   *                                a insertar.
+   * @param  string/AmTable $model  Nombre del modelo o instancia de la
+   *                                tabla donde se insertará los valores.
+   * @param  array          $fields Campos que recibirán con los valores que
+   *                                se insertarán.
+   * @return string                 SQL del query.
+   */
   public function sqlInsert($values, $model, array $fields = array()){
 
     $q = $this->prepareInsert(
@@ -291,11 +364,19 @@ class MysqlScheme extends AmScheme{
       return '';
 
     // Generar SQL
-    return "INSERT INTO {$q['table']}{$q['fields']} {$q['values']}";
+    return implode(" ", array(
+      "INSERT INTO",
+      $q['table'].$q['fields'],
+      $q['values']},
+    ));
 
   }
 
-  // Obtener el SQL para una consulta UPDATE
+  /**
+   * Obtener el SQL para una consulta UPDATE.
+   * @param  AmQuery $q Query.
+   * @return string     SQL del query.
+   */
   public function sqlUpdateQuery(AmQuery $q){
 
     return implode(" ", array(
@@ -308,10 +389,13 @@ class MysqlScheme extends AmScheme{
 
   }
 
-  // Obtener el SQL para una consulta DELETE
+  /**
+   * Obtener el SQL para una consulta DELETE.
+   * @param  AmQuery $q Query.
+   * @return string     SQL del query.
+   */
   public function sqlDeleteQuery(AmQuery $q){
 
-    // Agregar DELETE FROM
     return implode(" ", array(
       "DELETE FROM",
       trim($this->getParseObjectDatabaseName($q)),
@@ -320,7 +404,11 @@ class MysqlScheme extends AmScheme{
 
   }
 
-  // Obtener el SQL para la clausula SELECT
+  /**
+   * SQL Para la cláusula SELECT.
+   * @param  AmQuery $q Query.
+   * @return string     SQL correspondiente.
+   */
   public function sqlSelect(AmQuery $q){
 
     $selectsOri = $q->getSelects();  // Obtener argmuentos en la clausula SELECT
@@ -350,7 +438,11 @@ class MysqlScheme extends AmScheme{
 
   }
 
-  // Obtener el SQL para la clausula FROM
+  /**
+   * Obtener el SQL para la clausula FROM.
+   * @param  AmQuery $q Query.
+   * @return string     SQL correspondiente.
+   */
   public function sqlFrom(AmQuery $q){
 
     $fromsOri = $q->getFroms();   // Listado de argumentos de la clausula FROM
@@ -385,7 +477,11 @@ class MysqlScheme extends AmScheme{
 
   }
 
-  // Obtener SQL para la clausula WHERE de una consulta
+  /**
+   * Obtener el SQL para la clausula WHERE.
+   * @param  AmQuery $q Query.
+   * @return string     SQL correspondiente.
+   */
   public function sqlWhere(AmQuery $q){
 
     $where = trim($this->parseWhere($q->getWheres()));
@@ -394,7 +490,11 @@ class MysqlScheme extends AmScheme{
 
   }
 
-  // Obtener el SQL para la clausula JOIN de una consulta
+  /**
+   * Obtener el SQL para la clausula JOIN.
+   * @param  AmQuery $q Query.
+   * @return string     SQL correspondiente.
+   */
   public function sqlJoins(AmQuery $q){
 
     // Resultado
@@ -437,8 +537,12 @@ class MysqlScheme extends AmScheme{
 
   }
 
-  // Obtener el SQL de una clasula ORDER BY
-  public function sqlOrders(AmQuery $q, $with = true){
+  /**
+   * Obtener el SQL para la clausula ORDER BY.
+   * @param  AmQuery $q Query.
+   * @return string     SQL correspondiente.
+   */
+  public function sqlOrders(AmQuery $q){
 
     $ordersOri = $q->getOrders(); // Obtener orders agregados
     $orders = array();  // Orders para retorno
@@ -456,7 +560,11 @@ class MysqlScheme extends AmScheme{
 
   }
 
-  // Obtener el SQL de una clasula GROUP BY
+  /**
+   * Obtener el SQL para la clausula GROUP BY.
+   * @param  AmQuery $q Query.
+   * @return string     SQL correspondiente.
+   */
   public function sqlGroups(AmQuery $q){
 
     // Unir grupos
@@ -467,7 +575,11 @@ class MysqlScheme extends AmScheme{
 
   }
 
-  // Obtener SQL para la clausula LIMIT
+  /**
+   * Obtener el SQL para la clausula LIMIT.
+   * @param  AmQuery $q Query.
+   * @return string     SQL correspondiente.
+   */
   public function sqlLimit(AmQuery $q){
 
     // Obtener limite
@@ -478,8 +590,12 @@ class MysqlScheme extends AmScheme{
 
   }
 
-  // Obtener SQL para la clausula OFFSET
-  public function sqlOffset(AmQuery $q, $with = true){
+  /**
+   * Obtener el SQL para la clausula OFFSET.
+   * @param  AmQuery $q Query.
+   * @return string     SQL correspondiente.
+   */
+  public function sqlOffset(AmQuery $q){
 
     // Obtener punto de partida
     $offset = $q->getOffset();
@@ -490,7 +606,11 @@ class MysqlScheme extends AmScheme{
 
   }
 
-  // Obtener el SQL para la clausula SET de una consulta UPDATE
+  /**
+   * Obtener el SQL para la clausula SET de un query UPDATE.
+   * @param  AmQuery $q Query.
+   * @return string     SQL correspondiente.
+   */
   public function sqlSets(AmQuery $q){
 
     // Obtener sets
@@ -521,7 +641,11 @@ class MysqlScheme extends AmScheme{
 
   }
 
-  // Set de Caracteres
+  /**
+   * Set de caracteres en un query SQL.
+   * @param  string $charset Set de caracteres.
+   * @return string          SQL correspondiente.
+   */
   public function sqlCharset($charset = null){
 
     // Si no recibió argumentos obtener el charset de la BD
@@ -538,7 +662,11 @@ class MysqlScheme extends AmScheme{
 
   }
 
-  // Coleccion de caracteres
+  /**
+   * Coleccion de caracteres en un query SQL.
+   * @param  string $collage Colección de caracteres.
+   * @return string         SQL correspondiente.
+   */
   public function sqlCollage($collage = null){
 
     // Si no recibió argumentos obtener el college de la BD
@@ -555,6 +683,13 @@ class MysqlScheme extends AmScheme{
 
   }
 
+  /**
+   * Devuelve un tipo de datos para el DBMS dependiendo de un tipo de datos
+   * de lenguaje y la longuitud del mismo.
+   * @param  string $type Tipo de datos en el lenguaje.
+   * @param  int    $len  Longuitud del tipo de datos.
+   * @return string       Tipo de datos en el DBMS.
+   */
   private function getTypeByLen($type, $len){
     $seudoType = $type.'Bytes';
     $types = self::$$seudoType;
@@ -563,7 +698,11 @@ class MysqlScheme extends AmScheme{
     return $index? $index: $defaultType;
   }
 
-  // Obtener el SQL para un campo de una tabla al momento de crear la tabla
+  /**
+   * Obtener el SQL para un campo de una tabla al momento de crear la tabla.
+   * @param  AmField $field Instancia del campo.
+   * @return string         SQL correspondiente.
+   */
   public function sqlField(AmField $field){
 
     // Preparar las propiedades
@@ -635,7 +774,12 @@ class MysqlScheme extends AmScheme{
 
   }
 
-  // Obtener el SQL para crear una tabla
+  /**
+   * Obtener el SQL para crear una tabla.
+   * @param  AmTable $table       Instancia de la tabla a acrear
+   * @param  bool    $ifNotExists Se se debe agregar la cláusula IF NOT EXISTS.
+   * @return string  SQL del query.
+   */
   public function sqlCreateTable(AmTable $table, $ifNotExists = true){
 
     // Obtener nombre de la tabla
@@ -672,7 +816,12 @@ class MysqlScheme extends AmScheme{
 
   }
 
-  // Obtener el SQL para una consulta TRUNCATE: Vaciar una tabla
+  /**
+   * Devuelve el SQL para truncar un tabla.
+   * @param  AmTable/string $table    Instancia o nombre de la tabla.
+   * @param  bool           $ignoreFk Si se debe ignorar las claves foráneas.
+   * @return string         SQL de la acción.
+   */
   public function sqlTruncate($table, $ignoreFk = true){
 
     // Obtener nombre de la tabla
@@ -689,7 +838,12 @@ class MysqlScheme extends AmScheme{
 
   }
 
-  // Obtener el SQL para eliminar una tabla
+  /**
+   * Obtener el SQL para eliminar una tabla.
+   * @param  AmTable/string $table    Instancia o nombre de la tabla.
+   * @param  bool           $ifExists Si se debe agregar la cláusula IF EXISTS.
+   * @return string                   SQL correspondiente.
+   */
   public function sqlDropTable($table, $ifExists = true){
 
     // Obtener nombre de la tabla
@@ -700,6 +854,12 @@ class MysqlScheme extends AmScheme{
 
   }
 
+  /**
+   * Obtener el SQL para eliminar una tabla.
+   * @param  AmTable/string $table     Instancia o nombre de la tabla.
+   * @param  bool           $orReplace Si se agrega la cláusula OR REPLACE.
+   * @return string                    SQL correspondiente.
+   */
   public function sqlCreateView(AmQuery $q, $orReplace = true){
 
     $queryName = $this->getParseObjectDatabaseName($q->getName());
@@ -709,6 +869,12 @@ class MysqlScheme extends AmScheme{
 
   }
 
+  /**
+   * Obtener el SQL para eliminar una vista.
+   * @param  AmQuery/string $q        Instancia o SQL del query.
+   * @param  bool           $ifExists Si se debe agregar la cláusula IF EXISTS.
+   * @return string                   SQL correspondiente.
+   */
   public function sqlDropView($q, $ifExists = true){
     
     if($q instanceof AmQuery)
@@ -721,15 +887,23 @@ class MysqlScheme extends AmScheme{
 
   }
 
-
-  // Setear un valor a una variable de servidor
+  /**
+   * SQL para setear un valor a una variable de servidor.
+   * @param  string $varName Nombre de la variable.
+   * @param  string $value   Valor a asignar a la variable.
+   * @return string          SQL correspondiente.
+   */
   public function sqlSetServerVar($varName, $value){
 
     return "set {$varName}={$value}";
 
   }
 
-  // SQL para crear la BD
+  /**
+   * SQL Para crear la BD.
+   * @param  boolean $ifNotExists Si se agrega la cláusula IF NOT EXISTS.
+   * @return string               SQL correspondiente.
+   */
   public function sqlCreate($ifNotExists = true){
 
     $database = $this->getParseDatabaseName();
@@ -741,7 +915,10 @@ class MysqlScheme extends AmScheme{
 
   }
 
-  // SQL para seleccionar la BD
+  /**
+   * SQL para seleccionar la BD.
+   * @return string SQL correspondiente.
+   */
   public function sqlSelectDatabase(){
 
     $database = $this->getParseDatabaseName();
@@ -749,7 +926,11 @@ class MysqlScheme extends AmScheme{
     
   }
 
-  // SQL para eliminar la BD
+  /**
+   * SQL para eliminar la BD.
+   * @param  boolean $ifExists Si se agrega la cláusula IF EXISTS.
+   * @return string            SQL correspondiente.
+   */
   public function sqlDrop($ifExists = true){
 
     $database = $this->getParseDatabaseName();
@@ -759,7 +940,10 @@ class MysqlScheme extends AmScheme{
 
   }
 
-  // SQL par aobtener la informacion de la BD
+  /**
+   * SQL del query para obtener la informacion de la BD.
+   * @return string SQL correspondiente.
+   */
   public function sqlGetInfo(){
 
     $sql = $this
@@ -773,7 +957,10 @@ class MysqlScheme extends AmScheme{
 
   }
 
-  // SQL para obtener el listado de tablas
+  /**
+   * SQL del query para obtener el listado de tablas de la BD.
+   * @return string SQL correspondiente.
+   */
   public function sqlGetTables(){
 
     $sql = $this
@@ -794,7 +981,11 @@ class MysqlScheme extends AmScheme{
 
   }
   
-  // SQL para obtener el listado de columnas de una tabla
+  /**
+   *  SQL del query para obtener el listado de columnas de una tabla.
+   * @param  string $tableName Nombre de la tabla.
+   * @return string            SQL correspondiente.
+   */
   public function sqlGetTableColumns($tableName){
 
     $sql = $this
@@ -830,7 +1021,11 @@ class MysqlScheme extends AmScheme{
 
   }
 
-  // SQL para obtener el lista campos unicos
+  /**
+   * SQL del query para obtener el lista campos únicos.
+   * @param  string $tableName Nombre de la tabla.
+   * @return string            SQL correspondiente.
+   */
   public function sqlGetTableUniques($tableName){
 
     $sql = $this
@@ -856,7 +1051,11 @@ class MysqlScheme extends AmScheme{
 
   }
 
-  // SQL para obtener el lista de foreign keys de una tabla
+  /**
+   * SQL del query para obtener el lista de foreign keys de una tabla.
+   * @param  string $tableName Nombre de la tabla.
+   * @return string            SQL correspondiente.
+   */
   public function sqlGetTableForeignKeys($tableName){
 
     $sql = $this
@@ -877,7 +1076,11 @@ class MysqlScheme extends AmScheme{
 
   }
 
-  // SQL para obtener el lista de de referencias a una tabla
+  /**
+   * SQL del query para obtener el lista de de referencias a una tabla
+   * @param  string $tableName Nombre de la tabla.
+   * @return string            SQL correspondiente.
+   */
   public function sqlGetTableReferences($tableName){
 
     $sql = $this
@@ -898,7 +1101,14 @@ class MysqlScheme extends AmScheme{
 
   }
 
-  // Obtener el SQL para una condicion IN
+  /**
+   * Obtener el SQL para una condicion IN.
+   * @param  string               $field      Nombre del campo.
+   * @param  string/AmQuery/array $collection Instancia de un query select, SQL
+   *                                          array de valores o string a
+   *                                          insertar.
+   * @return string               SQL correspondiente.
+   */
   public function in($field, $collection){
 
     // Si es un array se debe preparar la condició
@@ -936,7 +1146,13 @@ class MysqlScheme extends AmScheme{
 
   }
 
-  // Helper para obtener el SQL de la clausula WHERE
+  /**
+   * Helper para obtener el SQL de la clausula WHERE.
+   * @param  string/array $condition Condición o array de condiciones.
+   * @param  string       $prefix    Si la condición tiene un prefijo.
+   * @param  bool         $isIn      Si la condición es un IN.
+   * @return string                  SQL correspondiente.
+   */
   private function parseWhere($condition, $prefix = null, $isIn = false){
 
     if($isIn){
