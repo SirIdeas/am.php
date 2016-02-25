@@ -246,7 +246,7 @@ class AmQuery extends AmObject{
 
   /**
    * Devuelve si se agregará la cláusula DISTINCT a un query select.
-   * @return [type] [description]
+   * @return bool Si se agrega la cláusula.
    */
   public function getDistinct(){
 

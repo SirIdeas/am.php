@@ -6,60 +6,149 @@
  * 
  */
 
+AmScheme::validator("min_value");
+AmScheme::validator("max_value");
+
 /**
- * Validacion del rango de un campo
+ * Validación del rango de un campo
  */
-
-AmORM::validator("min_value");
-AmORM::validator("max_value");
-
 class RangeValidator extends AmValidator{
 
   protected
-    $minValidator = null, // Instancia del validador inferior
-    $maxValidator = null, // Instancia del validador superior
+    /**
+     * Instancia del validador inferior.
+     */
+    $minValidator = null,
+
+    /**
+     * Instancia del validador superior.
+     */
+    $maxValidator = null,
+
+    /**
+     * Límite inferior del campo.
+     */
     $min = null,
+
+    /**
+     * Límite superior del campo.
+     */
     $max = null;
 
+  /**
+   * Sobrecarga del constructor par inicializar las propiedades específicas.
+   * @param hash $data Hash de propieades.
+   */
   public function __construct($options = array()){
+
+    // Agregar nuevos campos a las sustituciones.
     $this->setSustitutions("max", "max");
     $this->setSustitutions("min", "min");
 
-    // Get attrs of validators
-    $min = isset($options["min"])? $options["min"] : null;
-    $max = isset($options["max"])? $options["max"] : null;
-    unset($options["min"]);
-    unset($options["max"]);
-
+    // Instancia los validadores de los límites.
     $this->minValidator = new MinValueValidator($options);
-    $this->maxValidator =new MaxValueValidator($options);
+    $this->maxValidator = new MaxValueValidator($options);
 
-    $this->setMin($min);
-    $this->setMax($max);
-
+    // Constructor padre.
     parent::__construct($options);
+
   }
 
-  // La validacion consiste en cumplir con los dos validadores
+  /**
+   * Implementación de la validación.
+   * @param  AmModel &$model Model que se validará.
+   * @return bool            Si es válido o no.
+   */
   protected function validate(AmModel &$model){
-    return $this->getMinValidator()->validate($model) && $this->getMaxValidator()->validate($model);
+
+    // Debe cumplir con los dos validadores
+    return
+      $this->getMinValidator()->validate($model) &&
+      $this->getMaxValidator()->validate($model);
+
   }
 
-  // Al setear el valor de validador se debe cambiar tambien a los validadores internos
+  /**
+   * Asigna el nombre del campo que evalará el validador.
+   * Sobre carga para asignar el nombre del campo a las instancias de los
+   * validadores internos.
+   * @param string $value Nombre del campo.
+   */
   public function setFieldName($value = null){
+
     $this->getMinValidator()->setFieldName($value);
     $this->getMaxValidator()->setFieldName($value);
+
     return parent::setFieldName($value);
+
   }
 
-  // Limite inferior
-  public function getMinValidator(){ return $this->minValidator; }
-  public function getMin(){ return $this->getMinValidator()->getMin(); }
-  public function setMin($value){ return $this->getMinValidator()->setMin($value); }
+  /**
+   * Devuelve el límite superior.
+   * @return int Límite superior.
+   */
+  public function getMax(){
 
-  // Limite superior
-  public function getMaxValidator(){ return $this->maxValidator; }
-  public function getMax(){ return $this->getMaxValidator()->getMax(); }
-  public function setMax($value){ return $this->getMaxValidator()->setMax($value); }
+    return $this->max;
+
+  }
+
+  /**
+   * Devuelve el límite inferior.
+   * @return int Límite inferior.
+   */
+  public function getMin(){
+
+    return $this->min;
+
+  }
+
+  /**
+   * Asigna el límite superior.
+   * @param  int   $value Límite superior.
+   * @return $this
+   */
+  public function setMax($alue){
+
+    // Asignar límite a la instancia de validadore correspondiente.
+    $this->getMaxValidator()->setMax($value);
+    $this->max = $alue;
+    return $this;
+
+  }
+
+  /**
+   * Asigna el límite inferior.
+   * @param  int   $value Límite inferior.
+   * @return $this
+   */
+  public function setMin($value){
+
+    // Asignar límite a la instancia de validadore correspondiente.
+    $this->getMinValidator()->setMin($value);
+    $this->min = $value;
+    return $this;
+
+  }
+
+  /**
+   * Devuelve la instancia del validador superior.
+   * @return MaxValueValidator Instancia del validador.
+   */
+  public function getMaxValidator(){
+
+    return $this->maxValidator;
+
+  }
+
+  /**
+   * Devuelve la instancia del validador inferior.
+   * @return MinValueValidator Instancia del validador.
+   */
+  public function getMinValidator(){
+
+    return $this->minValidator;
+
+  }
 
 }

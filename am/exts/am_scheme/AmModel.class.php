@@ -558,8 +558,9 @@ class AmModel extends AmObject{
   }
 
   /**
-   * Devuelve el indice correspondiente a.
-   * @return [type] [description]
+   * Devuelve el indice correspondiente al registro.
+   * @return int/hash ID del registro o hash con los valores de los campos
+   *                  primarios.
    */
   public function index(){
 
@@ -676,11 +677,9 @@ class AmModel extends AmObject{
 
   }
 
-  // Ejecuta las validaciones para un campo
   /**
-   * [validateField description]
-   * @param  [type] $field [description]
-   * @return [type]        [description]
+   *  Ejecuta las validaciones para un campo.
+   * @param  string $field Nombre del campo a validar.
    */
   public function validateField($field){
     // Obtener validator del campo

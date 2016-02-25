@@ -7,15 +7,29 @@
  */
  
 /**
- * Validacion de un campo unico
+ * Validación de un campo unico
  */
-
 class UniqueValidator extends AmValidator{
 
   protected
-    $fields = array(), // Campos de la clave unica
-    $conditions = array();  // Condiciones para los indixes
 
+    /**
+     * Lista de nombres de campos que forman parte de la clave única.
+     * @var array
+     */
+    $fields = array(),
+
+    /**
+     * Condiciones para los índices.
+     * @var array
+     */
+    $conditions = array();
+
+  /**
+   * Implementación de la validación.
+   * @param  AmModel &$model Model que se validará.
+   * @return bool            Si es válido o no.
+   */
   protected function validate(AmModel &$model){
 
     // Obtener la tabla para el modelo
@@ -45,9 +59,8 @@ class UniqueValidator extends AmValidator{
 
     // Agregar condiciones para excluir el registro evaluado
     $index = $model->index();
-    foreach ($index as $key => $value) {
+    foreach ($index as $key => $value)
       $index[$key] = "{$key}='{$value}'";
-    }
 
     // Agregar condiciones para excluir el registro evaluado
     $query->andWhere("not", array_values($index));
@@ -58,13 +71,49 @@ class UniqueValidator extends AmValidator{
 
   }
 
-  // Lista de campos para la llave unica
-  public function getFields(){ return $this->fields; }
-  public function setFields($value){ $this->fields = $value; return $this; }
+  /**
+   * Devuelve la lista de nombre de campos que conforman la llave única.
+   * @return array Lista de nombre de campos.
+   */
+  public function getFields(){
 
-  // Lista de condiciones extras a aplicar la llave unica
-  public function getConditions(){ return $this->conditions; }
-  public function setConditions($value){ $this->conditions = $value; return $this; }
+    return $this->fields;
+
+  }
+  
+  /**
+   * Asigna la lista de nombre de campos que conforman la llave única.
+   * @param  array $value Lista de nombre de campos.
+   * @return $this
+   */
+  public function setFields($value){
+
+    $this->fields = $value;
+    return $this;
+
+  }
+
+  /**
+   * Devuelve la lista de condiciones extras a aplicar la llave única.
+   * @return array Lista de condiciones.
+   */
+  public function getConditions(){
+
+    return $this->conditions;
+
+  }
+
+  /**
+   * Asigna la lista de condiciones extras a aplicar la llave única.
+   * @param  array $value Lista de condiciones.
+   * @return $this
+   */
+  public function setConditions($value){
+
+    $this->conditions = $value;
+    return $this;
+
+  }
 
 
 }

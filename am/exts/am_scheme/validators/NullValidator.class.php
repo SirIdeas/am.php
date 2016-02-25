@@ -7,13 +7,20 @@
  */
  
 /**
- * Validacion para valores nulos
+ * Validación de campos no nulos.
  */
-
 class NullValidator extends AmValidator{
-
+  
+  /**
+   * Implementación de la validación.
+   * @param  AmModel &$model Model que se validará.
+   * @return bool            Si es válido o no.
+   */
   protected function validate(AmModel &$model){
+
+    // Validar que el valor no se nulo.
     return $this->value($model) !== null;
+    
   }
 
 }

@@ -6,16 +6,23 @@
  * 
  */
 
+AmScheme::validator("null");
+
 /**
- * Validacion para valores vacíos
+ * Validación de campos no vacíos.
  */
-
-AmORM::validator("null");
-
 class EmptyValidator extends NullValidator{
 
+  /**
+   * Implementación de la validación.
+   * @param  AmModel &$model Model que se validará.
+   * @return bool            Si es válido o no.
+   */
   protected function validate(AmModel &$model){
+
+    // Validar que el valor no se nulo ni vacío.
     return parent::validate($model) && trim($this->value($model)) != "";
+
   }
 
 }

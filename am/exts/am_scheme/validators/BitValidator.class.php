@@ -6,17 +6,25 @@
  * 
  */
  
+AmScheme::validator('regex');
+
 /**
- * Validacion de valores enteros
+ * Validación de valores enteros
  */
-
-AmORM::validator('regex');
-
 class BitValidator extends RegexValidator{
 
+  /**
+   * Sobrecarga del constructor par inicializar las propiedades específicas.
+   * @param hash $data Hash de propieades.
+   */
   public function __construct($options = array()){
+
+    // Agregar la REGEX para validar binarios.
     $options['regex'] = '/^[\01]+$/';
+
+    // Constructor padre.
     parent::__construct($options);
+
   }
 
 }

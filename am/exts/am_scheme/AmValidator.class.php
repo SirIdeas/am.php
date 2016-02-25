@@ -45,8 +45,8 @@ class AmValidator extends AmObject{
     $sustitutions = array('value' => 'value', 'fieldname' => 'name');
 
   /**
-   * Constructor de validador
-   * @param [type] $data [description]
+   * Constructor de validador.
+   * @param hash $data Hash de propieades.
    */
   public function __construct($data = null) {
 

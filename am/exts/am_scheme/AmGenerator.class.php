@@ -78,7 +78,7 @@ final class AmGenerator{
       $fieldName  = $f->getName();
 
       // Integer validator, dates, times and Bit validator
-      if(in_array($type, array('integer', 'bit', 'date', 'datetime', 'timestamp', 'time')))
+      if(in_array($type, array('integer', 'bit', 'date', 'datetime', 'timestamp', 'time', 'year')))
         $validators[] = "    \$this->setValidator('{$fieldName}', '{$type}');";
 
       // If have validate strlen of value.
@@ -98,7 +98,6 @@ final class AmGenerator{
 
       // To text fiels add strlen validator
       }elseif($type == 'text'){
-        $len = pow(256, $len) - 1;
         $validators[] = "    \$this->setValidator('{$fieldName}', 'max_length', ".
                               "array('max' => $len));";
 
@@ -122,11 +121,6 @@ final class AmGenerator{
       if(!empty($validators)){
         // $lines[] = "    // {$fieldName}";
         $lines = array_merge($lines, $validators);
-      }
-
-      switch ($type){
-        case 'year':
-        break;
       }
 
     }

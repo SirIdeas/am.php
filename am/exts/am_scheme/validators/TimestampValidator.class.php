@@ -6,10 +6,12 @@
  * 
  */
 
+AmScheme::validator("datetime");
+
 /**
  * Validación de campos don formato de Fecha y Hora.
  */
-class DatetimeValidator extends AmValidator{
+class TimestampValidator extends DatetimeValidator{
 
   /**
    * Implementación de la validación.
