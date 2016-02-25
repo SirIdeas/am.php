@@ -26,7 +26,9 @@ class Main extends AmController{
   }
 
   public function action_model(){
-    
+
+    // var_dump(Am::loadAllClasses());
+
     // $this->addHeader('content-type:text/plain');
      
     // -------------------------------------------------------------------------
