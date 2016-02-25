@@ -9,13 +9,6 @@
 return array(
 
   /**
-   * Archivos de la extensión
-   */
-  'files' => array(
-    'AmController.class'
-  ),
-
-  /**
    * Métodos de mezcla de configuación
    */
   'mergeFunctions' => array(
@@ -34,6 +27,11 @@ return array(
    * Configuración a extender
    */
   'extend' => array(
+
+    // Agregar directorios donde buscar clases
+    'autoload' => array(
+      'controllers'
+    ),
 
     // Configuración inicial de los controladores
     'controllers' => array(

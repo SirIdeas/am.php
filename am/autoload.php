@@ -64,12 +64,12 @@ define('AM_BOOTDIR', dirname(AM_BOOTFILE));
 /**
  * Inclusión del núcleo.
  * Se incluye los archivos que forman parte del núcleo del framework.
- * 
  */
-require dirname(__FILE__) . '/core/am-helpers.php';
-require dirname(__FILE__) . '/core/Am.class.php';
-require dirname(__FILE__) . '/core/AmError.class.php';
-require dirname(__FILE__) . '/core/AmObject.class.php';
+require AM_ROOT . '/core/am-helpers.php';
+require AM_ROOT . '/core/Am.class.php';
+
+// Asignar función para cargar clases.
+spl_autoload_register("Am::autoload");
 
 /**
  * Inicializa Amathista.

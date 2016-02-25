@@ -9,13 +9,6 @@
 return array(
 
   /**
-   * Archivos de la extensión
-   */
-  'files' => array(
-    'AmTpl.class'
-  ),
-
-  /**
    * Configuración a extender
    */
   'extend' => array(

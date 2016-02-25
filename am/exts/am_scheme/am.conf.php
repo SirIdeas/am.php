@@ -9,30 +9,34 @@
 return array(
   
   /**
-   * Archivos de la extensión
+   * Directorios de clases.
    */
-  'files' => array(
-    'AmField.class',
-    'AmRelation.class',
-    'AmScheme.class',
-    'AmQuery.class',
-    'AmTable.class',
-    'AmModel.class',
-    'AmValidator.class'
+  'autoload' => array(
+    'validators/',
+    'drivers/',
   ),
 
   /**
    * Configuración a extender
    */
   'extend' => array(
+
+    // Agregar directorios donde buscar clases
+    'autoload' => array(
+      'models'
+    ),
+
+    // Valores por defecto de los modelos.
     'models' => array(
       '' => array(
         'models' => array()
       )
     ),
 
+    // Configuraciones de los esquemas
     'schemes' => array(),
 
+    // Confivuraciones de los validadores.
     'validators' => array(
       'messages' => array()
     ),
@@ -40,7 +44,6 @@ return array(
     // Formatos
     'formats' => array(
       'AMSCHEME_QUERY_TYPE_UNKNOW' => 'AmScheme: Tipo de consulta indefinida "%s"',
-      'AMSCHEME_FILE_NOT_FOUND' => 'AmScheme: No se encontró el archivo "%s"',
       'AMSCHEME_SCHEMECONF_NOT_FOUND' => 'AmScheme: No se encontró la configuración para la fuente "%s"',
       'AMSCHEMA_TABLE_ALREADY_HAVE_A_FIELD_NAMED' => 'AmScheme: La tabla "%s" ya tiene un campo llamado "%s"',
       'AMSCHEME_MODEL_WITHOUT_TABLE' => 'AmScheme: Modelo "%s" sin tabla',

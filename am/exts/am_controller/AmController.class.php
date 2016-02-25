@@ -604,12 +604,6 @@ class AmController extends AmResponse{
 
     }
 
-    // Obtener la ruta del controlador
-    // Incluir controlador si existe el archivo
-    if(is_file($file = "{$conf['root']}/{$conf['name']}.php")){
-      require_once $file;
-    }
-
     if(!class_exists("{$conf['name']}") && $parentControllerName){
 
       // Si no tiene un archivo que incluir se asigna como nombre de

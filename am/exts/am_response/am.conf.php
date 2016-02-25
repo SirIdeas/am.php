@@ -9,18 +9,14 @@
 return array(
 
   /**
-   * Archivos de la extensión
+   * Directorios de clases.
    */
-  'files' => array(
-    'AmResponse.class',
-    'types/AmFileResponse.class',
-    'types/AmCallResponse.class',
-    'types/AmRedirectResponse.class',
-    'types/AmTemplateResponse.class',
+  'autoload' => array(
+    'types/',
   ),
 
   /**
-   * Configuración a extender
+   * Configuración a extender.
    */
   'extend' => array(
 

@@ -80,6 +80,7 @@ final class Am{
      * Definición de callbacks a utilizar para mezclar atributos.
      */
     $mergeFunctions = array(
+      'autoload' => 'merge_unique',
       'requires' => 'merge_if_snd_first_not_false',
       'env' => 'merge_if_both_are_array',
       'tasks' => 'array_merge_recursive',
@@ -105,10 +106,14 @@ final class Am{
     $instances = array(),
 
     /**
-     * Directorios de entorno
-     * Este es un array que contiene d
+     * Directorios de entorno.
      */
     $dirs = array(),
+
+    /**
+     * Hash de paths de las clases.
+     */
+    $pathClasses = array(),
 
     /**
      * Directorios de tareas
@@ -153,6 +158,53 @@ final class Am{
     $env = null;
 
   /**
+   * Función para cargar clases.
+   * @param string $className Nombre de la clase a cargar.
+   */
+  public static function autoload($className){
+
+    // Si existe el path cargarlo.
+    if(isset(self::$pathClasses[$className]))
+      require_once self::$pathClasses[$className];
+
+  }
+
+  /**
+   * Carga todas las clases detectadas.
+   * @return hash Hash de clases con listado de clases que no existen.
+   */
+  public static function loadAllClasses(){
+
+    $ret = array();
+    // Recorrer todas las clases detectadas y cargarlas.
+    foreach (self::$pathClasses as $className => $path)
+      $ret[$className] = class_exists($className);
+
+    return $ret;
+    
+  }
+
+  /**
+   * Agrega los paths de las clases en el directio a hash de path de clases.
+   * Las clases son identificadas como archivos con extensión .class.php.
+   * @param string/array $dir Directorio o listado de directosio a verificar.
+   */
+  public static function loadPathClases($dir){
+
+    // Obtener los paths de las clases en el directorios.
+    $classes = amGlobFiles($dir, array(
+      'recursive' => false,
+      'include' => '/(.*)\.class\.php$/',
+      'return' => 1
+    ));
+
+    // Agregar los paths
+    foreach ($classes as $path)
+      self::$pathClasses[basename($path)] = $path.'.class.php';
+
+  }
+
+  /**
    * Devuelve una texto con un determinado formato
    * @param  string $fmtKey formato a buscar
    * @return string         Texto formateado
@@ -187,6 +239,8 @@ final class Am{
    * Inicializa las variables de AmResponse
    */
   public static function start(){
+
+    self::loadPathClases(AM_ROOT . '/core/');
 
     self::$server = new AmObject($_SERVER);
     self::$get = new AmObject($_GET);
@@ -835,11 +889,12 @@ final class Am{
     if(in_array($realFileConf = realpath("{$file}/am.conf.php"), self::$loadedExts))
       return true;
 
-    // Si existe el archivo .conf para dicha ruta retornar se intentara incluir como una extension
+    // Si existe el archivo .conf para dicha ruta retornar se intentará incluir
+    // como una extensión
     if(is_file($realFile = $realFileConf)){
 
       // Obtener la configuracion de la extencion
-      $conf = require_once($realFile);
+      $conf = require_once $realFile;
 
       // Si el valor devuelto es un array
       if(is_array($conf)){
@@ -860,22 +915,34 @@ final class Am{
         $extend = itemOr('extend', $conf, array());
         self::extendProperties($extend, $realFile);
 
-        // Obtener archivos a agregar de la extencion
-        $files = itemOr('files', $conf, array());
+        // Obtener el directorio raíz de la extensión.
+        $dirbase = dirname($realFile);
 
-        // Llamar archivo de iniciacion en la carpeta si existe.
-        foreach($files as $item)
-          if(is_file($realFile = "{$file}/{$item}.php"))
+        // Obtener los directorios de clases.
+        $autoload = itemOr('autoload', $conf, array());
+
+        // Agregar el directorios raíz
+        $autoload[] = '';
+
+        foreach ($autoload as $path) {
+          
+          // Si es un archivo existente cargarlo.
+          if(is_file($realFile = "{$dirbase}/{$path}"))
             require_once $realFile;
-          else
-            throw Am::e('AM_NOT_FOUND_FILE_EXTS', $realFile, $file);
+
+          // Cargar paths de clases en el directorio si existe.
+          elseif(is_dir($dir = realpath("{$dirbase}/{$path}")))
+            self::loadPathClases($dir);
 
         }
+
+      }
 
     }
 
     // Incluir archivo init si existe
     if(is_file($realFile = realpath("{$file}/am.init.php"))){
+      
       $conf = true;
       // Incluir el archivo init.
       $init = require_once($realFile);
@@ -1255,10 +1322,32 @@ final class Am{
     
     // Incluir extensiones para peticiones archivos requeridos
     self::requireExt(self::getProperty('requires', array()));
-    $files = self::getProperty('files', array());
 
-    foreach($files as $file)
-      require_once self::findFile("{$file}.php");
+    // Cargar los paths de las clases dentro de los directorios registrados de
+    // la app.
+    $autoload = self::getProperty('autoload', array());
+
+    foreach ($autoload as $path) {
+          
+      // Si es un archivo existente cargarlo.
+      if(is_file($path))
+        require_once $path;
+      
+      // Cargar paths de clases en el directorio si existe.
+      elseif(is_dir($path))
+        self::loadPathClases($path);
+
+      else{
+
+        // Obtener el nombre del path si es un archivo.
+        $file = self::findFile($path);
+
+        // Incluir si el archivo existe.
+        if(is_file($file))
+          require_once $file;
+      }
+
+    }
 
     // Include init file at app root if exists
     if(is_file($initFilePath = 'am.init.php'))

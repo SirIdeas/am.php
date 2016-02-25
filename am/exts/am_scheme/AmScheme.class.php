@@ -354,7 +354,7 @@ abstract class AmScheme extends AmObject{
    */
   public function getBaseModelClassFilename($model){
 
-    return $this->getDir() . '/'. $this->getBaseModelClassName($model) .'.php';
+    return "{$this->getDir()}/{$this->getBaseModelClassName($model)}.class.php";
 
   }
 
@@ -394,9 +394,6 @@ abstract class AmScheme extends AmObject{
    * @return bool           Si se generó o no el modelo.
    */
   public function generateBaseModelFile(AmTable $table){
-
-    // Incluir la clase para generar
-    self::requireFile('AmGenerator.class.php');
 
     // Obtener el nombre del archivo destino
     $path = $this->getBaseModelClassFilename($table->getTableName());
@@ -1133,25 +1130,7 @@ abstract class AmScheme extends AmObject{
     return self::$schemesDir;
 
   }
-
-  /**
-   * Incluye un archivo de la extensión se existe.
-   * @param string $file Dirección relativa a la raíz de la extensión del
-   *                     archivo que se desea incluir.
-   */
-  public static function requireFile($file){
-
-    // Obtener el path real.
-    $path = realpath(dirname(__FILE__).'/' . $file);
-
-    // Si no existe el archivo se genera un error.
-    if(!is_file($path))
-      throw Am::e('AMSCHEME_FILE_NOT_FOUND', $path);
-
-    require_once $path;
-
-  }
-
+  
   /**
    * Devuelve la configuración de un determinado esquema.
    * @param  string $name Nombre del esquema buscado.
@@ -1220,9 +1199,6 @@ abstract class AmScheme extends AmObject{
     // Obtener el nombre de la clase
     $driverClassName = camelCase($driver, true).'Scheme';
 
-    // Se incluye satisfactoriamente el driver
-    self::requireFile("drivers/{$driverClassName}.class.php");
-
     // Se retorna en nombre de la clase
     return $driverClassName;
 
@@ -1255,13 +1231,6 @@ abstract class AmScheme extends AmObject{
       'tableName' => $tableName,
       'model' => $model
     ));
-
-    // Obtener la dirección real del modelo correspondiente
-    $modelPath = realpath($scheme->getBaseModelClassFilename($tableName));
-    
-    // Incluir modelo si existe
-    if(is_file($modelPath))
-      require_once $modelPath;
 
     return $table;
 
@@ -1345,10 +1314,6 @@ abstract class AmScheme extends AmObject{
     foreach($model['models'] as $require)
       self::model($require);
 
-    // Incluir archivo del modelo
-    if(is_file($modelFile = $model['root'] . $model['name'] . '.php'))
-      require_once($modelFile);
-
     // Retornar el nombre de la clase si existe
     return class_exists($model['name'])? $model['name'] : false;
 
@@ -1363,9 +1328,6 @@ abstract class AmScheme extends AmObject{
 
     // Obtener el nombre de la clase
     $validatorClassName = camelCase($validator, true).'Validator';
-
-    // Si se incluye satisfactoriamente el validator
-    self::requireFile("validators/{$validatorClassName}.class.php");
 
     // Se retorna en nombre de la clase
     return $validatorClassName;

@@ -299,10 +299,10 @@ function amGlobFiles($folders, array $options = array()){
     'dirs' => false,
     'recursive' => true,
     'include' => '/.*/',
-    'exclude' => '/^jade$/',
+    'exclude' => '/^$/',
     'return' => 0,
   ), $options);
-  
+
   // Variablle para el retorno.
   $ret = array();
 

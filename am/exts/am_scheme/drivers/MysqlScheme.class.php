@@ -367,7 +367,7 @@ class MysqlScheme extends AmScheme{
     return implode(" ", array(
       "INSERT INTO",
       $q['table'].$q['fields'],
-      $q['values']},
+      $q['values'],
     ));
 
   }

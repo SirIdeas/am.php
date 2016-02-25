@@ -16,13 +16,6 @@ return array(
   ),
 
   /**
-   * Archivos de la extensión
-   */
-  'files' => array(
-    'AmRoute.class'
-  ),
-
-  /**
    * Extensiones requeridas
    */
   'requires' => array(
