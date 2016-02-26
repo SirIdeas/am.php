@@ -25,40 +25,62 @@
   <li>
     <a href="(:/:)/api">API</a>
     <ul class="sub-nav">
-      <li><span><strong><a href="(:/:)/api/core/">core</a></strong></span>
+      <li><span><strong>Extensiones</strong></span>
         <ul class="sub-nav">
-          <li><a href="(:/:)/api/core#Am">Am</a></li>
-          <li><a href="(:/:)/api/core#AmObject">AmObject</a></li>
-          <li><a href="(:/:)/api/core#AmError">AmError</a></li>
+          <li><a href="(:/:)/exts/AmCoder">AmCoder</a></li>
+          <li><a href="(:/:)/exts/AmController">AmController</a></li>
+          <li><a href="(:/:)/exts/AmResponse">AmResponse</a></li>
+          <li><a href="(:/:)/exts/AmRoute">AmRoute</a></li>
+          <li><a href="(:/:)/exts/AmScheme">AmScheme</a></li>
+          <li><a href="(:/:)/exts/AmTpl">AmTpl</a></li>
         </ul>
       </li>
-      <li><span><strong><a href="(:/:)/api/AmRoute">AmRoute</a></strong></span>
+      <li><span><strong>Classes</a></strong></span>
         <ul class="sub-nav">
-          <li><a href="(:/:)/api/AmRoute#AmRoute">AmRoute</a></li>
-        </ul>
-      </li>
-      <li><span><strong><a href="(:/:)/api/AmTpl">AmTpl</a></strong></span>
-        <ul class="sub-nav">
-          <li><a href="(:/:)/api/AmTpl#AmTpl">AmTpl</a></li>
-        </ul>
-      </li>
-      <li><span><strong><a href="(:/:)/api/AmResponse">AmResponse</a></strong></span>
-        <ul class="sub-nav">
-          <li><a href="(:/:)/api/AmResponse#AmResponse">AmResponse</a></li>
-          <li><a href="(:/:)/api/AmResponse#AmCallResponse">AmCallResponse</a></li>
-          <li><a href="(:/:)/api/AmResponse#AmFileResponse">AmFileResponse</a></li>
-          <li><a href="(:/:)/api/AmResponse#AmRedirectResponse">AmRedirectResponse</a></li>
-          <li><a href="(:/:)/api/AmResponse#AmTemplateResponse">AmTemplateResponse</a></li>
-        </ul>
-      </li>
-      <li><span><strong><a href="(:/:)/api/AmController">AmController</a></strong></span>
-        <ul class="sub-nav">
-          <li><a href="(:/:)/api/AmController#AmController">AmController</a></li>
-        </ul>
-      </li>
-      <li><span><strong><a href="(:/:)/api/AmCoder">AmCoder</a></strong></span>
-        <ul class="sub-nav">
-          <li><a href="(:/:)/api/AmCoder#AmCoder">AmCoder</a></li>
+          <li><a href="(:/:)/classes/Am">Am</a></li>
+          <li><a href="(:/:)/classes/AmCallResponse">AmCallResponse</a></li>
+          <li><a href="(:/:)/classes/AmCoder">AmCoder</a></li>
+          <li><a href="(:/:)/classes/AmController">AmController</a></li>
+          <li><a href="(:/:)/classes/AmError">AmError</a></li>
+          <li><a href="(:/:)/classes/AmField">AmField</a></li>
+          <li><a href="(:/:)/classes/AmFileResponse">AmFileResponse</a></li>
+          <li><a href="(:/:)/classes/AmGenerator">AmGenerator</a></li>
+          <li><a href="(:/:)/classes/AmModel">AmModel</a></li>
+          <li><a href="(:/:)/classes/AmObject">AmObject</a></li>
+          <li><a href="(:/:)/classes/AmQuery">AmQuery</a></li>
+          <li><a href="(:/:)/classes/AmRedirectResponse">AmRedirectResponse</a></li>
+          <li><a href="(:/:)/classes/AmRelation">AmRelation</a></li>
+          <li><a href="(:/:)/classes/AmResponse">AmResponse</a></li>
+          <li><a href="(:/:)/classes/AmRoute">AmRoute</a></li>
+          <li><a href="(:/:)/classes/AmScheme">AmScheme</a></li>
+          <li><a href="(:/:)/classes/AmTable">AmTable</a></li>
+          <li><a href="(:/:)/classes/AmTemplateResponse">AmTemplateResponse</a></li>
+          <li><a href="(:/:)/classes/AmTpl">AmTpl</a></li>
+          <li><a href="(:/:)/classes/AmValidator">AmValidator</a></li>
+          <li><a href="(:/:)/classes/MysqlScheme">MysqlScheme</a></li>
+          <li><a href="(:/:)/classes/BitValidator">BitValidator</a></li>
+          <li><a href="(:/:)/classes/CustomValidator">CustomValidator</a></li>
+          <li><a href="(:/:)/classes/DatetimeValidator">DatetimeValidator</a></li>
+          <li><a href="(:/:)/classes/DateValidator">DateValidator</a></li>
+          <li><a href="(:/:)/classes/EmailValidator">EmailValidator</a></li>
+          <li><a href="(:/:)/classes/EmptyValidator">EmptyValidator</a></li>
+          <li><a href="(:/:)/classes/FloatValidator">FloatValidator</a></li>
+          <li><a href="(:/:)/classes/InQueryValidator">InQueryValidator</a></li>
+          <li><a href="(:/:)/classes/IntegerValidator">IntegerValidator</a></li>
+          <li><a href="(:/:)/classes/InValidator">InValidator</a></li>
+          <li><a href="(:/:)/classes/LengthValidator">LengthValidator</a></li>
+          <li><a href="(:/:)/classes/MaxLengthValidator">MaxLengthValidator</a></li>
+          <li><a href="(:/:)/classes/MaxValueValidator">MaxValueValidator</a></li>
+          <li><a href="(:/:)/classes/MinLengthValidator">MinLengthValidator</a></li>
+          <li><a href="(:/:)/classes/MinValueValidator">MinValueValidator</a></li>
+          <li><a href="(:/:)/classes/NullValidator">NullValidator</a></li>
+          <li><a href="(:/:)/classes/PhoneValidator">PhoneValidator</a></li>
+          <li><a href="(:/:)/classes/RangeValidator">RangeValidator</a></li>
+          <li><a href="(:/:)/classes/RegexValidator">RegexValidator</a></li>
+          <li><a href="(:/:)/classes/TimestampValidator">TimestampValidator</a></li>
+          <li><a href="(:/:)/classes/TimeValidator">TimeValidator</a></li>
+          <li><a href="(:/:)/classes/UniqueValidator">UniqueValidator</a></li>
+          <li><a href="(:/:)/classes/YearValidator">YearValidator</a></li>
         </ul>
       </li>
     </ul>

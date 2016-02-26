@@ -4,12 +4,8 @@ class Usuario extends AmModel{
 
   protected
     $tableName = 'usuarios',
-    $pks = array('id_user'),
     $fields = array(
-      'id_user' => array(
-        'type' => 'integer',
-        'autoIncrement' => true,
-      ),
+      'id_user' => 'id',
       'name' => 'varchar',
       'email' => 'varchar',
       'sueldo' => 'float',
@@ -63,17 +59,20 @@ class Main extends AmController{
     // var_dump($tbl->create());
     // var_dump($tbl->truncate());
 
-    var_dump(AmScheme::model('Usuario'));
+    // var_dump(AmScheme::model('Usuario'));
     // $u = Usuario::me()->find(2);
-    $u = new Usuario;
+    // var_dump($u);
 
-    $u->name .= 'a';
-    $u->sueldo = 120.0;
+    // var_dump(AmScheme::model('Usuario'));
+    // $u = new Usuario;
 
-    var_dump($u->save());
-    var_dump($u->toArray());
-    var_dump($u->getErrors());
-    var_dump(Usuario::all()->get('array'));
+    // $u->name .= 'a';
+    // $u->sueldo = 120.0;
+
+    // var_dump($u->save());
+    // var_dump($u->toArray());
+    // var_dump($u->getErrors());
+    // var_dump(Usuario::all()->get('array'));
 
     // $u = new User;
     // $u->s
