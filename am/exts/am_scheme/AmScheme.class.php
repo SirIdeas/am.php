@@ -35,7 +35,7 @@ abstract class AmScheme extends AmObject{
     /**
      * Directorio por defecto de los modelos base.
      */
-    $schemesDir = 'models';
+    $schemesDir = 'schemes';
 
   protected
 
