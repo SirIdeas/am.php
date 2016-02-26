@@ -624,7 +624,7 @@ abstract class AmScheme extends AmObject{
   /**
    * Setea el valor de una variable en el DBSM.
    * @param string $varName Nombre de la variable.
-   * @param any    $value   Valor a asignar.
+   * @param mixed  $value   Valor a asignar.
    */
   public function setServerVar($varName, $value){
 
@@ -1370,7 +1370,7 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Obtiene una cade con un valor seguro para el manejador de DBSM.
-   * @param  any    $value Valor que se desea procesar.
+   * @param  mixed  $value Valor que se desea procesar.
    * @return string        Valor procesado.
    */
   abstract public function realScapeString($value);

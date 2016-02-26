@@ -108,7 +108,7 @@ class AmTable extends AmObject{
 
   /**
    * Constructor para la clase.
-   * @param any $params Hash de valores iniciales para el objeto.
+   * @param mixed $params Hash de valores iniciales para el objeto.
    */
   public function __construct($params = null){
 
@@ -770,7 +770,7 @@ class AmTable extends AmObject{
   /**
    * Obtener consulta para buscar registro por un campo.
    * @param  string $field      Nombre del campo donde se buscará.
-   * @param  any    $value      Valor a buscar.
+   * @param  mixed  $value      Valor a buscar.
    * @param  string $alias      Alias de la tabla en el query.
    * @param  bool   $withFields Si la clausula SELECT se genera con los campos
    *                            de la tabla (true) o con * (false).
@@ -786,7 +786,7 @@ class AmTable extends AmObject{
   /**
    * [findAllBy description]
    * @param  string $field      Nombre del campo donde se buscará.
-   * @param  any    $value      Valor a buscar.
+   * @param  mixed  $value      Valor a buscar.
    * @param  string $as         String con el nombre del modelo o formato de
    *                            retorno. Puede ser "array", "am", "object",
    *                            nombre de una clase existente o identificador de
@@ -804,14 +804,14 @@ class AmTable extends AmObject{
   /**
    * Obtener el primer registro de la busqueda por un campo.
    * @param  string $field      Nombre del campo donde se buscará.
-   * @param  any    $value      Valor a buscar.
+   * @param  mixed  $value      Valor a buscar.
    * @param  string $as         String con el nombre del modelo o formato de
    *                            retorno. Puede ser "array", "am", "object",
    *                            nombre de una clase existente o identificador de
    *                            un modelo.
    * @param  bool   $withFields Si la clausula SELECT se genera con los campos
    *                            de la tabla (true) o con * (false).
-   * @return any/boo            El modelo en el formato especificado por el
+   * @return mixed/bool         El modelo en el formato especificado por el
    *                            parámetro $as o false si no se consigió alguna
    *                            coincidencia.
    */
@@ -896,7 +896,7 @@ class AmTable extends AmObject{
    * @param  bool             $withFields Si la clausula SELECT se genera con
    *                                      los campos de la tabla (true) o con *
    *                                      (false).
-   * @return any/bool                     El modelo en el formato especificado
+   * @return mixed/bool                   El modelo en el formato especificado
    *                                      por el parámetro $as o false si no se
    *                                      consigió alguna coincidencia.
    */

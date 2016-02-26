@@ -403,9 +403,9 @@ final class Am{
   /**
    * Devuelve el valor de una propiedad de aplicación.
    * @param  string $property Nombre de la propiedad a cargar.
-   * @param  any    $default  Valor por defecto a devolver sino existe un valor
+   * @param  mixed  $default  Valor por defecto a devolver sino existe un valor
    *                          para la propiedad.
-   * @return any              Valor de la propiedad evaluada recursivamente
+   * @return mixed            Valor de la propiedad evaluada recursivamente
    *                          después de incluir los archivos de configuración
    *                          adecuados.
    */
@@ -552,7 +552,7 @@ final class Am{
    * Asigna o sustituye un dispatcher a un tipo de ruta
    * @param  string   $type       Nombre del tipo al que se agrega el callback.
    * @param  callback $dispatcher Despachador a agregar
-   * @return any                  Valor devuelvo por el manejador del evento.
+   * @return mixed                Valor devuelvo por el manejador del evento.
    */
   public static function addRouteDispatcher($type, $dispatcher){
     return Am::ring('route.addDispatcher', $type, $dispatcher);
@@ -563,7 +563,7 @@ final class Am{
    * @param  string   $type         Nombre del tipo al que se agrega el
    *                                callback.
    * @param  callback $preProcessor Preprocesador.
-   * @return any                    Valor devuelvo por el manejador del evento.
+   * @return mixed                  Valor devuelvo por el manejador del evento.
    */
   public static function addRoutePreProcessor($type, $preProcessor)  {
     return Am::ring('route.addPreProcessor', $type, $preProcessor);
@@ -575,7 +575,7 @@ final class Am{
    * @param  bool     $attachment Si la ruta se descarga o no.
    * @param  string   $name       Nombre con el que se entregará el archivo.
    * @param  mimeType $mimeType   Tipo mime para la descarga.
-   * @return any                  Respuesta de manejador configurado.
+   * @return mixed                Respuesta de manejador configurado.
    */
   public static function file($filename, $attachment = false, $name = null,
     $mimeType = null){
@@ -590,7 +590,7 @@ final class Am{
    * @param  string   $file     Ruta del archivo a descargar.
    * @param  string   $name     Nombre con el que se entregará el archivo.
    * @param  mimeType $mimeType Tipo mime para la descarga.
-   * @return any                Respuesta de manejador configurado.
+   * @return mixed              Respuesta de manejador configurado.
    */
   public static function download($file, $name = null, $mimeType = null){
 
@@ -604,7 +604,7 @@ final class Am{
    * @param  string $callback String que identifica el controlador a buscar.
    * @param  array  $env      Variables de entorno.
    * @param  array  $params   Argumentos obtenidos de la ruta.
-   * @return any              Respuesta de manejador configurado.
+   * @return mixed            Respuesta de manejador configurado.
    */
   public static function call($callback, array $env = array(),
                               array $params = array()){
@@ -620,7 +620,7 @@ final class Am{
    * @param  array  $options   Opciones para la vista.
    * @param  array  $checkView Indica si se desea o no chequear si la vista
    *                           existe.
-   * @return any               Respuesta de manejador configurado.
+   * @return mixed             Respuesta de manejador configurado.
    */
   public static function template($tpl, array $vars = array(),
                                   array $options = array(), $checkView = true){
@@ -653,7 +653,7 @@ final class Am{
   /**
    * Responde con un error 404.
    * @param  string $msg Mensaje de error a mostrar
-   * @return any         Respuesta de manejador configurado.
+   * @return mixed       Respuesta de manejador configurado.
    */
   public static function e404($msg = null){
 
@@ -664,7 +664,7 @@ final class Am{
   /**
    * Responde con un error 403.
    * @param  string $msg Mensaje de error a mostrar
-   * @return any         Respuesta de manejador configurado.
+   * @return mixed       Respuesta de manejador configurado.
    */
   public static function e403($msg = null){
 
@@ -678,7 +678,7 @@ final class Am{
    *                        el formato 'Controlador@action'
    * @param  array  $env    Variables de entorno.
    * @param  array  $params Argumentos obtenidos de la ruta.
-   * @return any            Respuesta de manejador configurado.
+   * @return mixed          Respuesta de manejador configurado.
    */
   public static function controller($action, array $env = array(),
                                     array $params = array()){

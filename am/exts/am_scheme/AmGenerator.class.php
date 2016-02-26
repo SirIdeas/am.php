@@ -7,7 +7,7 @@
  */
 
 /**
- * Clase para generar clases de los modeles del ORM
+ * Clase para generar clases de los modelos del ORM
  */
 final class AmGenerator{
 

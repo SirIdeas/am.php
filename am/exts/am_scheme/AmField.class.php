@@ -201,7 +201,7 @@ class AmField extends AmObject{
 
   /**
    * Devuelve el valor por defecto.
-   * @return any Valor por defecto.
+   * @return mixed Valor por defecto.
    */
   public function getDefaultValue(){
 
@@ -291,7 +291,7 @@ class AmField extends AmObject{
 
   /**
    * Realizar casting a un valor por el tipo de datos del campo.
-   * @return any Valor parseado.
+   * @return mixed Valor parseado.
    */
   public function parseValue($value){
 

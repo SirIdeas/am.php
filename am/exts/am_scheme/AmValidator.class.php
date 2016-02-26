@@ -210,7 +210,7 @@ class AmValidator extends AmObject{
   /**
    * Obtener el valor del modelo del campo asignado al validador.
    * @param  AmModel $model Model del que se desea obtener el valor.
-   * @return any            Valor obtenido.
+   * @return mixed          Valor obtenido.
    */
   protected function value(AmModel $model){
 

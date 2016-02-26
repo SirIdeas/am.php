@@ -52,7 +52,7 @@ class AmResponse extends AmObject{
    * @param  bool     $attachment Si la ruta se descarga o no.
    * @param  string   $name       Nombre con el que se entregará el archivo.
    * @param  mimeType $mimeType   Tipo mime para la descarga.
-   * @return any                  Respuesta de manejador configurado.
+   * @return mixed                Respuesta de manejador configurado.
    */
   public static function file($filename, $attachment = false, $name = null,
     $mimeType = null){
@@ -69,7 +69,7 @@ class AmResponse extends AmObject{
    * @param  string $callback  String que identifica el controlador a buscar.
    * @param  array  $env       Variables de entorno.
    * @param  array  $params    Argumentos obtenidos de la ruta.
-   * @return any               Respuesta de manejador configurado.
+   * @return mixed             Respuesta de manejador configurado.
    */
   public static function call($callback, array $env = array(),
                               array $params = array()){
@@ -86,7 +86,7 @@ class AmResponse extends AmObject{
    * @param  array  $options   Opciones para la vista.
    * @param  array  $checkView Indica si se desea o no chequear si la vista
    *                           existe.
-   * @return any               Respuesta de manejador configurado.
+   * @return mixed             Respuesta de manejador configurado.
    */
   public static function template($tpl, array $vars = array(),
                                   array $options = array(), $checkView = true){
@@ -151,7 +151,7 @@ class AmResponse extends AmObject{
 
   /**
    * @param  string $propertyName Nombre de la propiedad que se desea asignar.
-   * @param  any    $value        Valor a asignar.
+   * @param  mixed $value        Valor a asignar.
    * @return $this
    */
   public function set($propertyName, $value){

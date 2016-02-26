@@ -14,11 +14,11 @@ class AmCoder{
   /**
    * Decodifica un archivo de configuracion con el mismo formato.
    * La decodificación se basa solo en obtener lo retornado en el archivo.
-   * @param  string    $file    Ruta del archivo a decodificar.
-   * @param  any       $default Valor por defecto a devolver si el archivo no
-   *                            existe.
-   * @return any/array          Retorno del archivo, sino el archivo no existe
-   *                            devuelve el valor por defecto.
+   * @param  string      $file    Ruta del archivo a decodificar.
+   * @param  mixed       $default Valor por defecto a devolver si el archivo no
+   *                              existe.
+   * @return mixed/array          Retorno del archivo, sino el archivo no existe
+   *                              devuelve el valor por defecto.
    */
   public static function decode($file, $default = array()){
 
@@ -33,11 +33,11 @@ class AmCoder{
 
   /**
    * Leer el archivo.
-   * @param  string    $file    Ruta del archivo a decodificar.
-   * @param  any       $default Valor por defecto a devolver si el archivo no
-   *                            existe.
-   * @return any/array          Retorno del archivo, sino el archivo no existe
-   *                            devuelve el valor por defecto.
+   * @param  string      $file    Ruta del archivo a decodificar.
+   * @param  mixed       $default Valor por defecto a devolver si el archivo no
+   *                              existe.
+   * @return mixed/array          Retorno del archivo, sino el archivo no existe
+   *                              devuelve el valor por defecto.
    */
   public static function read($file, $default = array()) {
 

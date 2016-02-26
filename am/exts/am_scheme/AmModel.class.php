@@ -263,7 +263,7 @@ class AmModel extends AmObject{
   /**
    * Dvuelve el valore real de un campo.
    * @param  string $name Nombre del campo.
-   * @return any          Valore real del campo.
+   * @return mixed        Valore real del campo.
    */
   public function getRealValue($name){
 
@@ -293,7 +293,7 @@ class AmModel extends AmObject{
   /**
    * Devuelve el valor del registro en un campo.
    * @param  string $field Nombre del campo.
-   * @return any           Valor del registro en un campo.
+   * @return mixed         Valor del registro en un campo.
    */
   public function getValue($field){
 

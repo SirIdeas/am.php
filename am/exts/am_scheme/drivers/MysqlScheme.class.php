@@ -1103,46 +1103,46 @@ class MysqlScheme extends AmScheme{
 
   /**
    * Obtener el SQL para una condicion IN.
-   * @param  string               $field      Nombre del campo.
-   * @param  string/AmQuery/array $collection Instancia de un query select, SQL
-   *                                          array de valores o string a
-   *                                          insertar.
-   * @return string               SQL correspondiente.
+   * @param  string               $field     Nombre del campo.
+   * @param  string/AmQuery/array $collation Instancia de un query select, SQL
+   *                                         array de valores o string a
+   *                                         insertar.
+   * @return string                          SQL correspondiente.
    */
-  public function in($field, $collection){
+  public function in($field, $collation){
 
     // Si es un array se debe preparar la condició
-    if(is_array($collection)){
+    if(is_array($collation)){
 
         // Filtrar elementos repetidos
-        $collection = array_filter($collection);
+        $collation = array_filter($collation);
 
         // Si no esta vacía la colecion
-        if(!empty($collection)){
+        if(!empty($collation)){
 
           // Agregar cadenas dentro de los comillas simple
-          foreach ($collection as $i => $value){
+          foreach ($collation as $i => $value){
             $value = $this->realScapeString($value);
-            $collection[$i] = is_numeric($value) ? $value : "\'{$value}\'";
+            $collation[$i] = is_numeric($value) ? $value : "\'{$value}\'";
           }
 
           // Unir colecion por comas
-          $collection = implode($collection, ",");
+          $collation = implode($collation, ",");
 
         }else{
           // Si es una colecion vacía
-          $collection = null;
+          $collation = null;
         }
 
-    }elseif($collection instanceof AmQuery){
+    }elseif($collation instanceof AmQuery){
 
       // Si es una consulta entonces se obtiene el SQL
-      $collection = $collection->sqlSelectQuery();
+      $collation = $collation->sqlSelectQuery();
 
     }
 
     // Agregar el comando IN
-    return isset($collection) ? "$field IN($collection)" : "false";
+    return isset($collation) ? "$field IN($collation)" : "false";
 
   }
 

@@ -910,7 +910,7 @@ class AmQuery extends AmObject{
    * Agrega un SET al query.
    * Además convierte el query en un UPDATE.
    * @param  string $field Nombre del campo a setear.
-   * @param  any    $value Valor a asignar
+   * @param  mixed  $value Valor a asignar
    * @param  bool   $const Si el valor es una constante de o un valor de
    *                       original del SMDB.
    * @return $this
@@ -952,7 +952,7 @@ class AmQuery extends AmObject{
    *                            de un modelom, o el nombre de una clase. Si no
    *                            sae indica se utiliza el modelo del query.
    * @param  callback $formater Callback para dar formato al registro.
-   * @return any                Devuelve el registro obtenido como un modelo
+   * @return mixed              Devuelve el registro obtenido como un modelo
    *                            señalado.
    */
   public function row($as = null, $formater = null){
