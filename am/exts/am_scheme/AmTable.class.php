@@ -82,9 +82,9 @@ class AmTable extends AmObject{
     $charset = null,
     
     /**
-     * Coleción de caracteres de la tala en la BD.
+     * Reglas para los caracteres.
      */
-    $collage = null,
+    $collation = null,
     
     /**
      * Lista de campos PKs.
@@ -323,9 +323,9 @@ class AmTable extends AmObject{
    * Devuelve la coleción de caracteres.
    * @return string Devuelve la coleción de caracteres.
    */
-  public function getCollage(){
+  public function getCollation(){
 
-    return $this->collage;
+    return $this->collation;
 
   }
   
@@ -936,7 +936,7 @@ class AmTable extends AmObject{
       'tableName' => $this->getTableName(),
       'engine' => $this->getEngine(),
       'charset' => $this->getCharset(),
-      'collage' => $this->getCollage(),
+      'collation' => $this->getCollation(),
       'fields' => $fields,
       'pks' => $this->getPks(),
       'uniques' => $this->getUniques(),

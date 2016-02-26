@@ -75,14 +75,14 @@ class AmField extends AmObject{
     $len = null,
 
     /**
-     * String con el charset.
+     * String con el set de charset.
      */
     $charset = null,
 
     /**
-     * String con el Collage.
+     * String con la coleción de reglas para los caracteres.
      */
-    $collage = null,
+    $collation = null,
 
     /**
      * Bool que indica si en un campo numérico (integer o float) tiene signo.
@@ -270,12 +270,12 @@ class AmField extends AmObject{
   }
 
   /**
-   * Devuelve el collage.
-   * @return string Collage.
+   * Devuelve la coleción de reglas para los caracteres.
+   * @return string Colecion de caracteres.
    */
-  public function getCollage(){
+  public function getCollation(){
 
-    return $this->collage;
+    return $this->collation;
   
   }
 
@@ -330,7 +330,7 @@ class AmField extends AmObject{
     // Campos opcionales
     foreach(array(
       'defaultValue',
-      'collage',
+      'collation',
       'charset',
       'extra',
       'len',

@@ -264,7 +264,7 @@ class MysqlScheme extends AmScheme{
     // Eliminar campos vacios
     foreach(array(
       'defaultValue',
-      'collage',
+      'collation',
       'charset',
       'len',
       'extra'
@@ -664,22 +664,22 @@ class MysqlScheme extends AmScheme{
 
   /**
    * Coleccion de caracteres en un query SQL.
-   * @param  string $collage Colección de caracteres.
-   * @return string         SQL correspondiente.
+   * @param  string $collatin Colección de caracteres.
+   * @return string           SQL correspondiente.
    */
-  public function sqlCollage($collage = null){
+  public function sqlCollation($collation = null){
 
     // Si no recibió argumentos obtener el college de la BD
     if(!count(func_get_args())>0)
-      $collage = $this->getCollage();
+      $collation = $this->getCollation();
 
     // El el argumento esta vacío retornar cadena vacia
-    if(empty($collage))
+    if(empty($collation))
       return "";
 
-    $collage = empty($collage) ? '' : " COLLATE {$collage}";
+    $collation = empty($collation) ? '' : " COLLATE {$collation}";
 
-    return $collage;
+    return $collation;
 
   }
 
@@ -710,7 +710,7 @@ class MysqlScheme extends AmScheme{
     $type = $field->getType();
     $len = $field->getLen();
     $charset = $this->sqlCharset($field->getCharset());
-    $collage = $this->sqlCollage($field->getCollage());
+    $collation = $this->sqlCollation($field->getCollation());
     $default = $field->getDefaultValue();
     $extra = $field->getExtra();
 
@@ -732,7 +732,7 @@ class MysqlScheme extends AmScheme{
     if($field->isUnsigned())      $attrs[] = "unsigned";
     if($field->isZerofill())      $attrs[] = "zerofill";
     if(!empty($charset))          $attrs[] = $charset;
-    if(!empty($collage))          $attrs[] = $collage;
+    if(!empty($collation))        $attrs[] = $collation;
     if(!$field->allowNull())      $attrs[] = "NOT NULL";
     if($field->isAutoIncrement()) $attrs[] = "AUTO_INCREMENT";
     if(isset($default))           $attrs[] = "DEFAULT {$default}";
@@ -801,7 +801,7 @@ class MysqlScheme extends AmScheme{
     // Preparar otras propiedades
     $engine = empty($table->getEngine()) ? "" : "ENGINE={$table->getEngine()} ";
     $charset = $this->sqlCharset($table->getCharset());
-    $collage = $this->sqlCollage($table->getCollage());
+    $collation = $this->sqlCollation($table->getCollation());
 
     // Agregar los primaris key al final de los campos
     $fields[] = empty($pks) ? "" : "PRIMARY KEY (" . implode(", ", $pks). ")";
@@ -812,7 +812,7 @@ class MysqlScheme extends AmScheme{
     $ifNotExists = $ifNotExists? "IF NOT EXISTS " : '';
 
     // Preparar el SQL final
-    return "CREATE TABLE {$ifNotExists}{$tableName}($fields){$engine}{$charset}{$collage};";
+    return "CREATE TABLE {$ifNotExists}{$tableName}($fields){$engine}{$charset}{$collation};";
 
   }
 
@@ -891,11 +891,13 @@ class MysqlScheme extends AmScheme{
    * SQL para setear un valor a una variable de servidor.
    * @param  string $varName Nombre de la variable.
    * @param  string $value   Valor a asignar a la variable.
+   * @param  bool   $scope   Si se agrega la cláusula GLOBAL o SESSION.
    * @return string          SQL correspondiente.
    */
-  public function sqlSetServerVar($varName, $value){
+  public function sqlSetServerVar($varName, $value, $scope = false){
 
-    return "set {$varName}={$value}";
+    $scope = $scope === true? 'GLOBAL ' : $scope === false? 'SESSION ' : '';
+    return "SET {$scope}{$varName}={$value}";
 
   }
 
@@ -908,9 +910,9 @@ class MysqlScheme extends AmScheme{
 
     $database = $this->getParseDatabaseName();
     $charset = $this->sqlCharset();
-    $collage = $this->sqlCollage();
+    $collation = $this->sqlCollation();
     $ifNotExists = $ifNotExists? 'IF NOT EXISTS ' : '';
-    $sql = "CREATE DATABASE {$ifNotExists}{$database}{$charset}{$collage}";
+    $sql = "CREATE DATABASE {$ifNotExists}{$database}{$charset}{$collation}";
     return $sql;
 
   }
@@ -950,7 +952,7 @@ class MysqlScheme extends AmScheme{
       ->q("information_schema.SCHEMATA")
       ->where("SCHEMA_NAME='{$this->getDatabase()}'")
       ->selectAs("s.DEFAULT_CHARACTER_SET_NAME", "charset")
-      ->selectAS("s.DEFAULT_COLLATION_NAME", "collage")
+      ->selectAS("s.DEFAULT_COLLATION_NAME", "collation")
       ->sql();
 
     return $sql;
@@ -973,7 +975,7 @@ class MysqlScheme extends AmScheme{
         "and", "t.TABLE_TYPE='BASE TABLE'")
       ->selectAs("t.TABLE_NAME", "tableName")
       ->selectAS("t.ENGINE", "engine")
-      ->selectAS("t.TABLE_COLLATION", "collage")
+      ->selectAS("t.TABLE_COLLATION", "collation")
       ->selectAS("c.CHARACTER_SET_NAME ", "charset")
       ->sql();
 
@@ -1004,7 +1006,7 @@ class MysqlScheme extends AmScheme{
 
       // Strings
       ->selectAs("CHARACTER_MAXIMUM_LENGTH", "len")
-      ->selectAs("COLLATION_NAME", "collage")
+      ->selectAs("COLLATION_NAME", "collation")
       ->selectAs("CHARACTER_SET_NAME", "charset")
 
       // Numerics

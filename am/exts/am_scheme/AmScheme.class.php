@@ -35,7 +35,12 @@ abstract class AmScheme extends AmObject{
     /**
      * Directorio por defecto de los modelos base.
      */
-    $schemesDir = 'schemes';
+    $schemesDir = 'schemes',
+
+    /**
+     * Directorio por defecto de los modelos.
+     */
+    $modelsDir = 'models';
 
   protected
 
@@ -80,14 +85,14 @@ abstract class AmScheme extends AmObject{
     $pass = null,
 
     /**
-     * String con el charset.
+     * String con el set de charset.
      */
     $charset = null,
 
     /**
-     * String con el collage.
+     * String con el set de reglas para de caracteres.
      */
-    $collage = null,
+    $collation = null,
 
     /**
      * Hash con los las instancias por modelos de la conexión.
@@ -205,12 +210,12 @@ abstract class AmScheme extends AmObject{
   }
     
   /**
-   * Devuelve el Collage.
-   * @return string Collage.
+   * Devuelve el reglas de caracteres.
+   * @return string Coleción de reglas para los caracteres.
    */
-  public function getCollage(){
+  public function getCollation(){
     
-    return $this->collage;
+    return $this->collation;
 
   }
 
@@ -525,11 +530,17 @@ abstract class AmScheme extends AmObject{
 
     // Cambiar la condificacion con la que se trabajará
     if($ret){
-      $this->setServerVar('character_set_server',
-        $this->realScapeString($this->getCharset()));
 
+      // Obtener charset y collation
+      $charset = $this->realScapeString($this->getCharset());
+      $collaction = $this->realScapeString($this->getCollation());
+
+      // Asignar variables
+      $this->setServerVar('character_set_server', $charset);
+      $this->setServerVar('collation_server', $collaction);
       // PENDIENTE: Revisar
-      $this->execute('set names \'utf8\'');
+      $this->setServerVar('names', $charset);
+
     }
 
     return $ret;
@@ -623,12 +634,14 @@ abstract class AmScheme extends AmObject{
 
   /**
    * Setea el valor de una variable en el DBSM.
-   * @param string $varName Nombre de la variable.
-   * @param mixed  $value   Valor a asignar.
+   * @param  string $varName Nombre de la variable.
+   * @param  mixed  $value   Valor a asignar.
+   * @param  bool   $scope   Si se agrega la cláusula GLOBAL o SESSION.
+   * @return bool            Resultado de la operación
    */
-  public function setServerVar($varName, $value){
+  public function setServerVar($varName, $value, $scope = false){
 
-    return !!$this->execute($this->sqlSetServerVar($varName, $value));
+    return !!$this->execute($this->sqlSetServerVar($varName, $value, $scope));
 
   }
 
@@ -1130,6 +1143,16 @@ abstract class AmScheme extends AmObject{
     return self::$schemesDir;
 
   }
+
+  /**
+   * Devuelve la carpeta destino para los modelos definidos.
+   * @return string Directorio de modelos.
+   */
+  public static function getModelsDir(){
+
+    return self::$modelsDir;
+
+  }
   
   /**
    * Devuelve la configuración de un determinado esquema.
@@ -1470,9 +1493,10 @@ abstract class AmScheme extends AmObject{
    * SQL para setear una variable del DBSM
    * @param  string $varName Nombre de la variable a setear.
    * @param  string $value   Valor a asignar.
+   * @param  bool   $scope   Si se agrega la cláusula GLOBAL o SESSION.
    * @return string          SQL para la operación.
    */
-  abstract public function sqlSetServerVar($varName, $value);
+  abstract public function sqlSetServerVar($varName, $value, $scope = false);
 
   /**
    * SQL para seleccionar la BD
@@ -1607,7 +1631,7 @@ abstract class AmScheme extends AmObject{
    * SQL para indicar la coleción de caracteres.
    * @return string SQL de la clausula.
    */
-  abstract public function sqlCollage();
+  abstract public function sqlCollation();
 
   /**
    * SQL para un campo para un query create table.

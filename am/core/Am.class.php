@@ -240,7 +240,7 @@ final class Am{
    */
   public static function start(){
 
-    self::loadPathClases(AM_ROOT . '/core/');
+    self::loadPathClases(realpath(AM_ROOT . '/core/'));
 
     self::$server = new AmObject($_SERVER);
     self::$get = new AmObject($_GET);
@@ -1328,14 +1328,17 @@ final class Am{
     $autoload = self::getProperty('autoload', array());
 
     foreach ($autoload as $path) {
+
+      // Obtener nombre físico del archivo.
+      $file = realpath($path);
           
       // Si es un archivo existente cargarlo.
-      if(is_file($path))
-        require_once $path;
+      if(is_file($file))
+        require_once $file;
       
       // Cargar paths de clases en el directorio si existe.
-      elseif(is_dir($path))
-        self::loadPathClases($path);
+      elseif(is_dir($file))
+        self::loadPathClases($file);
 
       else{
 
@@ -1345,6 +1348,7 @@ final class Am{
         // Incluir si el archivo existe.
         if(is_file($file))
           require_once $file;
+        
       }
 
     }
