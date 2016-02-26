@@ -23,7 +23,8 @@ return array(
 
     // Agregar directorios donde buscar clases
     'autoload' => array(
-      'schemes'
+      'schemes',
+      'models',
     ),
 
     // Valores por defecto de los modelos.
