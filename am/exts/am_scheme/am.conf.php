@@ -27,11 +27,9 @@ return array(
       'models',
     ),
 
-    // Valores por defecto de los modelos.
+    // Directorios de los modelos.
     'models' => array(
-      '' => array(
-        'models' => array()
-      )
+      '' => 'models',
     ),
 
     // Configuraciones de los esquemas

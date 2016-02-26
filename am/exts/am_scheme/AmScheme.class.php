@@ -23,11 +23,6 @@ abstract class AmScheme extends AmObject{
     ),
 
     /**
-     * Lista de modelos incluídos.
-     */
-    $includedModels = array(),
-
-    /**
      * Instancias de los esquemas cargados.
      */
     $schemes = array(),
@@ -1284,61 +1279,23 @@ abstract class AmScheme extends AmObject{
 
       $model = $scheme->getBaseModelClassName($m[1]);
 
-      // Retornar el nombre de la clase del modelo correspondiente
-      return class_exists($model)? $model : false;
+    }else{
+
+      // Obtener el hash de directorios de modelos.
+      $models = Am::getProperty('models');
+
+      // Obtener el directorio del modelo actual.
+      $modelDir = realPath(
+        itemOr($model, $models, itemOr('', $models, self::getModelsDir()))
+      );
+
+      // Cargar los paths de clases en dicho directorio.
+      Am::loadPathClases($modelDir);
 
     }
 
-    // Obtener configuraciones de mails
-    $models = Am::getProperty('models');
-
-    // Si se recibió un string asignar como nombre del modelo
-    if(is_string($model))
-      $model = array('name' => $model);
-
-    // Si no se recibió el nombre del modelo retornar falso
-    if(!isset($model['name']))
-      return false;
-
-    // Si ya fue incluido el model salir
-    if(in_array($model['name'], self::$includedModels))
-      return $model['name'];
-
-    // Configuración de valores po defecto
-    $defaults = itemOr('', $models, array());
-
-    if(is_string($defaults))
-      $defaults = array('root' => $defaults);
-
-    // Asignar directorio raíz de los modelos si no existe
-    $defaults['root'] = itemOr('root', $defaults, self::getSchemesDir());
-
-    // Configuración de valores del model
-    $modelConf = itemOr($model['name'], $models, array());
-    if(is_string($modelConf))
-      $modelConf = array('root' => $modelConf);
-
-    // Combinar opciones recibidas en el constructor con las
-    // establecidas en el archivo de configuracion
-    $model = array_merge($defaults, $modelConf, $model);
-
-    // Incluir como modelo de usuario
-    // Guardar el nombre del modelo dentro de los modelos incluidos
-    // para no generar bucles infinitos
-    self::$includedModels[] = $model['name'];
-
-    // Incluir de configuracion local del modelo
-    if(is_file($modelConfFile = $model['root'] . '.model.php')){
-      $modelConf = require_once($modelConfFile);
-      $model = array_merge($model, $modelConf);
-    }
-
-    // Incluir modelos requeridos por el modelo actual
-    foreach($model['models'] as $require)
-      self::model($require);
-
-    // Retornar el nombre de la clase si existe
-    return class_exists($model['name'])? $model['name'] : false;
+    // Retornar el nombre de la clase del modelo correspondiente
+    return class_exists($model)? $model : false;
 
   }
 
