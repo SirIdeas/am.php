@@ -116,6 +116,40 @@ class AmField extends AmObject{
     $extra = null;
 
   /**
+   * Sobre escribir el parámetro para detectar los tipos autoIncrement y
+   * cambiarlo adecuadamente.
+   * @param hash $params Listado de propiedades
+   */
+  public function __construct($params = null){
+
+    // Transformar atributos a array
+    $params = self::parse($params);
+
+    // Obtener el typo
+    $type = itemOr('type', $params);
+
+    // Tipo especial de datos: id, autoIncrement y unsigned
+    if(in_array($type, array('id', 'autoIncrement', 'unsigned'))){
+      $params['type'] = 'integer';
+      $params['unsigned'] = true;
+    }
+    
+    // Tipo especial id y autoIncrement
+    if(in_array($type, array('id', 'autoIncrement'))){
+      $params['autoIncrement'] = true;
+    }
+
+    // Tipo especial id
+    if($type == 'id'){
+      $params['pk'] = true;
+    }
+
+    // LLamar al constructor del padre
+    parent::__construct($params);
+
+  }
+
+  /**
    * Devuelve el nombre.
    * @return string Nombre.
    */
