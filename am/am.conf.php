@@ -12,9 +12,14 @@
 return array(
 
   /**
-   * Configuración del errorReporting
+   * Configuración del errorReporting.
    */
   'errorReporting' => E_ALL ^ E_DEPRECATED,
+
+  /**
+   * Variables de entorno.
+   */
+  'env' => array(),
 
   /**
    * Array de las rutas o aliases de las extensiones a cargar.
@@ -32,12 +37,12 @@ return array(
   'autoload' => array(),
 
   /**
-   * Configuración de las rutas (Ver ./routes.conf.php)
+   * Configuración de las rutas (Ver ./routes.conf.php).
    */
   'routing' => array(),
 
   /**
-   * Configuración de los controladores (Ver ./controllers.conf.php)
+   * Configuración de los controladores (Ver ./controllers.conf.php).
    */
   'controllers' => array(),
 
@@ -54,7 +59,7 @@ return array(
   ),
 
   /**
-   * Configuraciones de las tareas (Ver ./tasks.conf.php)
+   * Configuraciones de las tareas (Ver ./tasks.conf.php).
    */
   'tasks' => array(
     'copy' => array(
