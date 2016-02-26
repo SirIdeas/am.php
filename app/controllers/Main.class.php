@@ -1,20 +1,5 @@
 <?php
 
-class Usuario extends AmModel{
-
-  protected
-    $tableName = 'usuarios',
-    $fields = array(
-      'id_user' => 'id',
-      'name' => 'varchar',
-      'email' => 'varchar',
-      'sueldo' => 'float',
-    ),
-    $createdAtField = true,
-    $updatedAtField = true;
-
-}
-
 class Main extends AmController{
 
   public function action_index(){
@@ -27,7 +12,8 @@ class Main extends AmController{
 
     // $this->addHeader('content-type:text/plain');
      
-    // -------------------------------------------------------------------------
+    // // ----------------------------------------------------------------------
+    // // Creación eliminación y generación del modelo
     // $sch = AmScheme::get();
     // var_dump($sch->getTables());
     // var_dump($sch->generateScheme());
@@ -36,7 +22,7 @@ class Main extends AmController{
     // var_dump($sch->create());
     // exit;
 
-    // -------------------------------------------------------------------------
+    // //-----------------------------------------------------------------------
     // // Crear tabla sin model
     // $tbl = AmScheme::table('usuarios')
     //   ->addField('id_user', array(
@@ -52,17 +38,21 @@ class Main extends AmController{
     // var_dump($tbl->drop());
     // var_dump($tbl->create());
     
-    // -------------------------------------------------------------------------
+    // //-----------------------------------------------------------------------
     // // Crear tabla apartir del modelo
     // $tbl = Usuario::me();
     // var_dump($tbl->drop());
     // var_dump($tbl->create());
     // var_dump($tbl->truncate());
 
+    // //-----------------------------------------------------------------------
+    // // Buscar registro en el modelo
     // var_dump(AmScheme::model('Usuario'));
     // $u = Usuario::me()->find(2);
     // var_dump($u);
 
+    // //-----------------------------------------------------------------------
+    // // Crear usuario 
     // var_dump(AmScheme::model('Usuario'));
     // $u = new Usuario;
 
@@ -74,9 +64,6 @@ class Main extends AmController{
     // var_dump($u->getErrors());
     // var_dump(Usuario::all()->get('array'));
 
-    // $u = new User;
-    // $u->s
-    // 
   }
 
 }

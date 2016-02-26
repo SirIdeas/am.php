@@ -95,6 +95,7 @@
           <th>Propiedad</th>
           <th>Tipo</th>
           <th>Descripción</th>
+          <th>Valor por defecto</th>
         </tr>
       </thead>
       <tbody>
@@ -102,26 +103,33 @@
           <td><code><strong>errorReporting</strong></code></td>
           <td><code><strong>int</strong></code></td>
           <td>Nivel de errores a reportar. Utiliza la función <a href="http://php.net/manual/es/function.error-reporting.php" target="blank"><code><strong>error_reporting</strong></code></a></td>
+          <td><pre class="table-pre"><code class="language-php">'errorReporting' => E_ALL ^ E_DEPRECATED</code></pre></td>
         </tr>
         <tr>
           <td><code><strong>requires</strong></code></td>
           <td><code><strong>array</strong></code></td>
           <td>Listado de extensiones a incluir.</td>
+          <td><pre class="table-pre"><code class="language-php">'requires' => array(),</code></pre></td>
         </tr>
         <tr>
-          <td><code><strong>files</strong></code></td>
+          <td><code><strong>autoload</strong></code></td>
           <td><code><strong>array</strong></code></td>
-          <td>Listado de rutas de archivos que se incluyen automáticamente, después de incluir las extensiones.</td>
+          <td>
+            Listado de directorios donde se buscan las clases (archivos con extensión .class.php) y archivos se incluyen automáticamente, después de incluir las extensiones.
+          </td>
+          <td><pre class="table-pre"><code class="language-php">'autoload' => array(),</code></pre></td>
         </tr>
         <tr>
           <td><code><strong>env</strong></code></td>
           <td><code><strong>hash</strong></code></td>
           <td>Listado de pares variable=>valor del entorno global.</td>
+          <td><pre class="table-pre"><code class="language-php">'env' => array(),</code></pre></td>
         </tr>
         <tr>
           <td><code><strong>tasks</strong></code></td>
           <td><code><strong>hash</strong></code></td>
           <td>Listado de pares tarea=>configuración de las posibles tareas que se pueden ejecutar.</td>
+          <td><pre class="table-pre"><code class="language-php">'tasks' => array(),</code></pre></td>
         </tr>
       </tbody>
     </table>

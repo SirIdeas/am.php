@@ -84,7 +84,7 @@
       <tr><th>Tipo</th><td><code><strong>string</strong></code></td></tr>
       <tr>
         <th>Valor por defecto</th>
-        <td><pre class="table-pre"><code class="language-php">'name' => null  </code></pre></td>
+        <td><pre class="table-pre"><code class="language-php">'name' => null</code></pre></td>
       </tr>
     </table>
 

@@ -6,12 +6,8 @@ return array(
     'siteName' => 'Amathista | PHP Framework'
   ),
 
-  'requires' => array(
-    'exts/am_route',
-    'exts/am_tpl',
-    'exts/am_controller',
-    'exts/am_scheme',
-    'helpers/sync.helpers'
+  'autoload' => array(
+    'helpers/sync.helpers',
   ),
 
   'routing' => array(
@@ -34,16 +30,23 @@ return array(
 
   'schemes' => array(
     '' => array(
-      // 'prefix' => '',
       'driver' => 'mysql',
       'database' => 'am',
       'server' => 'localhost',
       // 'port' => '',
       'user' => 'root',
       'pass' => '',
-      // 'charset' => '',
-      // 'collage' => '',
+      'charset' => 'utf8',
+      'collation' => 'utf8_unicode_ci',
+      // 'prefix' => '',
     ),
-  )
+  ),
+
+  'requires' => array(
+    'exts/am_route',
+    'exts/am_tpl',
+    'exts/am_controller',
+    'exts/am_scheme',
+  ),
 
 );

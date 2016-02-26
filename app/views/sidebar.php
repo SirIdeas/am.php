@@ -35,7 +35,7 @@
           <li><a href="(:/:)/exts/AmTpl">AmTpl</a></li>
         </ul>
       </li>
-      <li><span><strong>Classes</a></strong></span>
+      <li><span><strong>Clases</a></strong></span>
         <ul class="sub-nav">
           <li><a href="(:/:)/classes/Am">Am</a></li>
           <li><a href="(:/:)/classes/AmCallResponse">AmCallResponse</a></li>
