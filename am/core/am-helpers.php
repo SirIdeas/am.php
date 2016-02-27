@@ -246,6 +246,20 @@ function underscore($s) {
 
 }
 
+/**
+ * Devuelve el plurar según la gramática inglesa de una cadena según como
+ * termina.
+ * @param  string $cad cadena a pluralizar.
+ * @return string      Cadena en plurar.
+ */
+function pluralize($cad){
+  if(preg_match('/.*(sh|ch|s|x|z)$/i', $cad, $m))
+    return $m[0].'es';
+  if(preg_match('/(.*[bcdfghjklmnpqrstvwxyz]{1})y$/i', $cad, $m))
+    return $m[1].'ies';
+  return $cad.'s';
+}
+
 // PENDIENTE: documentar
 // Devuelve una cadena 's' en formato camelCase. Si 'cfc == true' entonces
 // el primer caracter tambien es convertido en mayusculas

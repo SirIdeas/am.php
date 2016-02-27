@@ -106,6 +106,11 @@ class AmModel extends AmObject{
     // Signar si es nuevo.
     $this->isNew = $isNew;
 
+    // Tomar como nombre de la tabla el nombre de la clase del modelo en camel
+    // case y plurar según el inlés.
+    if(empty($this->tableName))
+      $this->tableName = pluralize(underscore($className));
+
     // Obtener la instancia de la tabla desde el esquema si esta cargada.
     $this->table = $scheme->getTableInstance($className);
 
