@@ -278,16 +278,6 @@ class AmTable extends AmObject{
     return in_array($fieldName, $this->getPks());
     
   }
-  
-  /**
-   * Devuelve el Hash de validadores.
-   * @return hash Hash de validadores.
-   */
-  public function getValidators(){
-
-    return $this->validators;
-
-  }
 
   /**
    * Devuelve a la tabla se le cargó la estructura de la BD.
@@ -660,6 +650,150 @@ class AmTable extends AmObject{
   }
 
   /**
+   * Devuelve los validadores para un campo.
+   * @param  string $name Nombre del campo que se desea obtener.
+   * @return array        Array de los validators en el campo indicado. Si $name
+   *                      es null devuelve todos los validators.
+   */
+  public function getValidators($name = null){
+
+    if(isset($name))
+      return isset($this->validators->$name)? $this->validators->$name : null;
+
+    return $this->validators;
+
+  }
+
+  /**
+   * Devuelve un validator específico de un campo.
+   * @param  string $name          Nombre del campo.
+   * @param  string $validatorName Nombre del validador.
+   * @return AmValidator           Instancia del validator si existe.
+   */
+  public function getValidator($name, $validatorName){
+
+    return isset($this->validators->$name[$validatorName])?
+      $this->validators->$name[$validatorName] : null;
+
+  }
+
+  /**
+   * Metodo para eliminar validator.
+   * @param  string $name          Nombre del campo.
+   * @param  string $validatorName Nombre del validador.
+   */
+  public function dropValidator($name, $validatorName = null){
+
+    if(isset($this->validators->$name[$validatorName])){
+      // Si esta definido el validator en la posicion especifica se eliminan
+      unset($this->validators->$name[$validatorName]);
+
+    }else if(isset($this->validators->$name)){
+      // Sino esta definido los validators para un atributo se eliminan
+      unset($this->validators->$name);
+    }
+
+  }
+
+  /**
+   * Asigna un validator a la tabla.
+   * @param string/array             $name          Nombre del campo o array de
+   *                                                campos a los que se
+   *                                                aplicará el validator.
+   * @param string/array/AmValidator $validatorName Nombre o instancia del
+   *                                                validador o array de
+   *                                                validadore a agregar.
+   * @param string/array/AmValidator $validator     Tipo de validador o
+   *                                                instancia o array de
+   *                                                validadores.
+   * @param array                    $options       opciones para instanciar
+   *                                                el validador.
+   */
+  public function setValidator($name, $validatorName, $validator = null,
+    $options = array()){
+
+    // Si el nombre es un array, entonces
+    if(is_array($name)){
+      // Agregar un  validator por cada elemento
+      foreach ($name as $value)
+        $this->setValidator($value, $validatorName, $validator, $options);
+      return;
+    }
+
+    // Si el segundo parámetro es una instancia de un validator
+    // se agrega
+    if($validatorName instanceof AmValidator)
+      return $this->setValidator($name, null, $validatorName);
+
+    // Si el segundo parámetro es un array entonces representa
+    // que se agregaran varios validators
+    if(is_array($validatorName)){
+      foreach ($validatorName as $value)
+        $this->setValidator($name, $value, $validator, $options);
+      return;
+    }
+
+    // Si el tercer parametro es un array, entonces representa las opciones.
+    // El nombre del parametro pasa a ser tambien el validator que se buscara.
+    if(is_array($validator))
+      return $this->setValidator($name, $validatorName, null, array_merge($validator, $options));
+
+    // Si no se indico el 3er parametros, entonces se tomara el nombre como validador
+    if(!isset($validator))
+      return $this->setValidator($name, $validatorName, $validatorName, $options);
+
+    // Si el validator no es una instancia de un validador
+    // Entonce obtener instancia del validador.
+    if(!$validator instanceof AmValidator){
+      $validator = AmScheme::validator($validator);
+      $validator = new $validator($options);
+    }
+
+    // Asignar el nombre al validator
+    $validator->setFieldName($name);
+    $validators = $this->validators;
+
+    // Crear array si no ha sido creado
+    if(!isset($validators->$name))
+      $validators->$name = array();
+
+    // Agregar el validator a la tabla
+    if(isset($validatorName)){
+      $validators->$name = array_merge($validators->$name, array(
+        $validatorName => $validator
+      ));
+      return $validator;
+    }
+
+    // Agregar al final
+    array_push($validators->$name, $validator);
+
+    return $validator;
+
+  }
+
+  /**
+   * Ejecuta validadores en un modelo.
+   * @param AmModel $model Instancia del registro a validar.
+   * @param string  $field Nombre del campo a validar.
+   */
+  public function validate(AmModel $model, $field){
+    // Obtener validator del campo
+    $validators = $this->getValidators($field);
+
+    // Sino se obtiene un array de validators retornar
+    // sine valuar
+    if(is_array($validators))
+
+      foreach($validators as $name => $validator)
+        // Si el modelo no cumple con la validacion
+        if(!$validator->isValid($model))
+          // Se agrega el error
+          $model->addError($field, $name, $validator->getMessage($model));
+
+  }
+
+  /**
    * Parse los campos de un hash de valores mediante los campos de la tabla.
    * @param  hash $r Hash de valores
    * @return hash    Hash de valores parseado.
@@ -719,8 +853,8 @@ class AmTable extends AmObject{
   }
 
   /**
-   * Devuelve el índice correspondiente a un modelo.
-   * @param  AmModel  $model Modelo del que se desea obtener el índice. 
+   * Devuelve el índice correspondiente a un registro.
+   * @param  AmModel  $model Instancia del registroe. 
    * @return int/hash        ID del registro o hash con los valores de los
    *                         campos primarios.
    */
@@ -930,6 +1064,106 @@ class AmTable extends AmObject{
 
     // Si se obtuno la consulta devolver obtener el primer registro.
     return isset($q)? $q->row($as) : null;
+
+  }
+
+  /**
+   * Devuelve un query que selecciona un registro.
+   * @param  AmModel $model      Instancia del registro.
+   * @param  string  $alias      Alias para la tabla de en el query.
+   * @param  bool    $withFields Si la consulta incluirá la seleción de todos
+   *                             los campos especificados en el modelo.
+   * @return AmQuery             Query select para obtener el registro de la BD.
+   */
+  public function querySelectModel(AmModel $model, $alias = 'q',
+    $withFields = false){
+
+    // Obtener el índice del modelo
+    $index = $this->indexOf($model);
+
+    // Realizar la busqueda
+    return $this->findById($index, $alias, $withFields);
+
+  }
+
+  /**
+   * Inserta el registro en la tabla como nuevo.
+   * @param  AmModel $model Instancia del registro a insertar.
+   * @return int/bool       Id del último registro insertado o false si se
+   *                        generó un error.
+   */
+  public function insert(AmModel $model){
+
+    // Si se inserta satisfactoriamente
+    if($this->insertInto($model))
+
+      // Devolver el último id insertado.
+      return $this->getScheme()->getLastInsertedId();
+
+    // De lo contrario devolver falso.
+    return false;
+
+  }
+
+  /**
+   * Realiza la actualización de un registro en la tabla.
+   * @param  AmModel $model Instancia del registro a actualizar.
+   * @return bool           Indica si se realizó la actualización
+   *                        satisfactoriamente.
+   */
+  public function update(AmModel $model){
+
+    // Obtener los campos
+    if($this->isSchemeStruct())
+      $fields = array_keys($this->getFields());
+    else
+      $fields = array_keys($model->toArray());
+
+    // Obtener una consulta para selecionar el registro
+    $q = $this->querySelectModel($model);
+
+    // Recorrer los campos para agregar los sets
+    // de los campos que cambiaron
+    foreach($fields as $fieldName){
+
+      // Si el campo cambió
+      if($model->hasChanged($fieldName))
+        // Agregar set a la consulta
+        $q->set($fieldName, $model->$fieldName);
+
+    }
+
+    return !!$q->update();
+
+  }
+
+  /**
+   * Devuelve un hash con los valores de un registro correspondientes a los
+   * campos de la tabla.
+   * @param  AmModel $model  Instancia del modelo.
+   * @param  bool    $withAI Si se incluirá los valore Autoincrementables.
+   * @return hash            Hash de valores.
+   */
+  public function dataToArray(AmModel $model, $withAI = true){
+
+    $ret = array(); // Para el retorno
+
+    // Obtener los campos
+    if(!$this->isSchemeStruct())
+      return $model->toArray();
+    
+    $fields = array_keys($this->getFields());
+
+    foreach($fields as $fieldName){
+      $field = $this->getField($fieldName);  // Obtener el campos
+      // Si se pidió incorporar los valores autoincrementados
+      // o si el campo no es autoincrementado
+      if($withAI || !$field || !$field->isAutoIncrement())
+        // Se agrega el campo al array de retorno
+        $ret[$fieldName] = $model->$fieldName;
+    }
+
+    return $ret;
 
   }
 

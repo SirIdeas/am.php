@@ -1037,7 +1037,7 @@ abstract class AmScheme extends AmObject{
         if($v instanceof AmModel){
           // Si el registro es AmModel obtener sus valores como array
           // asociativo o simple
-          $values[$i] = $v->dataToArray(!$mergeWithFields);
+          $values[$i] = $v->table->dataToArray($v, !$mergeWithFields);
           $rawValues[$i] = $v->getRawValues();
 
         }elseif($v instanceof AmObject)
