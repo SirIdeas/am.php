@@ -98,7 +98,7 @@ $generateTableStyles($tableClass = '.table', $color)
     &.striped
       tbody
         tr:nth-of-type(odd)
-          $setBackground    lightness($color, 98%)
+          $setBackground    lightness($color, 97.5%)
     
     &.bordered
       td,th
@@ -119,7 +119,7 @@ $generateTableStyles($tableClass = '.table', $color)
 // 1280px, Laptop MDPI, Laptop Touch
 // 1440px, Laptop HiDPI
 // 1600px, Amazon Kindle
-$generateGrid($contentCls = 'content', $rowCls = 'row', $colCls = 'col', $constantCls = 'col', $offsetCls = 'os', $hideCls = 'hide', $numSections = 12, $screens = {
+$generateGrid($numSections = 12, $contentCls = 'content', $rowCls = 'row', $colCls = 'col', $constantCls = 'col', $offsetCls = 'os', $hideCls = 'hide', $screens = {
     'c': 0,
     'v': 512px,
     's': 768px,

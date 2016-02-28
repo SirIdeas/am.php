@@ -23,16 +23,14 @@
     Las configuración de los controladores es tomada de la propiedad de aplicación <code><strong>controllers</strong></code>. Esta es un hash donde cada clave representa el nombre de un controlador y el valor su configuración.
   </p>
 
-  <div class="code-row">
+  <div class="divide-section">
     <table>
       <tr>
         <td class="s6">
           <pre><code class="language-php">(:= getCodeFile('controllers/controllers.conf.php') :)</code></pre>
-          <div></div>
         </td>
         <td class="s6">
           <pre><code class="language-php">(:= getCodeFile('controllers/am.conf.php') :)</code></pre>
-          <div></div>
         </td>
       </tr>
     </table>
@@ -92,31 +90,27 @@
       Define el nombre de la clases del controlador y el nombre de archivo que se incluirá. Si este no es indicado se tomará como nombre como haya sido mencionado en la ruta. En el caso de que no exista una clase con el nombre del controlador después de incluir el archivo correspondiente, el nombre del controlador pasará a ser el mismo que el padre si es que posee este último.
     </p>
 
-    <div class="code-row">
+    <div class="divide-section">
       <table>
         <tr>
           <td class="s6">
             <pre><code class="language-php">(:= getCodeFile('controllers/name.routing.conf.php') :)</code></pre>
-            <div></div>
           </td>
           <td class="s6">
             <pre><code class="language-php">(:= getCodeFile('controllers/name.controllers.conf.php') :)</code></pre>
-            <div></div>
           </td>
         </tr>
       </table>
     </div>
 
-    <div class="code-row">
+    <div class="divide-section">
       <table>
         <tr>
           <td class="s6">
             <pre><code class="language-php">(:= getCodeFile('controllers/name.Foo.php') :)</code></pre>
-            <div></div>
           </td>
           <td class="s6">
             <pre><code class="language-php">(:= getCodeFile('controllers/name.BarCtrl.php') :)</code></pre>
-            <div></div>
           </td>
         </tr>
       </table>
@@ -164,12 +158,11 @@
       Nombre del controlador padre y del cual se hereda la configuración. Este controlador es cargado antes de cargar el actual. En el caso de que no exista la clase del controlador actual se intentará instancia el controlador padre.
     </p>
 
-    <div class="code-row">
+    <div class="divide-section">
       <table>
         <tr>
           <td class="s6">
             <pre><code class="language-php">(:= getCodeFile('controllers/parent.controllers.conf.php') :)</code></pre>
-            <div></div>
           </td>
           <td class="s6">
             <pre class="mb5"><code class="language-php">(:= getCodeFile('controllers/parent.Foo.php') :)</code></pre>
@@ -348,16 +341,14 @@
 
   <pre class="table-pre"><code class="language-php">(:= getCodeFile('controllers/params.routing.php') :)</code></pre>
 
-  <div class="code-row">
+  <div class="divide-section">
     <table>
       <tr>
         <td class="s5">
           <pre class="table-pre"><code class="language-php">(:= getCodeFile('controllers/params.controllers.php') :)</code></pre>
-          <div></div>
         </td>
         <td class="s7">
           <pre class="table-pre"><code class="language-php">(:= getCodeFile('controllers/params.Foo.php') :)</code></pre>
-          <div></div>
         </td>
       </tr>
     </table>
@@ -377,16 +368,14 @@
     Para pasar variables a la vista se asignan propiedades al controlador
   </p>
 
-  <div class="code-row">
+  <div class="divide-section">
     <table>
       <tr>
         <td class="s6">
           <pre><code class="language-php">(:= getCodeFile('controllers/render.action.Foo.php') :)</code></pre>
-          <div></div>
         </td>
         <td class="s6">
           <pre><code class="language-php">(:= getCodeFile('controllers/render.view.bar.php') :)</code></pre>
-          <div></div>
         </td>
       </tr>
     </table>

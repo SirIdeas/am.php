@@ -8,6 +8,7 @@ class Main extends AmController{
 
   public function action_model(){
 
+
     // var_dump(Am::loadAllClasses());
 
     // $this->addHeader('content-type:text/plain');
@@ -26,7 +27,7 @@ class Main extends AmController{
     // // Crear tabla sin model
     // $tbl = AmScheme::table('usuarios')
     //   ->addField('id_user', array(
-    //     'type' => 'integer',
+    //     'type' => 'int',
     //     'pk' => true,
     //     'autoIncrement' => true
     //   ))

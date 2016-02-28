@@ -66,7 +66,7 @@
           <li><a href="(:/:)/classes/EmptyValidator">EmptyValidator</a></li>
           <li><a href="(:/:)/classes/FloatValidator">FloatValidator</a></li>
           <li><a href="(:/:)/classes/InQueryValidator">InQueryValidator</a></li>
-          <li><a href="(:/:)/classes/IntegerValidator">IntegerValidator</a></li>
+          <li><a href="(:/:)/classes/IntValidator">IntValidator</a></li>
           <li><a href="(:/:)/classes/InValidator">InValidator</a></li>
           <li><a href="(:/:)/classes/LengthValidator">LengthValidator</a></li>
           <li><a href="(:/:)/classes/MaxLengthValidator">MaxLengthValidator</a></li>

@@ -12,16 +12,14 @@
     Las configuración de las rutas son tomados de la propiedad de aplicación <code><strong>routing</strong></code>:
   </p>
 
-  <div class="code-row">
+  <div class="divide-section">
     <table>
       <tr>
         <td class="s6">
           <pre><code class="language-php">(:= getCodeFile('routing/routing.conf.php') :)</code></pre>
-          <div></div>
         </td>
         <td class="s6">
           <pre><code class="language-php">(:= getCodeFile('routing/am.conf.php') :)</code></pre>
-          <div></div>
         </td>
       </tr>
     </table>
