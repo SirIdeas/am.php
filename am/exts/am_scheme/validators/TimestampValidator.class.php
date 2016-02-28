@@ -6,7 +6,7 @@
  * 
  */
 
-AmScheme::validator("datetime");
+AmScheme::validator('datetime');
 
 /**
  * Validación de campos don formato de Fecha y Hora.
@@ -23,7 +23,7 @@ class TimestampValidator extends DatetimeValidator{
     return
 
       // Es válido si está vacío
-      trim($this->value($model) == "")
+      trim($this->value($model) == '')
 
       // Chequear la fecha.
       || self::checkTimestamp($this->value($model));

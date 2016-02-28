@@ -31,7 +31,7 @@ class CustomValidator extends AmValidator{
   public function __construct($options = array()){
 
     // Si no se asignó la propiedad force
-    $options["force"] = itemOr("force", $options, true);
+    $options['force'] = itemOr('force', $options, true);
 
     // Constructor padre.
     parent::__construct($options);

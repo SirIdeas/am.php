@@ -6,7 +6,7 @@
  * 
  */
  
-AmScheme::validator("regex");
+AmScheme::validator('regex');
 
 /**
  * Validación de campos con formato de teléfono.
@@ -20,7 +20,7 @@ class PhoneValidator extends RegexValidator{
   public function __construct($options = array()){
 
     // Agregar la REGEX para validar teléfonos.
-    $options["regex"] = "/^(\(?[0-9]{3,3}\)?|[0-9]{3,3}[-. ]?)[ ][0-9]{3,3}[-. ]?[0-9]{4,4}$/";
+    $options['regex'] = '/^(\(?[0-9]{3,3}\)?|[0-9]{3,3}[-. ]?)[ ][0-9]{3,3}[-. ]?[0-9]{4,4}$/';
 
     // Constructor padre.
     parent::__construct($options);

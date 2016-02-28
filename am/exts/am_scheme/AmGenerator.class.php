@@ -77,8 +77,8 @@ final class AmGenerator{
       $len        = $f->getLen();
       $fieldName  = $f->getName();
 
-      // Integer validator, dates, times and Bit validator
-      if(in_array($type, array('integer', 'bit', 'date', 'datetime', 'timestamp', 'time', 'year')))
+      // int validator, dates, times and Bit validator
+      if(in_array($type, array('int', 'bit', 'date', 'datetime', 'timestamp', 'time', 'year')))
         $validators[] = "    \$this->setValidator('{$fieldName}', '{$type}');";
 
       // If have validate strlen of value.
@@ -86,13 +86,13 @@ final class AmGenerator{
         $validators[] = "    \$this->setValidator('{$fieldName}', 'max_length',".
                               "array('max' => $len));";
 
-      // To integer fields add range validator
-      if($type == 'integer'){
+      // To int fields add range validator
+      if($type == 'int'){
         // $max = pow(256, $len);
         // $min = $f->isUnsigned() ? 0 : -($max>>1);
         // $max = $min + $max - 1;
         // $prefix = is_int($min) && is_int($max)? '' : '// ';
-        // // if the max limit is integer yet then add validator
+        // // if the max limit is int yet then add validator
         // $validators[] = "    {$prefix}\$this->setValidator('{$fieldName}', 'range', ".
         //                     " array('min' => {$min}, 'max' => {$max}));";
 

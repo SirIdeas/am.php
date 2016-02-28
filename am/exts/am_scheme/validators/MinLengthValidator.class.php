@@ -25,7 +25,7 @@ class MinLengthValidator extends AmValidator{
   public function __construct($options = array()){
 
     // Agregar un nuevo campo a las sustituciones.
-    $this->setSustitutions("min", "min");
+    $this->setSustitutions('min', 'min');
 
     // Constructor padre.
     parent::__construct($options);

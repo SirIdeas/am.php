@@ -19,23 +19,23 @@ class AmField extends AmObject{
     $parseFuncs = array(
 
       // Enteros
-      'integer'     => 'intval',
-      'bit'         => 'strval',
+      'int'       => 'intval',
+      'bit'       => 'strval',
 
       // Flotantes
-      'float'       => 'floatval',
+      'float'     => 'floatval',
 
       // Cadenas de caracteres
-      'char'        => 'strval',
-      'varchar'     => 'strval',
-      'text'        => 'strval',
+      'char'      => 'strval',
+      'varchar'   => 'strval',
+      'text'      => 'strval',
 
       // Fechas
-      'date'        => 'strval',
-      'datetime'    => 'strval',
-      'timestamp'   => 'strval',
-      'time'        => 'strval',
-      'year'        => 'strval',
+      'date'      => 'strval',
+      'datetime'  => 'strval',
+      'timestamp' => 'strval',
+      'time'      => 'strval',
+      'year'      => 'strval',
       
     );
 
@@ -70,7 +70,7 @@ class AmField extends AmObject{
     /**
      * Entero con el tamaño de campo. Para los tipos varchar indicar el máximo
      * tamaño, para campos del tipo bit y char el tamaño, para los tipos
-     * integer y floats indicar los bytes que ocupan.
+     * int y floats indicar los bytes que ocupan.
      */
     $len = null,
 
@@ -85,12 +85,12 @@ class AmField extends AmObject{
     $collation = null,
 
     /**
-     * Bool que indica si en un campo numérico (integer o float) tiene signo.
+     * Bool que indica si en un campo numérico (int o float) tiene signo.
      */
     $unsigned = null,
 
     /**
-     * Bool que indica si es un integer o float indica si se rellenan los
+     * Bool que indica si es un int o float indica si se rellenan los
      * espacio con ceros.
      */
     $zerofill = null,
@@ -130,7 +130,7 @@ class AmField extends AmObject{
 
     // Tipo especial de datos: id, autoIncrement y unsigned
     if(in_array($type, array('id', 'autoIncrement', 'unsigned'))){
-      $params['type'] = 'integer';
+      $params['type'] = 'int';
       $params['unsigned'] = true;
     }
     
@@ -315,7 +315,7 @@ class AmField extends AmObject{
     );
 
     // Atributos para campos numéricos.
-    if(in_array($this->type, array('integer', 'float'))){
+    if(in_array($this->type, array('int', 'float'))){
       $ret['unsigned'] = $this->isUnsigned();
       $ret['zerofill'] = $this->isZerofill();
       $ret['autoIncrement'] = $this->isAutoIncrement();

@@ -6,12 +6,12 @@
  * 
  */
  
-AmScheme::validator("regex");
+AmScheme::validator('regex');
 
 /**
  * Validación de campos enteros.
  */
-class IntegerValidator extends RegexValidator{
+class IntValidator extends RegexValidator{
 
   /**
    * Sobrecarga del constructor par inicializar las propiedades específicas.

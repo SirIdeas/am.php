@@ -32,8 +32,8 @@ class InQueryValidator extends AmValidator{
   public function __construct($options = array()){
 
     // Agregar los dos campos al sustitución.
-    $this->setSustitutions("query", "query");
-    $this->setSustitutions("field", "field");
+    $this->setSustitutions('query', 'query');
+    $this->setSustitutions('field', 'field');
 
     // Llamar constructor de la metaclase.
     parent::__construct($options);
@@ -60,9 +60,9 @@ class InQueryValidator extends AmValidator{
     $q = $this->getQuery();
 
     // Preparar consulta.
-    $qq = $q->getScheme()->q($q, "qq")
+    $qq = $q->getScheme()->q($q, 'qq')
         ->select($field)            // Selecionar campo.
-        ->where("$field = $value"); // Agregar consulta.
+        ->where("{$field} = {$value}"); // Agregar consulta.
 
     // Es válido si devuelve al menos un registro.
     return false !== $qq->row();

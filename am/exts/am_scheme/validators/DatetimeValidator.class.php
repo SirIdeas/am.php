@@ -21,7 +21,7 @@ class DatetimeValidator extends AmValidator{
     return
 
       // Es válido si está vacío
-      trim($this->value($model) == "")
+      trim($this->value($model) == '')
 
       // Chequear la fecha.
       || self::checkTimestamp($this->value($model));

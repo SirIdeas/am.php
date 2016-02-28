@@ -19,11 +19,11 @@ class MysqlScheme extends AmScheme{
 
     $types = array(
       // Enteros
-      'tinyint'    => 'integer',
-      'smallint'   => 'integer',
-      'mediumint'  => 'integer',
-      'int'        => 'integer',
-      'bigint'     => 'integer',
+      'tinyint'    => 'int',
+      'smallint'   => 'int',
+      'mediumint'  => 'int',
+      'int'        => 'int',
+      'bigint'     => 'int',
 
       // Flotantes
       'decimal'    => 'float',
@@ -50,7 +50,7 @@ class MysqlScheme extends AmScheme{
     ),
 
     // Tamaños de enteros
-    $integerBytes = array(
+    $intBytes = array(
       'tinyint'     => 1,
       'smallint'    => 2,
       'mediumint'   => 3,
@@ -75,9 +75,9 @@ class MysqlScheme extends AmScheme{
 
     // Tipos por defectos
     $defaultsByte = array(
-      'integer' => 'int',
-      'float'   => 'float',
-      'text'    => 'text'
+      'int'   => 'int',
+      'float' => 'float',
+      'text'  => 'text'
     );
 
   // Propiedades del driver
@@ -96,10 +96,10 @@ class MysqlScheme extends AmScheme{
   public function getParseName($name){
 
     // Verificar si ya no está parchado.
-    if(preg_match("/[`\\.]/", $name))
+    if(preg_match('/[`\\.]/', $name))
       return $name;
 
-    return "`$name`";
+    return "`'{$name}'`";
 
   }
 
@@ -168,7 +168,7 @@ class MysqlScheme extends AmScheme{
 
     $value = @mysql_real_escape_string($value);
     // Si no tiene valor asignar NULL
-    return isset($value)? "'$value'" : 'NULL';
+    return isset($value)? '\'$value\'' : 'NULL';
 
   }
 
@@ -230,12 +230,12 @@ class MysqlScheme extends AmScheme{
     // else look len into bytes used for native byte
     else
       $column['len']  = itemOr($nativeType, array_merge(
-                self::$integerBytes,
+                self::$intBytes,
                 self::$floatBytes,
                 self::$textBytes
               ));
 
-    if(in_array($column['type'], array('integer', 'float'))){
+    if(in_array($column['type'], array('int', 'float'))){
 
       $column['unsigned'] = preg_match('/unsigned/',
         $column['columnType']) != 0;
@@ -269,7 +269,7 @@ class MysqlScheme extends AmScheme{
       'len',
       'extra'
     ) as $attr)
-      if(!isset($column[$attr]) || trim($column[$attr])==="")
+      if(!isset($column[$attr]) || trim($column[$attr])==='')
         unset($column[$attr]);
 
     return $column;
@@ -284,7 +284,7 @@ class MysqlScheme extends AmScheme{
   public function sqlSelectQuery(AmQuery $q){
 
     return !empty($q->sql) ? $q->sql :
-      trim(implode(" ", array(
+      trim(implode(' ', array(
       trim($this->sqlSelect($q)),
       trim($this->sqlFrom($q)),
       trim($this->sqlJoins($q)),
@@ -319,7 +319,7 @@ class MysqlScheme extends AmScheme{
       $values = implode(',', $values);
 
       // Obtener Str para los valores
-      $values = "VALUES $values";
+      $values = "VALUES {$values}";
 
     }
 
@@ -364,8 +364,8 @@ class MysqlScheme extends AmScheme{
       return '';
 
     // Generar SQL
-    return implode(" ", array(
-      "INSERT INTO",
+    return implode(' ', array(
+      'INSERT INTO',
       $q['table'].$q['fields'],
       $q['values'],
     ));
@@ -379,8 +379,8 @@ class MysqlScheme extends AmScheme{
    */
   public function sqlUpdateQuery(AmQuery $q){
 
-    return implode(" ", array(
-      "UPDATE",
+    return implode(' ', array(
+      'UPDATE',
       trim($this->getParseObjectDatabaseName($q)),
       trim($this->sqlJoins($q)),
       trim($this->sqlSets($q)),
@@ -396,8 +396,8 @@ class MysqlScheme extends AmScheme{
    */
   public function sqlDeleteQuery(AmQuery $q){
 
-    return implode(" ", array(
-      "DELETE FROM",
+    return implode(' ', array(
+      'DELETE FROM',
       trim($this->getParseObjectDatabaseName($q)),
       trim($this->sqlWhere($q))
     ));
@@ -423,7 +423,8 @@ class MysqlScheme extends AmScheme{
         $field = "({$field->sql()})";
 
       // Agregar parametro AS
-      $selects[] = isNameValid($alias) ? "$field AS '$alias'" : (string)$field;
+      $selects[] = isNameValid($alias) ? "{$field} AS '{$alias}'" :
+        (string)$field;
 
     }
 
@@ -457,15 +458,15 @@ class MysqlScheme extends AmScheme{
       }elseif($from instanceof AmQuery){
         // Si es una consulta se encierra en parentesis
         $from = "({$from->sql()})";
-      }elseif(false !== (preg_match("/^([a-zA-Z_][a-zA-Z0-9_]*)\.([a-zA-Z_][a-zA-Z0-9_]*)$/", $from, $matches)!= 0)){
+      }elseif(false !== (preg_match('/^([a-zA-Z_][a-zA-Z0-9_]*)\.([a-zA-Z_][a-zA-Z0-9_]*)$/', $from, $matches)!= 0)){
         // Dividir por el punto
-        $from = $this->getParseName($matches[1]).".".$this->getParseName($matches[2]);
+        $from = $this->getParseName($matches[1]).'.'.$this->getParseName($matches[2]);
       }elseif(is_string($from)){
-        $from = $from = "($from)";
+        $from = $from = "({$from})";
       }
 
       // Agregar parametro AS
-      $froms[] = isNameValid($alias) ? "$from AS $alias" : $from;
+      $froms[] = isNameValid($alias) ? "{$from} AS {$alias}" : $from;
 
     }
 
@@ -513,8 +514,8 @@ class MysqlScheme extends AmScheme{
         $as = trim($as);
 
         // Si los parametros quedan vacios
-        if(!empty($on)) $on = " ON $on";
-        if(!empty($as)) $as = " AS $as";
+        if(!empty($on)) $on = " ON {$on}";
+        if(!empty($as)) $as = " AS {$as}";
 
         if($table instanceof AmQuery){
           // Si es una consulta insertar SQL dentro de parenteris
@@ -549,7 +550,7 @@ class MysqlScheme extends AmScheme{
 
     // Recorrer lista de campos para ordenar
     foreach($ordersOri as $order => $dir){
-      $orders[] = "$order $dir";
+      $orders[] = "{$order} {$dir}";
     }
 
     // Unir resultado
@@ -624,11 +625,11 @@ class MysqlScheme extends AmScheme{
 
       // Acrear asignacion
       if($value === null){
-        $sets[] = "{$set["field"]} = NULL";
-      }elseif($set["const"] === true){
-        $sets[] = "{$set["field"]} = " . $this->realScapeString($value);
-      }elseif($set["const"] === false){
-        $sets[] = "{$set["field"]} = $value";
+        $sets[] = "{$set['field']} = NULL";
+      }elseif($set['const'] === true){
+        $sets[] = "{$set['field']} = " . $this->realScapeString($value);
+      }elseif($set['const'] === false){
+        $sets[] = "{$set['field']} = {$value}";
       }
 
     }
@@ -675,7 +676,7 @@ class MysqlScheme extends AmScheme{
 
     // El el argumento esta vacío retornar cadena vacia
     if(empty($collation))
-      return "";
+      return '';
 
     $collation = empty($collation) ? '' : " COLLATE {$collation}";
 
@@ -729,28 +730,28 @@ class MysqlScheme extends AmScheme{
 
     $attrs = array();
 
-    if($field->isUnsigned())      $attrs[] = "unsigned";
-    if($field->isZerofill())      $attrs[] = "zerofill";
+    if($field->isUnsigned())      $attrs[] = 'unsigned';
+    if($field->isZerofill())      $attrs[] = 'zerofill';
     if(!empty($charset))          $attrs[] = $charset;
     if(!empty($collation))        $attrs[] = $collation;
-    if(!$field->allowNull())      $attrs[] = "NOT NULL";
-    if($field->isAutoIncrement()) $attrs[] = "AUTO_INCREMENT";
+    if(!$field->allowNull())      $attrs[] = 'NOT NULL';
+    if($field->isAutoIncrement()) $attrs[] = 'AUTO_INCREMENT';
     if(isset($default))           $attrs[] = "DEFAULT {$default}";
     if(!empty($extra))            $attrs[] = $extra;
 
-    $attrs = implode(" ", $attrs);
+    $attrs = implode(' ', $attrs);
 
     // Get type
-    // As integer
-    if($type === "integer")
+    // As int
+    if($type === 'int')
       $type = self::getTypeByLen($type, $len);
 
     // As text
-    elseif($type === "text")
+    elseif($type === 'text')
       $type = self::getTypeByLen($type, $len);
 
     // as float precision
-    elseif($type == "float"){
+    elseif($type == 'float'){
 
       $type = self::getTypeByLen($type, $len);
 
@@ -758,19 +759,19 @@ class MysqlScheme extends AmScheme{
       $scale = $field->getScale();
 
       if($precision && $precision)
-        $type = "$type($precision, $scale)";
+        $type = "{$type}({$precision}, {$scale})";
 
     // with var len
-    }elseif(in_array($type, array("bit", "char", "varchar"))){
+    }elseif(in_array($type, array('bit', 'char', 'varchar'))){
       if(!$len)
         $len = itemOr($type, self::$defaultsLen);
       
       if($len)
-        $type = "$type($len)";
+        $type = "{$type}({$len})";
 
     }
 
-    return "$name $type $attrs";
+    return "{$name} {$type} {$attrs}";
 
   }
 
@@ -799,17 +800,17 @@ class MysqlScheme extends AmScheme{
       $pks[$offset] = $this->getParseName($table->getField($pk)->getName());
 
     // Preparar otras propiedades
-    $engine = empty($table->getEngine()) ? "" : "ENGINE={$table->getEngine()} ";
+    $engine = empty($table->getEngine()) ? '' : "ENGINE={$table->getEngine()} ";
     $charset = $this->sqlCharset($table->getCharset());
     $collation = $this->sqlCollation($table->getCollation());
 
     // Agregar los primaris key al final de los campos
-    $fields[] = empty($pks) ? "" : "PRIMARY KEY (" . implode(", ", $pks). ")";
+    $fields[] = empty($pks) ? '' : 'PRIMARY KEY (' . implode(', ', $pks). ')';
 
     // Unir los campos
     $fields = "\n".implode(",\n", $fields);
 
-    $ifNotExists = $ifNotExists? "IF NOT EXISTS " : '';
+    $ifNotExists = $ifNotExists? 'IF NOT EXISTS ' : '';
 
     // Preparar el SQL final
     return "CREATE TABLE {$ifNotExists}{$tableName}($fields){$engine}{$charset}{$collation};";
@@ -949,10 +950,10 @@ class MysqlScheme extends AmScheme{
   public function sqlGetInfo(){
 
     $sql = $this
-      ->q("information_schema.SCHEMATA")
+      ->q('information_schema.SCHEMATA')
       ->where("SCHEMA_NAME='{$this->getDatabase()}'")
-      ->selectAs("s.DEFAULT_CHARACTER_SET_NAME", "charset")
-      ->selectAS("s.DEFAULT_COLLATION_NAME", "collation")
+      ->selectAs('s.DEFAULT_CHARACTER_SET_NAME', 'charset')
+      ->selectAS('s.DEFAULT_COLLATION_NAME', 'collation')
       ->sql();
 
     return $sql;
@@ -966,17 +967,17 @@ class MysqlScheme extends AmScheme{
   public function sqlGetTables(){
 
     $sql = $this
-      ->q("information_schema.TABLES", "t")
+      ->q('information_schema.TABLES', 't')
       ->innerJoin(
-        "information_schema.COLLATION_CHARACTER_SET_APPLICABILITY",
-        "t.TABLE_COLLATION = c.COLLATION_NAME", "c")
+        'information_schema.COLLATION_CHARACTER_SET_APPLICABILITY',
+        't.TABLE_COLLATION = c.COLLATION_NAME', 'c')
       ->where(
         "t.TABLE_SCHEMA='{$this->getDatabase()}'",
-        "and", "t.TABLE_TYPE='BASE TABLE'")
-      ->selectAs("t.TABLE_NAME", "tableName")
-      ->selectAS("t.ENGINE", "engine")
-      ->selectAS("t.TABLE_COLLATION", "collation")
-      ->selectAS("c.CHARACTER_SET_NAME ", "charset")
+        'and', 't.TABLE_TYPE=\'BASE TABLE\'')
+      ->selectAs('t.TABLE_NAME', 'tableName')
+      ->selectAS('t.ENGINE', 'engine')
+      ->selectAS('t.TABLE_COLLATION', 'collation')
+      ->selectAS('c.CHARACTER_SET_NAME', 'charset')
       ->sql();
 
     return $sql;
@@ -991,31 +992,31 @@ class MysqlScheme extends AmScheme{
   public function sqlGetTableColumns($tableName){
 
     $sql = $this
-      ->q("information_schema.COLUMNS")
+      ->q('information_schema.COLUMNS')
       ->where(
         "TABLE_SCHEMA='{$this->getDatabase()}'",
         "and", "TABLE_NAME='{$tableName}'")
 
       // Basic data
-      ->selectAs("COLUMN_NAME", "name")
-      ->selectAs("DATA_TYPE", "type")
-      ->selectAs("COLUMN_TYPE", "columnType")
-      ->selectAs("COLUMN_DEFAULT", "defaultValue")
-      ->selectAs("COLUMN_KEY='PRI'", "pk")
-      ->selectAs("IS_NULLABLE='YES'", "allowNull")
+      ->selectAs('COLUMN_NAME', 'name')
+      ->selectAs('DATA_TYPE', 'type')
+      ->selectAs('COLUMN_TYPE', 'columnType')
+      ->selectAs('COLUMN_DEFAULT', 'defaultValue')
+      ->selectAs('COLUMN_KEY=\'PRI\'', 'pk')
+      ->selectAs('IS_NULLABLE=\'YES\'', 'allowNull')
 
       // Strings
-      ->selectAs("CHARACTER_MAXIMUM_LENGTH", "len")
-      ->selectAs("COLLATION_NAME", "collation")
-      ->selectAs("CHARACTER_SET_NAME", "charset")
+      ->selectAs('CHARACTER_MAXIMUM_LENGTH', 'len')
+      ->selectAs('COLLATION_NAME', 'collation')
+      ->selectAs('CHARACTER_SET_NAME', 'charset')
 
       // Numerics
-      ->selectAs("NUMERIC_PRECISION", "precision")
-      ->selectAs("NUMERIC_SCALE", "scale")
-      ->orderBy("ORDINAL_POSITION")
+      ->selectAs('NUMERIC_PRECISION', 'precision')
+      ->selectAs('NUMERIC_SCALE', 'scale')
+      ->orderBy('ORDINAL_POSITION')
 
       // Others
-      ->selectAs("EXTRA", "extra")
+      ->selectAs('EXTRA', 'extra')
 
       ->sql();
 
@@ -1031,22 +1032,22 @@ class MysqlScheme extends AmScheme{
   public function sqlGetTableUniques($tableName){
 
     $sql = $this
-      ->q("information_schema.KEY_COLUMN_USAGE", "k")
+      ->q('information_schema.KEY_COLUMN_USAGE', 'k')
       ->innerJoin(
-        "information_schema.COLUMNS",
-        "k.TABLE_SCHEMA = c.TABLE_SCHEMA AND ".
-        "k.TABLE_NAME   = c.TABLE_NAME AND ".
-        "k.COLUMN_NAME  = c.COLUMN_NAME",
-        "c")
+        'information_schema.COLUMNS',
+        'k.TABLE_SCHEMA = c.TABLE_SCHEMA AND '.
+        'k.TABLE_NAME   = c.TABLE_NAME AND '.
+        'k.COLUMN_NAME  = c.COLUMN_NAME',
+        'c')
       ->where(
         "k.TABLE_SCHEMA='{$this->getDatabase()}'",
-        "and", "k.TABLE_NAME='{$tableName}'",
-        "and", "k.CONSTRAINT_NAME<>'PRIMARY'",
-        "and", "k.REFERENCED_TABLE_NAME IS NULL",
-        "and", "c.COLUMN_KEY <> 'PRI'")
-      ->selectAs("k.CONSTRAINT_NAME", "name")
-      ->selectAs("k.COLUMN_NAME", "columnName")
-      ->orderBy("k.CONSTRAINT_NAME", "k.ORDINAL_POSITION")
+        'and', "k.TABLE_NAME='{$tableName}'",
+        'and', 'k.CONSTRAINT_NAME<>\'PRIMARY\'',
+        'and', 'k.REFERENCED_TABLE_NAME IS NULL',
+        'and', 'c.COLUMN_KEY <> \'PRI\'')
+      ->selectAs('k.CONSTRAINT_NAME', 'name')
+      ->selectAs('k.COLUMN_NAME', 'columnName')
+      ->orderBy('k.CONSTRAINT_NAME', 'k.ORDINAL_POSITION')
       ->sql();
 
     return $sql;
@@ -1061,17 +1062,17 @@ class MysqlScheme extends AmScheme{
   public function sqlGetTableForeignKeys($tableName){
 
     $sql = $this
-      ->q("information_schema.KEY_COLUMN_USAGE")
-      ->selectAs("CONSTRAINT_NAME", "name")
-      ->selectAs("COLUMN_NAME", "columnName")
-      ->selectAs("REFERENCED_TABLE_NAME", "toTable")
-      ->selectAs("REFERENCED_COLUMN_NAME", "toColumn")
+      ->q('information_schema.KEY_COLUMN_USAGE')
+      ->selectAs('CONSTRAINT_NAME', 'name')
+      ->selectAs('COLUMN_NAME', 'columnName')
+      ->selectAs('REFERENCED_TABLE_NAME', 'toTable')
+      ->selectAs('REFERENCED_COLUMN_NAME', 'toColumn')
       ->where(
         "TABLE_SCHEMA='{$this->getDatabase()}'",
-        "and", "TABLE_NAME='{$tableName}'",
-        "and", "NOT REFERENCED_TABLE_NAME IS NULL",
-        "and", "CONSTRAINT_NAME<>'PRIMARY'")
-      ->orderBy("CONSTRAINT_NAME", "ORDINAL_POSITION")
+        'and', "TABLE_NAME='{$tableName}'",
+        'and', 'NOT REFERENCED_TABLE_NAME IS NULL',
+        'and', 'CONSTRAINT_NAME<>\'PRIMARY\'')
+      ->orderBy('CONSTRAINT_NAME', 'ORDINAL_POSITION')
       ->sql();
 
     return $sql;
@@ -1086,17 +1087,17 @@ class MysqlScheme extends AmScheme{
   public function sqlGetTableReferences($tableName){
 
     $sql = $this
-      ->q("information_schema.KEY_COLUMN_USAGE")
-      ->selectAs("CONSTRAINT_NAME", "name")
-      ->selectAs("COLUMN_NAME", "columnName")
-      ->selectAs("TABLE_NAME", "fromTable")
-      ->selectAs("REFERENCED_COLUMN_NAME", "toColumn")
+      ->q('information_schema.KEY_COLUMN_USAGE')
+      ->selectAs('CONSTRAINT_NAME', 'name')
+      ->selectAs('COLUMN_NAME', 'columnName')
+      ->selectAs('TABLE_NAME', 'fromTable')
+      ->selectAs('REFERENCED_COLUMN_NAME', 'toColumn')
       ->where(
         "TABLE_SCHEMA='{$this->getDatabase()}'",
-        "and", "REFERENCED_TABLE_NAME='{$tableName}'",
-        "and", "NOT REFERENCED_TABLE_NAME IS NULL",
-        "and", "CONSTRAINT_NAME<>'PRIMARY'")
-      ->orderBy("CONSTRAINT_NAME", "ORDINAL_POSITION")
+        'and', "REFERENCED_TABLE_NAME='{$tableName}'",
+        'and', 'NOT REFERENCED_TABLE_NAME IS NULL',
+        'and', 'CONSTRAINT_NAME<>\'PRIMARY\'')
+      ->orderBy('CONSTRAINT_NAME', 'ORDINAL_POSITION')
       ->sql();
 
     return $sql;
@@ -1129,7 +1130,7 @@ class MysqlScheme extends AmScheme{
           }
 
           // Unir colecion por comas
-          $collation = implode($collation, ",");
+          $collation = implode($collation, ',');
 
         }else{
           // Si es una colecion vacía
@@ -1144,7 +1145,7 @@ class MysqlScheme extends AmScheme{
     }
 
     // Agregar el comando IN
-    return isset($collation) ? "$field IN($collation)" : "false";
+    return isset($collation) ? "$field IN($collation)" : 'false';
 
   }
 
@@ -1164,14 +1165,14 @@ class MysqlScheme extends AmScheme{
 
     }elseif(is_array($condition)){
 
-      $str = "";
-      $lastUnion = "";
+      $str = '';
+      $lastUnion = '';
 
       // Recorrer condiciones
       foreach($condition as $c){
 
         // Obtener siguiente condicion
-        $next = $this->parseWhere($c["condition"], $c["prefix"], $c["isIn"]);
+        $next = $this->parseWhere($c['condition'], $c['prefix'], $c['isIn']);
 
         // Es la primera condicion
         if(empty($str)){
@@ -1179,23 +1180,23 @@ class MysqlScheme extends AmScheme{
         }else{
 
           // Si el operador de union es igual al anterior o no hay una anterior
-          if($c["union"] == $lastUnion || empty($lastUnion)){
-            $str = "$str {$c["union"]} $next";
+          if($c['union'] == $lastUnion || empty($lastUnion)){
+            $str = "{$str} {$c['union']} {$next}";
           }else{
             // Cuando cambia el operador de union se debe agregar la condicion anterior
             // entre parentesis
-            $str = "($str) {$c["union"]} $next";
+            $str = "({$str}) {$c['union']} {$next}";
           }
 
           // guardar para la siguiente condicion
-          $lastUnion = $c["union"];
+          $lastUnion = $c['union'];
 
         }
 
       }
 
       // Agregar parentesis a la condicion
-      $condition = empty($str) ? "" : "($str)";
+      $condition = empty($str) ? '' : "({$str})";
 
     }
 
@@ -1203,7 +1204,7 @@ class MysqlScheme extends AmScheme{
     $condition = trim($condition);
 
     // Agregar el prefix (NOT) si existe
-    return empty($condition) ? "" : trim($prefix." ".$condition);
+    return empty($condition) ? '' : trim($prefix.' '.$condition);
 
   }
 

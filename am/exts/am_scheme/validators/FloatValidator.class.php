@@ -6,7 +6,7 @@
  * 
  */
  
-AmScheme::validator("regex");
+AmScheme::validator('regex');
 
 /**
  * Validación de valores flotantes
@@ -31,8 +31,8 @@ class FloatValidator extends RegexValidator{
   public function __construct($options = array()){
 
     // Agregar nuevos campos a las sustituciones.
-    $this->setSustitutions("precision", "precision");
-    $this->setSustitutions("decimals", "decimals");
+    $this->setSustitutions('precision', 'precision');
+    $this->setSustitutions('decimals', 'decimals');
 
     // Constructor padre.
     parent::__construct($options);
@@ -106,9 +106,9 @@ class FloatValidator extends RegexValidator{
     $s = $this->scale;
     $p = $this->precision;
     $p = !empty($p) && !empty($s)? $p - $s : $p;
-    $s = empty($s)? "" : "\.?[0-9]{0,{$s}}";
-    $p = empty($p)? ".*" : "{0,{$p}}";
-    $regex = "/^[0-9]".$p.$s."$/";
+    $s = empty($s)? '' : "\.?[0-9]{0,{$s}}";
+    $p = empty($p)? '.*' : "{0,{$p}}";
+    $regex = "/^[0-9]{$p}{$s}$/";
     return $regex;
   }
 

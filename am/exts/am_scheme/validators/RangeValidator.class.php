@@ -6,8 +6,8 @@
  * 
  */
 
-AmScheme::validator("min_value");
-AmScheme::validator("max_value");
+AmScheme::validator('min_value');
+AmScheme::validator('max_value');
 
 /**
  * Validación del rango de un campo
@@ -42,8 +42,8 @@ class RangeValidator extends AmValidator{
   public function __construct($options = array()){
 
     // Agregar nuevos campos a las sustituciones.
-    $this->setSustitutions("max", "max");
-    $this->setSustitutions("min", "min");
+    $this->setSustitutions('max', 'max');
+    $this->setSustitutions('min', 'min');
 
     // Instancia los validadores de los límites.
     $this->minValidator = new MinValueValidator($options);

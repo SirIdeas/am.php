@@ -6,7 +6,7 @@
  * 
  */
 
-AmScheme::validator("null");
+AmScheme::validator('null');
 
 /**
  * Validación de campos no vacíos.
@@ -21,7 +21,7 @@ class EmptyValidator extends NullValidator{
   protected function validate(AmModel &$model){
 
     // Validar que el valor no se nulo ni vacío.
-    return parent::validate($model) && trim($this->value($model)) != "";
+    return parent::validate($model) && trim($this->value($model)) != '';
 
   }
 

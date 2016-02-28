@@ -6,7 +6,7 @@
  * 
  */
  
-AmScheme::validator("regex");
+AmScheme::validator('regex');
 
 /**
  * Validación de campos con formato de email.
@@ -20,7 +20,7 @@ class EmailValidator extends RegexValidator{
   public function __construct($options = array()){
 
     // Agregar la REGEX para validar emails.
-    $options["regex"] = "/^[^0-9][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,4}$/";
+    $options['regex'] = '/^[^0-9][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,4}$/';
 
     // Constructor padre.
     parent::__construct($options);

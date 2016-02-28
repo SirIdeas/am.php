@@ -65,7 +65,7 @@ abstract class AmScheme extends AmObject{
     $server = null,
 
     /**
-     * Integer/string con número del puerto para la conexión.
+     * int/string con número del puerto para la conexión.
      */
     $port = null,
 
@@ -600,8 +600,7 @@ abstract class AmScheme extends AmObject{
    * @return bool/int          Devuelve el resultado de la ejecución.
    *                           Puede ser un valor booleano que indica si se
    *                           ejecuto la consulta satisfactoriamente, o un
-   *                           integer en el caso de haberse ejecutatado un
-   *                           insert.
+   *                           int en el caso de haberse ejecutatado un insert.
    */
   public function execute($q){
 

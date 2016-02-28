@@ -63,7 +63,7 @@ class UniqueValidator extends AmValidator{
       $index[$key] = "{$key}='{$value}'";
 
     // Agregar condiciones para excluir el registro evaluado
-    $query->andWhere("not", array_values($index));
+    $query->andWhere('not', array_values($index));
 
     // Si la consulta devuelve 0 registro entonces el modelo
     // tiene un valor unico

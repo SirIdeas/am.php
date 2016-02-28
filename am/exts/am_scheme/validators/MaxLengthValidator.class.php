@@ -7,7 +7,7 @@
  */
  
 /**
- * Validación del tamano maximo de un campo
+ * Validación del tamano máximo de un campo
  */
 class MaxLengthValidator extends AmValidator{
 
@@ -25,7 +25,7 @@ class MaxLengthValidator extends AmValidator{
   public function __construct($options = array()){
 
     // Agregar un nuevo campo a las sustituciones.
-    $this->setSustitutions("max", "max");
+    $this->setSustitutions('max', 'max');
 
     // Constructor padre.
     parent::__construct($options);

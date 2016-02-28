@@ -6,7 +6,7 @@
  * 
  */
  
-AmScheme::validator("float");
+AmScheme::validator('float');
 
 /**
  * Validación del límite superior de un campo.
@@ -27,7 +27,7 @@ class MaxValueValidator extends FloatValidator{
   public function __construct($options = array()){
 
     // Agregar un nuevo campo a las sustituciones.
-    $this->setSustitutions("max", "max");
+    $this->setSustitutions('max', 'max');
 
     // Constructor padre.
     parent::__construct($options);

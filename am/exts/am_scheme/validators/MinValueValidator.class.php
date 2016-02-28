@@ -6,7 +6,7 @@
  * 
  */
  
-AmScheme::validator("float");
+AmScheme::validator('float');
 
 /**
  * Validación del límite inferior de un campo.
@@ -27,7 +27,7 @@ class MinValueValidator extends FloatValidator{
   public function __construct($options = array()){
 
     // Agregar un nuevo campo a las sustituciones.
-    $this->setSustitutions("min", "min");
+    $this->setSustitutions('min', 'min');
 
     // Constructor padre.
     parent::__construct($options);

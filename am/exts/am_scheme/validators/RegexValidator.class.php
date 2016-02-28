@@ -30,8 +30,8 @@ class RegexValidator extends AmValidator{
   public function __construct($options = array()){
 
     // Obtner si permiterá valores blancos
-    $blank = isset($options["blank"])? $options["blank"] : false;
-    unset($options["blank"]);
+    $blank = isset($options['blank'])? $options['blank'] : false;
+    unset($options['blank']);
     $this->setAllowEmpty($blank === true);
 
     parent::__construct($options);
@@ -50,7 +50,7 @@ class RegexValidator extends AmValidator{
       preg_match($this->getRegex(), $this->value($model))
 
       // o si se permite valores vacío y el campo está vacío.
-      || ($this->getAllowEmpty() && trim($this->value($model)) == "");
+      || ($this->getAllowEmpty() && trim($this->value($model)) == '');
 
   }
 

@@ -42,8 +42,8 @@ class LengthValidator extends AmValidator{
   public function __construct($options = array()){
 
     // Agregar nuevos campos a las sustituciones.
-    $this->setSustitutions("max", "max");
-    $this->setSustitutions("min", "min");
+    $this->setSustitutions('max', 'max');
+    $this->setSustitutions('min', 'min');
 
     // Instancia los validadores de los límites.
     $this->minValidator = new MinLengthValidator($options);

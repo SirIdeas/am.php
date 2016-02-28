@@ -6,7 +6,7 @@
  * 
  */
  
-AmScheme::validator("regex");
+AmScheme::validator('regex');
 
 /**
  * Validación de campos con formao de fechas simples.
@@ -20,7 +20,7 @@ class DateValidator extends RegexValidator{
   public function __construct($options = array()){
 
     // Asignar REGEX para validar fechas simples.
-    $options["regex"] = "/^[0-9]{4}-(0[0-9]?|1[0-2]?)-([012]?[0-9]?|3[01]?)$/";
+    $options['regex'] = '/^[0-9]{4}-(0[0-9]?|1[0-2]?)-([012]?[0-9]?|3[01]?)$/';
 
     // Constructor padre.
     parent::__construct($options);
