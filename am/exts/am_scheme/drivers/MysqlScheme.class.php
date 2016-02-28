@@ -995,7 +995,7 @@ class MysqlScheme extends AmScheme{
       ->q('information_schema.COLUMNS')
       ->where(
         "TABLE_SCHEMA='{$this->getDatabase()}'",
-        "and", "TABLE_NAME='{$tableName}'")
+        'and', "TABLE_NAME='{$tableName}'")
 
       // Basic data
       ->selectAs('COLUMN_NAME', 'name')

@@ -106,7 +106,7 @@ final class AmRoute{
     $regex = self::__compileRoute($route, $params);
 
     // Transformar / en  \/
-    $regex = str_replace('/', "\\/", $regex);
+    $regex = str_replace('/', '\\/', $regex);
 
     // Si no termina en barra entonces agregarla
     if(!preg_match('/\/$/', $regex)) $regex = "{$regex}[\/]{0,1}";

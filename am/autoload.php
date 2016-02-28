@@ -69,7 +69,7 @@ require AM_ROOT . '/core/am-helpers.php';
 require AM_ROOT . '/core/Am.class.php';
 
 // Asignar función para cargar clases.
-spl_autoload_register("Am::autoload");
+spl_autoload_register('Am::autoload');
 
 /**
  * Inicializa Amathista.

@@ -788,7 +788,7 @@ class AmTable extends AmObject{
    * @param  string $field      Nombre del campo donde se buscará.
    * @param  mixed  $value      Valor a buscar.
    * @param  string $as         String con el nombre del modelo o formato de
-   *                            retorno. Puede ser "array", "am", "object",
+   *                            retorno. Puede ser 'array', 'am', 'object',
    *                            nombre de una clase existente o identificador de
    *                            un modelo.
    * @param  bool   $withFields Si la clausula SELECT se genera con los campos
@@ -806,7 +806,7 @@ class AmTable extends AmObject{
    * @param  string $field      Nombre del campo donde se buscará.
    * @param  mixed  $value      Valor a buscar.
    * @param  string $as         String con el nombre del modelo o formato de
-   *                            retorno. Puede ser "array", "am", "object",
+   *                            retorno. Puede ser 'array', 'am', 'object',
    *                            nombre de una clase existente o identificador de
    *                            un modelo.
    * @param  bool   $withFields Si la clausula SELECT se genera con los campos
@@ -889,8 +889,8 @@ class AmTable extends AmObject{
    *                                      con los valores del id a buscar.
    * @param  string           $alias      Alias de la tabla en el query.
    * @param  string           $as         String con el nombre del modelo o
-   *                                      formato de retorno. Puede ser "array",
-   *                                      "am", "object", nombre de una clase
+   *                                      formato de retorno. Puede ser 'array',
+   *                                      'am', 'object', nombre de una clase
    *                                      existente o identificador de un
    *                                      modelo.
    * @param  bool             $withFields Si la clausula SELECT se genera con

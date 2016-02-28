@@ -84,7 +84,7 @@ final class AmGenerator{
       // If have validate strlen of value.
       if(in_array($type, array('char', 'varchar', 'bit')))
         $validators[] = "    \$this->setValidator('{$fieldName}', 'max_length',".
-                              "array('max' => $len));";
+                              "array('max' => {$len}));";
 
       // To int fields add range validator
       if($type == 'int'){
@@ -99,7 +99,7 @@ final class AmGenerator{
       // To text fiels add strlen validator
       }elseif($type == 'text'){
         $validators[] = "    \$this->setValidator('{$fieldName}', 'max_length', ".
-                              "array('max' => $len));";
+                              "array('max' => {$len}));";
 
       // To decimal fiels add float validator
       }elseif($type == 'float'){
