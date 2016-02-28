@@ -32,8 +32,8 @@ class MysqlScheme extends AmScheme{
 
       // Fechas y tiempo
       'date'       => 'date',
-      'datetime'   => 'datetime',
-      'timestamp'  => 'timestamp',
+      'datetime'   => 'datetime',  // 8 bytes
+      'timestamp'  => 'timestamp', // 4 bytes
       'time'       => 'time',
 
       // Cadenas de caracteres
