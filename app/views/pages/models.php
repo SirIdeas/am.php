@@ -381,8 +381,8 @@
     <h3>Campo de fecha de creación y modificación</h3>
   
     <p>
-      Para indicar o crear los campos de fechas de creación y modificación de un modelo utilice los atributos <code><strong>createdAtField</strong></code> y <code><strong>updatedAtField</strong></code> respectivamente.
-      Estos modelos añaden campos del tipo <code><strong>timestamp</strong></code> con los nombres <code><strong>created_at</strong></code> y <code><strong>updated_at</strong></code> que son asignados automáticamente. Para utiliza nombres de campos diferentes asigne al atributo el nombre del campo.
+      Para indicar o crear los campos de fechas de creación y modificación de un modelo utilice los atributos <code><strong>$createdAtField</strong></code> y <code><strong>$updatedAtField</strong></code> respectivamente.
+      Estos modelos añaden si no existen campos del tipo <code><strong>timestamp</strong></code> con los nombres <code><strong>created_at</strong></code> y <code><strong>updated_at</strong></code>. Estos campos son manejados de forma automática. Para utiliza nombres de campos diferentes asigne al atributo el nombre del campo.
     </p>
 
     <div class="divide-section">
@@ -399,6 +399,22 @@
     </div>
     
   </div>
+  
+  <div>
+    <h3>Insertar un registro</h3>
+    <p>
+      Para insertar un registro se crea una instancia del modelo y se llama el método <code><strong>save</strong></code>, el cual devolverá <code><strong>true</strong></code> o el ID del nuevo registro insertado en el caso de que el modelo posea como clave primaria un único campo autoincrementable. Si no lográ insertar el registro devuelve false.
+    </p>
+    <pre><code class="language-php">(:= getCodeFile('models/insert.php') :)</code></pre>
+  </div>
+
+  <div>
+    <h3>Buscar</h3>
+    <p>
+      Para buscar los registros
+    </p>
+  </div>
+
 <!-- 
   <div>
     <h3>Relaciones</h3>

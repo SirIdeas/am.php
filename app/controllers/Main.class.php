@@ -21,16 +21,11 @@ class Main extends AmController{
     // var_dump($sch->getGeneratedModels());
     // var_dump($sch->drop());
     // var_dump($sch->create());
-    // exit;
 
     // //-----------------------------------------------------------------------
     // // Crear tabla sin model
     // $tbl = AmScheme::table('usuarios')
-    //   ->addField('id_user', array(
-    //     'type' => 'int',
-    //     'pk' => true,
-    //     'autoIncrement' => true
-    //   ))
+    //   ->addField('id_user', 'id')
     //   ->addField('name', 'varchar')
     //   ->addField('sueldo', 'float')
     //   ->addCreatedAtField()
@@ -48,22 +43,20 @@ class Main extends AmController{
 
     // //-----------------------------------------------------------------------
     // // Buscar registro en el modelo
-    // var_dump(AmScheme::model('Usuario'));
     // $u = Usuario::me()->find(2);
     // var_dump($u);
 
-    // //-----------------------------------------------------------------------
-    // // Crear usuario 
-    // var_dump(AmScheme::model('Usuario'));
-    // $u = new Usuario;
+    //-----------------------------------------------------------------------
+    // Crear usuario 
+    $u = new Usuario;
 
-    // $u->name .= 'a';
-    // $u->sueldo = 120.0;
+    $u->name .= 'a';
+    $u->sueldo = 120.0;
 
-    // var_dump($u->save());
-    // var_dump($u->toArray());
-    // var_dump($u->getErrors());
-    // var_dump(Usuario::all()->get('array'));
+    var_dump($u->save());
+    var_dump($u->toArray());
+    var_dump($u->getErrors());
+    var_dump(Usuario::all()->get('array'));
 
   }
 

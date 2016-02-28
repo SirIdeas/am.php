@@ -22,6 +22,7 @@
       <li><a href="(:/:)/configure-server#nginx">Nginx</a></li>
     </ul>
   </li>
+  <!--
   <li>
     <a href="(:/:)/api">API</a>
     <ul class="sub-nav">
@@ -85,4 +86,5 @@
       </li>
     </ul>
   </li>
+  -->
 </ul>
