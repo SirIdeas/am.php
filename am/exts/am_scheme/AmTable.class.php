@@ -479,7 +479,7 @@ class AmTable extends AmObject{
     $this->setCreatedAtField($name);
 
     // Agregar campo como datatime.
-    return $this->addField($name, 'datetime');
+    return $this->addField($name, 'timestamp');
 
   }
 
@@ -498,7 +498,7 @@ class AmTable extends AmObject{
     $this->setUpdatedAtField($name);
 
     // Agregar campo como datatime.
-    return $this->addField($name, 'datetime');
+    return $this->addField($name, 'timestamp');
 
   }
 
