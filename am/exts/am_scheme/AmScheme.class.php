@@ -1111,6 +1111,11 @@ abstract class AmScheme extends AmObject{
    */
   public function insertInto($values, $model, array $fields = array()){
 
+    // Si los valores es una instancia de AmModel entonces convierte en un array
+    // que contenga solo dicha instancia.
+    if($values instanceof AmModel)
+      $values = array($values);
+
     // Obtener el SQL para saber si es valido
     $sql = $this->sqlInsert($values, $model, $fields);
 

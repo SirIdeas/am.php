@@ -41,12 +41,17 @@ class AmModel extends AmObject{
     /**
      * Definición de relaciones a otros modelos.
      */
-    $referencesTo = null,
+    $hasOne = null,
+    
+    /**
+     * Definición de relaciones a otros modelos.
+     */
+    $belongTo = null,
     
     /**
      * Definición de relaciones de otros modelos.
      */
-    $referencesBy = null,
+    $hasMany = null,
     
     /**
      * Definición de llaves únicas.
@@ -121,28 +126,30 @@ class AmModel extends AmObject{
       $this->table = new AmTable(array(
 
         // Asignar fuente
-        'schemeName'    => $this->schemeName,
-        'tableName'     => $this->tableName,
-        'model'         => $className,
+        'schemeName'   => $this->schemeName,
+        'tableName'    => $this->tableName,
+        'model'        => $className,
 
         // Detalle de la tabla
-        'fields'        => $this->fields,
-        'pks'           => $this->pks,
-        'referencesTo'  => $this->referencesTo,
-        'referencesBy'  => $this->referencesBy,
-        'uniques'       => $this->uniques,
+        'fields'       => $this->fields,
+        'pks'          => $this->pks,
+        'referencesTo' => array_merge($this->hasOne, $this->belongTo),
+        'referencesBy' => $this->hasMany,
+        'uniques'      => $this->uniques,
 
       ));
 
       // Señalar campo createdAt si ha sido señalado.
       if($this->createdAtField)
         $this->table->addCreatedAtField(
-          $this->createdAtField===true? null : $this->createdAtField);
+          $this->createdAtField===true? null : $this->createdAtField
+        );
 
       // Señalar campo updatedAt si ha sido señalado.
       if($this->updatedAtField)
         $this->table->addUpdatedAtField(
-          $this->updatedAtField===true? null : $this->updatedAtField);
+          $this->updatedAtField===true? null : $this->updatedAtField
+        );
 
       // Obtener validadores de la tabla.
       $this->validators = $this->table->getValidators();
@@ -189,7 +196,7 @@ class AmModel extends AmObject{
     // Tomar valores reales
     $this->realValues = $this->toArray();
 
-    // Llamar el metodo init del model
+    // Llamar el metodo init del modelo
     $this->init();
 
   }
@@ -234,17 +241,6 @@ class AmModel extends AmObject{
     return $this->isNew;
 
   }
-
-  /**
-   * Cantidad de errores generados en los validadores.
-   * @return int Cantidad de errores.
-   */
-  public function errorsCount(){
-
-    return $this->errorsCount;
-
-  }
-
   /**
    * Devuelve le hash con los campos que poseen valores nativos del BDMS.
    * @return hash Hash de booleans.
@@ -292,17 +288,6 @@ class AmModel extends AmObject{
     }
 
     return $ret;
-
-  }
-
-  /**
-   * Devuelve el valor del registro en un campo.
-   * @param  string $field Nombre del campo.
-   * @return mixed         Valor del registro en un campo.
-   */
-  public function getValue($field){
-
-    return $this->$field;
 
   }
 
@@ -622,7 +607,7 @@ class AmModel extends AmObject{
    *                             los campos especificados en el modelo.
    * @return AmQuery             Query select para obtener el registro de la BD.
    */
-  public function getQuerySelectItem($alias = 'q', $withFields = false){
+  private function getQuerySelectItem($alias = 'q', $withFields = false){
 
     return $this->getTable()->findById($this->index(), $alias, $withFields);
 
@@ -727,7 +712,7 @@ class AmModel extends AmObject{
     }
 
     // Es valido si no se generaron errores
-    return $this->errorsCount() === 0;
+    return $this->errorsCount === 0;
 
   }
 
@@ -751,7 +736,7 @@ class AmModel extends AmObject{
         // Insetar en la BD. Ret será igual a de generado
         // del registro en el caso de tener como PK un campo
         // autoincrementable o false si se generá un error
-        if(false !== ($ret = $this->insertInto())){
+        if(false !== ($ret = $this->insert())){
           // Obtener todos los campos de la tabla del modelo
           $fields = $this->getTable()->getFields();
 
@@ -824,10 +809,10 @@ class AmModel extends AmObject{
    * @return int/bool Id del último registro insertado o false si se generó un
    *                  error.
    */
-  public function insertInto(){
+  protected function insert(){
 
     // Si se inserta satisfactoriamente
-    if($this->getTable()->insertInto(array($this)))
+    if($this->getTable()->insertInto($this))
 
       // Devolver el último id insertado.
       return $this->getTable()->getScheme()->getLastInsertedId();
@@ -841,7 +826,7 @@ class AmModel extends AmObject{
    * Realiza la actualización del registro en la tabla.
    * @return bool Indica si se realizó la actualización satisfactoriamente.
    */
-  public function update(){
+  protected function update(){
 
     return !!$this->getQueryUpdate()->update();
 

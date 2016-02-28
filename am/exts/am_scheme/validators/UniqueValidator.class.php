@@ -52,7 +52,7 @@ class UniqueValidator extends AmValidator{
     // Se agrega una condicion and por cada campo extra configurado
     foreach($fields as $field){
       // Obtener el valor del campo en el modelo
-      $value = $model->getValue($field);
+      $value = $model->$field;
       // Agregar la condicion
       $query->andWhere("{$field}='{$value}'");
     }
