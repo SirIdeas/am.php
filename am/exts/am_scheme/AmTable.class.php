@@ -778,18 +778,35 @@ class AmTable extends AmObject{
    * @param string  $field Nombre del campo a validar.
    */
   public function validate(AmModel $model, $field){
-    // Obtener validator del campo
-    $validators = $this->getValidators($field);
 
-    // Sino se obtiene un array de validators retornar
-    // sine valuar
-    if(is_array($validators))
+    if(isset($field)){
 
-      foreach($validators as $name => $validator)
-        // Si el modelo no cumple con la validacion
-        if(!$validator->isValid($model))
-          // Se agrega el error
-          $model->addError($field, $name, $validator->getMessage($model));
+      // Obtener validator del campo
+      $validators = $this->getValidators($field);
+
+      // Sino se obtiene un array de validators retornar
+      // sine valuar
+      if(is_array($validators))
+
+        foreach($validators as $name => $validator)
+          // Si el modelo no cumple con la validacion
+          if(!$validator->isValid($model))
+            // Se agrega el error
+            $model->addError($field, $name, $validator->getMessage($model));
+
+    }else{
+
+      // Preparar campos
+      $model->prepare();
+
+      // Obtener nombre de validator definidos
+      $validators = (array)$this->getValidators();
+
+      // Validar todos los campos
+      foreach($validators as $field => $_)
+        $table->validate($field, $model);
+
+    }
 
   }
 
@@ -1134,6 +1151,86 @@ class AmTable extends AmObject{
     }
 
     return !!$q->update();
+
+  }
+
+  /**
+   * Guarda los cambios del registro. Si es un registro nuevo entonces el
+   * registro se intentará insertar en la tabla, de lo contrario se intentará
+   * actualizar los datos del registro.
+   * @param  AmModel  $model Instancia del modelo.
+   * @return int/bool        Si se insertó como un nuevo registro y la tabla
+   *                         donde se se insertó posee un único campo
+   *                         autoincrementable se devuelve el valor de dicho
+   *                         campo, de lo contrario solo devolverá si la
+   *                         operación se efectuó satisfactoriamente.
+   */
+  public function save(AmModel $model){
+
+    // Si todos los campos del registro son válidos
+    if($model->isValid()){
+
+      // Si es un registro nuevo se insertará
+      if($model->isNew()){
+
+        // Insetar en la BD. Ret será igual a de generado del registro en el
+        // caso de tener como PK un campo autoincrementable o false si se
+        // generá un error
+        if(false !== ($ret = $this->insert($model))){
+          // Obtener todos los campos de la tabla del modelo
+          $fields = $this->getFields();
+
+          // Recorrer campos
+          foreach($fields as $f)
+
+            // Agregar el valor que retorno el insert si se trata de un campo
+            // autoincrementable
+            if($f->isAutoIncrement()){
+
+              // Obtener el nombre del método SET
+              $fieldName = $f->getName();
+
+              // para asigar el valor autoincrementado
+              $model->$fieldName = $ret;
+
+              // Se supone que sebe ser un solo campo autoincrementable
+              break;
+
+            }
+
+          // Si ret == 0 es xq se interto correctamenre pero la tabla no tiene
+          // una columna autoincrement Se retorna verdadero o el valor del ID
+          // generado para el registro si se agregó correctamenre de lo
+          // contrario se retorna el valor de $ret.
+          return $ret == 0 ? true : $ret;
+
+        }
+
+      }else{
+
+        // Se intenta actualizar los datos del registro en la BD
+        if($this->update($model))
+
+          // retornar true indicando el exito de la operacion
+          return true;
+
+
+      }
+
+      // Obtener el esquema
+      $scheme = $this->getScheme();
+
+      // Si se llega a este punto es porque se generó un error en la inserción
+      // o actualizacion, por lo que se agrega un error global con el último
+      // error generado en el Gestor.
+      $model->addError('__global__',
+        $scheme->getErrNo(),
+        $scheme->getError()
+      );
+
+    }
+
+    return false;
 
   }
 

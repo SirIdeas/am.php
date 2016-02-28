@@ -383,31 +383,12 @@ class AmModel extends AmObject{
    */
   public function isValid($field = null){
 
-    // Obtener la instancia de la tabla
-    $table = $this->table;
-
     // Limpiar los errores
     $this->clearErrors();
 
     // Si se indico un campo
-    if(isset($field)){
-      
-      // Validar solo el campo
-      $table->validateField($field, $this);
-
-    }else{
-
-      // Obtener nombre de validator definidos
-      $validatorNames = array_keys((array)$this->table->getValidators());
-
-      // Preparar campos
-      $this->prepare();
-
-      // Validar todos los campos
-      foreach($validatorNames as $field)
-        $table->validateField($field, $this);
-
-    }
+    // Validar solo el campo
+    $this->table->validate($this, $field);
 
     // Es valido si no se generaron errores
     return $this->errorsCount === 0;
@@ -426,86 +407,20 @@ class AmModel extends AmObject{
   public function save(){
 
     // Obener la tabla
-    $table = $this->table;
+    $ret = $this->table->save($this);
 
-    // Obtener el esquema
-    $scheme = $table->getScheme();
+    // Si retorna false salir.
+    if($ret === false)
+      return false;
 
-    // Si todos los campos del registro son válidos
-    if($this->isValid()){
+    // Se guardó satisfactoriamente
+    // Indicar que ya no es registro nuevo
+    $this->isNew = false;
 
-      // Si es un registro nuevo se insertará
-      if($this->isNew()){
+    // Los nuevo valores reales del registro serán los guardados
+    $this->realValues = $this->toArray();
 
-        // Insetar en la BD. Ret será igual a de generado del registro en el
-        // caso de tener como PK un campo autoincrementable o false si se
-        // generá un error
-        if(false !== ($ret = $table->insert($this))){
-          // Obtener todos los campos de la tabla del modelo
-          $fields = $table->getFields();
-
-          // Recorrer campos
-          foreach($fields as $f){
-
-            // Agregar el valor que retorno el insert
-            // si se trata de un campo autoincrementable
-            if($f->isAutoIncrement()){
-
-              // Obtener el nombre del método SET
-              $fieldName = $f->getName();
-
-              // para asigar el valor autoincrementado
-              $this->$fieldName = $ret;
-
-            }
-
-          }
-
-          // Si el valor es diferente de false
-          // Indicar que ya no es registro nuevo
-          $this->isNew = false;
-
-          // Los nuevo valores reales del registro serán
-          // los que se tiene desdpue de insertar
-          $this->realValues = $this->toArray();
-
-          // Si ret == 0 es xq se interte correctamenre
-          // pero la tabla no tiene una columna autoincrement
-          // Se retorna verdadero o el valor del ID generado
-          // para el registro si se agregó correctamenre
-          // de lo contrario se retorna falso
-          return $ret === 0 ? true : $ret;
-
-        }
-
-      }else{
-
-        // Se intenta actualizar los datos del registro en la BD
-        if($table->update($this)){
-
-          // Si se actualiza correctamente entonces
-          // los datos reales nuevos seran los que
-          // tiene el registro
-          $this->realValues = $this->toArray();
-
-          // retornar true indicando el exito de la operacion
-          return true;
-
-        }
-
-      }
-
-      // Si se llega a este punto es porque se generó un error en la inserción
-      // o actualizacion, por lo que se agrega un error global con el último
-      // error generado en el Gestor.
-      $this->addError('__global__',
-        $scheme->getErrNo(),
-        $scheme->getError()
-      );
-
-    }
-
-    return false;
+    return true;
 
   }
 
