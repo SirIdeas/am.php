@@ -30,14 +30,11 @@ class MysqlScheme extends AmScheme{
       'float'      => 'float',
       'double'     => 'float',
 
-      'bit'        => 'bit',
-
-      // Fechas
+      // Fechas y tiempo
       'date'       => 'date',
       'datetime'   => 'datetime',
       'timestamp'  => 'timestamp',
       'time'       => 'time',
-      'year'       => 'year',
 
       // Cadenas de caracteres
       'char'       => 'char',
@@ -46,6 +43,10 @@ class MysqlScheme extends AmScheme{
       'text'       => 'text',
       'mediumtext' => 'text',
       'longtext'   => 'text',
+
+      // Otros
+      'year'       => 'year',
+      'bit'        => 'bit',
 
     ),
 
