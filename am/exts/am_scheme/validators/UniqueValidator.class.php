@@ -58,7 +58,7 @@ class UniqueValidator extends AmValidator{
     }
 
     // Agregar condiciones para excluir el registro evaluado
-    $index = $model->index();
+    $index = $table->indexOf($model);
     foreach ($index as $key => $value)
       $index[$key] = "{$key}='{$value}'";
 

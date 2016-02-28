@@ -548,27 +548,6 @@ class AmModel extends AmObject{
   }
 
   /**
-   * Devuelve el indice correspondiente al registro.
-   * @return int/hash ID del registro o hash con los valores de los campos
-   *                  primarios.
-   */
-  public function index(){
-
-    $ret = array(); // Para el retorno
-    $pks = $this->getTable()->getPks(); // Obtener PKs
-
-    if(empty($pks))
-      throw Am::e('AMSCHEME_MODEL_DONT_HAVE_PK', get_class($this));
-
-    // Agregar los IDs
-    foreach($pks as $pk)
-      $ret[$pk] = $this->getRealValue($pk);
-
-    return $ret;
-
-  }
-
-  /**
    * Devuelve un array con los valores del registro correspondientes a los
    * campos de la tabla.
    * @param  bool $withAI Si se incluirá los valore Autoincrementables.
@@ -609,7 +588,14 @@ class AmModel extends AmObject{
    */
   private function getQuerySelectItem($alias = 'q', $withFields = false){
 
-    return $this->getTable()->findById($this->index(), $alias, $withFields);
+    // Obtener la tabla del modelo
+    $table = $this->getTable();
+
+    // Obtener el índice del modelo
+    $index = $table->indexOf($this);
+
+    // Realizar la busqueda
+    return $table->findById($index, $alias, $withFields);
 
   }
 
@@ -618,7 +604,7 @@ class AmModel extends AmObject{
    * @return AmQuery Query update para realizar los campos con las
    *                       modificaciones que ha tenido el modelo.
    */
-  protected function getQueryUpdate(){
+  private function getQueryUpdate(){
 
     $table = $this->getTable();
 
@@ -644,26 +630,6 @@ class AmModel extends AmObject{
 
     // Devolver consulta generada
     return $q;
-
-  }
-
-  /**
-   * Ejecuta todos los validadores del modelo en el registro.
-   */
-  public function validate(){
-
-    // Limpiar los errores
-    $this->clearErrors();
-
-    // Obtener nombre de validator definidos
-    $validatorNames = array_keys((array)$this->getValidators());
-
-    // Preparar campos
-    $this->prepare();
-
-    // Validar todos los campos
-    foreach($validatorNames as $field)
-      $this->validateField($field);
 
   }
 
@@ -707,8 +673,19 @@ class AmModel extends AmObject{
       $this->validateField($field);
     }else{
 
+      // Limpiar los errores
+      $this->clearErrors();
+
+      // Obtener nombre de validator definidos
+      $validatorNames = array_keys((array)$this->getValidators());
+
+      // Preparar campos
+      $this->prepare();
+
       // Validar todos los campos
-      $this->validate();
+      foreach($validatorNames as $field)
+        $this->validateField($field);
+
     }
 
     // Es valido si no se generaron errores

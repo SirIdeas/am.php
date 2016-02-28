@@ -719,6 +719,28 @@ class AmTable extends AmObject{
   }
 
   /**
+   * Devuelve el índice correspondiente a un modelo.
+   * @param  AmModel  $model Modelo del que se desea obtener el índice. 
+   * @return int/hash        ID del registro o hash con los valores de los
+   *                         campos primarios.
+   */
+  public function indexOf(AmModel $model){
+
+    $ret = array(); // Para el retorno
+    $pks = $this->getPks(); // Obtener PKs
+
+    if(empty($pks))
+      throw Am::e('AMSCHEME_MODEL_DONT_HAVE_PK', get_class($model));
+
+    // Agregar los IDs
+    foreach($pks as $pk)
+      $ret[$pk] = $model->getRealValue($pk);
+
+    return $ret;
+
+  }
+
+  /**
    * Insertar valores en una tabla.
    * @param  array/AmQuery $values Array de modelos o AmQuery select con los
    *                               calores a insertar.
