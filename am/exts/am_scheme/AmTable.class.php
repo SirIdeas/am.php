@@ -144,6 +144,7 @@ class AmTable extends AmObject{
     // Obtener los campos y primary keys
     $fields = $this->fields;
     $pks = $this->pks? $this->pks : array();
+    $pks = is_array($pks)? $pks : array($pks);
 
     // Luego recetearlos para prepararlos
     $this->pks = array();
