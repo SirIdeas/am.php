@@ -169,7 +169,7 @@ class MysqlScheme extends AmScheme{
 
     $value = @mysql_real_escape_string($value);
     // Si no tiene valor asignar NULL
-    return isset($value)? '\'$value\'' : 'NULL';
+    return isset($value)? "'{$value}'" : 'NULL';
 
   }
 
@@ -323,6 +323,7 @@ class MysqlScheme extends AmScheme{
       $values = "VALUES {$values}";
 
     }
+
 
     return $values;
 
