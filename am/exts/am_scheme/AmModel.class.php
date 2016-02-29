@@ -539,9 +539,8 @@ class AmModel extends AmObject{
 
   }
 
-  // Obtener todos los registros de buscar por un campos
   /**
-   * [findAllBy description]
+   * Obtener todos los registros de buscar por un campos
    * @param  string $field      Nombre del campo donde se buscará.
    * @param  mixed  $value      Valor a buscar.
    * @param  string $as         String con el nombre del modelo o formato de
