@@ -1056,28 +1056,24 @@ class AmTable extends AmObject{
 
   /**
    * Devuelve un modelo con el registro solicitado.
-   * @param  string/int/array $id         Id del registro. Si la tabla tiene un
-   *                                      PK con un único campo entonces puede
-   *                                      ser un int o string, si es un PK
-   *                                      compuesto estonces debe ser un hash
-   *                                      con los valores del id a buscar.
-   * @param  string           $alias      Alias de la tabla en el query.
-   * @param  string           $as         String con el nombre del modelo o
-   *                                      formato de retorno. Puede ser 'array',
-   *                                      'am', 'object', nombre de una clase
-   *                                      existente o identificador de un
-   *                                      modelo.
-   * @param  bool             $withFields Si la clausula SELECT se genera con
-   *                                      los campos de la tabla (true) o con *
-   *                                      (false).
-   * @return mixed/bool                   El modelo en el formato especificado
-   *                                      por el parámetro $as o false si no se
-   *                                      consigió alguna coincidencia.
+   * @param  string/int/array $id    Id del registro. Si la tabla tiene un PK
+   *                                 con un único campo entonces puede ser un
+   *                                 int o string, si es un PK compuesto
+   *                                 estonces debe ser un hash con los valores
+   *                                 del id a buscar.
+   * @param  string           $alias Alias de la tabla en el query.
+   * @param  string           $as    String con el nombre del modelo o formato
+   *                                 de retorno. Puede ser 'array', 'am',
+   *                                 'object', nombre de una clase existente o
+   *                                 identificador de un modelo.
+   * @return AmModel/bool            El modelo en el formato especificado por
+   *                                 el parámetro $as o false si no se consigió
+   *                                 alguna coincidencia.
    */
-  public function find($id, $as = null, $withFields = false){
+  public function find($id, $as = null){
 
     // Obtener consulta de búsqueda por id.
-    $q = $this->byId($id, $withFields);
+    $q = $this->byId($id);
 
     // Si se obtuno la consulta devolver obtener el primer registro.
     return isset($q)? $q->row($as) : null;

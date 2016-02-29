@@ -533,8 +533,7 @@ class AmModel extends AmObject{
    *                            de la tabla (true) o con * (false).
    * @return AmQuery            Query select.
    */
-  public static function by($field, $value, $alias = 'q',
-    $withFields = false){
+  public static function by($field, $value, $alias = 'q', $withFields = false){
 
     return self::me()->by($field, $value, $alias, $withFields);
 
@@ -553,8 +552,7 @@ class AmModel extends AmObject{
    *                            de la tabla (true) o con * (false).
    * @return AmQuery            Query select.
    */
-  public static function allBy($field, $value, $as = null,
-    $withFields = false){
+  public static function allBy($field, $value, $as = null, $withFields = false){
 
     return self::me()->allBy($field, $value, $as, $withFields);
 
@@ -602,27 +600,23 @@ class AmModel extends AmObject{
 
   /**
    * Devuelve un modelo con el registro solicitado.
-   * @param  string/int/array $id         Id del registro. Si la tabla tiene un
-   *                                      PK con un único campo entonces puede
-   *                                      ser un int o string, si es un PK
-   *                                      compuesto estonces debe ser un hash
-   *                                      con los valores del id a buscar.
-   * @param  string           $alias      Alias de la tabla en el query.
-   * @param  string           $as         String con el nombre del modelo o
-   *                                      formato de retorno. Puede ser 'array',
-   *                                      'am', 'object', nombre de una clase
-   *                                      existente o identificador de un
-   *                                      modelo.
-   * @param  bool             $withFields Si la clausula SELECT se genera con
-   *                                      los campos de la tabla (true) o con *
-   *                                      (false).
-   * @return mixed/bool                   El modelo en el formato especificado
-   *                                      por el parámetro $as o false si no se
-   *                                      consigió alguna coincidencia.
+   * @param  string/int/array $id    Id del registro. Si la tabla tiene un PK
+   *                                 con un único campo entonces puede ser un
+   *                                 int o string, si es un PK compuesto
+   *                                 estonces debe ser un hash con los valores
+   *                                 del id a buscar.
+   * @param  string           $alias Alias de la tabla en el query.
+   * @param  string           $as    String con el nombre del modelo o formato
+   *                                 de retorno. Puede ser 'array', 'am',
+   *                                 'object', nombre de una clase existente o
+   *                                 identificador de un modelo.
+   * @return AmModel/bool            El modelo en el formato especificado por
+   *                                 el parámetro $as o false si no se consigió
+   *                                 alguna coincidencia.
    */
-  public static function find($id, $as = null, $withFields = false){
+  public static function find($id, $as = null){
 
-    return self::me()->find($id, $as, $withFields);
+    return self::me()->find($id, $as);
 
   }
   
