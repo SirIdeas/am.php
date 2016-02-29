@@ -1,12 +1,13 @@
 (:: parent:views/docs.php :)
 (:: set:pageTitle='Rutas' :)
+(:: set:subMenuItem='routes' :)
 
 <p>
   Las rutas son configuradas en la propiedad de aplicación <code><strong>routing</strong></code>.
 </p>
 
 <div>
-  <h2>Configuración</h2>
+  <h2 id="configuration">Configuración</h2>
   
   <p>
     Las configuración de las rutas son tomados de la propiedad de aplicación <code><strong>routing</strong></code>:
@@ -28,7 +29,7 @@
 </div>
 
 <div>
-  <h2>Estructura de las rutas</h2>
+  <h2 id="routes-struct">Estructura de las rutas</h2>
   <p>
     Las rutas poseen 3 partes:
   </p>
@@ -61,7 +62,7 @@
 </div>
 
 <div>
-  <h2>Forma simple o Forma explícita de las rutas</h2>
+  <h2 id="shapes">Forma simple o Forma explícita de las rutas</h2>
 
   <p>
     Una ruta puede ser presentado de diferentes formas, sin embargo al final todas son convertidaas a una a la <i>forma explícita</i>. Por ejemplo:
@@ -70,38 +71,38 @@
 </div>
 
 <div>
-  <h2>Tipos de rutas</h2>
+  <h2 id="route-types">Tipos de rutas</h2>
   <p>
     Inicialmente se puede configurar los siguientes tipos de rutas
   </p>
 
   <div>
-    <h3>Reponder con un archivo: <code>file</code></h3>
+    <h3 id="file">Reponder con un archivo: <code>file</code></h3>
     <pre><code class="language-php">(:= getCodeFile('routing/file.php') :)</code></pre>
   </div>
 
   <div>
-    <h3>Responder con la descarga de un archivo: <code>download</code></h3>
+    <h3 id="download">Responder con la descarga de un archivo: <code>download</code></h3>
     <pre><code class="language-php">(:= getCodeFile('routing/download.php') :)</code></pre>
   </div>
 
   <div>
-    <h3>Renderizar un template: <code>template</code></h3>
+    <h3 id="template">Renderizar un template: <code>template</code></h3>
     <pre><code class="language-php">(:= getCodeFile('routing/template.php') :)</code></pre>
   </div>
 
   <div>
-    <h3>Redirigir a otra URL de la aplicación: <code>redirect</code></h3>
+    <h3 id="redirect">Redirigir a otra URL de la aplicación: <code>redirect</code></h3>
     <pre><code class="language-php">(:= getCodeFile('routing/redirect.php') :)</code></pre>
   </div>
 
   <div>
-    <h3>Rediriguir a una URL externa: <code>goto</code></h3>
+    <h3 id="goto">Rediriguir a una URL externa: <code>goto</code></h3>
     <pre><code class="language-php">(:= getCodeFile('routing/goto.php') :)</code></pre>
   </div>
 
   <div>
-    <h3>Realizar la llamada de una función o método: <code>call</code></h3>
+    <h3 id="call">Realizar la llamada de una función o método: <code>call</code></h3>
     <pre><code class="language-php">(:= getCodeFile('routing/call.php') :)</code></pre>
     <p>
       Todos los estos callbacks reciben como parámetro un array con el entorno definido en la propiedad de aplicación <code><strong>env</strong></code>.
@@ -111,12 +112,12 @@
 </div>
 
 <div>
-  <h2>Rutas Anidadas</h2>
+  <h2 id="nested-route">Rutas Anidadas</h2>
   <pre><code class="language-php">(:= getCodeFile('routing/nested.php') :)</code></pre>
 </div>
 
 <div>
-  <h2>Parámetros de ruta</h2>
+  <h2 id="route-params">Parámetros de ruta</h2>
   <p>
     Los parámetros pueden ser definidos entre llaves en ruta y serán sustituidos en <i>target</i>, Por ejemplo, para la ruta:
   </p>
@@ -129,7 +130,7 @@
   </p>
   <pre><code class="language-php">(:= getCodeFile('routing/params-callbacks.php') :)</code></pre>
   <div>
-    <h3>Tipos de los parámetros de ruta</h3>
+    <h3 id="route-params-types">Tipos de los parámetros de ruta</h3>
     <p>
       Los tipos para los parámetros de ruta son definidos despues del nombre del parámetro con dos puntos (:). Los tipos principales son <code><strong>id</strong></code>, <code><strong>numeric</strong></code>, <code><strong>alphabetic</strong></code> y <code><strong>alphanumeric</strong></code>, sin embargo tambien puede definirse definirse una regex:
     </p>
@@ -139,7 +140,7 @@
 </div>
 
 <div>
-  <h2>Opciones avanzadas</h2>
+  <h2 id="avanced-options">Opciones avanzadas</h2>
 
   <div>
     <h3>Despachadores de rutas</h3>

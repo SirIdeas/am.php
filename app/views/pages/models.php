@@ -1,5 +1,6 @@
 (:: parent:views/docs.php :)
 (:: set:pageTitle='Modelos' :)
+(:: set:subMenuItem='models' :)
 
 <p>
   Los modelos son abstracciones de la información manejada por lo general gestionada a través de un Sistema Manejador de Base de datos (SMDB). Los modelos permiten buscar agregar, buscar, actualizar y eliminar registros de las tablas de las base de datos configuradas. También permite la realización
@@ -7,7 +8,7 @@
 </p>
 
 <div>
-  <h2>Configuración</h2>
+  <h2 id="configuration">Configuración</h2>
 
   <p>
     La utilización del ORM comienza con la configuración de las conexiones a las BDs mendiante la propiedad de aplicación <code><strong>schemes</strong></code> la cual es un hash donde cada clave representa el nombre de una conexión y su valor la confuiguración de conexión.
@@ -29,7 +30,7 @@
 </div>
 
 <div>
-  <h2>Propiedades</h2>
+  <h2 id="properties">Propiedades</h2>
 
   <p>
     Las propiedades para configurar la conexión son:
@@ -115,13 +116,7 @@
 </div>
 
 <div>
-  <h3></h3>
-
-
-</div>
-
-<div>
-  <h2>Definición de modelo</h2>
+  <h2 id="model-definition">Definición de modelo</h2>
   
   <p>
     Los modelos se implementan extendiendo de la clase <code><strong>AmModel</strong></code>. Por defecto los modelos son buscados dentro del directorio <code><strong>/app/models/</strong></code>. Un ejemplo de definir un modelo sería el siguiente:
@@ -130,17 +125,7 @@
   <pre><code class="language-php">(:= getCodeFile('models/Person.class.php') :)</code></pre>
 
   <div>
-    <h3>Nombre de tabla</h3>
-    
-    <p>
-      Para indicar el nombre de la tabla se utiliza el atributo <code><strong>$tableName</strong></code>. Si no se define se tomá como nombre de tabla el nombre de la clase en plurar según la gramática inglesa.
-    </p>
-    <pre><code class="language-php">(:= getCodeFile('models/Person.tableName.class.php') :)</code></pre>
-
-  </div>
-
-  <div>
-    <h3>Nombre de esquema</h3>
+    <h3 id="scheme-name">Nombre de esquema</h3>
     
     <p>
       El nombre del esquema al que pertenece el modelo se define mediante el atributo <code><strong>$schemeName</strong></code>. Si no es indicado o si es un string vacío, el modelo pertenecerá al esquema por defecto.
@@ -150,7 +135,17 @@
   </div>
 
   <div>
-    <h3>Campos</h3>
+    <h3 id="table-name">Nombre de tabla</h3>
+    
+    <p>
+      Para indicar el nombre de la tabla se utiliza el atributo <code><strong>$tableName</strong></code>. Si no se define se tomá como nombre de tabla el nombre de la clase en plurar según la gramática inglesa.
+    </p>
+    <pre><code class="language-php">(:= getCodeFile('models/Person.tableName.class.php') :)</code></pre>
+
+  </div>
+
+  <div>
+    <h3 id="fields">Campos</h3>
 
     <p>
       Hash de campos y su descripción. Para definirlos se utiliza el atributo <code><strong>$fields</strong></code>.
@@ -356,7 +351,7 @@
   </div>
 
   <div>
-    <h3>Clave primaria</h3>
+    <h3 id="primary-key">Clave primaria</h3>
 
     <p>
       Nombre el campo o lista de los nombres de los campos que forman la clave primaria del modelo. Se define mediante el atributo <code><strong>$pks</strong></code>. Tenga en cuenta que si algún campo es marcado como campo primario dentro de la propiedad <code><strong>$fields</strong></code> este tambien será parte de la clave primaria incluso si no se señala dentro de esta propiedad.
@@ -378,26 +373,18 @@
   </div>
 
   <div>
-    <h3>Campo de fecha de creación y modificación</h3>
+    <h3 id="created-at-and-updated-at">Campo de fecha de creación y modificación</h3>
   
     <p>
       Para indicar o crear los campos de fechas de creación y modificación de un modelo utilice los atributos <code><strong>$createdAtField</strong></code> y <code><strong>$updatedAtField</strong></code> respectivamente.
-      Estos modelos añaden si no existen campos del tipo <code><strong>timestamp</strong></code> con los nombres <code><strong>created_at</strong></code> y <code><strong>updated_at</strong></code>. Estos campos son manejados de forma automática. Para utiliza nombres de campos diferentes asigne al atributo el nombre del campo.
+      Estos modelos añaden si no existen campos del tipo <code><strong>timestamp</strong></code> con los nombres <code><strong>created_at</strong></code> y <code><strong>updated_at</strong></code>. Estos campos son manejados de forma automática.
     </p>
+    <pre><code class="language-php">(:= getCodeFile('models/Person.createdAndUpdatedField.class.php') :)</code></pre>
+    <p>
+      Para utiliza nombres de campos diferentes asigne al atributo el nombre del campo.
+    </p>
+    <pre><code class="language-php">(:= getCodeFile('models/Person.customCreatedAndUpdatedField.class.php') :)</code></pre>
 
-    <div class="divide-section">
-      <table>
-        <tr>
-          <td class="s6">
-            <pre><code class="language-php">(:= getCodeFile('models/Person.createdAndUpdatedField.class.php') :)</code></pre>
-          </td>
-          <td class="s6">
-            <pre><code class="language-php">(:= getCodeFile('models/Person.customCreatedAndUpdatedField.class.php') :)</code></pre>
-          </td>
-        </tr>
-      </table>
-    </div>
-    
   </div>
 
 <!-- 
@@ -431,10 +418,10 @@
 </div>
 
 <div>
-  <h2>Operaciones básicas</h2>
+  <h2 id="basic-actions">Acciones básicas</h2>
 
   <div>
-    <h3>Insertar</h3>
+    <h3 id="insert">Insertar</h3>
     <p>
       Para insertar un registro se crea una instancia del modelo y se llama el método <code><strong>save</strong></code>, el cual devolverá <code><strong>true</strong></code> o el ID del nuevo registro insertado en el caso de que el modelo posea como clave primaria un único campo autoincrementable. Si no lográ insertar el registro devuelve false.
     </p>
@@ -442,7 +429,7 @@
   </div>
 
   <div>
-    <h3>Buscar</h3>
+    <h3 id="find">Buscar</h3>
     <p>
       Para buscar por la clave primaria de un modelo se utiliza el método estático <code><strong>AmModel::find</strong></code> el cual recibe el ID a buscar y retornará una instancia del modelo con el registro de dicho ID. Si no encuentra el registro retornará <code><strong>false</strong></code>.
     </p>
@@ -459,7 +446,7 @@
   </div>
 
   <div>
-    <h3>Actualizar</h3>
+    <h3 id="update">Actualizar</h3>
     <p>
       Al igual que para insertar para actualizar un registro se utiliza el método <code><strong>save</strong></code>, el cual devolverá un <code><strong>true</strong></code> si lográ actualiza correctamente o <code><strong>false</strong></code> de lo contrario
     </p>
@@ -467,7 +454,7 @@
   </div>
 
   <div>
-    <h3>Eliminar</h3>
+    <h3 id="delete">Eliminar</h3>
 
     <p>
       Para eliminar un registro se utiliza el método <code><strong>delete</strong></code> el cual retorna <code><strong>true</strong></code> so logra eliminar satisfactoriamente <code><strong>false</strong></code> de lo contrario.

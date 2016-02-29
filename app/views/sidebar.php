@@ -1,3 +1,5 @@
+(:: set:menu=array() :)
+
 <div class="title-parent">
   <a href="(:/:)">
     <img src="(:/:)/images/am_vlogo_p.png" alt="" class="sub-header-logo">
@@ -5,23 +7,22 @@
 </div>
 
 <ul class="nav spyscroll" data-height="#pageTitle" data-str="float">
-  <li><span>Primeros pasos</span>
-    <ul class="sub-nav">
-      <li><a href="(:/:)/introduction">Introducción</a></li>
-      <li><a href="(:/:)/get-started">Comenzando</a></li>
-      <li><a href="(:/:)/routing">Rutas</a></li>
-      <li><a href="(:/:)/views">Vistas</a></li>
-      <li><a href="(:/:)/controllers">Controladores</a></li>
-      <li><a href="(:/:)/models">Modelos</a></li>
-    </ul>
-  </li>
-  <li>
-    <a href="(:/:)/server#">Servidor</a>
-    <ul class="sub-nav">
-      <li><a href="(:/:)/server#apache">Apache</a></li>
-      <li><a href="(:/:)/server#nginx">Nginx</a></li>
-    </ul>
-  </li>
+  (: foreach($menu as $url => $item): :)
+    <li>
+      <a href="(:/:)(:= $url :)">
+        (:= $item['txt'] :)
+      </a>
+      <ul class="sub-nav">
+        (: foreach($item['items'] as $subUrl => $subItem): :)
+          <li>
+            <a href="(:/:)(:= $subUrl :)">
+              (:= $subItem['txt'] :)
+            </a>
+          </li>
+        (: endforeach :)
+      </ul>
+    </li>
+  (: endforeach :)
   <!--
   <li>
     <a href="(:/:)/api">API</a>

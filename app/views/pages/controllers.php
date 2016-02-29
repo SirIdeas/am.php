@@ -1,12 +1,13 @@
 (:: parent:views/docs.php :)
 (:: set:pageTitle='Controladores' :)
+(:: set:subMenuItem='controllers' :)
 
 <p>
   Los controladores son clases que poseen métodos llamados acciones, las cuales pueden ser asignadas como procesadores de las rutas. Además de esto, los controladores tambien poseen métodos que pueden ser configurados como filtros para las acciones, con el fin de validar su ejecución, realizar tareas antes y despues de la acción. Además de todo esto, cada acción renderiza una vista con el mismo nombre de la acción, a menos que se indique lo controrio.
 </p>
 
 <div>
-  <h2>Rutas</h2>
+  <h2 id="routes">Rutas</h2>
   
   <p>
     Crear ruta con una acción de un controlador:
@@ -17,7 +18,7 @@
 </div>
 
 <div>
-  <h2>Configuración</h2>
+  <h2 id="configuration">Configuración</h2>
 
   <p>
     Las configuración de los controladores es tomada de la propiedad de aplicación <code><strong>controllers</strong></code>. Esta es un hash donde cada clave representa el nombre de un controlador y el valor su configuración.
@@ -39,7 +40,7 @@
 </div>
 
 <div>
-  <h2>Consideraciones</h2>
+  <h2 id="considerations">Consideraciones</h2>
   <ul>
     <li>
       Por defecto el directorio raíz de los controladores es <code><strong>/app/controllers/</strong></code>.
@@ -67,7 +68,7 @@
 
 <div>
 
-  <h2>Propiedades</h2>
+  <h2 id="properties">Propiedades</h2>
   
   <p>
     Las propiedades configurables son:
@@ -75,7 +76,7 @@
 
   <div>
     
-    <h3>Nombre del controlador</h3>
+    <h3 id="property-name">Nombre del controlador</h3>
 
     <table class="table striped small text-left">
       <tr><th>Propiedad</th><td><code><strong>name</strong></code></td></tr>
@@ -123,7 +124,7 @@
   </div>
 
   <div>
-    <h3>Directorio raíz</h3>
+    <h3 id="property-root">Directorio raíz</h3>
 
     <table class="table striped small text-left">
       <tr><th>Propiedad</th><td><code><strong>root</strong></code></td></tr>
@@ -143,7 +144,7 @@
   </div>
 
   <div>
-    <h3>Controlador padre</h3>
+    <h3 id="property-parent">Controlador padre</h3>
 
     <table class="table striped small text-left">
       <tr><th>Propiedad</th><td><code><strong>parent</strong></code></td></tr>
@@ -180,7 +181,7 @@
   </div>
 
   <div>
-    <h3>Directorio principal de vistas</h3>
+    <h3 id="property-views">Directorio principal de vistas</h3>
 
     <table class="table striped small text-left">
       <tr><th>Propiedad</th><td><code><strong>views</strong></code></td></tr>
@@ -200,7 +201,7 @@
   </div>
 
   <div>
-    <h3>Directorios secundarios de vistas</h3>
+    <h3 id="property-paths">Directorios secundarios de vistas</h3>
 
     <table class="table striped small text-left">
       <tr><th>Propiedad</th><td><code><strong>paths</strong></code></td></tr>
@@ -218,7 +219,7 @@
   </div>
 
   <div>
-    <h3>Prefijos</h3>
+    <h3 id="property-prefixs">Prefijos</h3>
 
     <table class="table striped small text-left">
       <tr><th>Propiedad</th><td><code><strong>prefixs</strong></code></td></tr>
@@ -238,7 +239,7 @@
   </div>
 
   <div>
-    <h3>Acciones permitidas</h3>
+    <h3 id="property-allows">Acciones permitidas</h3>
 
     <table class="table striped small text-left">
       <tr><th>Propiedad</th><td><code><strong>allows</strong></code></td></tr>
@@ -258,7 +259,7 @@
   </div>
 
   <div>
-    <h3>Formato de respuesta de los web services</h3>
+    <h3 id="property-services">Formato de respuesta de los web services</h3>
 
     <table class="table striped small text-left">
       <tr><th>Propiedad</th><td><code><strong>servicesFormat</strong></code></td></tr>
@@ -282,7 +283,7 @@
   </div>
 
   <div>
-    <h3>Filtros</h3>
+    <h3 id="property-filters">Filtros</h3>
 
     <table class="table striped small text-left">
       <tr><th>Propiedad</th><td><code><strong>filters</strong></code></td></tr>
@@ -308,7 +309,7 @@
   </div>
 
   <div>
-    <h3>Cabeceras de respuesta</h3>
+    <h3 id="property-headers">Cabeceras de respuesta</h3>
 
     <table class="table striped small text-left">
       <tr><th>Propiedad</th><td><code><strong>headers</strong></code></td></tr>
@@ -334,7 +335,7 @@
 </div>
 
 <div>
-  <h2>Recibir parámetros de la ruta</h2>
+  <h2 id="route-params">Recibir parámetros de la ruta</h2>
   <p>
     Todos los métodos correspondientes a las acciones y filtros llamados durante la ejecución de una acción reciben como argumentos los parámetros configurados en la ruta y obtenidos de la petición HTTP.
   </p>
@@ -357,7 +358,7 @@
 </div>
 
 <div>
-  <h2>Renderizado de vistas</h2>
+  <h2 id="rendering-views">Renderizado de vistas</h2>
   <p>
     Por defecto, al terminar ejecutar una acción se renderiza una vista con el mismo nombre de la acción y extensión <code><strong>.php</strong></code>, la cual es buscada dentro de los directorios de vistas del controlador. En el caso de que no exista simplemente no se realiza acción alguna. La vista tampoco de renderiza en el caso de que se devuelva un array o la instancia de un objecto.
   </p>
@@ -402,34 +403,34 @@
 </div>
 
 <div>
-  <h2>Tipos de respuestas</h2>
+  <h2 id="response-types">Tipos de respuestas</h2>
   
   <p>
     Los controladores por si solos son un tipo de respuesta, es por esto que heredan de <code><strong>AmResponse</strong></code>. Sin embargo existen otros tipos de respuestas, las cuales se puede utilizar como retorno tanto de los filtros como las acciones del controlador. Las diferentes respuestas que puede darse son:
   </p>
 
   <div>
-    <h3>Responder con una vista</h3>
+    <h3 id="response-template">Responder con una vista</h3>
     <pre class="table-pre"><code class="language-php">(:= getCodeFile('controllers/response.template.php') :)</code></pre>
   </div>
 
   <div>
-    <h3>Responder con una redirección</h3>
+    <h3 id="response-go">Responder con una redirección</h3>
     <pre class="table-pre"><code class="language-php">(:= getCodeFile('controllers/response.go.php') :)</code></pre>
   </div>
 
   <div>
-    <h3>Responder con un archivo</h3>
+    <h3 id="response-file">Responder con un archivo</h3>
     <pre class="table-pre"><code class="language-php">(:= getCodeFile('controllers/response.file.php') :)</code></pre>
   </div>
 
   <div>
-    <h3>Responder con un error</h3>
+    <h3 id="response-error">Responder con un error</h3>
     <pre class="table-pre"><code class="language-php">(:= getCodeFile('controllers/response.error.php') :)</code></pre>
   </div>
 
   <div>
-    <h3>Responder como un web services</h3>
+    <h3 id="response-services">Responder como un web services</h3>
     <pre class="table-pre"><code class="language-php">(:= getCodeFile('controllers/response.services.php') :)</code></pre>
   </div>
 

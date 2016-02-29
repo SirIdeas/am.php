@@ -1,8 +1,9 @@
 (:: parent:views/docs.php :)
 (:: set:pageTitle='Introducción' :)
+(:: set:subMenuItem='introduction' :)
 
 <div>
-  <h2>Términos</h2>
+  <h2 id="terms">Términos</h2>
   <p>
     A continuación se definen alguno de los términos utilizados en la documentación:
   </p>
@@ -103,13 +104,13 @@
 </div>
 
 <div>
-  <h2>Requerimientos</h2>
+  <h2 id="requirements">Requerimientos</h2>
 
   <p>Para ejecutar Amathista solo se require PHP <strong>>=5.3</strong></p>
 </div>
 
 <div>
-  <h2>Descarga</h2>
+  <h2 id="download">Descarga</h2>
 
   <p>
     La descarga de Amathista se realiza desde GitHub ya sea como un archivo comprimido, o clonando el repositorio.
@@ -130,7 +131,7 @@
 </div>
 
 <div>
-  <h2>Estructura</h2>
+  <h2 id="struct">Estructura</h2>
 
   <p>
     La estructura básica de una aplicación en Amathista consiste de 3 carpetas principales:
@@ -166,7 +167,7 @@
 </div>
 
 <div>
-  <h2>Archivos iniciales</h2>
+  <h2 id="init-files">Archivos iniciales</h2>
   
   <p>
     La plantilla base de Amathista incluye otros archivos:
@@ -216,7 +217,7 @@
 </div>
 
 <div>
-  <h2>Sitio de pruebas</h2>
+  <h2 id="test-site">Sitio de pruebas</h2>
 
   <p>
     Para verificar que todo vaya bien se puede ejcutar el sitio desde un navegador. En nuestro caso creamos el proyecto dentro de la carpeta <code><strong>testsite</strong></code> dentro de la carpeta web de nuestra instalación local de WAMPP:

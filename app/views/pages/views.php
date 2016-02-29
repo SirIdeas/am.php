@@ -1,12 +1,13 @@
 (:: parent:views/docs.php :)
 (:: set:pageTitle='Vistas' :)
+(:: set:subMenuItem='views' :)
   
 <p>
   El sistema de templates de Amathista permite incluir vistas una dentro de otras, definir secciones, definir variables, imprimir variables, definir herencia y embeber código PHP, todo a través de <i>directivas</i>.
 </p>
 
 <div>
-  <h2>Código embebido</h2>
+  <h2 id="embedded-code">Código embebido</h2>
   <p>
     Para agregar código PHP propio dentro de la vista se puede de la forma tradicional, o utilizar las etiquetas <code><strong>(<span>:</span></strong></code> y <code><strong><span>:</span>)</strong></code>:
   </p>
@@ -14,7 +15,7 @@
 </div>
 
 <div>
-  <h2>URL raíz de la aplicación</h2>
+  <h2 id="root-url">URL raíz de la aplicación</h2>
   <p>
     Adicionalmente, la directiva especial <code><strong><span>(</span>/:)</strong></code> es sustituida por la URL raíz de la aplicación (<code><strong>Am::url()</strong></code>):
   </p>
@@ -22,12 +23,12 @@
 </div>
 
 <div>
-  <h2>Directivas</h2>
+  <h2 id="directives">Directivas</h2>
   <p>
     Las directivas son las primeras sentencias que se ejecutan de una vista. Estas se diferencian el código embebido en que estas se encuentran entre una etiqueta <code><strong>(<span>::</span></strong></code> y <code><strong><span>:</span>)</strong></code>.
   </p>
   <div>
-    <h3>Herencia</h3>
+    <h3 id="heritage">Herencia</h3>
     <p>
       Para la herencia se utiliza el método <code><strong>parent</strong></code> el cual define de que vista se hereda; asi mismo la vista vista hiuja es insertada donde la vista padre ejecute el método <code><strong>child</strong></code>:
     </p>
@@ -49,7 +50,7 @@
   </div>
 
   <div>
-    <h3>Vistas anidadas</h3>
+    <h3 id="nested-views">Vistas anidadas</h3>
     <p>
       Para incluir vistas anidadas se utiliza el método <code><strong>place</strong></code>:
     </p>
@@ -73,7 +74,7 @@
   </div>
 
   <div>
-    <h3>Secciones</h3>
+    <h3 id="sections">Secciones</h3>
     <p>
       Para definir secciones se utiliza el método <code><strong>section</strong></code> para iniciarla y <code><strong>endSection</strong></code> para cerrarla:
     </p>
@@ -115,7 +116,7 @@
   </div>
 
   <div>
-    <h3>Variables</h3>
+    <h3 id="vars">Variables</h3>
     <p>
       Para asignar valores a variables se utiliza el método <code><strong>set</strong></code>:
     </p>

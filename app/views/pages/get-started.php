@@ -1,8 +1,9 @@
 (:: parent:views/docs.php :)
 (:: set:pageTitle='Comenzando' :)
+(:: set:subMenuItem='get-started' :)
 
 <div>
-  <h2>Cómo funciona</h2>
+  <h2 id="how-works">Cómo funciona</h2>
   <p>
     Amathista es un manejador de eventos capaz incorporar módulos de software extras (extensiones) para ampliar su funcionalidad.
   </p>
@@ -12,7 +13,7 @@
 </div>
 
 <div>
-  <h2>Eventos básicos</h2>
+  <h2 id="basics-events">Eventos básicos</h2>
   <p>
     Los eventos en Amathista son unidos a los callbacks mediante el método <code><strong>Am::on</strong></code> y disparados mediante el método <code><strong>Am::ring</strong></code>. Los eventos básicos son:
   </p>
@@ -74,7 +75,7 @@
 </div>
 
 <div>
-  <h2>Archivo de configuración principal <small>(<code>/app/am.conf.php</code>)</small></h2>
+  <h2 id="main-conf-file">Archivo principal de configuración <small>(<code>/app/am.conf.php</code>)</small></h2>
   <p>
     Contiene la inicialización de las propiedades de la aplicación, tales como extensiones a cargar, archivos inciales, configuraciones de los módulos a reescribir y variables de entorno entre otros. Cada item de este archivo de configuración representa un propiedad de la aplicación.
   </p>
@@ -86,7 +87,7 @@
     las propiedad <code><strong>env</strong></code> se extenderían con el archivo <code><strong>env.conf.php</strong></code> y la propiedad <code><strong>requires</strong></code> con <code><strong>requires.conf.php</strong></code> del directorio <code><strong>/app/</strong></code>.
   </p>
   <div>
-    <h3>Propiedades básicas</h3>
+    <h3 id="basics-properties">Propiedades básicas</h3>
     
     El núcleo de Amathista utiliza las siguientes propieades:
     <table class="table striped">
@@ -142,7 +143,7 @@
 </div>
 
 <div>
-  <h2>Archivo de inicio principal<small> (<code>/app/am.init.php</code>)</small></h2>
+  <h2 id="#main-init-file">Archivo principalde inicio <small> (<code>/app/am.init.php</code>)</small></h2>
   <p>
     Archivo PHP que se ejecuta luego de incluir las archivos iniciales indicados en la propiedad <code><strong>files</strong></code>. Su fin es la declaración de clases, funciones, constantes y variables globales entre otros.
   </p>

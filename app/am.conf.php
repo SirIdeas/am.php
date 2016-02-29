@@ -3,7 +3,7 @@
 return array(
 
   'env' => array(
-    'siteName' => 'Amathista | PHP Framework'
+    'siteName' => 'Amathista | PHP Framework',
   ),
 
   'autoload' => array(
