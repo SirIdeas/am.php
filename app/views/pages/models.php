@@ -399,21 +399,6 @@
     </div>
     
   </div>
-  
-  <div>
-    <h3>Insertar un registro</h3>
-    <p>
-      Para insertar un registro se crea una instancia del modelo y se llama el método <code><strong>save</strong></code>, el cual devolverá <code><strong>true</strong></code> o el ID del nuevo registro insertado en el caso de que el modelo posea como clave primaria un único campo autoincrementable. Si no lográ insertar el registro devuelve false.
-    </p>
-    <pre><code class="language-php">(:= getCodeFile('models/insert.php') :)</code></pre>
-  </div>
-
-  <div>
-    <h3>Buscar</h3>
-    <p>
-      Para buscar los registros
-    </p>
-  </div>
 
 <!-- 
   <div>
@@ -442,5 +427,53 @@
     </p>
 
   </div> -->
+
+</div>
+
+<div>
+  <h2>Operaciones básicas</h2>
+
+  <div>
+    <h3>Insertar</h3>
+    <p>
+      Para insertar un registro se crea una instancia del modelo y se llama el método <code><strong>save</strong></code>, el cual devolverá <code><strong>true</strong></code> o el ID del nuevo registro insertado en el caso de que el modelo posea como clave primaria un único campo autoincrementable. Si no lográ insertar el registro devuelve false.
+    </p>
+    <pre><code class="language-php">(:= getCodeFile('models/insert.php') :)</code></pre>
+  </div>
+
+  <div>
+    <h3>Buscar</h3>
+    <p>
+      Para buscar por la clave primaria de un modelo se utiliza el método estático <code><strong>AmModel::find</strong></code> el cual recibe el ID a buscar y retornará una instancia del modelo con el registro de dicho ID. Si no encuentra el registro retornará <code><strong>false</strong></code>.
+    </p>
+    <pre><code class="language-php">$person = Person::find(3);</code></pre>
+    <p>
+      Si el modelo posee una clave primaria múltiple entonces se debe pasar un hash con la combinación de valores en dichos campos a buscar:
+    </p>
+    <pre><code class="language-php">$invoiceDetail = InvoiceDetail::find(array('id_invoice' => 1435, 'id_item' => 896));</code></pre>
+    <p>
+      Para buscar por otro campo de un modelo se utiliza el método estático <code><strong>AmModel::oneBy</strong></code> el cual recibe el nombre del campo para la búsqueda y el valor buscado. Retornará el primer registro con la coincidencia y si no existe ninguna coincidencia retornará <code><strong>false</strong></code>.
+    </p>
+    <pre><code class="language-php">$person = Person::oneBy('dni', 'E412312T');</code></pre>
+  
+  </div>
+
+  <div>
+    <h3>Actualizar</h3>
+    <p>
+      Al igual que para insertar para actualizar un registro se utiliza el método <code><strong>save</strong></code>, el cual devolverá un <code><strong>true</strong></code> si lográ actualiza correctamente o <code><strong>false</strong></code> de lo contrario
+    </p>
+    <pre><code class="language-php">(:= getCodeFile('models/update.php') :)</code></pre>
+  </div>
+
+  <div>
+    <h3>Eliminar</h3>
+
+    <p>
+      Para eliminar un registro se utiliza el método <code><strong>delete</strong></code> el cual retorna <code><strong>true</strong></code> so logra eliminar satisfactoriamente <code><strong>false</strong></code> de lo contrario.
+    </p>
+    <pre><code class="language-php">(:= getCodeFile('models/delete.php') :)</code></pre>
+
+  </div>
 
 </div>

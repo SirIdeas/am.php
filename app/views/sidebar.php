@@ -16,10 +16,10 @@
     </ul>
   </li>
   <li>
-    <a href="(:/:)/configure-server#">Configuración del servidor</a>
+    <a href="(:/:)/server#">Servidor</a>
     <ul class="sub-nav">
-      <li><a href="(:/:)/configure-server#apache">Apache</a></li>
-      <li><a href="(:/:)/configure-server#nginx">Nginx</a></li>
+      <li><a href="(:/:)/server#apache">Apache</a></li>
+      <li><a href="(:/:)/server#nginx">Nginx</a></li>
     </ul>
   </li>
   <!--

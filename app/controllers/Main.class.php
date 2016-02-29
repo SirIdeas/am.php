@@ -13,8 +13,8 @@ class Main extends AmController{
 
     // $this->addHeader('content-type:text/plain');
      
-    // // ----------------------------------------------------------------------
-    // // Creación eliminación y generación del modelo
+    // ----------------------------------------------------------------------
+    // Creación eliminación y generación del modelo
     // $sch = AmScheme::get();
     // var_dump($sch->getTables());
     // var_dump($sch->generateScheme());
@@ -22,8 +22,8 @@ class Main extends AmController{
     // var_dump($sch->drop());
     // var_dump($sch->create());
 
-    // //-----------------------------------------------------------------------
-    // // Crear tabla sin model
+    //-----------------------------------------------------------------------
+    // Crear tabla sin model
     // $tbl = AmScheme::table('usuarios')
     //   ->addField('id_user', 'id')
     //   ->addField('name', 'varchar')
@@ -34,29 +34,28 @@ class Main extends AmController{
     // var_dump($tbl->drop());
     // var_dump($tbl->create());
     
-    // //-----------------------------------------------------------------------
-    // // Crear tabla apartir del modelo
-    // $tbl = Usuario::me();
-    // var_dump($tbl->drop());
-    // var_dump($tbl->create());
-    // var_dump($tbl->truncate());
+    //-----------------------------------------------------------------------
+    // Crear tabla apartir del modelo
+    // var_dump(Usuario::drop());
+    // var_dump(Usuario::create());
+    // var_dump(Usuario::truncate());
 
-    // //-----------------------------------------------------------------------
-    // // Buscar registro en el modelo
-    // $u = Usuario::me()->find(2);
+    //-----------------------------------------------------------------------
+    // Buscar registro en el modelo
+    // $u = Usuario::find(2);
     // var_dump($u);
 
     //-----------------------------------------------------------------------
-    // Crear usuario 
-    $u = new Usuario;
+    // Crear usuario
+    // $u = new Usuario;
 
-    $u->name .= 'a';
-    $u->sueldo = 120.0;
+    // $u->name .= 'a';
+    // $u->sueldo = 120.0;
 
-    var_dump($u->save());
-    var_dump($u->toArray());
-    var_dump($u->getErrors());
-    var_dump(Usuario::all()->get('array'));
+    // var_dump($u->save());
+    // var_dump($u->toArray());
+    // var_dump($u->getErrors());
+    // var_dump(Usuario::all()->get('array'));
 
   }
 
