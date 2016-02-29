@@ -100,7 +100,7 @@ class MysqlScheme extends AmScheme{
     if(preg_match('/[`\\.]/', $name))
       return $name;
 
-    return "`'{$name}'`";
+    return "`{$name}`";
 
   }
 

@@ -462,5 +462,168 @@ class AmModel extends AmObject{
     return self::me()->all($alias, $withFields);
 
   }
+
+  /**
+   * Crea la tabla en la BD.
+   * @param  bool $ifNotExists Se agrega el parémtro IS NOT EXISTS.
+   * @return bool              Si se creó la tabla. Si la tabla existe y el
+   *                           parámetro $ifNotExists == true, retornará true.
+   */
+  public static function create($isNotExists = true){
+
+    return self::me()->create($isNotExists);
+
+  }
+
+  /**
+   * Elimina la tabla de la BD.
+   * @param  bool $ifExists Si se agrega la clausula IF EXISTS.
+   * @return bool           Si se eliminó la Tabla. Si la Tabla no existe y el
+   *                        parémetro $ifExists==true entonces retorna true.
+   */
+  public static function drop($isExists = true){
+
+    return self::me()->drop($isExists);
+
+  }
+
+  /**
+   * Indica si existe la tabla en la BD.
+   * @return bool Si existe la tabla.
+   */
+  public static function exists(){
+
+    return self::me()->exists();
+
+  }
+
+  /**
+   * Vacía la tabla.
+   * @param  bool $ignoreFk Si se ingorará los Foreing Keys.
+   * @return bool           Si se vació la tabla satisfactoriamente.
+   */
+  public static function truncate($ignoreFK = false){
+
+    return self::me()->truncate($ignoreFK);
+
+  }
+
+  /**
+   * Insertar valores en una tabla.
+   * @param  array/AmQuery $values Array de modelos o AmQuery select con los
+   *                               calores a insertar.
+   * @param  array         $fields Lista de campos para la consulta insert.
+   * @return boolen/int            Si se realizó la inserción correstamente. Si
+   *                               Se inserta un solo elemento y la tabla
+   *                               contiene un único campo autoincrementable
+   *                               entonces devuelve este campo.
+   */
+  public static function insertInto($values, array $fields = array()){
+
+    return self::me()->insertInto($values, $this, $fields);
+
+  }
+
+  /**
+   * Obtener consulta para buscar registro por un campo.
+   * @param  string $field      Nombre del campo donde se buscará.
+   * @param  mixed  $value      Valor a buscar.
+   * @param  string $alias      Alias de la tabla en el query.
+   * @param  bool   $withFields Si la clausula SELECT se genera con los campos
+   *                            de la tabla (true) o con * (false).
+   * @return AmQuery            Query select.
+   */
+  public static function by($field, $value, $alias = 'q',
+    $withFields = false){
+
+    return self::me()->by($field, $value, $alias, $withFields);
+
+  }
+
+  // Obtener todos los registros de buscar por un campos
+  /**
+   * [findAllBy description]
+   * @param  string $field      Nombre del campo donde se buscará.
+   * @param  mixed  $value      Valor a buscar.
+   * @param  string $as         String con el nombre del modelo o formato de
+   *                            retorno. Puede ser 'array', 'am', 'object',
+   *                            nombre de una clase existente o identificador de
+   *                            un modelo.
+   * @param  bool   $withFields Si la clausula SELECT se genera con los campos
+   *                            de la tabla (true) o con * (false).
+   * @return AmQuery            Query select.
+   */
+  public static function allBy($field, $value, $as = null,
+    $withFields = false){
+
+    return self::me()->allBy($field, $value, $as, $withFields);
+
+  }
+
+  /**
+   * Obtener el primer registro de la busqueda por un campo.
+   * @param  string $field      Nombre del campo donde se buscará.
+   * @param  mixed  $value      Valor a buscar.
+   * @param  string $as         String con el nombre del modelo o formato de
+   *                            retorno. Puede ser 'array', 'am', 'object',
+   *                            nombre de una clase existente o identificador de
+   *                            un modelo.
+   * @param  bool   $withFields Si la clausula SELECT se genera con los campos
+   *                            de la tabla (true) o con * (false).
+   * @return mixed/bool         El modelo en el formato especificado por el
+   *                            parámetro $as o false si no se consigió alguna
+   *                            coincidencia.
+   */
+  public static function oneBy($field, $value, $type = null,
+    $withFields = false){
+
+    return self::me()->oneBy($field, $value, $type, $withFields);
+    
+  }
+
+  /**
+   * Obtener la consulta para encontrar el registro con un determinado ID.
+   * @param  string/int/array $id         Id del registro. Si la tabla tiene un
+   *                                      PK con un único campo entonces puede
+   *                                      ser un int o string, si es un PK
+   *                                      compuesto estonces debe ser un hash
+   *                                      con los valores del id a buscar.
+   * @param  string           $alias      Alias de la tabla en el query.
+   * @param  bool             $withFields Si la clausula SELECT se genera con
+   *                                      los campos de la tabla (true) o con *
+   *                                      (false).
+   * @return AmQuery                      Query select.
+   */
+  public static function byId($id, $alias = 'q', $withFields = false){
+
+    return self::me()->byId($id, $alias, $withFields);
+
+  }
+
+  /**
+   * Devuelve un modelo con el registro solicitado.
+   * @param  string/int/array $id         Id del registro. Si la tabla tiene un
+   *                                      PK con un único campo entonces puede
+   *                                      ser un int o string, si es un PK
+   *                                      compuesto estonces debe ser un hash
+   *                                      con los valores del id a buscar.
+   * @param  string           $alias      Alias de la tabla en el query.
+   * @param  string           $as         String con el nombre del modelo o
+   *                                      formato de retorno. Puede ser 'array',
+   *                                      'am', 'object', nombre de una clase
+   *                                      existente o identificador de un
+   *                                      modelo.
+   * @param  bool             $withFields Si la clausula SELECT se genera con
+   *                                      los campos de la tabla (true) o con *
+   *                                      (false).
+   * @return mixed/bool                   El modelo en el formato especificado
+   *                                      por el parámetro $as o false si no se
+   *                                      consigió alguna coincidencia.
+   */
+  public static function find($id, $as = null, $withFields = false){
+
+    return self::me()->find($id, $as, $withFields);
+
+  }
   
 }

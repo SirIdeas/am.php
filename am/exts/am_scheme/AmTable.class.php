@@ -950,7 +950,7 @@ class AmTable extends AmObject{
    *                            de la tabla (true) o con * (false).
    * @return AmQuery            Query select.
    */
-  public function findBy($field, $value, $alias = 'q', $withFields = false){
+  public function by($field, $value, $alias = 'q', $withFields = false){
 
     return $this->all($alias, $withFields)->where("{$field}='{$value}'");
 
@@ -969,9 +969,9 @@ class AmTable extends AmObject{
    *                            de la tabla (true) o con * (false).
    * @return AmQuery            Query select.
    */
-  public function findAllBy($field, $value, $as = null, $withFields = false){
+  public function allBy($field, $value, $as = null, $withFields = false){
 
-    return $this->findBy($field, $value, $withFields)->get($as);
+    return $this->by($field, $value, $withFields)->get($as);
 
   }
 
@@ -989,9 +989,9 @@ class AmTable extends AmObject{
    *                            parámetro $as o false si no se consigió alguna
    *                            coincidencia.
    */
-  public function findOneBy($field, $value, $type = null, $withFields = false){
+  public function oneBy($field, $value, $type = null, $withFields = false){
 
-    return $this->findBy($field, $value, $withFields)->row($type);
+    return $this->by($field, $value, $withFields)->row($type);
     
   }
 
@@ -1008,7 +1008,7 @@ class AmTable extends AmObject{
    *                                      (false).
    * @return AmQuery                      Query select.
    */
-  public function findById($id, $alias = 'q', $withFields = false){
+  public function byId($id, $alias = 'q', $withFields = false){
 
     // Obtener consultar para obtener todos los registros
     $q = $this->all($alias, $withFields);
@@ -1077,7 +1077,7 @@ class AmTable extends AmObject{
   public function find($id, $as = null, $withFields = false){
 
     // Obtener consulta de búsqueda por id.
-    $q = $this->findById($id, $withFields);
+    $q = $this->byId($id, $withFields);
 
     // Si se obtuno la consulta devolver obtener el primer registro.
     return isset($q)? $q->row($as) : null;
@@ -1099,7 +1099,7 @@ class AmTable extends AmObject{
     $index = $this->indexOf($model);
 
     // Realizar la busqueda
-    return $this->findById($index, $alias, $withFields);
+    return $this->byId($index, $alias, $withFields);
 
   }
 
