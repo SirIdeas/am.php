@@ -373,7 +373,7 @@
   </div>
 
   <div>
-    <h3 id="created-at-and-updated-at">Campo de fecha de creación y modificación</h3>
+    <h3 id="created-at-and-updated-at">Fecha de creación y modificación</h3>
   
     <p>
       Para indicar o crear los campos de fechas de creación y modificación de un modelo utilice los atributos <code><strong>$createdAtField</strong></code> y <code><strong>$updatedAtField</strong></code> respectivamente.

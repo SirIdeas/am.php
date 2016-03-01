@@ -143,7 +143,7 @@
   <h2 id="avanced-options">Opciones avanzadas</h2>
 
   <div>
-    <h3>Despachadores de rutas</h3>
+    <h3 id="route-dispatcher">Despachadores de rutas</h3>
     <p>
       Los despachadores son callbacks que se encargan de atender las peticiones HTTP según el tipo de ruta con el que coincidan.
     </p>
@@ -194,7 +194,7 @@
   </div>
 
   <div>
-    <h3>Pre-procesadores de ruta</h3>
+    <h3 id="route-pre-processor">Pre-procesadores de ruta</h3>
     <p>
       Los pre-procesadores de rutas son callbacks que reparan una ruta antes de que esta sea evaluada. Estos  son asignados a un tipo de ruta. Reciben como primer parámetro la ruta en forma explícita y debe retornar la ruta transformada.
     </p>
@@ -213,7 +213,7 @@
   </div>
 
   <div>
-    <h3>Flujo de petición</h3>
+    <h3 id="flow-request">Flujo de petición</h3>
     <p>
       El proceso seguido para determinar como despachar un ruta es el siguiente:
     </p>

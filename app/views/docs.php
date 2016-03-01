@@ -11,21 +11,23 @@
         </a>
       </div>
 
-      <ul class="nav spyscroll" data-height="#pageTitle" data-str="float">
+      <ul class="nav">
         (: foreach($menu['sidebar'] as $url => $item): :)
           <li>
-            <a href="(:/:)(:= $url :)">
+            <a href="(:= empty($url)?'#':Am::url($url) :)">
               (:= $item['txt'] :)
             </a>
-            <ul class="sub-nav">
-              (: foreach($item['items'] as $subUrl => $subTxt): :)
-                <li>
-                  <a href="(:/:)(:= $subUrl :)">
-                    (:= $subTxt :)
-                  </a>
-                </li>
-              (: endforeach :)
-            </ul>
+            (: if(isset($item['items'])): :)
+              <ul class="sub-nav">
+                (: foreach($item['items'] as $subUrl => $subTxt): :)
+                  <li>
+                    <a href="(:= empty($subUrl)?'#':Am::url($subUrl) :)">
+                      (:= $subTxt :)
+                    </a>
+                  </li>
+                (: endforeach :)
+              </ul>
+            (: endif :)
           </li>
         (: endforeach :)
       </ul>
@@ -36,15 +38,15 @@
       <div class="inner">(:: child :)</div>
     </div>
 
-    <div class="site-sidebar col col2">
-      <ul class="page-nav">
+    <div id="pageNav" class="col col2 spyscroll" data-height="#pageTitle" data-class="site-sidebar">
+      <ul class="page-nav spyscroll" data-nav="body" data-class="active" data-relative="#pageTitle">
         (: foreach($menu[$subMenuItem] as $url => $item): :)
           <li>
             <a href="(:= $url :)">
               (:= $item['txt'] :)
             </a>
-            <ul class="sub-nav">
-              (: if(isset($item['items'])): :)
+            (: if(isset($item['items'])): :)
+              <ul>
                 (: foreach($item['items'] as $subUrl => $subTxt): :)
                   <li>
                     <a href="(:= $subUrl :)">
@@ -52,8 +54,8 @@
                     </a>
                   </li>
                 (: endforeach :)
-              (: endif :)
-            </ul>
+              </ul>
+            (: endif :)
           </li>
         (: endforeach :)
       </ul>

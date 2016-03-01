@@ -3,6 +3,9 @@
 return array(
   'sidebar' => array(
     '/' => array(
+      'txt' => 'Inicio',
+    ),
+    '' => array(
       'txt' => 'Primeros pasos',
       'items' => array(
         '/introduction' => 'Introducción',
@@ -175,11 +178,11 @@ return array(
         '#table-name' => 'Nombre de tabla',
         '#fields' => 'Campos',
         '#primary-key' => 'Clave primaria',
-        '#created-at-and-updated-at' => 'Campo de fecha de creación y modificación',
+        '#created-at-and-updated-at' => 'Fecha de creación y modificación',
       ),
     ),
     '#basic-actions' => array(
-      'txt' => 'Operaciones básicas',
+      'txt' => 'Acciones básicas',
       'items' => array(
         '#insert' => 'Insertar',
         '#find' => 'Buscar',
@@ -187,6 +190,16 @@ return array(
         '#delete' => 'Eliminar',
       ),
     ),
+  ),
+
+  'routes' => array(
+    '#apache' => array(
+      'txt' => 'Apache',
+    ),
+    '#nginx' => array(
+      'txt' => 'Nginx',
+    ),
+
   ),
 
 );

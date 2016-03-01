@@ -143,7 +143,7 @@
 </div>
 
 <div>
-  <h2 id="#main-init-file">Archivo principalde inicio <small> (<code>/app/am.init.php</code>)</small></h2>
+  <h2 id="main-init-file">Archivo principalde inicio <small> (<code>/app/am.init.php</code>)</small></h2>
   <p>
     Archivo PHP que se ejecuta luego de incluir las archivos iniciales indicados en la propiedad <code><strong>files</strong></code>. Su fin es la declaración de clases, funciones, constantes y variables globales entre otros.
   </p>

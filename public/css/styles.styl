@@ -2,6 +2,9 @@
 
 @import 'basics.styl'
 
+body
+  color                 #333
+
 // -----------------------------------------------------------------------------
 // Llamadas
 // -----------------------------------------------------------------------------
@@ -66,7 +69,7 @@ $pageTitleMinHeight     = 200px
 $pageTitleH1Hmargin     = 18px
 $pageTitleH1Height      = 34px
 $logoHeight             = $pageTitleH1Hmargin*2 + $pageTitleH1Height + $toolbarHeight
-
+$sidePaddingRight       = 30px
 .logo-parent
   img
     max-height          $logoHeight
@@ -109,9 +112,15 @@ $logoHeight             = $pageTitleH1Hmargin*2 + $pageTitleH1Height + $toolbarH
     height              $siteFooterHeight
   a
     color               inherit
-    
+
+.side
+  padding-right         $sidePaddingRight
+  
 .site-sidebar
   fixed                 top $siteHeaderHeight bottom $siteFooterHeight
+  .title-parent
+  .nav
+    padding-right       $sidePaddingRight
   .title-parent
     absolute            top left right
   .nav
@@ -136,7 +145,7 @@ $logoHeight             = $pageTitleH1Hmargin*2 + $pageTitleH1Height + $toolbarH
 .sub-header-logo
   display               block
   height                160px
-  margin                20px auto 0 auto
+  margin                20px 0 0 auto
       
 .nav-item
   line-height           40px
@@ -161,7 +170,8 @@ $logoHeight             = $pageTitleH1Hmargin*2 + $pageTitleH1Height + $toolbarH
     font-size           300%
   img
     max-height          300px
-
+  
+ul.page-nav
 ul.nav
   margin                0
   padding               20px 0  
@@ -170,7 +180,6 @@ ul.nav
   li
     margin              0
     list-style-type     none
-    font-size           95%
     >a
     >span
       text-decoration   none
@@ -180,12 +189,34 @@ ul.nav
       //   background-color rgba(158,158,158,0.2)
   >li
     padding-bottom      5px
+
+ul.nav
+  text-align            right
+  li
+    font-size           95%
+    color               
+  >li
     >a
     >span
       padding           5px 15px
       font-size         120%
       font-weight       bold
       color             $primaryColor
+
+ul.page-nav
+  a
+    line-height         20px
+  li
+    font-size           90%
+    color               gray
+    li
+      font-weight       normal
+      
+    &.active
+      font-weight       bold
+      color             $primaryColor
+      
+  
 
 .sub-nav
   margin-bottom         20px
