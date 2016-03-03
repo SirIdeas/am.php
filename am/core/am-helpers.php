@@ -28,6 +28,10 @@ function itemOr($index, array $arr, $def = null){
  */
 function isValidCallback($callback){
 
+  // Si es una función retornar true
+  if(is_callable($callback))
+    return true;
+
   // convetir en array
   if(is_string($callback))
     $callback = explode('::', $callback);
