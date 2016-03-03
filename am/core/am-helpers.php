@@ -28,21 +28,17 @@ function itemOr($index, array $arr, $def = null){
  */
 function isValidCallback($callback){
 
-  // Si es un array evaluar como metodo
-  if(is_array($callback))
-    return call_user_func_array('method_exists', $callback);
-
-  // Si es string evaluar como function
-  if(is_string($callback)){
+  // convetir en array
+  if(is_string($callback))
     $callback = explode('::', $callback);
 
-    if(count($callback)==2)
-      return isValidCallback($callback);
+  // Si el array tiene 2 elemento buscar callback como metodo
+  if(count($callback)==2)
+    return call_user_func_array('method_exists', $callback);
 
-    elseif(count($callback)==1)
-      return function_exists($callback[0]);
-
-  }
+  // Si el array tiene un solo elemento buscar como funcion
+  elseif(count($callback)==2)
+    return function_exists($callback[0]);
   
   // Es un callback invalido
   return false;

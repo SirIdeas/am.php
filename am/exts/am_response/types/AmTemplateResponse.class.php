@@ -117,7 +117,7 @@ class AmTemplateResponse extends AmResponse{
   public function make(){
     parent::make();
     
-    $ret = Am::ring('render.template',
+    $ret = Am::emit('render.template',
       $this->__p->tpl, $this->__p->vars, $this->__p->options);
 
     // Si no existe el archivo responder con error 404

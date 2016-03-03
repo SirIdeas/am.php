@@ -18,6 +18,12 @@ final class Am{
      */
     $callbacks = array(
 
+      // Cuando se agrega un nuevo directorio de clases
+      'core.loadedPath' => null, // $dir
+
+      // Cuando se incluye un archivo para una clase
+      'core.loadedClass' => null, // $class
+
       // Evalucación de ruta
       'route.evaluate' => null, // $request
 
@@ -164,8 +170,15 @@ final class Am{
   public static function autoload($className){
 
     // Si existe el path cargarlo.
-    if(isset(self::$pathClasses[$className]))
+    if(isset(self::$pathClasses[$className])){
+
+      // Incluir el archivo
       require_once self::$pathClasses[$className];
+
+      // Emitir evento indicando que se incluyó la clase
+      self::emit('core.loadedClass', $className);
+
+    }
 
   }
 
@@ -201,6 +214,9 @@ final class Am{
     // Agregar los paths
     foreach ($classes as $path)
       self::$pathClasses[basename($path)] = $path.'.class.php';
+
+    // Emitir evento indicando que se cargó el directorio de clases
+    self::emit('core.loadedPath', $dir);
 
   }
 
@@ -299,7 +315,7 @@ final class Am{
    *                        argumentos de la llamada del callback.
    * @return mixed          Lo retornado por el callback correspondiente.
    */
-  public static function ring($action /* Resto de los parametros*/){
+  public static function emit($action /* Resto de los parametros*/){
     
     // Obtener los parámetros
     $options = func_get_args();
@@ -555,7 +571,7 @@ final class Am{
    * @return mixed                Valor devuelvo por el manejador del evento.
    */
   public static function addRouteDispatcher($type, $dispatcher){
-    return Am::ring('route.addDispatcher', $type, $dispatcher);
+    return self::emit('route.addDispatcher', $type, $dispatcher);
   }
 
   /**
@@ -566,7 +582,7 @@ final class Am{
    * @return mixed                  Valor devuelvo por el manejador del evento.
    */
   public static function addRoutePreProcessor($type, $preProcessor)  {
-    return Am::ring('route.addPreProcessor', $type, $preProcessor);
+    return self::emit('route.addPreProcessor', $type, $preProcessor);
   }
 
   /**
@@ -580,7 +596,7 @@ final class Am{
   public static function file($filename, $attachment = false, $name = null,
     $mimeType = null){
 
-    return self::ring('response.file', self::findFile($filename), $attachment,
+    return self::emit('response.file', self::findFile($filename), $attachment,
       $name, $mimeType);
 
   }
@@ -609,7 +625,7 @@ final class Am{
   public static function call($callback, array $env = array(),
                               array $params = array()){
 
-    return self::ring('response.call', $callback, $env, $params);
+    return self::emit('response.call', $callback, $env, $params);
 
   }
 
@@ -625,8 +641,8 @@ final class Am{
   public static function template($tpl, array $vars = array(),
                                   array $options = array(), $checkView = true){
 
-    return self::ring('response.template',
-      Am::findFile($tpl), $vars, $options, $checkView);
+    return self::emit('response.template',
+      self::findFile($tpl), $vars, $options, $checkView);
 
   }
 
@@ -636,7 +652,7 @@ final class Am{
    */
   public static function go($url){
 
-    return self::ring('response.go', $url);
+    return self::emit('response.go', $url);
 
   }
 
@@ -657,7 +673,7 @@ final class Am{
    */
   public static function e404($msg = null){
 
-    return self::ring('response.e404', $msg);
+    return self::emit('response.e404', $msg);
 
   }
 
@@ -668,7 +684,7 @@ final class Am{
    */
   public static function e403($msg = null){
 
-    return self::ring('response.e403', $msg);
+    return self::emit('response.e403', $msg);
 
   }
 
@@ -683,7 +699,7 @@ final class Am{
   public static function controller($action, array $env = array(),
                                     array $params = array()){
 
-    return self::ring('response.controller', $action, $env, $params);
+    return self::emit('response.controller', $action, $env, $params);
 
   }
 
@@ -1015,7 +1031,7 @@ final class Am{
    */
   public static function getCredentialsHandler(){
 
-    return self::ring('credentials.handler');
+    return self::emit('credentials.handler');
 
   }
   
@@ -1410,7 +1426,7 @@ final class Am{
     }else{
 
       // Llamado de accion para evaluar ruta
-      self::ring('route.evaluate', self::getRequest());
+      self::emit('route.evaluate', self::getRequest());
       
     }
 
