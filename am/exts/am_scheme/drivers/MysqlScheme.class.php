@@ -765,11 +765,8 @@ class MysqlScheme extends AmScheme{
 
     // with var len
     }elseif(in_array($type, array('bit', 'char', 'varchar'))){
-      if(!$len)
-        $len = itemOr($type, self::$defaultsLen);
       
-      if($len)
-        $type = "{$type}({$len})";
+      $type = "{$type}({$len})";
 
     }
 

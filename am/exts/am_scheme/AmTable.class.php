@@ -69,7 +69,7 @@ class AmTable extends AmObject{
     /**
      * Hash de validadores.
      */
-    $validators = null,
+    $validators = true,
     
     /**
      * Motor de la tabla en la BD.
@@ -104,7 +104,7 @@ class AmTable extends AmObject{
     /**
      * Array de índices únicos.
      */
-    $uniques = array();
+    $uniqes = array();
 
   /**
    * Constructor para la clase.
@@ -140,6 +140,9 @@ class AmTable extends AmObject{
     // Obtener como retornará los resultados y asignarlo a la consulta
     if(!$this->getModel())
       $this->model = $scheme->getSchemeModelName($params['tableName']);
+
+    // Agregar tabla al esquema
+    $scheme->addTable($this);
 
     // Obtener los campos y primary keys
     $fields = $this->fields;
@@ -182,8 +185,111 @@ class AmTable extends AmObject{
       if(!$relation instanceof AmRelation)
         $this->referencesBy[$name] = new AmRelation($relation);
 
-    // Agregar tabla al esquema
-    $scheme->addTable($this);
+    // Si validators === true entonces se esta pidiendo que se generen todos
+    // los validadores
+    if($this->validators === true)
+
+      $this->validators = array_fill_keys(merge_unique(
+        // De campos
+        array_keys($this->fields),
+        // De referencias a otros modelos
+        array_keys($this->referencesTo),
+        // Claves únicas
+        array_keys($this->uniqes)
+
+      ), true);
+
+    // No se deben incluir los validadores
+    elseif($this->validators === false)
+      $this->validators = array();
+
+    $validatorsResults = array();
+
+    // Preparar instancias de los validadores
+    foreach ($this->validators as $i => $validators) {
+
+      // Si hay un campo con el mismo nombre
+      if($this->hasField($i)){
+
+        // Obtener el campo
+        $field = $this->getField($i);
+
+        // Se debe agregar los validadores automaticamente
+        if($validators === true){
+
+          $validators = array();
+
+          if(!$field->isAutoIncrement()){
+
+            $type = $field->getType();
+            $len = $field->getLen();
+            
+            if(in_array($type, array('int', 'bit', 'date', 'datetime',
+              'timestamp', 'time', 'year')))
+              $validators[$type] = array();
+
+            if(in_array($type, array('char', 'varchar', 'bit', 'text'))
+              && isset($len))
+              $validators['max_length'] = array('max' => $len);
+
+            if('int' == $type){}
+
+            if('text' == $type){}
+
+            if('float' == $type){
+              $valdiators['float'] = array(
+                'precision' => $field->getPrecision(),
+                'decimals' => $field->getScale()
+              );
+            }
+
+            if($field->isPk() && count($this->getPks()) == 1)
+              $validators['unique'] = array();
+
+            if(empty($validators) && !$field->allowNull())
+              $validators['null'] = array();
+
+          }
+
+        }
+
+        $validatorsResults[$i] = $validators;
+
+      }elseif(isset($this->referencesTo[$i])){
+
+        $r = $this->referencesTo[$i];
+
+        $cols = $r->getColumns();
+        if(count($cols) == 1){
+          $colName = array_keys($cols);
+          $f = $this->getField($colName[0]);
+          if(isset($f) && !$f->allowNull()){
+            $colStr = $cols[$colName[0]];
+            $validatorsResults[$f->getName()] = array(
+              'in_query' => array(
+                'query' => AmScheme::table(
+                  $r->getTable(),
+                  $this->getScheme()->getName()
+                )->all(),
+                'field' => $colStr
+              )
+            );
+          }
+        }
+
+      }elseif(isset($this->uniques[$i])){
+        if(count($cols) > 1){
+          $validatorsResults[$i] = array(
+            'unique' => array('fields' => $cols)
+          );
+        }
+      }
+
+    }
+
+    $this->validators = $validatorsResults;
+
+    var_export($this->validators);
 
   }
 
@@ -646,10 +752,7 @@ class AmTable extends AmObject{
    */
   public function getValidators($name = null){
 
-    if(isset($name))
-      return isset($this->validators->$name)? $this->validators->$name : null;
-
-    return $this->validators;
+    return itemOr($name, $this->validators, $this->validators);
 
   }
 
@@ -661,8 +764,8 @@ class AmTable extends AmObject{
    */
   public function getValidator($name, $validatorName){
 
-    return isset($this->validators->$name[$validatorName])?
-      $this->validators->$name[$validatorName] : null;
+    return isset($this->validators[$name][$validatorName])?
+      $this->validators[$name][$validatorName] : null;
 
   }
 
@@ -673,14 +776,15 @@ class AmTable extends AmObject{
    */
   public function dropValidator($name, $validatorName = null){
 
-    if(isset($this->validators->$name[$validatorName])){
-      // Si esta definido el validator en la posicion especifica se eliminan
-      unset($this->validators->$name[$validatorName]);
+    if(isset($validatorName)){
 
-    }else if(isset($this->validators->$name)){
+      if(isset($this->validators[$name][$validatorName]))
+        // Si esta definido el validator en la posicion especifica se eliminan
+        unset($this->validators[$name][$validatorName]);
+
+    }else if(isset($this->validators[$name]))
       // Sino esta definido los validators para un atributo se eliminan
-      unset($this->validators->$name);
-    }
+      unset($this->validators[$name]);
 
   }
 
@@ -743,19 +847,19 @@ class AmTable extends AmObject{
     $validators = $this->validators;
 
     // Crear array si no ha sido creado
-    if(!isset($validators->$name))
-      $validators->$name = array();
+    if(!isset($validators[$name]))
+      $validators[$name] = array();
 
     // Agregar el validator a la tabla
     if(isset($validatorName)){
-      $validators->$name = array_merge($validators->$name, array(
+      $validators[$name] = array_merge($validators[$name], array(
         $validatorName => $validator
       ));
       return $validator;
     }
 
     // Agregar al final
-    array_push($validators->$name, $validator);
+    array_push($validators[$name], $validator);
 
     return $validator;
 
@@ -793,7 +897,7 @@ class AmTable extends AmObject{
 
       // Validar todos los campos
       foreach($validators as $field => $_)
-        $table->validate($field, $model);
+        $this->validate($field, $model);
 
     }
 
@@ -1230,7 +1334,7 @@ class AmTable extends AmObject{
     $ret = array(); // Para el retorno
 
     // Obtener los campos
-    if(!$this->isSchemeStruct())
+    if($this->autoFields)
       return $model->toArray();
     
     $fields = array_keys($this->getFields());

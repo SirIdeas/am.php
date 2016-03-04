@@ -92,13 +92,13 @@ function isHash(array $arr){
 }
 
 /**
- * Devuelve un array con los valores únicos de la mezcla de dos arrays.
- * @param  array $arr0
- * @param  array $arr2
+ * Devuelve un array con los valores únicos de la mezcla de los arrays recibidos
+ * por parámetro.
  * @return array        
  */
-function merge_unique(array $arr1, array $arr2){
-  return array_unique(array_merge($arr1, $arr2));
+function merge_unique(/* Lista de arrays */){
+  $args = func_get_args();
+  return array_unique(call_user_func_array('array_merge', $args));
 }
 
 /**

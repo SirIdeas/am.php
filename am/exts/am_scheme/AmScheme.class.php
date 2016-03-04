@@ -14,15 +14,6 @@ abstract class AmScheme extends AmObject{
   protected static
 
     /**
-     * Tamaños por defecto par alos tipos de datos con la propiedad len.
-     */
-    $defaultsLen = array(
-      'bit' => 8,
-      'char' => 64,
-      'varchar' => 128,
-    ),
-
-    /**
      * Instancias de los esquemas cargados.
      */
     $schemes = array(),
@@ -1129,9 +1120,9 @@ abstract class AmScheme extends AmObject{
 
   }
 
-  //////////////////////////////////////////////////////////////////////////////
-  // Metodos Abstractos que deben ser definidos en las implementaciones
-  //////////////////////////////////////////////////////////////////////////////
+  public static function getLenByType(){
+
+  }
 
   /**
    * Devuelve la carpeta destino para los modelos base de los esquemas.

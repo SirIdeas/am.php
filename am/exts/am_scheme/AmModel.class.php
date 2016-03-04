@@ -29,6 +29,11 @@ class AmModel extends AmObject{
     $fields = null,
     
     /**
+     * Configuración de los validadores.
+     */
+    $validators = true,
+    
+    /**
      * Indica si los campos estarán basado en los campos del modelo o en los
      * campos de la tabla.
      */
@@ -133,6 +138,9 @@ class AmModel extends AmObject{
 
         // Si los campos son tomados automaticamente del modelo
         'autoFields'   => $this->autoFields,
+
+        // configuración de los validators
+        'validators'   => $this->validators,
 
         // Detalle de la tabla
         'fields'       => $this->fields,

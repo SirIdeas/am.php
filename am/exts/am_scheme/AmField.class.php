@@ -12,6 +12,15 @@
 class AmField extends AmObject{
 
   protected static
+
+    /**
+     * Tamaños por defecto par alos tipos de datos con la propiedad len.
+     */
+    $defaultsLen = array(
+      'bit' => 8,
+      'char' => 64,
+      'varchar' => 128,
+    ),
     
     /**
      * Funciones para obtener el valor segun el tipo de dato
@@ -135,14 +144,17 @@ class AmField extends AmObject{
     }
     
     // Tipo especial id y autoIncrement
-    if(in_array($type, array('id', 'autoIncrement'))){
+    if(in_array($type, array('id', 'autoIncrement')))
       $params['autoIncrement'] = true;
-    }
 
     // Tipo especial id
-    if($type == 'id'){
+    if($type == 'id')
       $params['pk'] = true;
-    }
+
+    // Si es un campo que requiere LEN y no se ha asignado se obtiene el por defecto
+    if(in_array($type, array('bit', 'char', 'varchar')) &&
+      !isset($params['len']))
+      $params['len'] = self::getDefLen($type);
 
     // LLamar al constructor del padre
     parent::__construct($params);
@@ -340,6 +352,10 @@ class AmField extends AmObject{
 
     return $ret;
 
+  }
+
+  public static function getDefLen($type){
+    return itemOr($type, self::$defaultsLen);
   }
 
 }
