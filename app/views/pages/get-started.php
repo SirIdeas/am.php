@@ -15,7 +15,7 @@
 <div>
   <h2 id="basics-events">Eventos básicos</h2>
   <p>
-    Los eventos en Amathista son unidos a los callbacks mediante el método <code><strong>Am::on</strong></code> y disparados mediante el método <code><strong>Am::ring</strong></code>. Los eventos básicos son:
+    Los eventos en Amathista son unidos a los callbacks mediante el método <code><strong>Am::on</strong></code> y disparados mediante el método <code><strong>Am::emit</strong></code>. Los eventos básicos son:
   </p>
   <table class="table striped">
     <thead>
