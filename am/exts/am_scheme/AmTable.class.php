@@ -313,14 +313,15 @@ class AmTable extends AmObject{
 
     // Si contiene configuración de validator entonces se mezclan o asignan
     // a los validadores
-    if(is_array($fieldValidators) && !empty($fieldValidators)){
+    if(is_array($fieldValidators) && !empty($fieldValidators))
 
-      $validators = merge_r_if_are_array_and_snd_first_not_false(
+      $validators = merge_if_both_are_array_and_snd_first_not_false(
         $validators,
         $fieldValidators
       );
-      
-    }
+
+    elseif(is_bool($fieldValidators))
+      $validators = array_fill_keys(array_keys($validators), $fieldValidators);
 
     // Preparar la instanciación de los validadores
     $this->validators[$name] = array();

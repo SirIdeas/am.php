@@ -232,6 +232,32 @@ class AmModel extends AmObject{
   }
 
   /**
+   * Devuelve el valor de un resgistro en un campo.
+   * @param  string $field Nombre del campo.
+   * @return mixed         Valor del registro en el campo.
+   */
+  public function get($field){
+
+    return $this->$field;
+
+  }
+
+  /**
+   * Asignar valores a un campo del reistro.
+   * @param  string  $field Nombre del campo a asignar.
+   * @param  string  $value Valor a asignar.
+   * @param  boolean $isRaw Indica si el valor asigando es un valor puro o no.
+   * @return $this
+   */
+  public function set($field, $value, $isRaw = false){
+
+    $this->$field = $value;
+    $this->rawValues[$field] = $isRaw;
+    return $this;
+
+  }
+
+  /**
    * Devuelve la tabla del modelo.
    * @return AmTable Instancia de la tabla.
    */

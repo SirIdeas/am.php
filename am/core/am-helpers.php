@@ -229,6 +229,22 @@ function merge_if_both_are_array(array $arr1, array $arr2){
 
 }
 
+/**
+ * Devuelve la mezcla de dos array conla funcion merge_if_both_are_array si el
+ * segundo array en la posición 0 ($arr[0]) es diferente de falso, de lo
+ * contrario devuelve el segundo.
+ * array ($arr2).
+ * @param  array $arr1
+ * @param  array $arr2
+ * @return array
+ */
+function merge_if_both_are_array_and_snd_first_not_false(
+  array $arr1, array $arr2){
+  if(isset($arr2[0]) && $arr2[0] === false)
+    return $arr2;
+  return merge_if_both_are_array($arr1, $arr2);
+}
+
 // PENDIENTE: documentar
 // Devuelve la cadena 's' convertida en formato under_score
 function underscore($s) {
