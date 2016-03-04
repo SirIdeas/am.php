@@ -149,18 +149,48 @@ class AmTable extends AmObject{
     $pks = $this->pks? $this->pks : array();
     $pks = is_array($pks)? $pks : array($pks);
 
+    // Si validators === true entonces se esta pidiendo que se generen todos
+    // los validadores
+    if(is_bool($this->validators))
+
+      $this->validators = array_fill_keys(merge_unique(
+        // De campos
+        array_keys($this->fields),
+        // De referencias a otros modelos
+        array_keys($this->referencesTo),
+        // Claves únicas
+        array_keys($this->uniqes)
+
+      ), $this->validators);
+
     // Luego recetearlos para prepararlos
     $this->pks = array();
     $this->fields = array();
 
     // Preparar los campos
-    if(is_array($fields))
-      foreach($fields as $fieldName => $column)
+    if(is_array($fields)){
+      foreach($fields as $name => $options){
+
+        // Opciones
+        $options = array_merge(
+          is_string($options)? array('type' => $options) : $options,
+          array('pk' => in_array($name, $pks))
+        );
+
+        // Configuración de los validadores en el campo
+        $fieldValidators = itemOr('validators', $options, null);
+
+        unset($options['validatos']);
+
         // Agregar instancia del campo
-        $this->addField($fieldName, array_merge(
-          is_string($column)?array('type' => $column) : $column,
-          array('pk' => in_array($fieldName, $pks))
-        ));
+        $this->addField($name, $options); 
+
+        // Construir validadores
+        $this->buildValidatorsTo($name, $fieldValidators);
+
+      }
+    }
+
 
     // Preparar los primary keys.
     if(is_array($pks))
@@ -185,111 +215,142 @@ class AmTable extends AmObject{
       if(!$relation instanceof AmRelation)
         $this->referencesBy[$name] = new AmRelation($relation);
 
-    // Si validators === true entonces se esta pidiendo que se generen todos
-    // los validadores
-    if($this->validators === true)
+    // $allValidators = $<th colspan="" rowspan="" headers="" scope=""></th>is->validators;
 
-      $this->validators = array_fill_keys(merge_unique(
-        // De campos
-        array_keys($this->fields),
-        // De referencias a otros modelos
-        array_keys($this->referencesTo),
-        // Claves únicas
-        array_keys($this->uniqes)
+    // // Preparar instancias de los validadores
+    // foreach ($allValidators as $i => $validators) {
 
-      ), true);
+    //   // Si hay un campo con el mismo nombre
+    //   if($this->hasField($i)){
 
-    // No se deben incluir los validadores
-    elseif($this->validators === false)
-      $this->validators = array();
+    //     continue;
 
-    $validatorsResults = array();
+    //   }elseif(isset($this->referencesTo[$i])){
 
-    // Preparar instancias de los validadores
-    foreach ($this->validators as $i => $validators) {
+    //     $r = $this->referencesTo[$i];
 
-      // Si hay un campo con el mismo nombre
-      if($this->hasField($i)){
+    //     $cols = $r->getColumns();
+    //     if(count($cols) == 1){
+    //       $colName = array_keys($cols);
+    //       $f = $this->getField($colName[0]);
+    //       if(isset($f) && !$f->allowNull()){
+    //         $colStr = $cols[$colName[0]];
+    //         $validatorsResults[$f->getName()] = array(
+    //           'in_query' => array(
+    //             'query' => AmScheme::table(
+    //               $r->getTable(),
+    //               $this->getScheme()->getName()
+    //             )->all(),
+    //             'field' => $colStr
+    //           )
+    //         );
+    //       }
+    //     }
 
-        // Obtener el campo
-        $field = $this->getField($i);
+    //   }elseif(isset($this->uniques[$i])){
+    //     if(count($cols) > 1){
+    //       $validatorsResults[$i] = array(
+    //         'unique' => array('fields' => $cols)
+    //       );
+    //     }
+    //   }
 
-        // Se debe agregar los validadores automaticamente
-        if($validators === true){
+    // }
 
-          $validators = array();
+    // $this->validators = $validatorsResults;
 
-          if(!$field->isAutoIncrement()){
+  }
 
-            $type = $field->getType();
-            $len = $field->getLen();
-            
-            if(in_array($type, array('int', 'bit', 'date', 'datetime',
-              'timestamp', 'time', 'year')))
-              $validators[$type] = array();
+  /**
+   * Construye los validadores para un campo basado en la configuración interna.
+   * @param  string     $name            Nombre del campo a configurar.
+   * @param  array/bool $fieldValidators Array con configuracion obtenida de la 
+   *                                     configuración del campo.
+   */
+  private function buildValidatorsTo($name, $fieldValidators){
 
-            if(in_array($type, array('char', 'varchar', 'bit', 'text'))
-              && isset($len))
-              $validators['max_length'] = array('max' => $len);
+    // Obtener el campo
+    $field = $this->getField($name);
+    $len = $field->getLen();
+    $type = $field->getType();
 
-            if('int' == $type){}
+    // Obtener validators hasta el momento
+    $validators = $this->validators[$name];
 
-            if('text' == $type){}
+    // posee validator entonces se continua con el siguiente campo
+    if($validators === false || $field->isAutoIncrement())
+      return;
 
-            if('float' == $type){
-              $valdiators['float'] = array(
-                'precision' => $field->getPrecision(),
-                'decimals' => $field->getScale()
-              );
-            }
+    // Si es true entonces se definen los valores por defecto
+    if($validators === true){
 
-            if($field->isPk() && count($this->getPks()) == 1)
-              $validators['unique'] = array();
+      $validators = array();
+      
+      // Campos sin parámetros de configuración para los validadores
+      if(in_array($type, array('int', 'bit', 'date', 'datetime',
+        'timestamp', 'time', 'year')))
+        $validators[$type] = true;
 
-            if(empty($validators) && !$field->allowNull())
-              $validators['null'] = array();
+      // Campos con validación de max_len
+      if(in_array($type, array('char', 'varchar', 'bit', 'text'))
+        && isset($len))
+        $validators['max_length'] = true;
 
-          }
-
-        }
-
-        $validatorsResults[$i] = $validators;
-
-      }elseif(isset($this->referencesTo[$i])){
-
-        $r = $this->referencesTo[$i];
-
-        $cols = $r->getColumns();
-        if(count($cols) == 1){
-          $colName = array_keys($cols);
-          $f = $this->getField($colName[0]);
-          if(isset($f) && !$f->allowNull()){
-            $colStr = $cols[$colName[0]];
-            $validatorsResults[$f->getName()] = array(
-              'in_query' => array(
-                'query' => AmScheme::table(
-                  $r->getTable(),
-                  $this->getScheme()->getName()
-                )->all(),
-                'field' => $colStr
-              )
-            );
-          }
-        }
-
-      }elseif(isset($this->uniques[$i])){
-        if(count($cols) > 1){
-          $validatorsResults[$i] = array(
-            'unique' => array('fields' => $cols)
-          );
-        }
+      // Campos para validar la precisión de los nros flotantes
+      if($type === 'float'){
+        $validators['float'] = true;
       }
+
+      // Validadores de la PK no autonimérica
+      if($field->isPk() && count($this->getPks()) == 1)
+        $validators['unique'] = true;
+
+      // Validadores de cmapos no nulos
+      if(empty($validators) && !$field->allowNull())
+        $validators['null'] = true;
 
     }
 
-    $this->validators = $validatorsResults;
+    // Si contiene configuración de validator entonces se mezclan o asignan
+    // a los validadores
+    if(is_array($fieldValidators) && !empty($fieldValidators)){
 
-    var_export($this->validators);
+      $validators = merge_r_if_are_array_and_snd_first_not_false(
+        $validators,
+        $fieldValidators
+      );
+      
+    }
+
+    // Preparar la instanciación de los validadores
+    $this->validators[$name] = array();
+
+    foreach ($validators as $type => $options) {
+
+      if($options === true){
+
+        // Tamaño máximo del campo
+        if($type === 'max_length')
+          $options = array('max' => $field->getLen());
+
+        // Presición de la parte entera y la parte decimal del campo
+        elseif($type === 'float')
+          $options = array(
+            'precision' => $field->getPrecision(),
+            'decimals' => $field->getScale()
+          );
+
+        else
+          $options = array();
+        
+      }
+
+      // Si es una configuración
+      if(is_array($options)){
+        $this->setValidator($name, $type, $options);
+      }
+
+    }
 
   }
 
@@ -844,22 +905,21 @@ class AmTable extends AmObject{
 
     // Asignar el nombre al validator
     $validator->setFieldName($name);
-    $validators = $this->validators;
 
     // Crear array si no ha sido creado
-    if(!isset($validators[$name]))
-      $validators[$name] = array();
+    if(!isset($this->validators[$name]))
+      $this->validators[$name] = array();
 
     // Agregar el validator a la tabla
     if(isset($validatorName)){
-      $validators[$name] = array_merge($validators[$name], array(
+      $this->validators[$name] = array_merge($this->validators[$name], array(
         $validatorName => $validator
       ));
       return $validator;
     }
 
     // Agregar al final
-    array_push($validators[$name], $validator);
+    array_push($this->validators[$name], $validator);
 
     return $validator;
 
@@ -897,7 +957,7 @@ class AmTable extends AmObject{
 
       // Validar todos los campos
       foreach($validators as $field => $_)
-        $this->validate($field, $model);
+        $this->validate($model, $field);
 
     }
 

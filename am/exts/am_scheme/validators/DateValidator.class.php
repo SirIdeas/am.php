@@ -6,24 +6,20 @@
  * 
  */
  
-AmScheme::validator('regex');
-
 /**
  * Validación de campos con formao de fechas simples.
  */
-class DateValidator extends RegexValidator{
+class DateValidator extends AmValidator{
 
   /**
-   * Sobrecarga del constructor par inicializar las propiedades específicas.
-   * @param hash $data Hash de propieades.
+   * Implementación de la validación.
+   * @param  AmModel &$model Model que se validará.
+   * @return bool            Si es válido o no.
    */
-  public function __construct($options = array()){
-
-    // Asignar REGEX para validar fechas simples.
-    $options['regex'] = '/^[0-9]{4}-(0[0-9]?|1[0-2]?)-([012]?[0-9]?|3[01]?)$/';
-
-    // Constructor padre.
-    parent::__construct($options);
+  protected function validate(AmModel &$model){
+    
+    $value = $this->value($model);
+    return !empty($value) && !!strtotime($value.' 00:00:00');
 
   }
 

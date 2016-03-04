@@ -6,9 +6,6 @@
  * 
  */
 
-AmScheme::validator('min_value');
-AmScheme::validator('max_value');
-
 /**
  * Validación del rango de un campo
  */
@@ -108,11 +105,11 @@ class RangeValidator extends AmValidator{
    * @param  int   $value Límite superior.
    * @return $this
    */
-  public function setMax($alue){
+  public function setMax($value){
 
     // Asignar límite a la instancia de validadore correspondiente.
     $this->getMaxValidator()->setMax($value);
-    $this->max = $alue;
+    $this->max = $value;
     return $this;
 
   }

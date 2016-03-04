@@ -6,9 +6,6 @@
  * 
  */
  
-AmScheme::validator('min_length');
-AmScheme::validator('max_length');
-
 /**
  * Validación del tamano minimo y maximo
  */

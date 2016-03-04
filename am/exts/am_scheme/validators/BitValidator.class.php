@@ -6,8 +6,6 @@
  * 
  */
  
-AmScheme::validator('regex');
-
 /**
  * Validación de valores enteros
  */
@@ -20,7 +18,7 @@ class BitValidator extends RegexValidator{
   public function __construct($options = array()){
 
     // Agregar la REGEX para validar binarios.
-    $options['regex'] = '/^[\01]+$/';
+    $options['regex'] = '/^[01]+$/';
 
     // Constructor padre.
     parent::__construct($options);

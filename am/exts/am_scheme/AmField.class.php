@@ -307,6 +307,10 @@ class AmField extends AmObject{
    */
   public function parseValue($value){
 
+    // Si el valor es nulo retornar el miusmo valor.
+    if(!isset($value))
+      return $value;
+
     $fn = self::$parseFuncs[$this->getType()];
     return $fn($value);
     

@@ -6,24 +6,20 @@
  * 
  */
  
-AmScheme::validator('regex');
-
 /**
  * Validación de campos con formato de hora simple.
  */
-class TimeValidator extends RegexValidator{
+class TimeValidator extends AmValidator{
 
   /**
-   * Sobrecarga del constructor par inicializar las propiedades específicas.
-   * @param hash $data Hash de propieades.
+   * Implementación de la validación.
+   * @param  AmModel &$model Model que se validará.
+   * @return bool            Si es válido o no.
    */
-  public function __construct($options = array()){
-
-    // Asignar REGEX para validar enteros.
-    $options['regex'] = '/^([01]?[0-9]|2[0-3]):[0-5][0-9](|:[0-5][0-9])$/';
-
-    // Constructor padre.
-    parent::__construct($options);
+  protected function validate(AmModel &$model){
+    
+    $value = $this->value($model);
+    return !empty($value) && !!strtotime('2000/01/01 '.$value);
 
   }
 

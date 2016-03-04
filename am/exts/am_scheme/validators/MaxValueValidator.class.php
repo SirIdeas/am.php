@@ -6,8 +6,6 @@
  * 
  */
  
-AmScheme::validator('float');
-
 /**
  * Validación del límite superior de un campo.
  */

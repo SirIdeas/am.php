@@ -6,8 +6,6 @@
  * 
  */
  
-AmScheme::validator('range');
-
 /**
  * Validación de años.
  */

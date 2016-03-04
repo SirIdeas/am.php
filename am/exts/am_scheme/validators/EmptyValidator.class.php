@@ -6,8 +6,6 @@
  * 
  */
 
-AmScheme::validator('null');
-
 /**
  * Validación de campos no vacíos.
  */

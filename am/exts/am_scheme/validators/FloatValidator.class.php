@@ -6,8 +6,6 @@
  * 
  */
  
-AmScheme::validator('regex');
-
 /**
  * Validación de valores flotantes
  */
