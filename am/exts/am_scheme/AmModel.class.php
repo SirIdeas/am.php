@@ -24,9 +24,15 @@ class AmModel extends AmObject{
     $tableName = null,
     
     /**
-     * Hahs con las definiciones de los campos.
+     * Hash con las definiciones de los campos.
      */
     $fields = null,
+    
+    /**
+     * Indica si los campos estarán basado en los campos del modelo o en los
+     * campos de la tabla.
+     */
+    $autoFields = false,
     
     /**
      * Nombre del campo para la fecha de creación.
@@ -124,6 +130,9 @@ class AmModel extends AmObject{
         'schemeName'   => $this->schemeName,
         'tableName'    => $this->tableName,
         'model'        => $className,
+
+        // Si los campos son tomados automaticamente del modelo
+        'autoFields'   => $this->autoFields,
 
         // Detalle de la tabla
         'fields'       => $this->fields,

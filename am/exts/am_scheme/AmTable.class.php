@@ -62,9 +62,9 @@ class AmTable extends AmObject{
     $fields = null,
     
     /**
-     * Indica si la tabla cargó la estructura de la BD.
+     * Si los campos son dinámicos.
      */
-    $schemeStruct = false,
+    $autoFields = false,
     
     /**
      * Hash de validadores.
@@ -129,7 +129,7 @@ class AmTable extends AmObject{
 
     // Si se pudo obtener la configuración se mezcla con la recibida
     if($conf)
-      $params = array_merge($conf, $params, array('schemeStruct' => true));
+      $params = array_merge($conf, $params, array('autoFields' => false));
 
     // Aaignar modelo
     $params['scheme'] = $scheme;
@@ -278,17 +278,6 @@ class AmTable extends AmObject{
     return in_array($fieldName, $this->getPks());
     
   }
-
-  /**
-   * Devuelve a la tabla se le cargó la estructura de la BD.
-   * @return bool Si tiene la estructura de la BD.
-   */
-  public function isSchemeStruct(){
-
-    return $this->schemeStruct;
-
-  }
-
 
   /**
    * Devuelve el nombre del motor de la tabla en la BD.
@@ -1126,10 +1115,10 @@ class AmTable extends AmObject{
   public function update(AmModel $model){
 
     // Obtener los campos
-    if($this->isSchemeStruct())
-      $fields = array_keys($this->getFields());
-    else
+    if($this->autoFields)
       $fields = array_keys($model->toArray());
+    else
+      $fields = array_keys($this->getFields());
 
     // Obtener una consulta para selecionar el registro
     $q = $this->querySelectModel($model);

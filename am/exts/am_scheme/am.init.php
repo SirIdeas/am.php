@@ -10,8 +10,10 @@ Am::on('core.loadedClass', function($className){
     // Si se asignó la variable $autoMigrate en true
     if($className::$autoMigrate){
 
+      $table = $className::me();
+      
       // Por los momentos se creará la tabla si no existe
-      $className::me()->create();
+      $table->create();
 
     }
 
