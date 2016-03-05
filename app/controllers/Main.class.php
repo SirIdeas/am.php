@@ -8,19 +8,18 @@ class Main extends AmController{
 
   public function action_model(){
 
-    $this->addHeader('content-type:text/plain');
+    // $this->addHeader('content-type:text/plain');
 
-
-    // var_export(['Am::loadAllClasses()' => Am::loadAllClasses()]);
+    // var_dump(['Am::loadAllClasses()' => Am::loadAllClasses()]);
      
     // ----------------------------------------------------------------------
     // Creación eliminación y generación del modelo
     // $sch = AmScheme::get();
-    // var_export(['$sch->getTables()' => $sch->getTables()]);
-    // var_export(['$sch->generateScheme()' => $sch->generateScheme()]);
-    // var_export(['$sch->getGeneratedModels()' => $sch->getGeneratedModels()]);
-    // var_export(['$sch->drop()' => $sch->drop()]);
-    // var_export(['$sch->create()' => $sch->create()]);
+    // var_dump(['$sch->getTables()' => $sch->getTables()]);
+    // var_dump(['$sch->generateScheme()' => $sch->generateScheme()]);
+    // var_dump(['$sch->getGeneratedModels()' => $sch->getGeneratedModels()]);
+    // var_dump(['$sch->drop()' => $sch->drop()]);
+    // var_dump(['$sch->create()' => $sch->create()]);
 
     //-----------------------------------------------------------------------
     // Crear tabla sin model
@@ -31,32 +30,59 @@ class Main extends AmController{
     //   ->addCreatedAtField()
     //   ->addUpdatedAtField()
     //   ;
-    // var_export(['$tbl->drop()' => $tbl->drop()]);
-    // var_export(['$tbl->create()' => $tbl->create()]);
+    // var_dump(['$tbl->drop()' => $tbl->drop()]);
+    // var_dump(['$tbl->create()' => $tbl->create()]);
     
     //-----------------------------------------------------------------------
     // Crear tabla apartir del modelo
-    var_export(['Person::drop' => Person::drop()]);
-    var_export(['Person::create' => Person::create()]);
-    var_export(['Person::truncate' => Person::truncate()]);
+    // Person::drop();
+    // Person::create();
+    // Person::truncate();
 
     //-----------------------------------------------------------------------
     // Buscar registro en el modelo
-    // $u = Person::find(2);
-    // var_export($u);
+    // $p = Person::find(2);
+    // var_dump($u);
 
     //-----------------------------------------------------------------------
     // Crear usuario
-    $u = new Person;
+    $p = new Person;
+    $p->age = 26;
+    $p->height = 1.80;
+    $p->born_date = '1989/04/04';
+    $p->register_date = '2000/02/02 05:45:02';
+    $p->last_session = '2016/03/03 19:12:45';
+    $p->check_in = null;
+    $p->dni = 'V18667932';
+    $p->name = 'Alex J. Rondon';
+    $p->email = 'arondn2@gmail.com';
+    $p->marriage_year = 1901;
+    $p->set('permissions', "b'1001'", true);
+    $p->children = 3;
+    var_dump(array(
+      // 'drop' => Person::drop(),
+      // 'create' => Person::create(),
+      'save' => $p->save(),
+      // 'errors' => $p->getErrors(),
+      'save' => $p->toArray(),
+      // 'all' => Person::all()->get('array')
+    ));
 
-    $u->name .= 'a';
-    $u->sueldo = 120.0;
+    //-----------------------------------------------------------------------
+    // Depatament
+    $d = new Departament;
+    $d->id_person = $p->id_person;
+    var_dump(array(
+      // 'drop' => Departament::drop(),
+      // 'create' => Departament::create(),
+      'save' => $d->save(),
+      // 'errors' => $d->getErrors(),
+      'save' => $p->toArray(),
+      // 'all' => Departament::all()->get('array')
+    ));
 
-    // var_export($u->save());
-    // var_export($u->toArray());
-    // var_export($u->getErrors());
-    // var_export(Person::all()->get('array'));
-
+    var_dump($d->chief()->row('array'));
+    
   }
 
 }

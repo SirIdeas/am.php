@@ -6,9 +6,8 @@ class Person extends AmModel{
     $autoMigrate = true;
 
   protected
-    $pks = 'id',
     $fields = array(
-      'id' => 'id',
+      'id_person' => 'id',
       'age' => 'int',
       'height' => 'float',
       'born_date' => 'date',
@@ -20,10 +19,18 @@ class Person extends AmModel{
         'len' => 12
       ),
       'name' => 'varchar',
-      'email' => 'varchar',
+      'email' => array(
+        'type' => 'varchar',
+        'validators' => array(
+          'email' => true
+        )
+      ),
       'bio' => 'text',
-      'marriage' => 'year',
-      'permissions' => 'bit',
+      'marriage_year' => 'year',
+      'permissions' => array(
+        'type' => 'bit',
+        'validators' => false,
+      ),
       'children' => 'unsigned',
     );
 
