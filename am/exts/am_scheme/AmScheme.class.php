@@ -811,12 +811,12 @@ abstract class AmScheme extends AmObject{
         $ret[$name] = array(
           'scheme' => $schemeName,
           'table' => $fk['toTable'],
-          'columns' => array()
+          'cols' => array()
         );
       }
 
       // Agregar la columna a la lista de columnas
-      $ret[$name]['columns'][$fk['columnName']] = $fk['toColumn'];
+      $ret[$name]['cols'][$fk['columnName']] = $fk['toColumn'];
 
     }
 
@@ -855,12 +855,12 @@ abstract class AmScheme extends AmObject{
         $ret[$name] = array(
           'scheme' => $schemeName,
           'table' => $fk['fromTable'],
-          'columns' => array()
+          'cols' => array()
         );
       }
 
       // Agregar la columna a la lista de columnas
-      $ret[$name]['columns'][$fk['toColumn']] = $fk['columnName'];
+      $ret[$name]['cols'][$fk['toColumn']] = $fk['columnName'];
 
     }
 
@@ -914,9 +914,9 @@ abstract class AmScheme extends AmObject{
 
       // Detalle de la tabla
       'fields'        => $this->getTableColumns($tableName),
-      'referencesTo'  => $this->getTableForeignKeys($tableName),
-      'referencesBy'  => $this->getTableReferences($tableName),
-      'uniques'       => $this->getTableUniques($tableName),
+      // 'referencesTo'  => $this->getTableForeignKeys($tableName),
+      // 'referencesBy'  => $this->getTableReferences($tableName),
+      // 'uniques'       => $this->getTableUniques($tableName),
 
     )));
 
@@ -1261,7 +1261,8 @@ abstract class AmScheme extends AmObject{
   public static function model($model){
 
     // Si es un modelo nativo
-    if(preg_match('/^:(.*)@(.*)$/', $model, $m) || preg_match('/^:(.*)$/', $model, $m)){
+    if(preg_match('/^:(.*)@(.*)$/', $model, $m) ||
+      preg_match('/^:(.*)$/', $model, $m)){
 
       // Si no se indica la fuente tomar la fuente por defecto
       if(empty($m[2]))

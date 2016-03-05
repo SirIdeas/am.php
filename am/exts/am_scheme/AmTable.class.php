@@ -59,7 +59,7 @@ class AmTable extends AmObject{
     /**
      * Hash de campos.
      */
-    $fields = null,
+    $fields = array(),
     
     /**
      * Si los campos son dinámicos.
@@ -92,14 +92,14 @@ class AmTable extends AmObject{
     $pks = array(),
     
     /**
-     * Hash de referencias a otras tablas.
+     * Definición modelos a los que pertenece el actual.
      */
-    $referencesTo = array(),
+    $belongTo = array(),
     
     /**
-     * Hash de referencias a esta tabla.
+     * Definición modelos que pertenecen al actual.
      */
-    $referencesBy = array(),
+    $hasMany = array(),
     
     /**
      * Array de índices únicos.
@@ -157,7 +157,7 @@ class AmTable extends AmObject{
         // De campos
         array_keys($this->fields),
         // De referencias a otros modelos
-        array_keys($this->referencesTo),
+        array_keys($this->belongTo),
         // Claves únicas
         array_keys($this->uniqes)
 
@@ -191,73 +191,66 @@ class AmTable extends AmObject{
       }
     }
 
-
     // Preparar los primary keys.
     if(is_array($pks))
       foreach($pks as $pk)
         $this->addPk($pk);
       
     // Preparar referencias a
-    if(!is_array($this->referencesTo))
-      $this->referencesTo = array();
+    if(!is_array($this->belongTo))
+      $this->belongTo = array();
 
-    // Preparar referencias a
-    foreach($this->referencesTo as $name => $relation)
-      if(!$relation instanceof AmRelation)
-        $this->referencesTo[$name] = new AmRelation($relation);
+    // Instancia los campos
+    foreach ($this->belongTo as $name => $relation) {
 
-    // Preparar referencias de
-    if(!is_array($this->referencesBy))
-      $this->referencesBy = array();
+      // Se utilizará la configuracoin automática de la relación
+      if(is_string($relation)){
 
-    // Preparar referencias de
-    foreach($this->referencesBy as $name => $relation)
-      if(!$relation instanceof AmRelation)
-        $this->referencesBy[$name] = new AmRelation($relation);
+        // Obtener el modelo de la relación
+        $relation = AmScheme::model($relation); // Obtener la clase modelo
 
-    // $allValidators = $<th colspan="" rowspan="" headers="" scope=""></th>is->validators;
+        // Si el modelo no existe continuar
+        if(!$relation){
+          unset($this->belongTo[$name]);
+          continue;
+        }
 
-    // // Preparar instancias de los validadores
-    // foreach ($allValidators as $i => $validators) {
+        // Obtener tabla y campos PK
+        $table = $relation::me(); // Obtener la tabla
+        $cols = $table->getPks();
+        if(!empty($cols))
+          $cols = array_combine($cols, $cols);
 
-    //   // Si hay un campo con el mismo nombre
-    //   if($this->hasField($i)){
+        // Configuración de la relación
+        $relation = array(
+          'model' => $table->getModel(),
+          'cols' => $cols,
+        );
 
-    //     continue;
+      }
 
-    //   }elseif(isset($this->referencesTo[$i])){
+      // Instanciar relación si aún no se ha instanciado
+      if(!$relation instanceof AmRelation){
+        $this->belongTo[$name] = $relation = new AmRelation($relation);
 
-    //     $r = $this->referencesTo[$i];
+        // Agregar los campos si no existen
+        $cols = $relation->getCols();
+        $table = $relation->getTable();
 
-    //     $cols = $r->getColumns();
-    //     if(count($cols) == 1){
-    //       $colName = array_keys($cols);
-    //       $f = $this->getField($colName[0]);
-    //       if(isset($f) && !$f->allowNull()){
-    //         $colStr = $cols[$colName[0]];
-    //         $validatorsResults[$f->getName()] = array(
-    //           'in_query' => array(
-    //             'query' => AmScheme::table(
-    //               $r->getTable(),
-    //               $this->getScheme()->getName()
-    //             )->all(),
-    //             'field' => $colStr
-    //           )
-    //         );
-    //       }
-    //     }
+        foreach ($cols as $from => $to) {
+          if(!$this->hasField($from)){
+            $field = $table->getField($to)->cp(array(
+              'name' => $from,
+              'pk' => $this->isPk($from),
+              'autoIncrement' => false,
+            ));
+            $this->addField($field);
+          }
+        }
 
-    //   }elseif(isset($this->uniques[$i])){
-    //     if(count($cols) > 1){
-    //       $validatorsResults[$i] = array(
-    //         'unique' => array('fields' => $cols)
-    //       );
-    //     }
-    //   }
+      }
 
-    // }
-
-    // $this->validators = $validatorsResults;
+    }
 
   }
 
@@ -395,14 +388,21 @@ class AmTable extends AmObject{
 
   }
 
-
   /**
    * Devuelve la Hash de referencias a otras tablas.
-   * @return Hash Hash de referencias a otras tablas.
+   * @param  string          $name Nombre de la relación buscada.
+   * @return AmRelation/Hash       La instancia de la relación correspondiente
+   *                               o el hash de todas las relaciones si no se
+   *                               indicó el nombre.
    */
-  public function getReferencesTo(){
+  public function getBelongTo($name = null){
 
-    return $this->referencesTo;
+    // Si no se recibe el nombre entonces entonces se 
+    if(!isset($name))
+      return $this->belongTo;
+
+    // Obtener la relación
+    return itemOr($name, $this->belongTo);
 
   }
   
@@ -1425,14 +1425,14 @@ class AmTable extends AmObject{
       $fields[$offset] = $field->toArray();
 
     // Convertir refencias
-    $referencesTo = array();
-    foreach($this->getReferencesTo() as $offset => $field)
-      $referencesTo[$offset] = $field->toArray();
+    $belongTo = array();
+    foreach($this->getBelongTo() as $offset => $field)
+      $belongTo[$offset] = $field->toArray();
 
-    // Convertir referencias a
-    $referencesBy = array();
-    foreach($this->getReferencesBy() as $offset => $field)
-      $referencesBy[$offset] = $field->toArray();
+    // // Convertir referencias a
+    // $referencesBy = array();
+    // foreach($this->getReferencesBy() as $offset => $field)
+    //   $referencesBy[$offset] = $field->toArray();
 
     // Unir todas las partes
     return array(
@@ -1442,9 +1442,9 @@ class AmTable extends AmObject{
       'collation' => $this->getCollation(),
       'fields' => $fields,
       'pks' => $this->getPks(),
-      'uniques' => $this->getUniques(),
-      'referencesTo' => $referencesTo,
-      'referencesBy' => $referencesBy,
+      'belongTo' => $belongTo,
+      // 'uniques' => $this->getUniques(),
+      // 'referencesBy' => $referencesBy,
     );
 
   }

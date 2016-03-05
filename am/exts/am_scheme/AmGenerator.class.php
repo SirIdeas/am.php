@@ -130,7 +130,7 @@ final class AmGenerator{
     // Add validator of relations
     $validators = array();
     foreach($table->getReferencesTo() as $r){
-      $cols = $r->getColumns();
+      $cols = $r->getCols();
       if(count($cols) == 1){
         $colName = array_keys($cols);
         $f = $table->getField($colName[0]);

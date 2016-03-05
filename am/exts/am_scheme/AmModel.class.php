@@ -42,25 +42,20 @@ class AmModel extends AmObject{
     /**
      * Nombre del campo para la fecha de creación.
      */
-    $createdAtField = false,
+    $createdAtField = true,
     
     /**
      * Nombre del campo para la fecha de actualización.
      */
-    $updatedAtField = false,
+    $updatedAtField = true,
     
     /**
-     * Definición de relaciones a otros modelos.
-     */
-    $hasOne = array(),
-    
-    /**
-     * Definición de relaciones a otros modelos.
+     * Definición modelos a los que pertenece el actual.
      */
     $belongTo = array(),
     
     /**
-     * Definición de relaciones de otros modelos.
+     * Definición modelos que pertenecen al actual.
      */
     $hasMany = array(),
     
@@ -98,7 +93,12 @@ class AmModel extends AmObject{
     /**
      * Cantidad de errores
      */
-    $errorsCount = 0;
+    $errorsCount = 0,
+
+    /**
+     * Hash con las relaciones del modelo.
+     */
+    $relations = array();
 
   /**
    * El constructor se encarga instancia la tabla correspondiente al modelo si
@@ -145,8 +145,8 @@ class AmModel extends AmObject{
         // Detalle de la tabla
         'fields'       => $this->fields,
         'pks'          => $this->pks,
-        'referencesTo' => array_merge($this->hasOne, $this->belongTo),
-        'referencesBy' => $this->hasMany,
+        'belongTo'     => $this->belongTo,
+        'hasMany'      => $this->hasMany,
         'uniques'      => $this->uniques,
 
       ));
@@ -374,18 +374,18 @@ class AmModel extends AmObject{
     // Obtener la tabla
     $table = $this->table;
 
-    // Recorrer cada columan de cada referencia
-    $references = $table->getReferencesTo();
-    foreach($references as $rel){
-      $cols = array_keys($rel->getColumns());
-      foreach($cols as $from){
+    // // Recorrer cada columan de cada referencia
+    // $references = $table->getReferencesTo();
+    // foreach($references as $rel){
+    //   $cols = array_keys($rel->getCols());
+    //   foreach($cols as $from){
 
-        // Las referencias si es un valor vacío se debe setear a null
-        $value = trim(itemOr($from, $values));
-        $values[$from] = empty($value) ? null : $value;
+    //     // Las referencias si es un valor vacío se debe setear a null
+    //     $value = trim(itemOr($from, $values));
+    //     $values[$from] = empty($value) ? null : $value;
 
-      }
-    }
+    //   }
+    // }
 
     // Si no se recibió la lista de campos a asignar, se tomarán
     // todos los campos de la tabla
@@ -474,6 +474,30 @@ class AmModel extends AmObject{
   public function delete(){
 
     return !!$this->table->querySelectModel($this)->delete();
+
+  }
+
+  public function __call($relationName, $arguments){
+
+    $relation = itemOr($relationName, $this->relations);
+
+    // Si no se ha generado una consulta para la relación
+    if(!isset($relation)){
+
+      // Obtener la relación
+      $relation = $this->getTable()->getBelongTo($relationName);
+
+      // Si no existe la relación
+      if(!isset($relation)){
+        return null;
+      }
+
+      $this->relations[$relationName] = $relation;
+
+    }
+
+    // Query para de la relación
+    return $query = $relation->getQuery($this);
 
   }
 

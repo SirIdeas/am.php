@@ -14,54 +14,22 @@ class AmRelation extends AmObject{
   protected
     
     /**
-     * Nombre del esquema al que apunta la relación.
+     * Modelo al que apunta la relación.
      */
-    $scheme = '',
-    
-    /**
-     * Nombre de la tabla a la que apunta la relación.
-     */
-    $table = null,
-    
-    /**
-     * Instancia de la tabla a la que apunta la relación.
-     */
-    $tableInstance = null,
+    $model = '',
     
     /**
      * Hash de columnas relacionadas.
      */
-    $columns = array();
+    $cols = array();
     
   /**
-   * Contructor. Inicializa la tabla.
+   * Devuelve el nombre del model a la que referencia.
+   * @return string Nombre del model.
    */
-  public function __construct($data = null){
-    parent::__construct($data);
-
-    // Obtener la instancia de la tabla
-    $this->tableInstance = AmScheme::table($this->getTable(),
-      $this->getScheme());
-
-  }
+  public function getModel(){
     
-  /**
-   * Devuelve el nombre del esquema a la que referencia.
-   * @return string Nombre del esquema.
-   */
-  public function getScheme(){
-    
-    return $this->scheme;
-
-  }
-
-  /**
-   * Devuelve el nombre de la tabla a la que referencia.
-   * @return string Nombre de la tabla.
-   */
-  public function getTable(){
-    
-    return $this->table;
+    return $this->model;
 
   }
 
@@ -69,9 +37,23 @@ class AmRelation extends AmObject{
    * Devuelve el hash con las columnas relacionadas.
    * @return hash Hash con las columnas relacionadas.
    */
-  public function getColumns(){
+  public function getCols(){
     
-    return $this->columns;
+    return $this->cols;
+
+  }
+    
+  /**
+   * Devuelve el intancia de la tabla a la que apunta la realación.
+   * @return AmTable Instancia de la tabla.
+   */
+  public function getTable(){
+
+    // Obtener el modelo
+    $classModel = $this->model;
+    
+    // Devolver la tabla
+    return $classModel::me();
 
   }
 
@@ -83,14 +65,18 @@ class AmRelation extends AmObject{
    */
   public function getQuery(AmModel $model){
 
-    // Una consulta para todos los registros de la tabla
-    $q = $this->tableInstance->all();
+    // Obtener una consulta con todos los elmentos.
+    $query = $this->getTable()->all();
 
-    foreach($this->getColumns() as $from => $to){
-      $q->where("{$to}='{$model->$from}'");
-    }
+    // Obtener las columnas
+    $cols = $this->getCols();
 
-    return $q;
+    // Agregar condiciones de la relacion
+    foreach($cols as $from => $to)
+      $query->where("{$to}='{$model->$from}'");
+
+    // Devolver query
+    return $query;
 
   }
 
@@ -103,7 +89,7 @@ class AmRelation extends AmObject{
     return array(
       'scheme' => $this->getScheme(),
       'table' => $this->getTable(),
-      'columns' => $this->getColumns()
+      'cols' => $this->getCols()
     );
 
   }
