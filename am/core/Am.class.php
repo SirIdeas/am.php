@@ -762,7 +762,10 @@ final class Am{
 
       }
 
-      self::$requestStr = $request;
+      self::$requestStr = array(
+        'method' => strtoupper($_SERVER['REQUEST_METHOD']),
+        'request' => $request,
+      );
 
     }
 

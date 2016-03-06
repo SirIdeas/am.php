@@ -60,7 +60,7 @@ final class AmRoute{
     $this->route = $route;
 
     // cmpila la ruta
-    list($this->regex, $this->params) = self::compileRoute($route);
+    $this->regex = self::compileRoute($route, $this->params);
 
   }
 
@@ -98,9 +98,11 @@ final class AmRoute{
    *                          obtenia para la ruta, la segunda un array con
    *                          los nombres de los parámetros de la ruta.
    */
-  private static function compileRoute($route){
+  private static function compileRoute($route, array &$params){
 
-    $params = array();
+    // Si la ruta no tiene indicado la regex para obtener se debe añadirle
+    if(!preg_match_all('/^(.+) (.*)$/', $route, $m))
+      $route = '.+ '.trim($route);
 
     // Compila la ruta
     $regex = self::__compileRoute($route, $params);
@@ -109,12 +111,14 @@ final class AmRoute{
     $regex = str_replace('/', '\\/', $regex);
 
     // Si no termina en barra entonces agregarla
-    if(!preg_match('/\/$/', $regex)) $regex = "{$regex}[\/]{0,1}";
+    if(!preg_match('/\/$/', $regex))
+      $regex = "{$regex}[\/]{0,1}";
 
     // Colocar inicio y final para formar regex
     $regex = "/^{$regex}$/";
 
-    return array($regex, $params);
+
+    return $regex;
 
   }
 
@@ -212,8 +216,11 @@ final class AmRoute{
    *                         correspondiente.
    * @return bool            Si se encontró o no una respuesta para la petición.
    */
-  public static function evaluate($request){
-      
+  public static function evaluate(array $request){
+
+    // Obtener string para la consulta.
+    $request = $request['method'].' '.$request['request'];
+
     $response = self::evalMatch($request,
       array('routes' => Am::getProperty('routing', array())),
       Am::getProperty('env', array())
@@ -283,7 +290,11 @@ final class AmRoute{
       }
     }
 
-    // No tiene rutas hijas o ninguna de las rutas hijas atendió la pentición
+    // No tiene rutas hijas o ninguna de las rutas hijas atendió la petición
+    // Se debe verificar si la ruta actual tiene una ruta asignada para 
+    // evaluarla, de lo contrario salir 
+    if(!isset($parent['route']) && !isset($routes['route']))
+      return $lastResponse;
 
     // Si no esta indicada la ruta se toma el indice de la ruta como indice
     $routes['route'] = itemOr('route', $parent, '') .
