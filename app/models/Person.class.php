@@ -5,8 +5,8 @@ class Person extends AmModel{
   public static 
     $autoMigrate = true;
 
-  protected
-    $fields = array(
+  public $sketch = array(
+    'fields' => array(
       'id_person' => 'id',
       'age' => 'int',
       'height' => 'float',
@@ -32,6 +32,10 @@ class Person extends AmModel{
         'validators' => false,
       ),
       'children' => 'unsigned',
-    );
+    ),
+    'hasMany' => array(
+      'departaments' => 'Departament',
+    )
+  );
 
 }

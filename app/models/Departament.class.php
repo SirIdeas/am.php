@@ -5,13 +5,12 @@ class Departament extends AmModel{
   public static 
     $autoMigrate = true;
 
-  protected
-    $fields = array(
+  public $sketch = array(
+    'fields' => array(
       'id_departament' => 'id',
       'name' => 'varchar',
     ),
-
-    $belongTo = array(
+    'belongTo' => array(
       'chief' => 'Person',
       'secretary' => array(
         'model' => 'Person',
@@ -19,7 +18,11 @@ class Departament extends AmModel{
           'secretary_id' => 'id_person'
         )
       )
-    );
+    ),
+    'hasMany' => array(
+      'sections' => 'Section'
+    )
+  );
 
 
 }

@@ -14,11 +14,12 @@ return array(
 
     '/' => 'template => views/pages/index.php',
     '/{view}' => 'template => views/pages/{view}.php',
+    
+    '/model' => 'Main@model',
 
     '/controller/{p1}/{p2}' => 'Index@index2',
     '/main' => 'Main@index',
-    '/model' => 'Main@model',
-    
+
   ),
 
   'controllers' => array(
