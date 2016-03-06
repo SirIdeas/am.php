@@ -125,12 +125,10 @@ final class AmRoute{
   /**
    * Devuelve una regex correspondiente para una ruta dividiendo los párametros
    * y obteniendo el tipo para cada uno.
-   * @param  string   $route  Ruta de la que se desea obtener la regex.
-   * @param  &array   $params Array donde se appilarán los nombres de los
-   *                          parámetros deectados en la ruta.
-   * @return array(2)         Array de dos posiciones. la primera es la regex
-   *                          obtenia para la ruta, la segunda un array con
-   *                          los nombres de los parámetros de la ruta.
+   * @param  string $route   Ruta de la que se desea obtener la regex.
+   * @param  array  &$params Array donde se apilarán los nombres de los
+   *                         parámetros deectados en la ruta.
+   * @return string          La regex obtenia para la ruta.
    */
   private static function __compileRoute($route, array &$params){
 
