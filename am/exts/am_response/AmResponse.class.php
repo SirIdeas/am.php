@@ -24,6 +24,7 @@ class AmResponse extends AmObject{
    * parámetro $data
    */
   public function __construct($data = null){
+    
     // Instancia el objeto de las propiedades
     $this->__p = new AmObject;
 

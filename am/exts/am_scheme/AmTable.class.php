@@ -92,6 +92,11 @@ class AmTable extends AmObject{
     $pks = array(),
     
     /**
+     * Hash con las instancias de las relaciones
+     */
+    $relations = array(),
+    
+    /**
      * Definición modelos a los que pertenece el actual.
      */
     $belongTo = array(),
@@ -200,57 +205,168 @@ class AmTable extends AmObject{
     if(!is_array($this->belongTo))
       $this->belongTo = array();
 
-    // Instancia los campos
-    foreach ($this->belongTo as $name => $relation) {
+    $this->relations = array();
 
-      // Se utilizará la configuracoin automática de la relación
-      if(is_string($relation)){
+    // Crear instancias de las relaciones belongTo
+    foreach ($this->belongTo as $name => $relation)
+      $this->buildBelongTo($name, $relation);
 
-        // Obtener el modelo de la relación
-        $relation = AmScheme::model($relation); // Obtener la clase modelo
+    // Crear instancias de las relaciones hasMany
+    foreach ($this->hasMany as $name => $relation)
+      $this->buildHasMany($name, $relation);
 
-        // Si el modelo no existe continuar
-        if(!$relation){
-          unset($this->belongTo[$name]);
-          continue;
+  }
+
+  /**
+   * Crea una instancia de una relacion belongTo de la tabla.
+   * @param  string       $name     nombre de la relación 
+   * @param  string/array $relation Modelo con el que se relaciona o array con
+   *                                la consfiguración del modelo.
+   * @return $this
+   */
+  protected function buildBelongTo($name, $relation){
+
+    // Si esta definida una relación con el mismo nombre generar un error.
+    if(isset($this->relations[$name]))
+      throw Am::e('AMSCHEME_RELATION_ALREADY_EXISTS', $this->getModel(), $name);
+
+    // Se utilizará la configuracoin automática de la relación
+    if(is_string($relation)){
+
+      // Obtener el modelo de la relación
+      $model = AmScheme::model($relation);
+
+      // Si el modelo no existe continuar
+      if(!$model)
+        throw Am::e('AMSCHEME_MODEL_NOT_EXISTS', $relation);
+
+      // Obtener tabla y campos PK
+      $table = $model::me(); // Obtener la tabla
+      $cols = $table->getPks();
+
+      if(empty($cols))
+        throw Am::e('AMSCHEME_MODEL_DONT_HAVE_PK', $model);
+
+      $cols = array_combine($cols, $cols);
+
+      // Configuración de la relación
+      $this->belongTo[$name] = $relation = array(
+        'model' => $table->getModel(),
+        'cols' => $cols,
+      );
+
+    }
+
+    // Instanciar relación si aún no se ha instanciado
+    if(!$relation instanceof AmRelation){
+      $relation = new AmRelation($relation);
+
+      $this->relations[$name] = array(
+        'type' => 'belongTo',
+        'relation' => $relation,
+      );
+
+      // Agregar los campos si no existen
+      $cols = $relation->getCols();
+      $table = $relation->getTable();
+
+      foreach ($cols as $from => $to) {
+        if(!$this->hasField($from)){
+          $field = $table->getField($to)->cp(array(
+            'name' => $from,
+            'pk' => $this->isPk($from),
+            'autoIncrement' => false,
+          ));
+          $this->addField($field);
         }
-
-        // Obtener tabla y campos PK
-        $table = $relation::me(); // Obtener la tabla
-        $cols = $table->getPks();
-        if(!empty($cols))
-          $cols = array_combine($cols, $cols);
-
-        // Configuración de la relación
-        $relation = array(
-          'model' => $table->getModel(),
-          'cols' => $cols,
-        );
-
-      }
-
-      // Instanciar relación si aún no se ha instanciado
-      if(!$relation instanceof AmRelation){
-        $this->belongTo[$name] = $relation = new AmRelation($relation);
-
-        // Agregar los campos si no existen
-        $cols = $relation->getCols();
-        $table = $relation->getTable();
-
-        foreach ($cols as $from => $to) {
-          if(!$this->hasField($from)){
-            $field = $table->getField($to)->cp(array(
-              'name' => $from,
-              'pk' => $this->isPk($from),
-              'autoIncrement' => false,
-            ));
-            $this->addField($field);
-          }
-        }
-
       }
 
     }
+
+    return $this;
+
+  }
+
+  /**
+   * Crea una instancia de una relacion hasMany de la tabla.
+   * @param  string       $name     nombre de la relación 
+   * @param  string/array $relation Modelo con el que se relaciona o array con
+   *                                la consfiguración del modelo.
+   * @return $this
+   */
+  protected function buildHasMany($name, $relation){
+
+    // Si esta definida una relación con el mismo nombre generar un error.
+    if(isset($this->relations[$name]))
+      throw Am::e('AMSCHEME_RELATION_ALREADY_EXISTS', $this->getModel(), $name);
+
+    // Se utilizará la configuracoin automática de la relación
+    if(is_string($relation)){
+
+      // Obtener el modelo de la relación
+      $model = AmScheme::model($relation);
+
+      // Si el modelo no existe continuar
+      if(!$model)
+        throw Am::e('AMSCHEME_MODEL_NOT_EXISTS', $relation);
+
+      // Obtener tabla y campos PK
+      $cols = $this->getPks();
+
+      if(empty($cols))
+        throw Am::e('AMSCHEME_MODEL_DONT_HAVE_PK', $this->getModel());
+
+      $cols = array_combine($cols, $cols);
+
+      // Configuración de la relación
+      $this->belongTo[$name] = $relation = array(
+        'model' => $model,
+        'cols' => $cols,
+      );
+
+    }
+
+    // Instanciar relación si aún no se ha instanciado
+    if(!$relation instanceof AmRelation){
+      $relation = new AmRelation($relation);
+
+      $this->relations[$name] = array(
+        'type' => 'belongTo',
+        'relation' => $relation,
+      );
+
+      // Agregar los campos si no existen
+      $cols = $relation->getCols();
+      $table = $relation->getTable();
+
+      foreach ($cols as $from => $to) {
+        if(!$this->hasField($from)){
+          $field = $table->getField($to)->cp(array(
+            'name' => $from,
+            'pk' => $this->isPk($from),
+            'autoIncrement' => false,
+          ));
+          $this->addField($field);
+        }
+      }
+
+    }
+
+    return $this;
+
+  }
+
+  /**
+   * Devuelve la instancia de la relación.
+   * @param  string          $name Nombre de la relación buscada.
+   * @return AmRelation/Hash       La instancia de la relación correspondiente.
+   */
+  public function getRelation($name){
+
+    $relation = itemOr($name, $this->relations);
+
+    // Obtener la relación
+    return isset($relation['relation'])? $relation['relation'] : null;
 
   }
 
@@ -385,24 +501,6 @@ class AmTable extends AmObject{
   public function getScheme(){
 
     return $this->scheme;
-
-  }
-
-  /**
-   * Devuelve la Hash de referencias a otras tablas.
-   * @param  string          $name Nombre de la relación buscada.
-   * @return AmRelation/Hash       La instancia de la relación correspondiente
-   *                               o el hash de todas las relaciones si no se
-   *                               indicó el nombre.
-   */
-  public function getBelongTo($name = null){
-
-    // Si no se recibe el nombre entonces entonces se 
-    if(!isset($name))
-      return $this->belongTo;
-
-    // Obtener la relación
-    return itemOr($name, $this->belongTo);
 
   }
   
@@ -1424,17 +1522,6 @@ class AmTable extends AmObject{
     foreach($this->getFields() as $offset => $field)
       $fields[$offset] = $field->toArray();
 
-    // Convertir refencias
-    $belongTo = array();
-    foreach($this->getBelongTo() as $offset => $field)
-      $belongTo[$offset] = $field->toArray();
-
-    // // Convertir referencias a
-    // $referencesBy = array();
-    // foreach($this->getReferencesBy() as $offset => $field)
-    //   $referencesBy[$offset] = $field->toArray();
-
-    // Unir todas las partes
     return array(
       'tableName' => $this->getTableName(),
       'engine' => $this->getEngine(),
@@ -1442,7 +1529,7 @@ class AmTable extends AmObject{
       'collation' => $this->getCollation(),
       'fields' => $fields,
       'pks' => $this->getPks(),
-      'belongTo' => $belongTo,
+      'belongTo' => $this->belongTo,
       // 'uniques' => $this->getUniques(),
       // 'referencesBy' => $referencesBy,
     );

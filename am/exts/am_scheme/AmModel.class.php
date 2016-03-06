@@ -12,93 +12,11 @@
 class AmModel extends AmObject{
 
   protected
-    
-    /**
-     * Nombre del esquema a la que pertenece el modelo.
-     */
-    $schemeName = '',
-    
-    /**
-     * Nombre de la tabla a la que pertenece el modelo.
-     */
-    $tableName = null,
-    
-    /**
-     * Hash con las definiciones de los campos.
-     */
-    $fields = null,
-    
-    /**
-     * Configuración de los validadores.
-     */
-    $validators = true,
-    
-    /**
-     * Indica si los campos estarán basado en los campos del modelo o en los
-     * campos de la tabla.
-     */
-    $autoFields = false,
-    
-    /**
-     * Nombre del campo para la fecha de creación.
-     */
-    $createdAtField = true,
-    
-    /**
-     * Nombre del campo para la fecha de actualización.
-     */
-    $updatedAtField = true,
-    
-    /**
-     * Definición modelos a los que pertenece el actual.
-     */
-    $belongTo = array(),
-    
-    /**
-     * Definición modelos que pertenecen al actual.
-     */
-    $hasMany = array(),
-    
-    /**
-     * Definición de llaves únicas.
-     */
-    $uniques = null,
-    
-    /**
-     * Instancia de la tabla del modelo.
-     */
-    $table = null,
-    
-    /**
-     * Indica si es un registro nuevo.
-     */
-    $isNew = true,
-    
-    /**
-     * Hash de errores.
-     */
-    $errors = array(),
-    
-    /**
-     * Indica que valores de las propiedades de la instancia del objeto son
-     * nativos del BDMS.
-     */
-    $rawValues = array(),
-    
-    /**
-     * Valores reales.
-     */
-    $realValues = array(),
-    
-    /**
-     * Cantidad de errores
-     */
-    $errorsCount = 0,
 
     /**
-     * Hash con las relaciones del modelo.
+     * Propiedades internas del Modelo.
      */
-    $relations = array();
+    $__p = array();
 
   /**
    * El constructor se encarga instancia la tabla correspondiente al modelo si
@@ -108,68 +26,109 @@ class AmModel extends AmObject{
    */
   final public function __construct($params = array(), $isNew = true) {
 
+    // Instancia el objeto de las propiedades internas
+    $this->__p = new AmObject;
+
+    // Inicializar propiedades
+    $this->__p->extend(array_merge(array(
+      // Nombre del esquema a la que pertenece el modelo.
+      'schemeName' => '',
+      // Nombre de la tabla a la que pertenece el modelo.
+      'tableName' => null,
+      // Hash con las definiciones de los campos.
+      'fields' => array(),
+      // Configuración de los validadores.
+      'validators' => true,
+      // Indica si los campos estarán basado en los campos del modelo o en los campos de la tabla.
+      'autoFields' => false,
+      // Nombre del campo para la fecha de creación.
+      'createdAtField' => true,
+      // Nombre del campo para la fecha de actualización.
+      'updatedAtField' => true,
+      // Definición modelos a los que pertenece el actual.
+      'belongTo' => array(),
+      // Definición modelos que pertenecen al actual.
+      'hasMany' => array(),
+      // Definición de llaves únicas.
+      'uniques' => array(),
+      // Instancia de la tabla del modelo.
+      'table' => null,
+      // Indica si es un registro nuevo.
+      'isNew' => true,
+      // Hash de errores.
+      'errors' => array(),
+      // Indica que valores de las propiedades de la instancia del objeto son nativos del BDMS.
+      'rawValues' => array(),
+      // Valores reales.
+      'realValues' => array(),
+      // Cantidad de errores
+      'errorsCount' => 0,
+      // Hash con las relaciones del modelo.
+      'relations' => array(),
+    ), is_array($this->sketch)? $this->sketch : array()));
+
     // Inicializar la tabla si no ha sido inicializada
     $className = get_class($this);
 
     // Obtener la instancia del esquema.
-    $scheme = AmScheme::get($this->schemeName);
+    $scheme = AmScheme::get($this->__p->schemeName);
 
     // Signar si es nuevo.
-    $this->isNew = $isNew;
+    $this->__p->isNew = $isNew;
 
     // Tomar como nombre de la tabla el nombre de la clase del modelo en camel
     // case y plurar según el inlés.
-    if(empty($this->tableName))
-      $this->tableName = pluralize(underscore($className));
+    if(empty($this->__p->tableName))
+      $this->__p->tableName = pluralize(underscore($className));
 
     // Obtener la instancia de la tabla desde el esquema si esta cargada.
-    $this->table = $scheme->getTableInstance($className);
+    $this->__p->table = $scheme->getTableInstance($className);
 
     // Si no esta cargada la tabla
-    if(!$this->table){
+    if(!$this->__p->table){
 
       // Crear instancia anonima de la tabla
-      $this->table = new AmTable(array(
+      $this->__p->table = new AmTable(array(
 
         // Asignar fuente
-        'schemeName'   => $this->schemeName,
-        'tableName'    => $this->tableName,
+        'schemeName'   => $this->__p->schemeName,
+        'tableName'    => $this->__p->tableName,
         'model'        => $className,
 
         // Si los campos son tomados automaticamente del modelo
-        'autoFields'   => $this->autoFields,
+        'autoFields'   => $this->__p->autoFields,
 
         // configuración de los validators
-        'validators'   => $this->validators,
+        'validators'   => $this->__p->validators,
 
         // Detalle de la tabla
-        'fields'       => $this->fields,
-        'pks'          => $this->pks,
-        'belongTo'     => $this->belongTo,
-        'hasMany'      => $this->hasMany,
-        'uniques'      => $this->uniques,
+        'fields'       => $this->__p->fields,
+        'pks'          => $this->__p->pks,
+        'belongTo'     => $this->__p->belongTo,
+        'hasMany'      => $this->__p->hasMany,
+        'uniques'      => $this->__p->uniques,
 
       ));
 
       // Señalar campo createdAt si ha sido señalado.
-      if($this->createdAtField)
-        $this->table->addCreatedAtField(
-          $this->createdAtField===true? null : $this->createdAtField
+      if($this->__p->createdAtField)
+        $this->__p->table->addCreatedAtField(
+          $this->__p->createdAtField===true? null : $this->__p->createdAtField
         );
 
       // Señalar campo updatedAt si ha sido señalado.
-      if($this->updatedAtField)
-        $this->table->addUpdatedAtField(
-          $this->updatedAtField===true? null : $this->updatedAtField
+      if($this->__p->updatedAtField)
+        $this->__p->table->addUpdatedAtField(
+          $this->__p->updatedAtField===true? null : $this->__p->updatedAtField
         );
 
       // Inicializar los validators
-      $this->start($this->table);
+      $this->start($this->__p->table);
       
     }
 
     // Obtener los campos
-    $fields = $this->table->getFields();
+    $fields = $this->__p->table->getFields();
 
     // Por cada campo
     foreach($fields as $fieldName => $field){
@@ -203,7 +162,7 @@ class AmModel extends AmObject{
     $this->clearErrors();
 
     // Tomar valores reales
-    $this->realValues = $this->toArray();
+    $this->__p->realValues = $this->toArray();
 
     // Llamar el metodo init del modelo
     $this->init();
@@ -232,7 +191,7 @@ class AmModel extends AmObject{
   }
 
   /**
-   * Devuelve el valor de un resgistro en un campo.
+   * Devuelve el valor de un registro en un campo.
    * @param  string $field Nombre del campo.
    * @return mixed         Valor del registro en el campo.
    */
@@ -252,7 +211,7 @@ class AmModel extends AmObject{
   public function set($field, $value, $isRaw = false){
 
     $this->$field = $value;
-    $this->rawValues[$field] = $isRaw;
+    $this->__p->rawValues[$field] = $isRaw;
     return $this;
 
   }
@@ -263,7 +222,7 @@ class AmModel extends AmObject{
    */
   public function getTable(){
 
-    return $this->table;
+    return $this->__p->table;
 
   }
 
@@ -273,7 +232,7 @@ class AmModel extends AmObject{
    */
   public function isNew(){
 
-    return $this->isNew;
+    return $this->__p->isNew;
 
   }
   /**
@@ -282,7 +241,7 @@ class AmModel extends AmObject{
    */
   public function getRawValues(){
 
-    return $this->rawValues;
+    return $this->__p->rawValues;
 
   }
 
@@ -292,7 +251,7 @@ class AmModel extends AmObject{
    */
   public function getRealValues(){
 
-    return $this->realValues;
+    return $this->__p->realValues;
 
   }
 
@@ -303,7 +262,7 @@ class AmModel extends AmObject{
    */
   public function getRealValue($name){
 
-    return itemOr($name, $this->realValues);
+    return itemOr($name, $this->__p->realValues);
 
   }
 
@@ -320,22 +279,22 @@ class AmModel extends AmObject{
 
     // Se retorna todo los errores
     if(!isset($field))
-      return $this->errors;
+      return $this->__p->errors;
 
     // Si no existe se crea el array
-    if(!isset($this->errors[$field]))
-      $this->errors[$field] = array();
+    if(!isset($this->__p->errors[$field]))
+      $this->__p->errors[$field] = array();
 
     // Se devuelve el hash de errores del campo consultado
     if(!isset($errorName))
-      return $this->errors[$field];
+      return $this->__p->errors[$field];
 
     // Se devuelve el error especifico del campo consultado
     if(!isset($errorMsg))
-      return $this->errors[$field][$errorName];
+      return $this->__p->errors[$field][$errorName];
 
     // Devolver todos los errores
-    return $this->errors;
+    return $this->__p->errors;
 
   }
 
@@ -344,8 +303,8 @@ class AmModel extends AmObject{
    */
   public function clearErrors(){
 
-    $this->errors = array(); // Resetear los errores
-    $this->errorsCount = 0;  // Resetear la cantidad de errores
+    $this->__p->errors = array(); // Resetear los errores
+    $this->__p->errorsCount = 0;  // Resetear la cantidad de errores
     
   }
 
@@ -358,8 +317,8 @@ class AmModel extends AmObject{
   public function addError($field, $errorName, $errorMsg){
 
     // Se asigna el error
-    $this->errors[$field][$errorName] = $errorMsg;
-    $this->errorsCount++;
+    $this->__p->errors[$field][$errorName] = $errorMsg;
+    $this->__p->errorsCount++;
     return $this;
 
   }
@@ -372,7 +331,7 @@ class AmModel extends AmObject{
   public function setValues(assh $values, array $fields = array()){
 
     // Obtener la tabla
-    $table = $this->table;
+    $table = $this->__p->table;
 
     // // Recorrer cada columan de cada referencia
     // $references = $table->getReferencesTo();
@@ -431,10 +390,10 @@ class AmModel extends AmObject{
 
     // Si se indico un campo
     // Validar solo el campo
-    $this->table->validate($this, $field);
+    $this->__p->table->validate($this, $field);
 
     // Es valido si no se generaron errores
-    return $this->errorsCount === 0;
+    return $this->__p->errorsCount === 0;
 
   }
 
@@ -450,7 +409,7 @@ class AmModel extends AmObject{
   public function save(){
 
     // Obener la tabla
-    $ret = $this->table->save($this);
+    $ret = $this->__p->table->save($this);
 
     // Si retorna false salir.
     if($ret === false)
@@ -458,10 +417,10 @@ class AmModel extends AmObject{
 
     // Se guardó satisfactoriamente
     // Indicar que ya no es registro nuevo
-    $this->isNew = false;
+    $this->__p->isNew = false;
 
     // Los nuevo valores reales del registro serán los guardados
-    $this->realValues = $this->toArray();
+    $this->__p->realValues = $this->toArray();
 
     return true;
 
@@ -473,26 +432,25 @@ class AmModel extends AmObject{
    */
   public function delete(){
 
-    return !!$this->table->querySelectModel($this)->delete();
+    return !!$this->__p->table->querySelectModel($this)->delete();
 
   }
 
   public function __call($relationName, $arguments){
 
-    $relation = itemOr($relationName, $this->relations);
+    $relation = itemOr($relationName, $this->__p->relations);
 
     // Si no se ha generado una consulta para la relación
     if(!isset($relation)){
 
       // Obtener la relación
-      $relation = $this->getTable()->getBelongTo($relationName);
+      $relation = $this->__p->table->getRelation($relationName);
 
       // Si no existe la relación
-      if(!isset($relation)){
+      if(!isset($relation))
         return null;
-      }
 
-      $this->relations[$relationName] = $relation;
+      $this->__p->relations[$relationName] = $relation;
 
     }
 
