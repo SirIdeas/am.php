@@ -126,4 +126,126 @@ class AmRelation extends AmObject{
 
   }
 
+  /**
+   * Permite construir la configuración de una relación.
+   * @param  AmTable     $tbl  Instancia de la tabla a la que se le desea
+   *                           crear la relación.
+   * @param  string      $type Tipo de relación (belongTo, hasMany o 
+   *                           hasManyAndBelongTo).
+   * @param  string      $name Nombre de la relación
+   * @param  string/hash $conf Modelo con el que se está relacionando o hash con
+   *                           la configuración inicial de la relación.
+   * @return hash              Configuración completa
+   */
+  public static function relationConf($tbl, $type, $name, $conf){
+
+    // Si esta definida una relación con el mismo nombre generar un error.
+    if($tbl->getRelation($name))
+      throw Am::e('AMSCHEME_RELATION_ALREADY_EXISTS', $tbl->getModel(), $name);
+
+    // Se utilizará la configuracoin automática de la relación
+    if(is_string($conf))
+      $conf = array('model' => $conf);
+
+    // Obtener el modelo de la relación
+    $model = AmScheme::model($conf['model']);
+
+    // Generar error si el modelo no existe 
+    if(!$model)
+      throw Am::e('AMSCHEME_MODEL_NOT_EXISTS', $conf['model']);
+
+    // Asignar el modelo real
+    $conf['model'] = $model;
+
+    if($type !== 'hasManyAndBelongTo'){
+
+      // Definir columnas si no esta definidas
+      if(!isset($conf['cols'])){
+
+        $formTbl = array(
+          'belongTo' => $model::me(),
+          'hasMany' => $tbl,
+        )[$type];
+
+        // Obtener tabla y campos PK
+        $pks = $formTbl->getPks();
+
+        // Si la clave primaria no tiene campos generar un error.
+        if(empty($pks))
+          throw Am::e('AMSCHEME_MODEL_DONT_HAVE_PK', $formTbl->getModel());
+
+        // Guardar columnas
+        $conf['cols'] = array_combine($pks, $pks);
+
+      }
+
+    }else{
+
+      // Tabla relacionada
+      $refTbl = $model::me();
+
+      // Generar error si el esquema de la tabla actual no es el mismo de la
+      // tabla refrenciada
+      if($tbl->getSchemeName() !== $refTbl->getSchemeName())
+        throw Am::e(
+          'AMSCHEME_HAS_MANY_AND_BELONG_TO_RELATION_DIFFERENT_SCHEMES', $name,
+          $tbl->getModel(),   $tbl->getSchemeName(),
+          $refTbl->getModel(), $refTbl->getSchemeName()
+        );
+
+      // Definir el nombre de la tabla mediante la cual enlaza las clases si no
+      // está definida
+      if(!isset($conf['through'])){
+
+        // Para obtener le nombre de la tabla intermedia
+        $tn1 = $tbl->getTableName();
+        $tn2 = $refTbl->getTableName();
+
+        // Obtener el nombre de la tabla intermedia en la BD
+        if($tn1 < $tn2)     $conf['through'] = "{$tn1}_{$tn2}";
+        elseif($tn1 > $tn2) $conf['through'] = "{$tn2}_{$tn1}";
+        else                $conf['through'] = "{$tn1}_{$tn2}";
+
+      }
+
+      // Definir los joins si no han sido asignados
+      if(!isset($conf['joins'])){
+
+        // Tabla intermedia
+        $through = $conf['through'];
+
+        // Para crear los joins con la tabla intermedia
+        $joins = array();
+        $pks = $refTbl->getPks();
+        foreach($pks as $pk)
+          $joins["{$tn2}.{$pk}"] = "{$through}.{$pk}_{$tn2}";
+
+        // Guardar joins
+        $conf['joins'] = array($through => $joins);
+
+      }
+
+      // Definir columnas si no han sido asignadas
+      if(!isset($conf['cols'])){
+
+        // Para crear relaciones con el modleo actual
+        $pks = $tbl->getPks();
+        if(empty($pks))
+          throw Am::e('AMSCHEME_MODEL_DONT_HAVE_PK', $tbl->getModel());
+
+        $cols = array();
+        foreach($pks as $pk)
+          $cols[$pk] = "{$conf['through']}.{$pk}_{$tn1}";
+
+        // Guardar columnas
+        $conf['cols'] = $cols;
+
+      }
+
+    }
+
+    return $conf;
+    
+  }
+
 }

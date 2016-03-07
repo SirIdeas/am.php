@@ -212,75 +212,36 @@ class AmTable extends AmObject{
 
     $this->relations = array();
 
-    // Crear instancias de las relaciones belongTo
-    foreach ($this->belongTo as $name => $relation)
-      $this->buildBelongTo($name, $relation);
-
     // Crear instancias de las relaciones hasMany
-    foreach ($this->hasMany as $name => $relation)
-      $this->buildHasMany($name, $relation);
+    foreach (array('belongTo', 'hasMany', 'hasManyAndBelongTo') as $type){
 
-    // Crear instancias de las relaciones hasManyAndBelongTo
-    foreach ($this->hasManyAndBelongTo as $name => $relation)
-      $this->buildHasManyAndBelongTo($name, $relation);
+      $confs = array();
+      foreach ($this->$type as $name => $conf){
 
-  }
+        // Preparar la configuración
+        $conf = AmRelation::relationConf($this, $type, $name, $conf);
 
-  /**
-   * Crea una instancia de una relacion belongTo de la tabla.
-   * @param  string       $name     nombre de la relación 
-   * @param  string/array $relation Modelo con el que se relaciona o array con
-   *                                la consfiguración del modelo.
-   * @return $this
-   */
-  protected function buildBelongTo($name, $relation){
+        // Instancia relación
+        $this->relations[$name] = array(
+          'type' => 'belongTo',
+          'relation' => new AmRelation($conf),
+        );
+        
+        // Guardar relación configurada
+        $confs[$name] = $conf;
+        
+      }
 
-    // Si esta definida una relación con el mismo nombre generar un error.
-    if(isset($this->relations[$name]))
-      throw Am::e('AMSCHEME_RELATION_ALREADY_EXISTS', $this->getModel(), $name);
-
-    // Se utilizará la configuracoin automática de la relación
-    if(is_string($relation))
-      $relation = array('model' => $relation);
-
-    // Obtener el modelo de la relación
-    $model = AmScheme::model($relation['model']);
-
-    // Generar error si el modelo no existe 
-    if(!$model)
-      throw Am::e('AMSCHEME_MODEL_NOT_EXISTS', $relation['model']);
-
-    // Asignar el modelo real
-    $relation['model'] = $model;
-
-    // Definir columnas si no esta definidas
-    if(!isset($relation['cols'])){
-
-      // Obtener campos PK
-      $pks = $model::me()->getPks();
-
-      // Si la clave primaria no tiene campos devolver error.
-      if(empty($pks))
-        throw Am::e('AMSCHEME_MODEL_DONT_HAVE_PK', $model);
-
-      // Asignar columnas
-      $relation['cols'] = array_combine($pks, $pks);
+      // Guardar todas las configuraciones
+      $this->$type = $confs;
 
     }
 
-    // Guardar relación configurada
-    $this->belongTo[$name] = $relation;
-
-    // Instanciar relación si aún no se ha instanciado
-    if(!$relation instanceof AmRelation){
-      $relation = new AmRelation($relation);
-
-      $this->relations[$name] = array(
-        'type' => 'belongTo',
-        'relation' => $relation,
-      );
+    // Agregar los campos de las relaciones belongTo si no existen
+    foreach ($this->belongTo as $name => $conf){
 
       // Agregar los campos si no existen
+      $relation = $this->getRelation($name);
       $cols = $relation->getCols();
       $table = $relation->getTable();
 
@@ -297,168 +258,8 @@ class AmTable extends AmObject{
 
     }
 
-    return $this;
-
   }
-
-  /**
-   * Crea una instancia de una relacion hasMany de la tabla.
-   * @param  string       $name     nombre de la relación 
-   * @param  string/array $relation Modelo con el que se relaciona o array con
-   *                                la consfiguración del modelo.
-   * @return $this
-   */
-  protected function buildHasMany($name, $relation){
-
-    // Si esta definida una relación con el mismo nombre generar un error.
-    if(isset($this->relations[$name]))
-      throw Am::e('AMSCHEME_RELATION_ALREADY_EXISTS', $this->getModel(), $name);
-
-    // Se utilizará la configuracoin automática de la relación
-    if(is_string($relation))
-      $relation = array('model' => $relation);
-
-    // Obtener el modelo de la relación
-    $model = AmScheme::model($relation['model']);
-
-    // Generar error si el modelo no existe 
-    if(!$model)
-      throw Am::e('AMSCHEME_MODEL_NOT_EXISTS', $relation['model']);
-
-    // Asignar el modelo real
-    $relation['model'] = $model;
-
-    if(!isset($relation['cols'])){
-
-      // Obtener tabla y campos PK
-      $pks = $this->getPks();
-
-      if(empty($pks))
-        throw Am::e('AMSCHEME_MODEL_DONT_HAVE_PK', $this->getModel());
-
-      // Guardar columnas
-      $relation['cols'] = array_combine($pks, $pks);
-
-    }
-
-    // Guardar relación
-    $this->hasMany[$name] = $relation;
-
-    // Instanciar relación si aún no se ha instanciado
-    if(!$relation instanceof AmRelation){
-      $relation = new AmRelation($relation);
-
-      $this->relations[$name] = array(
-        'type' => 'hasMany',
-        'relation' => $relation,
-      );
-
-    }
-
-    return $this;
-
-  }
-
-  protected function buildHasManyAndBelongTo($name, $relation){
-
-    // Si esta definida una relación con el mismo nombre generar un error.
-    if(isset($this->relations[$name]))
-      throw Am::e('AMSCHEME_RELATION_ALREADY_EXISTS', $this->getModel(), $name);
-
-    // Se utilizará la configuracoin automática de la relación
-    if(is_string($relation))
-      $relation = array('model' => $relation);
-
-    // Obtener el modelo de la relación
-    $model = AmScheme::model($relation['model']);
-
-    // Generar error si el modelo no existe 
-    if(!$model)
-      throw Am::e('AMSCHEME_MODEL_NOT_EXISTS', $relation['model']);
-
-    // Asignar el modelo real
-    $relation['model'] = $model;
-
-    // Tabla relacionada
-    $table = $model::me();
-
-    // Generar error si el esquema de la tabla actual no es el mismo de la
-    // tabla refrenciada
-    if($this->getSchemeName() !== $table->getSchemeName())
-      throw Am::e(
-        'AMSCHEME_HAS_MANY_AND_BELONG_TO_RELATION_DIFFERENT_SCHEMES',
-        $name,
-        $this->getModel(), $this->getSchemeName(),
-        $table->getModel(),
-        $table->getSchemeName());
-
-    // Definir el nombre de la tabla mediante la cual enlaza las clases si no
-    // está definida
-    if(!isset($relation['through'])){
-
-      // Para obtener le nombre de la tabla intermedia
-      $tn1 = $this->getTableName();
-      $tn2 = $table->getTableName();
-
-      // Obtener el nombre de la tabla intermedia en la BD
-      if($tn1 < $tn2)     $relation['through'] = "{$tn1}_{$tn2}";
-      elseif($tn1 > $tn2) $relation['through'] = "{$tn2}_{$tn1}";
-      else                $relation['through'] = "{$tn1}_{$tn2}";
-
-    }
-
-    // Definir los joins si no han sido asignados
-    if(!isset($relation['joins'])){
-
-      // Tabla intermedia
-      $through = $relation['through'];
-
-      // Para crear los joins con la tabla intermedia
-      $joins = array();
-      $pks = $table->getPks();
-      foreach($pks as $pk)
-        $joins["{$tn2}.{$pk}"] = "{$through}.{$pk}_{$tn2}";
-
-      // Guardar joins
-      $relation['joins'] = array($through => $joins);
-
-    }
-
-    // Definir columnas si no han sido asignadas
-    if(!isset($relation['cols'])){
-
-      // Para crear relaciones con el modleo actual
-      $pks = $this->getPks();
-      if(empty($pks))
-        throw Am::e('AMSCHEME_MODEL_DONT_HAVE_PK', $this->getModel());
-
-      $cols = array();
-      foreach($pks as $pk)
-        $cols[$pk] = "{$relation['through']}.{$pk}_{$tn1}";
-
-      // Guardar columnas
-      $relation['cols'] = $cols;
-
-    }
-
-    // Guardar configuración de la relación
-    $this->hasManyAndBelongTo[$name] = $relation;
-
-    // Instanciar relación si aún no se ha instanciado
-    if(!$relation instanceof AmRelation){
-      $relation = new AmRelation($relation);
-
-      $this->relations[$name] = array(
-        'type' => 'hasManyAndBelongTo',
-        'relation' => $relation,
-      );
-
-    }
-
-    return $this;
-
-  }
-
+  
   /**
    * Construye los validadores para un campo basado en la configuración interna.
    * @param  string     $name            Nombre del campo a configurar.
