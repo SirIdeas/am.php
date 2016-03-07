@@ -84,8 +84,8 @@ class Main extends AmController{
 
     //-----------------------------------------------------------------------
     // Seccion
-    $p = Person::find(31);
-    $d = Departament::find(29);
+    // $p = Person::find(31);
+    // $d = Departament::find(29);
     // $s = new Section;
 
     // $s->name = 'seccion';
@@ -104,10 +104,56 @@ class Main extends AmController{
     //   // 'all' => Section::all()->get('array')
     // ));
 
-    var_dump($p->departaments()->get('array'));
-    var_dump($d->chief()->row('array'));
-    var_dump($d->sections()->get('array'));
+    // var_dump($p->departaments()->get('array'));
+    // var_dump($d->chief()->row('array'));
+    // var_dump($d->sections()->get('array'));
     
+    //-----------------------------------------------------------------------
+    // Product
+    // $pp = new Product;
+    // $pp->descripcion = 'producto';
+    // $pp->cant = 10;
+    // var_dump(array(
+    //   // 'drop' => Product::drop(),
+    //   // 'create' => Product::create(),
+    //   'save' => $pp->save(),
+    //   // 'errors' => $pp->getErrors(),
+    //   'array' => $pp->toArray(),
+    //   // 'all' => Product::all()->get('array')
+    // ));
+
+    // $pp->descripcion .= ' '.$pp->id;
+    // $pp->save();
+
+    //-----------------------------------------------------------------------
+    // Invoice
+    // $p = Person::find(31);
+    // $i = new Invoice;
+    // $i->invoice_date = date('c');
+    // $i->id_person = $p->id_person;
+
+    // var_dump(array(
+    //   // 'drop' => Invoice::drop(),
+    //   // 'create' => Invoice::create(),
+    //   'save' => $i->save(),
+    //   // 'errors' => $i->getErrors(),
+    //   'array' => $i->toArray(),
+    //   // 'all' => Invoice::all()->get('array')
+    // ));
+
+    //-----------------------------------------------------------------------
+    // Probar todas las relaciones
+    // $p = Person::find(31);
+    // $d = Departament::find(29);
+    // $pp = Product::find(1);
+    // $i = Invoice::find(1);
+
+    // var_dump($p->departaments()->get('array'));
+    // var_dump($d->chief()->row('array'));
+    // var_dump($d->sections()->get('array'));
+    // var_dump($pp->invoices()->get('array'));
+    // var_dump($i->products()->get('array'));
+
   }
 
 }

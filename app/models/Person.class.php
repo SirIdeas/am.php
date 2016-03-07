@@ -35,6 +35,7 @@ class Person extends AmModel{
     ),
     'hasMany' => array(
       'departaments' => 'Departament',
+      'invoices' => 'Invoice',
     )
   );
 
