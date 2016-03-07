@@ -22,6 +22,11 @@ class AmRelation extends AmObject{
      * Joins de la relación
      */
     $joins = array(),
+
+    /**
+     * Campos extras a selecionar
+     */
+    $select = array(),
     
     /**
      * Hash de columnas relacionadas.
@@ -90,6 +95,10 @@ class AmRelation extends AmObject{
     $query = $table->all($tableName)
       ->select("{$tableName}.*");
 
+    // Agregar campos extras a selecionar
+    foreach ($this->select as $as => $field)
+      $query->selectAs($field, $as);
+
     // Obtener las columnas
     $cols = $this->getCols();
 
@@ -106,6 +115,8 @@ class AmRelation extends AmObject{
     // Agregar condiciones de la relacion
     foreach($cols as $from => $to)
       $query->where("{$to}='{$model->$from}'");
+
+    var_dump($query->sql());
 
     // Devolver query
     return $query;
@@ -189,17 +200,17 @@ class AmRelation extends AmObject{
       if($tbl->getSchemeName() !== $refTbl->getSchemeName())
         throw Am::e(
           'AMSCHEME_HAS_MANY_AND_BELONG_TO_RELATION_DIFFERENT_SCHEMES', $name,
-          $tbl->getModel(),   $tbl->getSchemeName(),
+          $tbl->getModel(),    $tbl->getSchemeName(),
           $refTbl->getModel(), $refTbl->getSchemeName()
         );
+
+      // Para obtener le nombre de la tabla intermedia
+      $tn1 = $tbl->getTableName();
+      $tn2 = $refTbl->getTableName();
 
       // Definir el nombre de la tabla mediante la cual enlaza las clases si no
       // está definida
       if(!isset($conf['through'])){
-
-        // Para obtener le nombre de la tabla intermedia
-        $tn1 = $tbl->getTableName();
-        $tn2 = $refTbl->getTableName();
 
         // Obtener el nombre de la tabla intermedia en la BD
         if($tn1 < $tn2)     $conf['through'] = "{$tn1}_{$tn2}";
@@ -211,19 +222,23 @@ class AmRelation extends AmObject{
       // Definir los joins si no han sido asignados
       if(!isset($conf['joins'])){
 
-        // Tabla intermedia
-        $through = $conf['through'];
-
         // Para crear los joins con la tabla intermedia
         $joins = array();
         $pks = $refTbl->getPks();
         foreach($pks as $pk)
-          $joins["{$tn2}.{$pk}"] = "{$through}.{$pk}_{$tn2}";
+          $joins["{$tn2}.{$pk}"] = "{$conf['through']}.{$pk}_{$tn2}";
 
         // Guardar joins
-        $conf['joins'] = array($through => $joins);
+        $conf['joins'] = array($conf['through'] => $joins);
 
       }
+
+      // Si el select no es un array entonces se debe generar un error
+      if(isset($conf['select']) && !is_array($conf['select']))
+        throw Am::e(
+          'AMSCHEME_HAS_MANY_AND_BELONG_TO_RELATION_SELECT_PARAM_MAY_BE_ARRAY',
+          $name, $tbl->getModel()
+        );
 
       // Definir columnas si no han sido asignadas
       if(!isset($conf['cols'])){
