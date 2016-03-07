@@ -17,6 +17,11 @@ class AmRelation extends AmObject{
      * Modelo al que apunta la relación.
      */
     $model = '',
+
+    /**
+     * Joins de la relación
+     */
+    $joins = array(),
     
     /**
      * Hash de columnas relacionadas.
@@ -42,6 +47,16 @@ class AmRelation extends AmObject{
     return $this->cols;
 
   }
+
+  /**
+   * Devuelve el hash con las relaciones extras.
+   * @return hash Hash con las relaciones extras.
+   */
+  public function getJoins(){
+    
+    return $this->joins;
+
+  }
     
   /**
    * Devuelve el intancia de la tabla a la que apunta la realación.
@@ -65,11 +80,28 @@ class AmRelation extends AmObject{
    */
   public function getQuery(AmModel $model){
 
+    // Obtener la tabla
+    $table = $this->getTable();
+
+    // Obtener el nombre de la tabla.
+    $tableName = $table->getTableName();
+
     // Obtener una consulta con todos los elmentos.
-    $query = $this->getTable()->all();
+    $query = $table->all($tableName)
+      ->select("{$tableName}.*");
 
     // Obtener las columnas
     $cols = $this->getCols();
+
+    // Obtener las joins
+    $joins = $this->getJoins();
+
+    foreach ($joins as $refTableName => $on) {
+      foreach ($on as $from => $to) {
+        $on[$from] = "{$from}={$to}";
+      }
+      $query->innerJoin($refTableName, implode('-', $on), $refTableName);
+    }
 
     // Agregar condiciones de la relacion
     foreach($cols as $from => $to)
@@ -87,9 +119,9 @@ class AmRelation extends AmObject{
   public function toArray(){
 
     return array(
-      'scheme' => $this->getScheme(),
-      'table' => $this->getTable(),
-      'cols' => $this->getCols()
+      'model' => $this->model,
+      'cols' => $this->cols,
+      'joins' => $this->joins,
     );
 
   }

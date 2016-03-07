@@ -45,10 +45,12 @@ class AmModel extends AmObject{
       'createdAtField' => true,
       // Nombre del campo para la fecha de actualización.
       'updatedAtField' => true,
-      // Definición modelos a los que pertenece el actual.
+      // Definición relaciones belongTo.
       'belongTo' => array(),
-      // Definición modelos que pertenecen al actual.
+      // Definición relaciones hasMany.
       'hasMany' => array(),
+      // Definición relaciones hasManyAndBelongTo.
+      'hasManyAndBelongTo' => array(),
       // Definición de llaves únicas.
       'uniques' => array(),
       // Instancia de la tabla del modelo.
@@ -91,22 +93,23 @@ class AmModel extends AmObject{
       $this->__p->table = new AmTable(array(
 
         // Asignar fuente
-        'schemeName'   => $this->__p->schemeName,
-        'tableName'    => $this->__p->tableName,
-        'model'        => $className,
+        'schemeName'         => $this->__p->schemeName,
+        'tableName'          => $this->__p->tableName,
+        'model'              => $className,
 
         // Si los campos son tomados automaticamente del modelo
-        'autoFields'   => $this->__p->autoFields,
+        'autoFields'         => $this->__p->autoFields,
 
         // configuración de los validators
-        'validators'   => $this->__p->validators,
+        'validators'         => $this->__p->validators,
 
         // Detalle de la tabla
-        'fields'       => $this->__p->fields,
-        'pks'          => $this->__p->pks,
-        'belongTo'     => $this->__p->belongTo,
-        'hasMany'      => $this->__p->hasMany,
-        'uniques'      => $this->__p->uniques,
+        'fields'             => $this->__p->fields,
+        'pks'                => $this->__p->pks,
+        'belongTo'           => $this->__p->belongTo,
+        'hasMany'            => $this->__p->hasMany,
+        'hasManyAndBelongTo' => $this->__p->hasManyAndBelongTo,
+        'uniques'            => $this->__p->uniques,
 
       ));
 
@@ -455,7 +458,7 @@ class AmModel extends AmObject{
     }
 
     // Query para de la relación
-    return $query = $relation->getQuery($this);
+    return $relation->getQuery($this);
 
   }
 
