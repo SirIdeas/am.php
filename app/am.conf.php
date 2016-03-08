@@ -6,7 +6,7 @@ return array(
     'siteName' => 'Amathista | PHP Framework',
   ),
 
-  'autoload' => array(
+  'requires' => array(
     'helpers/sync.helpers',
   ),
 
