@@ -116,8 +116,6 @@ class AmRelation extends AmObject{
     foreach($cols as $from => $to)
       $query->where("{$to}='{$model->$from}'");
 
-    var_dump($query->sql());
-
     // Devolver query
     return $query;
 

@@ -12,8 +12,8 @@ return array(
    * Directorios de clases.
    */
   'autoload' => array(
-    'validators/',
-    'drivers/',
+    'validators' => false,
+    'drivers' => false,
   ),
 
   /**
@@ -23,8 +23,8 @@ return array(
 
     // Agregar directorios donde buscar clases
     'autoload' => array(
-      'schemes',
-      'models',
+      'schemes' => true,
+      'models' => true,
     ),
 
     // Directorios de los modelos.

@@ -30,7 +30,7 @@ return array(
 
     // Agregar directorios donde buscar clases
     'autoload' => array(
-      'controllers'
+      'controllers' => true,
     ),
 
     // Configuración inicial de los controladores

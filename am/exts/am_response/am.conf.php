@@ -12,7 +12,7 @@ return array(
    * Directorios de clases.
    */
   'autoload' => array(
-    'types/',
+    'types' => false,
   ),
 
   /**

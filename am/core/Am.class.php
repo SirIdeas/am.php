@@ -86,7 +86,7 @@ final class Am{
      * Definición de callbacks a utilizar para mezclar atributos.
      */
     $mergeFunctions = array(
-      'autoload' => 'merge_unique',
+      'autoload' => 'array_merge',
       'requires' => 'merge_if_snd_first_not_false',
       'env' => 'merge_if_both_are_array',
       'tasks' => 'array_merge_recursive',
@@ -200,13 +200,15 @@ final class Am{
   /**
    * Agrega los paths de las clases en el directio a hash de path de clases.
    * Las clases son identificadas como archivos con extensión .class.php.
-   * @param string/array $dir Directorio o listado de directosio a verificar.
+   * @param string/array $dir       Directorio o listado de directosio a
+   *                                verificar.
+   * @param bool         $recursive Si se busca en directorios internos
    */
-  public static function loadPathClases($dir){
+  public static function loadPathClases($dir, $recursive = false){
 
     // Obtener los paths de las clases en el directorios.
     $classes = amGlobFiles($dir, array(
-      'recursive' => false,
+      'recursive' => $recursive,
       'include' => '/(.*)\.class\.php$/',
       'return' => 1
     ));
@@ -941,17 +943,19 @@ final class Am{
         $autoload = itemOr('autoload', $conf, array());
 
         // Agregar el directorios raíz
-        $autoload[] = '';
+        $autoload = array_merge(array('' => false), $autoload);
 
-        foreach ($autoload as $path) {
+        foreach ($autoload as $path => $recursive) {
           
           // Si es un archivo existente cargarlo.
           if(is_file($realFile = "{$dirbase}/{$path}"))
             require_once $realFile;
 
           // Cargar paths de clases en el directorio si existe.
-          elseif(is_dir($dir = realpath("{$dirbase}/{$path}")))
-            self::loadPathClases($dir);
+          elseif(is_dir($dir = realpath("{$dirbase}/{$path}"))){
+
+            self::loadPathClases($dir, $recursive);
+          }
 
         }
 
@@ -1346,7 +1350,7 @@ final class Am{
     // la app.
     $autoload = self::getProperty('autoload', array());
 
-    foreach ($autoload as $path) {
+    foreach ($autoload as $path => $recursive) {
 
       // Obtener nombre físico del archivo.
       $file = realpath($path);
@@ -1357,7 +1361,8 @@ final class Am{
       
       // Cargar paths de clases en el directorio si existe.
       elseif(is_dir($file))
-        self::loadPathClases($file);
+
+        self::loadPathClases($file, $recursive);
 
       else{
 
