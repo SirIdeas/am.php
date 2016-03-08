@@ -9,7 +9,7 @@
 /**
  * Validación del tamano minimo y maximo
  */
-class LengthValidator extends AmValidator{
+class LenValidator extends AmValidator{
 
   protected
     /**
@@ -43,8 +43,8 @@ class LengthValidator extends AmValidator{
     $this->setSustitutions('min', 'min');
 
     // Instancia los validadores de los límites.
-    $this->minValidator = new MinLengthValidator($options);
-    $this->maxValidator = new MaxLengthValidator($options);
+    $this->minValidator = new MinLenValidator($options);
+    $this->maxValidator = new MaxLenValidator($options);
 
     // Constructor padre.
     parent::__construct($options);

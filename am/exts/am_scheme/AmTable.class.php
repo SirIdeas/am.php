@@ -293,7 +293,7 @@ class AmTable extends AmObject{
       // Campos con validación de max_len
       if(in_array($type, array('char', 'varchar', 'bit', 'text'))
         && isset($len))
-        $validators['max_length'] = true;
+        $validators['max_len'] = true;
 
       // Campos para validar la precisión de los nros flotantes
       if($type === 'float'){
@@ -330,7 +330,7 @@ class AmTable extends AmObject{
       if($options === true){
 
         // Tamaño máximo del campo
-        if($type === 'max_length')
+        if($type === 'max_len')
           $options = array('max' => $field->getLen());
 
         // Presición de la parte entera y la parte decimal del campo

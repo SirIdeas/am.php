@@ -9,7 +9,7 @@
 /**
  * Validación del tamano máximo de un campo
  */
-class MaxLengthValidator extends AmValidator{
+class MaxLenValidator extends AmValidator{
 
   protected
 

@@ -9,7 +9,7 @@
 /**
  * Validación del tamano minimo de un campo
  */
-class MinLengthValidator extends AmValidator{
+class MinLenValidator extends AmValidator{
 
   protected
 
