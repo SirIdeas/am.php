@@ -230,7 +230,7 @@ class AmValidator extends AmObject{
     $fnIf = $this->getFnIf();
     $fnIfExists = method_exists($model, $fnIf);
     $field = $model->getTable()->getField($this->getFieldName());
-    $allowNull = $field? $field->allowNull() : true;
+    $allowNull = $field? $field->allowNull() : false;
     $value = $this->value($model);
     $force = $this->getForce();
 

@@ -84,6 +84,11 @@ class AmField extends AmObject{
     $len = null,
 
     /**
+     * Bool que indica si un campo único.
+     */
+    $unique = false,
+
+    /**
      * String con el set de charset.
      */
     $charset = null,
@@ -155,6 +160,10 @@ class AmField extends AmObject{
     if(in_array($type, array('bit', 'char', 'varchar')) &&
       !isset($params['len']))
       $params['len'] = self::getDefLen($type);
+
+    // Si es una clave primaria no puede permitir valores nulos
+    if(itemOr('pk', $params))
+      $params['allowNull'] = false;
 
     // LLamar al constructor del padre
     parent::__construct($params);
@@ -268,6 +277,16 @@ class AmField extends AmObject{
   public function isPk(){
 
     return $this->pk;
+
+  }
+
+  /**
+   * Devuelve si es un campo unico.
+   * @return bool Si es un campo único.
+   */
+  public function isUnique(){
+
+    return $this->unique;
 
   }
 

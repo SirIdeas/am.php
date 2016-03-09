@@ -181,11 +181,12 @@ class AmTable extends AmObject{
     if(is_array($fields)){
       foreach($fields as $name => $options){
 
+        // Si es un string entonces representa el tipo del cmapo
+        if(is_string($options))
+          $options = array('type' => $options);
+
         // Opciones
-        $options = array_merge(
-          is_string($options)? array('type' => $options) : $options,
-          array('pk' => in_array($name, $pks))
-        );
+        $options = array_merge(array('pk' => in_array($name, $pks)), $options);
 
         // Configuración de los validadores en el campo
         $fieldValidators = itemOr('validators', $options, null);
@@ -205,6 +206,27 @@ class AmTable extends AmObject{
     if(is_array($pks))
       foreach($pks as $pk)
         $this->addPk($pk);
+
+    // Agrega validador unique del primary key de la tabla.
+    $this->setValidator('_pk_', 'unique', array(
+      'fields' => $this->pks
+    ));
+
+    // Crear validadores de restriciones únicas.
+    foreach ($this->uniques as $name => $options) {
+
+      // Si es false no se crea el validador
+      if($options === false)
+        continue;
+
+      // Si es tru se crea el validador con un único campo
+      if($options === true)
+        $options = array('fields' => array($name));
+
+      // Agrega validador unique del primary key de la tabla.
+      $this->setValidator($name, 'unique', $options);
+
+    }
       
     // Preparar referencias a
     if(!is_array($this->belongTo))
@@ -280,6 +302,12 @@ class AmTable extends AmObject{
     if($validators === false || $field->isAutoIncrement())
       return;
 
+    // Si contiene configuración de validator entonces se mezclan o asignan
+    // a los validadores
+    if(is_array($fieldValidators) && !empty($fieldValidators))
+
+      $validators = $fieldValidators;
+
     // Si es true entonces se definen los valores por defecto
     if($validators === true){
 
@@ -288,39 +316,29 @@ class AmTable extends AmObject{
       // Campos sin parámetros de configuración para los validadores
       if(in_array($type, array('int', 'bit', 'date', 'datetime',
         'timestamp', 'time', 'year')))
-        $validators[$type] = true;
+        $validators[] = $type;
 
       // Campos con validación de max_len
       if(in_array($type, array('char', 'varchar', 'bit', 'text'))
         && isset($len))
-        $validators['max_len'] = true;
+        $validators[] = 'max_len';
 
       // Campos para validar la precisión de los nros flotantes
-      if($type === 'float'){
-        $validators['float'] = true;
-      }
+      if($type === 'float')
+        $validators[] = 'float';
 
-      // Validadores de la PK no autonimérica
-      if($field->isPk() && count($this->getPks()) == 1)
-        $validators['unique'] = true;
+      // Validadores de campos no nulos
+      if(!$field->allowNull())
+        $validators[] = 'null';
 
-      // Validadores de cmapos no nulos
-      if(empty($validators) && !$field->allowNull())
-        $validators['null'] = true;
+      // Validadores de campos no nulos
+      if($field->isUnique())
+        $validators[] = 'unique';
 
     }
 
-    // Si contiene configuración de validator entonces se mezclan o asignan
-    // a los validadores
-    if(is_array($fieldValidators) && !empty($fieldValidators))
-
-      $validators = merge_if_both_are_array_and_snd_first_not_false(
-        $validators,
-        $fieldValidators
-      );
-
-    elseif(is_bool($fieldValidators))
-      $validators = array_fill_keys(array_keys($validators), $fieldValidators);
+    $validators = array_fill_keys($validators,
+      is_bool($fieldValidators)? $fieldValidators: true);
 
     // Preparar la instanciación de los validadores
     $this->validators[$name] = array();
@@ -943,11 +961,13 @@ class AmTable extends AmObject{
       // sine valuar
       if(is_array($validators))
 
-        foreach($validators as $name => $validator)
+        foreach($validators as $name => $validator){
+
           // Si el modelo no cumple con la validacion
           if(!$validator->isValid($model))
             // Se agrega el error
             $model->addError($field, $name, $validator->getMessage($model));
+        }
 
     }else{
 
@@ -1435,7 +1455,7 @@ class AmTable extends AmObject{
       'belongTo' => $this->belongTo,
       'hasMany' => $this->hasMany,
       'hasManyAndBelongTo' => $this->hasManyAndBelongTo,
-      // 'uniques' => $this->getUniques(),
+      'uniques' => $this->uniques,
     );
 
   }
