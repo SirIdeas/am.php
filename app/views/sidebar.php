@@ -51,7 +51,7 @@
           <li><a href="(:/:)/classes/AmObject">AmObject</a></li>
           <li><a href="(:/:)/classes/AmQuery">AmQuery</a></li>
           <li><a href="(:/:)/classes/AmRedirectResponse">AmRedirectResponse</a></li>
-          <li><a href="(:/:)/classes/AmRelation">AmRelation</a></li>
+          <li><a href="(:/:)/classes/AmForeignKey">AmForeignKey</a></li>
           <li><a href="(:/:)/classes/AmResponse">AmResponse</a></li>
           <li><a href="(:/:)/classes/AmRoute">AmRoute</a></li>
           <li><a href="(:/:)/classes/AmScheme">AmScheme</a></li>
@@ -70,10 +70,10 @@
           <li><a href="(:/:)/classes/InQueryValidator">InQueryValidator</a></li>
           <li><a href="(:/:)/classes/IntValidator">IntValidator</a></li>
           <li><a href="(:/:)/classes/InValidator">InValidator</a></li>
-          <li><a href="(:/:)/classes/LengthValidator">LengthValidator</a></li>
-          <li><a href="(:/:)/classes/MaxLengthValidator">MaxLengthValidator</a></li>
+          <li><a href="(:/:)/classes/LenValidator">LenValidator</a></li>
+          <li><a href="(:/:)/classes/MaxLenValidator">MaxLenValidator</a></li>
           <li><a href="(:/:)/classes/MaxValueValidator">MaxValueValidator</a></li>
-          <li><a href="(:/:)/classes/MinLengthValidator">MinLengthValidator</a></li>
+          <li><a href="(:/:)/classes/MinLenValidator">MinLenValidator</a></li>
           <li><a href="(:/:)/classes/MinValueValidator">MinValueValidator</a></li>
           <li><a href="(:/:)/classes/NullValidator">NullValidator</a></li>
           <li><a href="(:/:)/classes/PhoneValidator">PhoneValidator</a></li>

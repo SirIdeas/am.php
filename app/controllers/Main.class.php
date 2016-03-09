@@ -141,18 +141,55 @@ class Main extends AmController{
     //   // 'all' => Invoice::all()->get('array')
     // ));
 
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
     // Probar todas las relaciones
     // $p = Person::find(31);
     // $d = Departament::find(29);
     // $pp = Product::find(1);
     // $i = Invoice::find(1);
 
-    // var_dump($p->departaments()->get('array'));
-    // var_dump($d->chief()->row('array'));
-    // var_dump($d->sections()->get('array'));
-    // var_dump($pp->invoices()->get('array'));
-    // var_dump($i->products()->get('array'));
+    // var_dump([
+    //     'departaments' => $p->departaments(),
+    //     'chief' => $d->chief(),
+    //     'sections' => $d->sections(),
+    //     'invoices' => $pp->invoices(),
+    //     'products' => $i->products(),
+    // ]);
+    
+    //-----------------------------------------------------------------------
+    // Probar validadores Uniques
+    // $ppp = new Persona;
+
+    // $ppp->ci = 'V1866792';
+    // $ppp->nombre = 'alex22';
+    // $ppp->email = 'alex2@sirideas.com';
+    // // var_dump(Persona::me()->getValidators('nombre_email'));
+    // // exit;
+    // var_dump(array(
+    //   // 'drop' => Persona::drop(),
+    //   // 'create' => Persona::create(),
+    //   'save' => $ppp->isValid(),
+    //   'errors' => $ppp->getErrors(),
+    //   'array' => $ppp->toArray(),
+    // ));
+    
+    //-----------------------------------------------------------------------
+    // Asignar valor a relacion belongTo
+    $p = Person::find(30);
+
+    $d = Departament::find(29);
+    var_dump([
+      $d->toArray(),
+      $d->chief(null)->save(),
+      $d->toArray(),
+    ]);
+    
+    $d = Departament::find(29);
+    var_dump([
+      $d->toArray(),
+      $d->chief($p)->save(),
+      $d->toArray(),
+    ]);
 
   }
 
