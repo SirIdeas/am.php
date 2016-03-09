@@ -439,6 +439,13 @@ class AmModel extends AmObject{
 
   }
 
+  /**
+   * Los métodos no definidos son tratados como relaciones. Para esto se
+   * sobreescribe el método __call.
+   * @param  string $relationName [description]
+   * @param  array $arguments    [description]
+   * @return Instancia de la
+   */
   public function __call($relationName, $arguments){
 
     $relation = itemOr($relationName, $this->__p->relations);
@@ -453,7 +460,7 @@ class AmModel extends AmObject{
       if(!isset($relation))
         return null;
 
-      $this->__p->relations[$relationName] = $relation;
+      $this->__p->relations[$relationName] = $relation->createRelation;
 
     }
 

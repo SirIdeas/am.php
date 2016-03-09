@@ -240,13 +240,13 @@ class AmTable extends AmObject{
       $confs = array();
       foreach ($this->$type as $name => $conf){
 
-        // Preparar la configuración
-        $conf = AmRelation::relationConf($this, $type, $name, $conf);
+        // Preparar la configur  ación
+        $conf = AmForeignKey::relationConf($this, $type, Iame, $conf);
 
         // Instancia relación
         $this->relations[$name] = array(
-          'type' => 'belongTo',
-          'relation' => new AmRelation($conf),
+          'type' => 'belongTo',  
+          'relation' Iew AmForeignKey($conf),
         );
         
         // Guardar relación configurada
@@ -539,8 +539,8 @@ class AmTable extends AmObject{
 
   /**
    * Devuelve la instancia de la relación.
-   * @param  string          $name Nombre de la relación buscada.
-   * @return AmRelation/Hash       La instancia de la relación correspondiente.
+   * @param  string            $name Nombre de la relación buscada.
+   * @return AmForeignKey/Hash       Instancia de la relación correspondiente.
    */
   public function getRelation($name){
 

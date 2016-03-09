@@ -9,7 +9,7 @@
 /**
  * Clase para las relaciones entre las tablas.
  */
-class AmRelation extends AmObject{
+class AmForeignKey extends AmObject{
 
   protected
     
