@@ -336,19 +336,6 @@ class AmModel extends AmObject{
     // Obtener la tabla
     $table = $this->__p->table;
 
-    // // Recorrer cada columan de cada referencia
-    // $references = $table->getReferencesTo();
-    // foreach($references as $rel){
-    //   $cols = array_keys($rel->getCols());
-    //   foreach($cols as $from){
-
-    //     // Las referencias si es un valor vacío se debe setear a null
-    //     $value = trim(itemOr($from, $values));
-    //     $values[$from] = empty($value) ? null : $value;
-
-    //   }
-    // }
-
     // Si no se recibió la lista de campos a asignar, se tomarán
     // todos los campos de la tabla
     if(empty($fields))
@@ -439,14 +426,7 @@ class AmModel extends AmObject{
 
   }
 
-  /**
-   * Los métodos no definidos son tratados como relaciones. Para esto se
-   * sobreescribe el método __call.
-   * @param  string $foreignName Nombre del método llamado.
-   * @param  array $arguments    Argumentos con los que se llamó el método.
-   * @return Instancia de la
-   */
-  public function __call($foreignName, $arguments){
+  public function getRelation($foreignName){
 
     $foreign = itemOr($foreignName, $this->__p->foreigns);
 
@@ -458,14 +438,39 @@ class AmModel extends AmObject{
 
       // Si no existe la relación
       if(!isset($foreign))
-        return null;
+        throw Am::e('AMSCHEME_RELATION_NOT_EXISTS', get_class($this),
+          $foreignName);
 
-      $this->__p->foreigns[$foreignName] = $foreign->createForeign;
+      $this->__p->foreigns[$foreignName] = AmRelation::create($this, $foreign);
+
+    }
+
+    return $this->__p->foreigns[$foreignName];
+
+  }
+
+  /**
+   * Los métodos no definidos son tratados como relaciones. Para esto se
+   * sobreescribe el método __call.
+   * @param  string $foreignName Nombre del método llamado.
+   * @param  array $arguments    Argumentos con los que se llamó el método.
+   * @return                     Instancia de la relación.
+   */
+  public function __call($foreignName, $arguments){
+
+    $relation = $this->getRelation($foreignName);
+
+    // Si se pasó un elmenento entonces se está asignando el modelo
+    if(count($arguments) > 0){
+
+      $relation->set($arguments[0]);
+
+      return $this;
 
     }
 
     // Query para de la relación
-    return $foreign->getQuery($this);
+    return $relation->get();
 
   }
 

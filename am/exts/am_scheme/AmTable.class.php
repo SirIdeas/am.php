@@ -92,9 +92,9 @@ class AmTable extends AmObject{
     $pks = array(),
     
     /**
-     * Hash con las instancias de los foreignKeys
+     * Hash con las instancias de los foreigns
      */
-    $foreignKeys = array(),
+    $foreigns = array(),
     
     /**
      * Definición modelos a los que pertenece el actual.
@@ -232,7 +232,7 @@ class AmTable extends AmObject{
     if(!is_array($this->belongTo))
       $this->belongTo = array();
 
-    $this->foreignKeys = array();
+    $this->foreigns = array();
 
     // Crear instancias de las relaciones hasMany
     foreach (array('belongTo', 'hasMany', 'hasManyAndBelongTo') as $type){
@@ -241,12 +241,12 @@ class AmTable extends AmObject{
       foreach ($this->$type as $name => $conf){
 
         // Preparar la configur  ación
-        $conf = AmForeignKey::foreignConf($this, $type, Iame, $conf);
+        $conf = AmForeign::foreignConf($this, $type, $name, $conf);
 
         $conf['type'] = $type;
 
         // Instancia relación
-        $this->foreignKeys[$name] = new AmForeignKey($conf);
+        $this->foreigns[$name] = new AmForeign($conf);
         
         // Guardar relación configurada
         $confs[$name] = $conf;
@@ -301,12 +301,6 @@ class AmTable extends AmObject{
     if($validators === false || $field->isAutoIncrement())
       return;
 
-    // Si contiene configuración de validator entonces se mezclan o asignan
-    // a los validadores
-    if(is_array($fieldValidators) && !empty($fieldValidators))
-
-      $validators = $fieldValidators;
-
     // Si es true entonces se definen los valores por defecto
     if($validators === true){
 
@@ -315,29 +309,38 @@ class AmTable extends AmObject{
       // Campos sin parámetros de configuración para los validadores
       if(in_array($type, array('int', 'bit', 'date', 'datetime',
         'timestamp', 'time', 'year')))
-        $validators[] = $type;
+        $validators[$type] = true;
 
       // Campos con validación de max_len
       if(in_array($type, array('char', 'varchar', 'bit', 'text'))
         && isset($len))
-        $validators[] = 'max_len';
+        $validators['max_len'] = true;
 
       // Campos para validar la precisión de los nros flotantes
       if($type === 'float')
-        $validators[] = 'float';
+        $validators['float'] = true;
 
       // Validadores de campos no nulos
       if(!$field->allowNull())
-        $validators[] = 'null';
+        $validators['null'] = true;
 
       // Validadores de campos no nulos
       if($field->isUnique())
-        $validators[] = 'unique';
+        $validators['unique'] = true;
 
     }
 
-    $validators = array_fill_keys($validators,
-      is_bool($fieldValidators)? $fieldValidators: true);
+    // Si contiene configuración de validator entonces se mezclan o asignan
+    // a los validadores
+    if(is_array($fieldValidators) && !empty($fieldValidators))
+
+      $validators = merge_if_both_are_array_and_snd_first_not_false(
+        $validators,
+        $fieldValidators
+      );
+
+    elseif(is_bool($fieldValidators))
+      $validators = array_fill_keys(array_keys($validators), $fieldValidators);
 
     // Preparar la instanciación de los validadores
     $this->validators[$name] = array();
@@ -538,15 +541,13 @@ class AmTable extends AmObject{
 
   /**
    * Devuelve la instancia de la relación.
-   * @param  string            $name Nombre de la relación buscada.
-   * @return AmForeignKey/Hash       Instancia de la relación correspondiente.
+   * @param  string         $name Nombre de la relación buscada.
+   * @return AmForeign/Hash       Instancia de la relación correspondiente.
    */
   public function getForeign($name){
 
-    $foreign = itemOr($name, $this->foreignKeys);
-
     // Obtener la relación
-    return isset($foreign['foreign'])? $foreign['foreign'] : null;
+    return itemOr($name, $this->foreigns);
 
   }
 
@@ -1335,6 +1336,13 @@ class AmTable extends AmObject{
    *                         operación se efectuó satisfactoriamente.
    */
   public function save(AmModel $model){
+
+    foreach(array_keys($this->foreigns) as $relationName){
+
+      $relation = $model->getRelation($relationName);
+      $relation->updateRecord();
+
+    }
 
     // Si todos los campos del registro son válidos
     if($model->isValid()){

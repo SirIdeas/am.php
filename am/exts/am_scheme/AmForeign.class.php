@@ -9,9 +9,14 @@
 /**
  * Clase para las relaciones entre las tablas.
  */
-class AmForeignKey extends AmObject{
+class AmForeign extends AmObject{
 
-  protected
+  protected 
+
+    /**
+     * String que determina el tipo de relación.
+     */
+    $type = null,
     
     /**
      * Modelo al que apunta la relación.
@@ -32,6 +37,16 @@ class AmForeignKey extends AmObject{
      * Hash de columnas relacionadas.
      */
     $cols = array();
+    
+  /**
+   * Devuelve el tipo de relación.
+   * @return string Tipo de relación.
+   */
+  public function getType(){
+    
+    return $this->type;
+
+  }
     
   /**
    * Devuelve el nombre del model a la que referencia.
@@ -114,7 +129,7 @@ class AmForeignKey extends AmObject{
 
     // Agregar condiciones de la relacion
     foreach($cols as $from => $to)
-      $query->where("{$to}='{$model->$from}'");
+      $query->where("{$to}='{$model->getRealValue($from)}'");
 
     // Devolver query
     return $query;
@@ -149,7 +164,7 @@ class AmForeignKey extends AmObject{
   public static function foreignConf($tbl, $type, $name, $conf){
 
     // Si esta definida una relación con el mismo nombre generar un error.
-    if($tbl->getForeingKey($name))
+    if($tbl->getForeign($name))
       throw Am::e('AMSCHEME_FOREIGN_ALREADY_EXISTS', $tbl->getModel(), $name);
 
     // Se utilizará la configuracoin automática de la relación
