@@ -146,11 +146,11 @@ class AmForeignKey extends AmObject{
    *                           la configuración inicial de la relación.
    * @return hash              Configuración completa
    */
-  public static function relationConf($tbl, $type, $name, $conf){
+  public static function foreignConf($tbl, $type, $name, $conf){
 
     // Si esta definida una relación con el mismo nombre generar un error.
-    if($tbl->getRelation($name))
-      throw Am::e('AMSCHEME_RELATION_ALREADY_EXISTS', $tbl->getModel(), $name);
+    if($tbl->getForeingKey($name))
+      throw Am::e('AMSCHEME_FOREIGN_ALREADY_EXISTS', $tbl->getModel(), $name);
 
     // Se utilizará la configuracoin automática de la relación
     if(is_string($conf))
@@ -197,7 +197,7 @@ class AmForeignKey extends AmObject{
       // tabla refrenciada
       if($tbl->getSchemeName() !== $refTbl->getSchemeName())
         throw Am::e(
-          'AMSCHEME_HAS_MANY_AND_BELONG_TO_RELATION_DIFFERENT_SCHEMES', $name,
+          'AMSCHEME_HAS_MANY_AND_BELONG_TO_FOREIGN_DIFFERENT_SCHEMES', $name,
           $tbl->getModel(),    $tbl->getSchemeName(),
           $refTbl->getModel(), $refTbl->getSchemeName()
         );
@@ -234,7 +234,7 @@ class AmForeignKey extends AmObject{
       // Si el select no es un array entonces se debe generar un error
       if(isset($conf['select']) && !is_array($conf['select']))
         throw Am::e(
-          'AMSCHEME_HAS_MANY_AND_BELONG_TO_RELATION_SELECT_PARAM_MAY_BE_ARRAY',
+          'AMSCHEME_HAS_MANY_AND_BELONG_TO_FOREIGN_SELECT_PARAM_MAY_BE_ARRAY',
           $name, $tbl->getModel()
         );
 

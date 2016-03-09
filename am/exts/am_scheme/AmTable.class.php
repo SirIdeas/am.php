@@ -92,9 +92,9 @@ class AmTable extends AmObject{
     $pks = array(),
     
     /**
-     * Hash con las instancias de las relaciones
+     * Hash con las instancias de los foreignKeys
      */
-    $relations = array(),
+    $foreignKeys = array(),
     
     /**
      * Definición modelos a los que pertenece el actual.
@@ -232,7 +232,7 @@ class AmTable extends AmObject{
     if(!is_array($this->belongTo))
       $this->belongTo = array();
 
-    $this->relations = array();
+    $this->foreignKeys = array();
 
     // Crear instancias de las relaciones hasMany
     foreach (array('belongTo', 'hasMany', 'hasManyAndBelongTo') as $type){
@@ -241,13 +241,12 @@ class AmTable extends AmObject{
       foreach ($this->$type as $name => $conf){
 
         // Preparar la configur  ación
-        $conf = AmForeignKey::relationConf($this, $type, Iame, $conf);
+        $conf = AmForeignKey::foreignConf($this, $type, Iame, $conf);
+
+        $conf['type'] = $type;
 
         // Instancia relación
-        $this->relations[$name] = array(
-          'type' => 'belongTo',  
-          'relation' Iew AmForeignKey($conf),
-        );
+        $this->foreignKeys[$name] = new AmForeignKey($conf);
         
         // Guardar relación configurada
         $confs[$name] = $conf;
@@ -263,9 +262,9 @@ class AmTable extends AmObject{
     foreach ($this->belongTo as $name => $conf){
 
       // Agregar los campos si no existen
-      $relation = $this->getRelation($name);
-      $cols = $relation->getCols();
-      $table = $relation->getTable();
+      $foreign = $this->getForeign($name);
+      $cols = $foreign->getCols();
+      $table = $foreign->getTable();
 
       foreach ($cols as $from => $to) {
         if(!$this->hasField($from)){
@@ -542,12 +541,12 @@ class AmTable extends AmObject{
    * @param  string            $name Nombre de la relación buscada.
    * @return AmForeignKey/Hash       Instancia de la relación correspondiente.
    */
-  public function getRelation($name){
+  public function getForeign($name){
 
-    $relation = itemOr($name, $this->relations);
+    $foreign = itemOr($name, $this->foreignKeys);
 
     // Obtener la relación
-    return isset($relation['relation'])? $relation['relation'] : null;
+    return isset($foreign['foreign'])? $foreign['foreign'] : null;
 
   }
 

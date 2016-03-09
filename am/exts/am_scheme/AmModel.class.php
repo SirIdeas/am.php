@@ -66,7 +66,7 @@ class AmModel extends AmObject{
       // Cantidad de errores
       'errorsCount' => 0,
       // Hash con las relaciones del modelo.
-      'relations' => array(),
+      'foreigns' => array(),
     ), is_array($this->sketch)? $this->sketch : array()));
 
     // Inicializar la tabla si no ha sido inicializada
@@ -442,30 +442,30 @@ class AmModel extends AmObject{
   /**
    * Los métodos no definidos son tratados como relaciones. Para esto se
    * sobreescribe el método __call.
-   * @param  string $relationName [description]
-   * @param  array $arguments    [description]
+   * @param  string $foreignName Nombre del método llamado.
+   * @param  array $arguments    Argumentos con los que se llamó el método.
    * @return Instancia de la
    */
-  public function __call($relationName, $arguments){
+  public function __call($foreignName, $arguments){
 
-    $relation = itemOr($relationName, $this->__p->relations);
+    $foreign = itemOr($foreignName, $this->__p->foreigns);
 
     // Si no se ha generado una consulta para la relación
-    if(!isset($relation)){
+    if(!isset($foreign)){
 
       // Obtener la relación
-      $relation = $this->__p->table->getRelation($relationName);
+      $foreign = $this->__p->table->getForeign($foreignName);
 
       // Si no existe la relación
-      if(!isset($relation))
+      if(!isset($foreign))
         return null;
 
-      $this->__p->relations[$relationName] = $relation->createRelation;
+      $this->__p->foreigns[$foreignName] = $foreign->createForeign;
 
     }
 
     // Query para de la relación
-    return $relation->getQuery($this);
+    return $foreign->getQuery($this);
 
   }
 

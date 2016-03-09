@@ -57,11 +57,11 @@ class AmValidator extends AmObject{
         self::$conf = Am::getProperty('validators', array());
 
       // Obtener el nombre del validador
-      $validatorName = strtolower($this->getValidatorName());
+      $validatorName = $this->getValidatorName();
 
       // Obtener el mensaje de la configuracion
       if(isset(self::$conf['messages'][$validatorName]))
-        $data['messages'] = self::$conf['messages'][$validatorName];
+        $data['message'] = self::$conf['messages'][$validatorName];
 
     }
 
@@ -177,7 +177,7 @@ class AmValidator extends AmObject{
    */
   protected function getValidatorName(){
 
-    return preg_replace("/(.*)Validator$/", "$1", get_class($this));
+    return strtolower(preg_replace("/(.*)Validator$/", "$1", get_class($this)));
 
   }
 

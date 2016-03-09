@@ -37,7 +37,10 @@ return array(
 
     // Confivuraciones de los validadores.
     'validators' => array(
-      'messages' => array()
+      'messages' => array(
+        'bit' => 'Formato de bit no coincide',
+        'unique' => 'Ya existe un registro con [fieldname] == "[value]"'
+      )
     ),
 
     // Formatos
@@ -48,9 +51,9 @@ return array(
       'AMSCHEME_MODEL_WITHOUT_TABLE' => 'AmScheme: Modelo "%s" sin tabla',
       'AMSCHEME_MODEL_DONT_HAVE_PK' => 'AmScheme: Model "%s" no tiene primary key',
       'AMSCHEME_MODEL_NOT_EXISTS' => 'AmScheme: Model "%s" no existe',
-      'AMSCHEME_RELATION_ALREADY_EXISTS' => 'AmScheme: Relación "%s@%s" ya existe existe',
-      'AMSCHEME_HAS_MANY_AND_BELONG_TO_RELATION_DIFFERENT_SCHEMES' => 'AmScheme: Relación hasManyAndBelontTo "%s" definida entre diferentes esquemas: "%s" pertenece al esquema "%s" y "%s" pertenece al esquema "%s"',
-      'AMSCHEME_HAS_MANY_AND_BELONG_TO_RELATION_SELECT_PARAM_MAY_BE_ARRAY' => 'AmScheme: Parámetro select de la relación hasManyAndBelontTo "%s"@"%s"debe ser un array',
+      'AMSCHEME_FOREIGN_ALREADY_EXISTS' => 'AmScheme: Relación "%s@%s" ya existe existe',
+      'AMSCHEME_HAS_MANY_AND_BELONG_TO_FOREIGN_DIFFERENT_SCHEMES' => 'AmScheme: Relación hasManyAndBelontTo "%s" definida entre diferentes esquemas: "%s" pertenece al esquema "%s" y "%s" pertenece al esquema "%s"',
+      'AMSCHEME_HAS_MANY_AND_BELONG_TO_FOREIGN_SELECT_PARAM_MAY_BE_ARRAY' => 'AmScheme: Parámetro select de la relación hasManyAndBelontTo "%s"@"%s"debe ser un array',
     )
   ),
   
