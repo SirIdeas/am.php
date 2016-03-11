@@ -34,20 +34,20 @@ class AmHasManyAndBelongToRelation extends AmCollectionAbstractRelation{
       $query = $scheme->q($through);
       $update = false; // Indica si se actualizará
 
-      // // Asignar cada campo de la relación
-      // foreach ($index as $from => $to){
+      // Asignar cada campo de la relación
+      foreach ($index as $from => $to){
 
-      //   $value = itemOr($to, $this->beforeIndex);
-      //   $newValue = $record->get($to);
+        $value = itemOr($to, $this->beforeIndex);
+        $newValue = $record->get($to);
 
-      //   $query->where("{$from}='{$value}'");
+        $query->where("{$from}='{$value}'");
 
-      //   if($value != $newValue){
-      //     $update = true;
-      //     $query->set($from, $record->get($to));
-      //   }
+        if($value != $newValue){
+          $update = true;
+          $query->set($from, $record->get($to));
+        }
 
-      // }
+      }
 
       // Ejecutar acctualización
       if($update)
