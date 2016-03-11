@@ -90,7 +90,7 @@ class AmHasManyRelation extends AmRelation{
   public function add(AmModel $model){
 
     // chequear que el registro pertenezca al modelo.
-    $this->checkModel($record);
+    $this->checkModel($model);
 
     // Sincronizar el modelo a agregar.
     $this->sync($model);
@@ -118,7 +118,7 @@ class AmHasManyRelation extends AmRelation{
   public function remove(AmModel $model){
 
     // chequear que el registro pertenezca al modelo.
-    $this->checkModel($record);
+    $this->checkModel($model);
 
     // Se busca el registro dentro de los nuevos. Si existe se elimina.
     if($key = array_search($model, $this->news, true))
