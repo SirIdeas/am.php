@@ -57,22 +57,6 @@ class AmBelongToRelation extends AmRelation{
   }
 
   /**
-   * Chequea que un modelo pertenezca al modelo de la realación.
-   * @param  AmModel $model Modelo a chequear
-   */
-  protected function checkModel(AmModel $record){
-
-    // Obtener el modelo de la relación.
-    $model = $this->getForeign()->getModel();
-
-    // Si el valor asignado es una instancia que no coresponde con el objeto
-    // se genera un error.
-    if($record !== null && !$record instanceof $model)
-      throw Am::e('AMSCHEME_RELATION_SET_MUST_RECIVED_AMMODEL', $model);
-
-  }
-
-  /**
    * Método que se ejecuta antes de guardar del registro propietario. Se debe
    * asignar igualar las columnas relacionadas.
    */
