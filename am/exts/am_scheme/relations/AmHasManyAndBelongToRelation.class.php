@@ -32,12 +32,14 @@ class AmHasManyAndBelongToRelation extends AmRelation{
 
   }
 
-  public function has(AmModel $record){
+  /**
+   * Método que se ejecuta antes de guardar del registro propietario.
+   */
+  public function beforeSave(){}
 
-  }
-
-  public function save(){
-
-  }
+  /**
+   * Método que se ejecuta después de guardar del registro propietario.
+   */
+  public function afterSave(){}
   
 }

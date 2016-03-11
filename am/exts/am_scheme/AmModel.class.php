@@ -401,8 +401,7 @@ class AmModel extends AmObject{
     // Guardar relaciones belongTo
     foreach(array_keys($this->__p->table->getForeigns()) as $relationName){
       $relation = $this->getRelation($relationName);
-      if($relation instanceof AmBelongToRelation)
-        $relation->save($relationName);
+      $relation->beforeSave($relationName);
     }
 
     // Obener la tabla
@@ -422,8 +421,7 @@ class AmModel extends AmObject{
     // Guardar relaciones hasMany y hasManyAndBelongTo
     foreach(array_keys($this->__p->table->getForeigns()) as $relationName){
       $relation = $this->getRelation($relationName);
-      if(!$relation instanceof AmBelongToRelation)
-        $relation->save($relationName);
+      $relation->afterSave($relationName);
     }
 
     return true;
