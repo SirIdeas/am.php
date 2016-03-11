@@ -149,11 +149,11 @@ class Main extends AmController{
     // $i = Invoice::find(1);
 
     // var_dump([
-    //     'departaments' => $p->departaments(),
-    //     'chief' => $d->chief(),
-    //     'sections' => $d->sections(),
-    //     'invoices' => $pp->invoices(),
-    //     'products' => $i->products(),
+    //     'departaments' => $p->departaments()->get('array'),
+    //     'chief' => $d->chief()->toArray(),
+    //     'sections' => $d->sections()->get('array'),
+    //     'invoices' => $pp->invoices()->get('array'),
+    //     'products' => $i->products()->get('array'),
     // ]);
     
     //-----------------------------------------------------------------------
@@ -212,6 +212,82 @@ class Main extends AmController{
     //   'save' => $d->save(),
     //   'sections' => $d->sections()->get('array'),
     // ]);
+    
+    //-----------------------------------------------------------------------
+    // var_dump([
+    //   'Prueba de drop y create',
+    //   'Person' => [Person::drop(), Person::create()],
+    //   'Departament' => [Departament::drop(), Departament::create()],
+    //   'Section' => [Section::drop(), Section::create()],
+    //   'Invoice' => [Invoice::drop(), Invoice::create()],
+    //   'Product' => [Product::drop(), Product::create()],
+    // ]);
+
+    $p = Person::find('V18667932');
+    // $d = new Departament([
+    //   'name' => 'departament '.Departament::all()->count(),
+    // ]);
+    // $s = new Section([
+    //   'name' => 'section '.Section::all()->count(),
+    // ]);
+    // $p = new Person;
+    // $p->ci = 'V18667932';
+    // $p->name = 'Alex J.';
+    // $p->last_ame = 'Rondon';
+
+    // $p->age = 26;
+    // $p->height = 1.80;
+    // $p->born_date = '1989/04/04';
+    // $p->register_date = '2000/02/02 05:45:02';
+    // $p->last_session = '2016/03/03 19:12:45';
+    // $p->check_in = null;
+    // $p->email = 'arondn2@gmail.com';
+    // $p->marriage_year = 1901;
+    // $p->set('permissions', "b'1001'", true);
+    // $p->children = 3;
+    
+    // $p->departaments()->add($d);
+    // $d->sections()->add($s);
+    // // 
+    // $d->chief($p);
+    // $s->departament($d);
+
+    // var_dump([
+    //   'array' => $p->toArray(),
+    //   // 'save' => $p->save(),
+    //   'save2' => $s->save(),
+    //   // 'errors' => $p->getErrors(),
+    // ]);
+
+    // $i = new Invoice;
+    // $i->invoice_date = date('c');
+    // $i->own($p);
+
+    // $t = new Product;
+    // $t->descripcion = 'product '.Product::all()->count();
+
+    // var_dump([
+    //   'invoice' => $i->save(),
+    //   'product' => $t->save(),
+    // ]);
+
+    $i = Invoice::find(1);
+    $i->products()
+      ->add(Product::find(2))
+      ->add(Product::find(4))
+      ->add(Product::find(6))
+      ->add(Product::find(8));
+
+    $i->save();
+    var_dump($i->products()->get('array'));
+
+    $i->products()
+      ->remove(Product::find(6))
+      ->remove(Product::find(2));
+
+    
+    $i->save();
+    var_dump($i->products()->get('array'));
 
   }
 

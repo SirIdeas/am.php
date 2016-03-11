@@ -14,7 +14,10 @@ class Product extends AmModel{
     'hasManyAndBelongTo' => array(
       'invoices' => array(
         'model' => 'Invoice',
-        'through' => 'invoicedetails'
+        'through' => 'invoicedetails',
+        'cols' => array(
+          'id_products' => 'id'
+        )
       ),
     )
   );

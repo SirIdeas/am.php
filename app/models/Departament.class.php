@@ -7,20 +7,30 @@ class Departament extends AmModel{
 
   public $sketch = array(
     'fields' => array(
-      'id_departament' => 'id',
+      'id' => 'id',
       'name' => 'varchar',
     ),
     'belongTo' => array(
-      'chief' => 'Person',
+      'chief' => array(
+        'model' => 'Person',
+        'cols' => array(
+          'id_chief' => 'ci'
+        )
+      ),
       'secretary' => array(
         'model' => 'Person',
         'cols' => array(
-          'secretary_id' => 'id_person'
+          'id_secretary' => 'ci'
         )
       )
     ),
     'hasMany' => array(
-      'sections' => 'Section'
+      'sections' => array(
+        'model' => 'Section',
+        'cols' => array(
+          'id_departament' => 'id'
+        )
+      )
     )
   );
 

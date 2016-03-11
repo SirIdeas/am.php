@@ -11,14 +11,22 @@ class Invoice extends AmModel{
       'invoice_date' => 'timestamp',
     ),
     'belongTo' => array(
-      'belongTo' => 'Person'
+      'own' => array(
+        'model' => 'Person',
+        'cols' => array(
+          'id_own' => 'ci'
+        )
+      ),
     ),
     'hasManyAndBelongTo' => array(
       'products' => array(
         'model' => 'Product',
         'through' => 'invoicedetails',
+        'cols' => array(
+          'id_invoices' => 'id'
+        ),
         'select' => array(
-          'amount' => 'invoicedetails.id_invoices'
+          'amount' => 'amount'
         )
       ),
     )
