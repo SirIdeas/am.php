@@ -36,7 +36,12 @@ class AmForeign extends AmObject{
     /**
      * Hash de columnas relacionadas.
      */
-    $cols = array();
+    $cols = array(),
+    
+    /**
+     * Nombre de la tabla através de la cual se realiza la realción.
+     */
+    $through = null;
     
   /**
    * Devuelve el tipo de relación.
@@ -77,6 +82,16 @@ class AmForeign extends AmObject{
     return $this->joins;
 
   }
+
+  /**
+   * Nombre de la tabla a través la cual se relacionan los elementos.
+   * @return string Nombre de la tabla.
+   */
+  public function getThrough(){
+    
+    return $this->through;
+
+  }
     
   /**
    * Devuelve el intancia de la tabla a la que apunta la realación.
@@ -114,22 +129,22 @@ class AmForeign extends AmObject{
     foreach ($this->select as $as => $field)
       $query->selectAs($field, $as);
 
-    // Obtener las columnas
-    $cols = $this->getCols();
-
     // Obtener las joins
     $joins = $this->getJoins();
 
     foreach ($joins as $refTableName => $on) {
       foreach ($on as $from => $to) {
-        $on[$from] = "{$from}={$to}";
+        $on[$from] = "{$tableName}.{$from}={$refTableName}.{$to}";
       }
-      $query->innerJoin($refTableName, implode('-', $on), $refTableName);
+      $query->innerJoin($refTableName, implode('-', $on));
     }
+
+    // Obtener las columnas
+    $cols = $this->getCols();
 
     // Agregar condiciones de la relacion
     foreach($cols as $from => $to)
-      $query->where("{$to}='{$model->getRealValue($from)}'");
+      $query->where("{$this->getThrough()}.{$to}='{$model->getRealValue($from)}'");
 
     // Devolver query
     return $query;
@@ -146,6 +161,7 @@ class AmForeign extends AmObject{
       'model' => $this->model,
       'cols' => $this->cols,
       'joins' => $this->joins,
+      'through' => $this->through,
     );
 
   }
@@ -239,7 +255,7 @@ class AmForeign extends AmObject{
         $joins = array();
         $pks = $refTbl->getPks();
         foreach($pks as $pk)
-          $joins["{$tn2}.{$pk}"] = "{$conf['through']}.{$pk}_{$tn2}";
+          $joins[$pk] = "{$pk}_{$tn2}";
 
         // Guardar joins
         $conf['joins'] = array($conf['through'] => $joins);
@@ -263,7 +279,7 @@ class AmForeign extends AmObject{
 
         $cols = array();
         foreach($pks as $pk)
-          $cols[$pk] = "{$conf['through']}.{$pk}_{$tn1}";
+          $cols[$pk] = "{$pk}_{$tn1}";
 
         // Guardar columnas
         $conf['cols'] = $cols;
