@@ -540,6 +540,16 @@ class AmTable extends AmObject{
   }
 
   /**
+   * Devuelve el hash de foreign.
+   * @return hash Hash de foreign.
+   */
+  public function getForeigns(){
+
+    return $this->foreigns;
+
+  }
+
+  /**
    * Devuelve la instancia de la relación.
    * @param  string         $name Nombre de la relación buscada.
    * @return AmForeign/Hash       Instancia de la relación correspondiente.
@@ -1314,9 +1324,9 @@ class AmTable extends AmObject{
     foreach($fields as $fieldName){
 
       // Si el campo cambió
-      if($model->hasChanged($fieldName))
+      if($model->changed($fieldName))
         // Agregar set a la consulta
-        $q->set($fieldName, $model->$fieldName);
+        $q->set($fieldName, $model->get($fieldName));
 
     }
 
@@ -1336,13 +1346,6 @@ class AmTable extends AmObject{
    *                         operación se efectuó satisfactoriamente.
    */
   public function save(AmModel $model){
-
-    foreach(array_keys($this->foreigns) as $relationName){
-
-      $relation = $model->getRelation($relationName);
-      $relation->updateRecord();
-
-    }
 
     // Si todos los campos del registro son válidos
     if($model->isValid()){
@@ -1368,7 +1371,7 @@ class AmTable extends AmObject{
               $fieldName = $f->getName();
 
               // para asigar el valor autoincrementado
-              $model->$fieldName = $ret;
+              $model->set($fieldName, $ret);
 
               // Se supone que sebe ser un solo campo autoincrementable
               break;
@@ -1379,7 +1382,7 @@ class AmTable extends AmObject{
           // una columna autoincrement Se retorna verdadero o el valor del ID
           // generado para el registro si se agregó correctamenre de lo
           // contrario se retorna el valor de $ret.
-          return $ret == 0 ? true : $ret;
+          return $ret === 0 ? true : $ret;
 
         }
 
@@ -1434,7 +1437,7 @@ class AmTable extends AmObject{
       // o si el campo no es autoincrementado
       if($withAI || !$field || !$field->isAutoIncrement())
         // Se agrega el campo al array de retorno
-        $ret[$fieldName] = $model->$fieldName;
+        $ret[$fieldName] = $model->get($fieldName);
     }
 
     return $ret;

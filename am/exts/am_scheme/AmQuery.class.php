@@ -43,6 +43,15 @@ class AmQuery extends AmObject{
      */
     $result = null,
     
+    /**
+     * Posición actual en la iteración.
+     */
+    $index = 0,
+
+    /**
+     * Registros obtenidos.
+     */
+    $items = array(),
     
    /**
     * Hash de campos para la cláusula SELECT.
@@ -412,6 +421,9 @@ class AmQuery extends AmObject{
    * @return handler Devuelve el muntore manejador del resultado del query.
    */
   public function execute(){
+
+    $this->index = 0;
+    $this->items = array();
 
     return $this->result = $this->getScheme()->execute($this);
 
@@ -1093,5 +1105,72 @@ class AmQuery extends AmObject{
       ->row('array');
       
   }
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Sobre escrituras de los método para iterar la consulta
+  //////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Rebobinar la Iterador al primer elemento.
+   */
+  public function rewind(){
+    $this->index = 0;
+  }
+
+  /**
+   * Comprueba si la posición actual del iterador es válida.
+   * @return bool Si existe el elemento actual.
+   */
+  public function valid(){
+
+    // Si no está cargada la posición actual
+    if(!isset($this->items[$this->index])){
+
+      // Se obtiene el siguiente elemento.
+      $row = $this->row();
+
+      // Si nbo se pudo obtener un elemento retornar falso.
+      if(!$row)
+        return false;
+
+      // Guardar en los items obtenidos.
+      $this->items[$this->index] = $row;
+
+    }
+
+    // Es válido
+    return true;
+
+  }
+
+  /**
+   * Devuelve el elemento actual del iterador.
+   * @return mixed Elemento actual.
+   */
+  public function current(){
+
+    return $this->items[$this->index];
+
+  }
+
+  /**
+   * Devuelve la clave del elemento actual.
+   * @return int Clave del elemento actual.
+   */
+  public function key(){
+
+    return $this->index;
+
+  }
+
+  /**
+   * Avanza al siguiente elemento de la iteración.
+   */
+  public function next(){
+
+    $this->index++;
+
+  }
+
 
 }

@@ -154,7 +154,7 @@ class AmModel extends AmObject{
       }
 
       // Asignar valor mediante el metodo set
-      $this->$fieldName = $field->parseValue($value);
+      $this->set($fieldName, $field->parseValue($value));
 
     }
 
@@ -349,7 +349,7 @@ class AmModel extends AmObject{
       // Si exist el campo y es no es un campo autoincrementable
       if((!$field || !$field->isAutoIncrement()) && isset($values[$fieldName]))
         // Se asigna el valor
-        $this->$fieldName = $values[$fieldName];
+        $this->set($fieldName, $values[$fieldName]);
     }
 
   }
@@ -359,9 +359,9 @@ class AmModel extends AmObject{
    * @param  string $name Nombre del campo.
    * @return bool         Si cambió o nó e valor.
    */
-  public function hasChanged($name){
+  public function changed($name){
 
-    return $this->getRealValue($name) != $this->$name;
+    return $this->getRealValue($name) != $this->get($name);
 
   }
 
@@ -398,6 +398,13 @@ class AmModel extends AmObject{
    */
   public function save(){
 
+    // Guardar relaciones belongTo
+    foreach(array_keys($this->__p->table->getForeigns()) as $relationName){
+      $relation = $this->getRelation($relationName);
+      if($relation instanceof AmBelongToRelation)
+        $relation->save($relationName);
+    }
+
     // Obener la tabla
     $ret = $this->__p->table->save($this);
 
@@ -411,6 +418,13 @@ class AmModel extends AmObject{
 
     // Los nuevo valores reales del registro serán los guardados
     $this->__p->realValues = $this->toArray();
+
+    // Guardar relaciones hasMany y hasManyAndBelongTo
+    foreach(array_keys($this->__p->table->getForeigns()) as $relationName){
+      $relation = $this->getRelation($relationName);
+      if(!$relation instanceof AmBelongToRelation)
+        $relation->save($relationName);
+    }
 
     return true;
 
@@ -463,14 +477,14 @@ class AmModel extends AmObject{
     // Si se pasó un elmenento entonces se está asignando el modelo
     if(count($arguments) > 0){
 
-      $relation->set($arguments[0]);
+      $relation->_set($arguments[0]);
 
       return $this;
 
     }
 
     // Query para de la relación
-    return $relation->get();
+    return $relation;
 
   }
 

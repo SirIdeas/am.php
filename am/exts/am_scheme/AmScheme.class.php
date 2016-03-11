@@ -972,7 +972,7 @@ abstract class AmScheme extends AmObject{
 
     // Consulta de eliminación
     if($type == 'delete')
-      return $this->sqlDelete($q);
+      return $this->sqlDeleteQuery($q);
 
     throw Am::e('AMSCHEME_QUERY_TYPE_UNKNOW', var_export($q, true));
 

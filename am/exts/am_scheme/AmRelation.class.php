@@ -9,10 +9,15 @@
 /**
  * Clase para instancia las claves foráneas entre las tablas.
  */
-class AmRelation extends AmObject{
+abstract class AmRelation extends AmObject{
 
   protected
-    
+
+    /**
+     * Método permitidos
+     */
+    $allodMethods = true,
+
     /**
      * Instancia del registro al que pertenece el modelo relación
      */
@@ -53,16 +58,26 @@ class AmRelation extends AmObject{
 
   }
 
-  public function updateRecord(){
+  public function __call($method, $arguments){
+
+    if($this->allodMethods === true || (is_array($this->allodMethods) &&
+      in_array($method, $this->allodMethods))){
+
+      $callback = array($this->_get(), $method);
+
+      if(isValidCallback($callback)){
+
+        return call_user_func_array($callback, $arguments);
+
+      }
+
+
+    }
 
   }
 
-  /**
-   * [create description]
-   * @param  [type] $record  [description]
-   * @param  [type] $foreign [description]
-   * @return [type]          [description]
-   */
+  abstract public function _get();
+
   public static function create($record, $foreign){
 
     $className = 'Am'.camelCase($foreign->getType(), true).'Relation';

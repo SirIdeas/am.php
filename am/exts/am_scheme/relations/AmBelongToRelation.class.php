@@ -12,52 +12,46 @@
 class AmBelongToRelation extends AmRelation{
 
   protected
-    $current = null,
-    $realCurrent = null;
+    $value = null,
+    $current = null;
 
-  /**
-   * [get description]
-   * @return [type]           [description]
-   */
-  public function get($reload = false){
+  public function _getValue($reload = false){
 
-    if(!$this->realCurrent || $reload === true)
-      $this->realCurrent = $this->current = $this->getQuery()->row();
+    if(!$this->current || $reload === true)
+      $this->current = $this->value = $this->_get();
 
-    return $this->current;
+    return $this->value;
 
   }
 
-  public function set($record){
+  public function _get(){
 
-    $this->get();
+    return $this->getQuery()->row();
+
+  }
+
+  public function _set($record){
+
+    $this->_getValue();
     $model = $this->getForeign()->getModel();
 
     if($record !== null && !$record instanceof $model)
       throw Am::e('AMSCHEME_RELATION_SET_MUST_RECIVED_AMMODEL', $model);
 
-    $this->current = $record;
+    $this->value = $record;
 
   }
 
-  public function changed(){
+  public function save(){
 
-    return $this->current !== $this->realCurrent;
-
-  }
-
-  public function updateRecord(){
-
-    if($this->changed()){
+    if($this->value !== $this->current){
 
       $record = $this->getRecord();
-      $current = $this->current;
+      $value = $this->value;
       $index = $this->getForeign()->getCols();
 
-      foreach ($index as $from => $to){
-        $record->$from = $current ? $current->$to : null;
-      }
-
+      foreach ($index as $from => $to)
+        $record->set($from, $value ? $value->get($to) : null);
 
     }
 

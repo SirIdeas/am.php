@@ -12,21 +12,32 @@
 class AmHasManyAndBelongToRelation extends AmRelation{
 
   protected
-    $current = null;
+    $collection = array();
 
-  /**
-   * [get description]
-   * @return [type]           [description]
-   */
-  public function get(){
+  public function _get($reload = false){
 
-    if(!$this->current){
-      $this->current = $this->current = $this->getQuery()->get();
-    }
-
-    return $this->current;
+    return $this->getQuery();
 
   }
 
+  public function add(AmModel $record){
 
+    return $this;
+
+  }
+
+  public function remove(AmModel $record){
+
+    return $this;
+
+  }
+
+  public function has(AmModel $record){
+
+  }
+
+  public function save(){
+
+  }
+  
 }
