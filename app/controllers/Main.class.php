@@ -175,21 +175,43 @@ class Main extends AmController{
     
     //-----------------------------------------------------------------------
     // Asignar valor a relacion belongTo
-    $p = Person::find(30);
+    // $p = Person::find(30);
 
-    $d = Departament::find(29);
-    var_dump([
-      $d->toArray(),
-      $d->chief(null)->save(),
-      $d->toArray(),
-    ]);
+    // $d = Departament::find(29);
+    // var_dump([
+    //   'before' => $d->toArray(),
+    //   'chief save' => $d->chief(null)->save(),
+    //   'after' => $d->toArray(),
+    // ]);
     
-    $d = Departament::find(29);
-    var_dump([
-      $d->toArray(),
-      $d->chief($p)->save(),
-      $d->toArray(),
-    ]);
+    // $d = Departament::find(29);
+    // var_dump([
+    //   'before' => $d->toArray(),
+    //   'chief save' => $d->chief($p)->save(),
+    //   'after' => $d->toArray(),
+    // ]);
+    
+    //-----------------------------------------------------------------------
+    // Probar relación hasMany
+    // $d = Departament::find(29);
+    // $s = Section::find(51);
+
+    // $d->sections()->add(new Section(array(
+    //   'name' => 'section'.$d->sections()->count()
+    // )));
+
+    // var_dump([
+    //   // 'save' => $d->save(),
+    //   'sections' => $d->sections()->get('array'),
+    // ]);
+
+    // if($s)
+    //     $d->sections()->remove($s);
+
+    // var_dump([
+    //   'save' => $d->save(),
+    //   'sections' => $d->sections()->get('array'),
+    // ]);
 
   }
 
