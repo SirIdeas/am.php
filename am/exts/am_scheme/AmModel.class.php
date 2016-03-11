@@ -137,16 +137,14 @@ class AmModel extends AmObject{
     foreach($fields as $fieldName => $field){
 
       // Obtener nombre del campo
-      $fieldNameBD = $field->getName();
-
       $value = null;
 
       // Si el campo existe en los parametros
-      if(isset($params[$fieldNameBD])){
+      if(isset($params[$fieldName])){
         // Obtener el valor
-        $value = $params[$fieldNameBD];
+        $value = $params[$fieldName];
         // Eliminar de los parametros
-        unset($params[$fieldNameBD]);
+        unset($params[$fieldName]);
       }else{
         // Si no existe en los parametros se toma el valor
         // por defecto del campo
@@ -154,7 +152,7 @@ class AmModel extends AmObject{
       }
 
       // Asignar valor mediante el metodo set
-      $this->set($fieldName, $field->parseValue($value));
+      $this->set($fieldName, $value);
 
     }
 
@@ -175,23 +173,17 @@ class AmModel extends AmObject{
   /**
    * Para la inizialización de los validadores de la tabla.
    */
-  protected function start(AmTable $table){
-
-  }
+  protected function start(AmTable $table){}
 
   /**
    * Método redefinido el usuario para inicializaciones customizadas del modelo.
    */
-  public function init(){
-
-  }
+  public function init(){}
 
   /**
    * Funcion para preparar los valores del model antes de guardar.
    */
-  public function prepare(){
-
-  }
+  public function prepare(){}
 
   /**
    * Devuelve el valor de un registro en un campo.
@@ -211,10 +203,11 @@ class AmModel extends AmObject{
    * @param  boolean $isRaw Indica si el valor asigando es un valor puro o no.
    * @return $this
    */
-  public function set($field, $value, $isRaw = false){
+  public function set($fieldName, $value, $isRaw = false){
 
-    $this->$field = $value;
-    $this->__p->rawValues[$field] = $isRaw;
+    $field = $this->__p->table->getField($fieldName);
+    $this->$fieldName = $field? $field->parseValue($value) : $value;
+    $this->__p->rawValues[$fieldName] = $isRaw;
     return $this;
 
   }
@@ -482,7 +475,7 @@ class AmModel extends AmObject{
     }
 
     // Query para de la relación
-    return $relation;
+    return $relation->val();
 
   }
 

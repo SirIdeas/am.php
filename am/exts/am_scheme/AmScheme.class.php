@@ -1000,12 +1000,17 @@ abstract class AmScheme extends AmObject{
     if(!$table instanceof AmTable)
       $table = $this->getTableInstance($table);
 
-    if(!$table)
-      throw Am::e('AMSCHEME_MODEL_WITHOUT_TABLE', $model);
+    if($table){
 
-    // Agregar fechas de creacion y modificacion si existen en la tabla
-    $table->setAutoCreatedAt($values);
-    $table->setAutoUpdatedAt($values);
+      // Agregar fechas de creacion y modificacion si existen en la tabla
+      $table->setAutoCreatedAt($values);
+      $table->setAutoUpdatedAt($values);
+
+    }else{
+
+      $table = $model;
+
+    }
 
     if($values instanceof AmQuery){
 

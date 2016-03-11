@@ -24,6 +24,17 @@ class AmBelongToRelation extends AmRelation{
     $current = null;
 
   /**
+   * Este método es sobreescrito para que devuelva la instancia del registro
+   * relacionado en lugar de devolverse a si mismo.
+   * @return $this
+   */
+  public function val(){
+    
+    return $this->_get();
+
+  }
+
+  /**
    * Devuelve el modelo relacionado.
    * @return AmModel/bool Devuelve el primer registro de la query de la relación
    *                      o false si no encuentra nada.
@@ -71,6 +82,10 @@ class AmBelongToRelation extends AmRelation{
       // Obtener el valor asignado a la relación
       $value = $this->value;
 
+      // Guardar registro relacionado
+      if(isset($value) && !$value->save())
+        return false;
+
       // Obtener los campos relacionados.
       $index = $this->getForeign()->getCols();
 
@@ -80,6 +95,8 @@ class AmBelongToRelation extends AmRelation{
         $record->set($from, $value ? $value->get($to) : null);
 
     }
+
+    return true;
 
   }
 

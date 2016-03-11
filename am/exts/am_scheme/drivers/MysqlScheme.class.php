@@ -425,7 +425,7 @@ class MysqlScheme extends AmScheme{
         $field = "({$field->sql()})";
 
       // Agregar parametro AS
-      $selects[] = isNameValid($alias) ? "{$field} AS '{$alias}'" :
+      $selects[] = !empty($alias) ? "{$field} AS '{$alias}'" :
         (string)$field;
 
     }

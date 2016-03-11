@@ -89,6 +89,16 @@ abstract class AmRelation extends AmObject{
   }
 
   /**
+   * Devuelve la instancia que deve devolverse en el llamaod __call del modelo.
+   * @return $this
+   */
+  public function val(){
+    
+    return $this;
+
+  }
+
+  /**
    * Se debe implementar para que la clase devuelva un valor.
    * @return mixed Instancia de un objeto que depende del tipo de relación.
    */

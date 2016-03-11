@@ -21,7 +21,7 @@ class AmQuery extends AmObject{
     /**
      * Callback con el formateador del resultado del query.
      */
-    $formater = null,
+    $formatter = null,
     
     /**
      * Tipo de query: select, insert, update o delete.
@@ -127,9 +127,9 @@ class AmQuery extends AmObject{
    * Devuelve el callback con el formateador de resultado.
    * @return callback Formateador del resultado.
    */
-  public function getFormater(){
+  public function getFormatter(){
 
-    return $this->formater;
+    return $this->formatter;
 
   }
 
@@ -315,11 +315,11 @@ class AmQuery extends AmObject{
    * @param callback $value Callback a asignar.
    * @return $this
    */
-  public function setFormater($value){
+  public function setFormatter($value){
 
     // Si es un callback válido se asigna.
     if(isValidCallback($value))
-      $this->formater = $value;
+      $this->formatter = $value;
 
     return $this;
     
@@ -582,21 +582,21 @@ class AmQuery extends AmObject{
 
     $this->type = 'select';
 
-    // Si no se indicó el argumetno $alias
+    // Si no se indicó el argumento $alias
     if(empty($alias)){
       if (isNameValid($field)){
-        // Agregar en una posicion espeficia
+        // Agregar en una posición específica
         $this->selects[$field] = $field;
       }else{
         // Agregar al final
         $this->selects[] = $field;
       }
     }elseif(isNameValid($alias)){
-      // Agregar en una posicion espeficia
+      // Agregar en una posición específica
       $this->selects[$alias] = $field;
     }else{
       // Agregar al final
-      $this->selects[] = $field;
+      $this->selects[$alias] = $field;
     }
 
     return $this;
@@ -959,15 +959,15 @@ class AmQuery extends AmObject{
 
   /**
    * Obtener un registro del resultado del query.
-   * @param  string   $as       Modelo con el que se devolverá el regsitro.
-   *                            puede ser 'array', 'am', 'object', el nombre
-   *                            de un modelom, o el nombre de una clase. Si no
-   *                            sae indica se utiliza el modelo del query.
-   * @param  callback $formater Callback para dar formato al registro.
-   * @return mixed              Devuelve el registro obtenido como un modelo
-   *                            señalado.
+   * @param  string   $as        Modelo con el que se devolverá el regsitro.
+   *                             puede ser 'array', 'am', 'object', el nombre
+   *                             de un modelom, o el nombre de una clase. Si no
+   *                             se indica se utiliza el modelo del query.
+   * @param  callback $formatter Callback para dar formato al registro.
+   * @return mixed               Devuelve el registro obtenido como un modelo
+   *                             señalado.
    */
-  public function row($as = null, $formater = null){
+  public function row($as = null, $formatter = null){
     
     // Obtener la fuente de datos
     $scheme = $this->getScheme();
@@ -975,8 +975,8 @@ class AmQuery extends AmObject{
     if(!isset($as))
       $as = $this->getModel();
 
-    if(!isset($formater))
-      $formater = $this->getFormater();
+    if(!isset($formatter))
+      $formatter = $this->getFormatter();
 
     // Se ejecuta el query si no se ha ejecutado
     if(null === $this->result)
@@ -1036,8 +1036,8 @@ class AmQuery extends AmObject{
     }
 
     // Formatear el valor
-    if(isset($formater))
-      $r = call_user_func_array($formater, array($r));
+    if(isset($formatter))
+      $r = call_user_func_array($formatter, array($r));
 
     return $r;
 
@@ -1049,10 +1049,10 @@ class AmQuery extends AmObject{
    *                            puede ser 'array', 'am', 'object', el nombre
    *                            de un modelom, o el nombre de una clase. Si no
    *                            sae indica se utiliza el modelo del query.
-   * @param  callback $formater Callback para dar formato al registro.
+   * @param  callback $formatter Callback para dar formato al registro.
    * @return array              Array de modelos resultantes del query
    */
-  public function get($as = null, $formater = null){
+  public function get($as = null, $formatter = null){
 
     // Clonar el query
     $q = $this->copy();
@@ -1061,7 +1061,7 @@ class AmQuery extends AmObject{
     $ret = array();
 
     // Mientras exista resgistros en cola
-    while(!!($row = $q->row($as, $formater)))
+    while(!!($row = $q->row($as, $formatter)))
       $ret[] = $row; // Agregar registros al array
 
     return $ret;

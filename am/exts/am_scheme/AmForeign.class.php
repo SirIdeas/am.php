@@ -108,6 +108,30 @@ class AmForeign extends AmObject{
   }
 
   /**
+   * Formateador del resultado del query. Convierte las columnas tomadas de la
+   * tabla intermedia y las guarda en un array en un atributo con el mismo
+   * nombre de la tabla relacional. Además borra los campos tomados.
+   * @param  array/AmModel $record Registro a formatear.
+   * @return array/AmModel         Registro formateado.
+   */
+  public function queryFormatter($record){
+
+    // Obtener la tabla a través de la cual se realiza la realación.
+    $through = $this->getThrough();
+    
+    $ret = array();
+    // Agregar campos extras a selecionar
+    foreach($this->select as $as => $field){
+      $field = $through? "{$through}.$as" : $field;
+      $ret[$as] = $record[$field];
+      unset($record[$field]);
+    }
+
+    $record[$through] = $ret;
+    return $record;
+  }
+
+  /**
    * Generador de la consulta para la relación basado en un modelo.
    * @param  AmModel $model Instancia de AmModel a la que se quiere obtener
    *                        la relación.
@@ -121,18 +145,29 @@ class AmForeign extends AmObject{
     // Obtener el nombre de la tabla.
     $tableName = $table->getTableName();
 
+    // Obtener la tabla a través de la cual se realiza la realación.
+    $through = $this->through;
+
     // Obtener una consulta con todos los elmentos.
     $query = $table->all($tableName)
       ->select("{$tableName}.*");
 
     // Agregar campos extras a selecionar
-    foreach ($this->select as $as => $field)
+    foreach($this->select as $as => $field){
+      $field = $through? "{$through}.$field" : $field;
+      $as = $through? "{$through}.$as" : $as;
       $query->selectAs($field, $as);
+    }
+
+    // Si tiene una tabla a traves y tiene campos selecionados entonces se
+    // agrega el formateador
+    if(!empty($through) && !empty($this->select))
+      $query->setFormatter(array($this, 'queryFormatter'));
 
     // Obtener las joins
     $joins = $this->getJoins();
 
-    foreach ($joins as $refTableName => $on) {
+    foreach($joins as $refTableName => $on) {
       foreach ($on as $from => $to) {
         $on[$from] = "{$tableName}.{$from}={$refTableName}.{$to}";
       }
@@ -143,8 +178,10 @@ class AmForeign extends AmObject{
     $cols = $this->getCols();
 
     // Agregar condiciones de la relacion
-    foreach($cols as $from => $to)
-      $query->where("{$this->getThrough()}.{$to}='{$model->getRealValue($from)}'");
+    foreach($cols as $from => $field){
+      $sqlField = $through? "{$through}.$from" : $from;
+      $query->where("{$sqlField}='{$model->getRealValue($field)}'");
+    }
 
     // Devolver query
     return $query;
