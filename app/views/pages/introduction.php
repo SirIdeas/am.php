@@ -30,7 +30,7 @@
       <tr>
         <th>Modo <i>routing</i></th>
         <td>
-          Ejecución de Amathista desde un servidor w  eb para atender peticiones HTTP.
+          Ejecución de Amathista desde un servidor web para atender peticiones HTTP.
         </td>
       </tr>
       <tr>
@@ -48,7 +48,7 @@
       <tr>
         <th>Archivo de configuración raíz</th>
         <td>
-          Archivo de configuración <code><strong>am.conf.php</strong></code> que contiene la configuración básica de una aplicación o extensión y está ubicado en la carpeta raíz del mismo.
+          Archivo de configuración <code><strong>am.conf.php</strong></code> que contiene la configuración básica de una aplicación o extensión. Está ubicado en la carpeta raíz del mismo.
         </td>
       </tr>
       <tr>
@@ -60,7 +60,7 @@
       <tr>
         <th>Archivo de inicio</th>
         <td>
-          Archivo <code><strong>am.init.php</strong></code> contiene al código de inicialización de una aplicación o extensión y está ubicado en la raíz del mismo.
+          Archivo <code><strong>am.init.php</strong></code> contiene al código de inicialización de una aplicación o extensión. Está ubicado en la raíz del mismo.
         </td>
       </tr>
       <tr>
@@ -72,7 +72,7 @@
       <tr>
         <th>Bootfile</th>
         <td>
-          Archivo de arranque de Amathista. Se encarga de incluir el núcleo de Amathista, inicializar la aplicación y ejecutarla. Por lo general es el archivo /public/bootfile.php. Es el único archivo que se ejecuta fuera del Entorno de ejecución.
+          Archivo de arranque de Amathista. Se encarga de incluir el núcleo de Amathista, inicializar la aplicación y ejecutarla. Por lo general es el archivo /public/index.php. Es el único archivo que se ejecuta fuera del Entorno de ejecución.
         </td>
       </tr>
       <tr>
@@ -193,7 +193,7 @@
         <td>Vista index de la aplicación</td>
       </tr>
       <tr>
-        <td><code><strong>/public/bootfile.php</strong></code></td>
+        <td><code><strong>/public/index.php</strong></code></td>
         <td>Bootfile.</td>
       </tr>
       <tr>
