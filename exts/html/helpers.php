@@ -25,7 +25,7 @@
 
 function isResourceAllow($url){
   $resourcesNotAllow = itemOr('resourcesNotAllow',
-    Am::getAttribute('env', array()), array());
+    Am::getProperty('env', array()), array());
 
   return !in_array($url, $resourcesNotAllow);
   

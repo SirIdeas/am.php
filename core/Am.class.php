@@ -228,7 +228,7 @@ final class Am{
 
   // Obtener la contenido de un archivo de configuración
   public static function getConfig($file){
-    return require self::findFileIn("{$file}.conf.php", self::$paths);
+    return require findFileIn("{$file}.conf.php", self::$paths);
   }
 
   // Obtener un atributo de la confiuguracion
@@ -536,13 +536,13 @@ final class Am{
     self::mergePropertiesFromAllFiles();
 
     // Obtener el valor
-    $errorReporting = self::getAttribute('errorReporting');
+    $errorReporting = self::getProperty('errorReporting');
     error_reporting($errorReporting);
 
     // Incluir extensiones para peticiones
     // Archivos requeridos
-    self::requireExt(self::getAttribute('requires', array()));
-    $files = self::getAttribute('files', array());
+    self::requireExt(self::getProperty('requires', array()));
+    $files = self::getProperty('files', array());
 
     foreach ($files as $item)
       if(is_file($realFile = self::findFile("{$item}.php")))
@@ -601,26 +601,12 @@ final class Am{
   /////////////////////////////////////////////////////////////////////////////
 
   public static function findFile($file){
-    return self::findFileIn($file, self::$paths);
-  }
-  // Busca un archivo en los paths indicados
-  public static function findFileIn($file, array $paths){
-
-    // Si existe el archivo retornar el mismo
-    if(is_file($file)) return $file;
-
-    // Buscar un archivo dentro de las carpetas
-    foreach($paths as $path)
-      if(is_file($realPath = "{$path}/{$file}"))
-        return $realPath;
-
-    return false;
-
+    return findFileIn($file, self::$paths);
   }
 
   // Obtienen tipo mime de un determinado archivo.
   public final static function mimeType($filename) {
-    $mimePath = self::findFileIn('resources/mime.types', self::$paths);
+    $mimePath = self::findFile('resources/mime.types');
     $fileext = substr(strrchr($filename, '.'), 1);
     if (empty($fileext)) return (false);
     $regex = '/^([\w\+\-\.\/]+)\s+(\w+\s)*($fileext\s)/i';

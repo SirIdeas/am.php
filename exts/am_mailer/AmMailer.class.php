@@ -247,7 +247,7 @@ class AmMailer extends PHPMailer{
     $ret = Am::call('render.template',
       $this->template,
       array(
-        'paths' => array($this->dir),
+        'paths' => $this->dir,
         'ignore' => true,
         'env' => $env
       )
@@ -282,7 +282,7 @@ class AmMailer extends PHPMailer{
   public static function get($name, array $options = array()){
 
     // Obtener configuraciones de mails
-    $mails = Am::getAttribute('mails');
+    $mails = Am::getProperty('mails');
 
     // Combinar opciones recibidas en el constructor con las
     // establecidas en el archivo de configuracion
@@ -300,7 +300,7 @@ class AmMailer extends PHPMailer{
     if(!is_array($options['smtp'])){
 
       // Obtener configuraciones STMP
-      $smtpConfs = Am::getAttribute('smtp', array());
+      $smtpConfs = Am::getProperty('smtp', array());
 
       // Si se debe tomar la configuracion por defecto
       if($options['smtp'] === true)

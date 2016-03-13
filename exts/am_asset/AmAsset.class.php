@@ -72,7 +72,7 @@ class AmAsset{
   public static function response($file){
 
     // Obtener los recursos configurados
-    $assets = Am::getAttribute('assets', array());
+    $assets = Am::getProperty('assets', array());
 
     // Si no exite un recurso con el nombre del solicitado retornar falso
     if(!isset($assets[$file]))
