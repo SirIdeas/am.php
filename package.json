@@ -15,12 +15,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/SirIdeas/amathista.php.git"
+    "url": "git+https://github.com/SirIdeas/amathista.git"
   },
   "author": "arondn2@gmail.com (Alex J. Rondon)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/SirIdeas/amathista.php/issues"
+    "url": "https://github.com/SirIdeas/amathista/issues"
   },
-  "homepage": "https://github.com/SirIdeas/amathista.php#readme"
+  "homepage": "https://github.com/SirIdeas/amathista#readme"
 }

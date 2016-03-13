@@ -29,7 +29,7 @@
     </div>
     <div class="col s4 valign-middle text-right">
       <small>
-        <a class="link" target="_blank" href="https://github.com/SirIdeas/amathista.php/blob/master/LICENSE">MIT License</a>, <a class="link" target="_blank" href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0.</a>
+        <a class="link" target="_blank" href="https://github.com/SirIdeas/amathista/blob/master/LICENSE">MIT License</a>, <a class="link" target="_blank" href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0.</a>
       </small>
     </div>
   </div>

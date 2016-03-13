@@ -78,7 +78,7 @@
       <tr>
         <th>Directorio raíz de la aplicación</th>
         <td>
-          Directorio contenedor de código fuente de la applicación como lo son los controladores, vistas y modelos entre otros) y donde se ejecutará Amathista (no confundir con el Directorio público). Este es definido en el llamado del método <code><strong>Am::app()</strong></code> del <code><strong>bootfile</strong></code>, en el cual or defecto es el directorio <code><strong>/app/</strong></code>. Su estrucutra interna es definida a conveniencia.
+          Directorio contenedor de código fuente de la applicación como lo son los controladores, vistas y modelos entre otros) y donde se ejecutará Amathista (no confundir con el Directorio público). Este es definido en el llamado del método <code><strong>Am::app()</strong></code> del <code><strong>bootfile</strong></code>, en el cual por defecto es el directorio <code><strong>/app/</strong></code>. Su estructura interna es definida a conveniencia.
         </td>
       </tr>
       <tr>
@@ -96,7 +96,7 @@
       <tr>
         <th>Callback</th>
         <td>
-          Puede ser el nombre de una función, un método estático en formato de string (<code><strong>'Clase::metodo'</strong></code>) o formato array (<code><strong>array('Clase', 'metodo')</strong></code>) o un método de un objeto (<code><strong>array($obj, 'método')</strong></code>).
+          Puede ser uina función, el nombre de una función, un método estático en formato de string (<code><strong>'Clase::metodo'</strong></code>) o formato array (<code><strong>array('Clase', 'metodo')</strong></code>) o un método de un objeto (<code><strong>array($obj, 'método')</strong></code>).
         </td>
       </tr>
     </tbody>
@@ -118,14 +118,14 @@
   <ul>
     <li>
       <p>
-        Descarga directa de <a class="link" target="_blank" href="https://codeload.github.com/SirIdeas/amathista.php/zip/master">GitHub</a>, y se descomprime donde resulte conveniente.
+        Descarga directa de <a class="link" target="_blank" href="https://codeload.github.com/SirIdeas/amathista/zip/master">GitHub</a>, y se descomprime donde resulte conveniente.
       </p>
     </li>
     <li>
       <p>
         Clonar desde GitHub en la carpeta que crea conveniente:
       </p>
-      <pre><code class="language-bash">$ git clone https://github.com/SirIdeas/amathista.php.git</code></pre>
+      <pre><code class="language-bash">$ git clone https://github.com/SirIdeas/amathista.git</code></pre>
     </li>
   </ul>
 </div>
