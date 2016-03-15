@@ -5,5 +5,5 @@ public function action_foo(){
 
 public function action_bar(){
   // Redireccion interna
-  return Am::go('/inicio');
+  return Am::redirect('/inicio');
 }

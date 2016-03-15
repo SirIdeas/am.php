@@ -1591,3 +1591,6 @@ ul.page-nav li.active {
 .divide-section >pre.col {
   margin: 0;
 }
+.token.operator {
+  background-color: transparent;
+}
