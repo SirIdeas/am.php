@@ -32,20 +32,10 @@
     <p>
       Para la herencia se utiliza el método <code><strong>parent</strong></code> el cual define de que vista se hereda; asi mismo la vista vista hiuja es insertada donde la vista padre ejecute el método <code><strong>child</strong></code>:
     </p>
-    <div class="divide-section">
-      <table>
-        <tr>
-          <td class="s4">
-            <pre><code class="language-php">(:= getCodeFile('views/parent1.php') :)</code></pre>
-          </td>
-          <td class="s4">
-            <pre><code class="language-php">(:= getCodeFile('views/parent2.php') :)</code></pre>
-          </td>
-          <td class="s4">
-            <pre><code class="language-php">(:= getCodeFile('views/parent3.php') :)</code></pre>
-          </td>
-        </tr>
-      </table>
+    <div class="row divide-section">
+      <pre class="col s4"><code class="language-php">(:= getCodeFile('views/parent1.php') :)</code></pre>
+      <pre class="col s4"><code class="language-php">(:= getCodeFile('views/parent2.php') :)</code></pre>
+      <pre class="col s4"><code class="language-php">(:= getCodeFile('views/parent3.php') :)</code></pre>
     </div>
   </div>
 
@@ -55,20 +45,10 @@
       Para incluir vistas anidadas se utiliza el método <code><strong>place</strong></code>:
     </p>
 
-    <div class="divide-section">
-      <table>
-        <tr>
-          <td class="s4">
-            <pre><code class="language-php">(:= getCodeFile('views/place1.php') :)</code></pre>
-          </td>
-          <td class="s4">
-            <pre><code class="language-php">(:= getCodeFile('views/place2.php') :)</code></pre>
-          </td>
-          <td class="s4">
-            <pre><code class="language-php">(:= getCodeFile('views/place3.php') :)</code></pre>
-          </td>
-        </tr>
-      </table>
+    <div class="row divide-section">
+      <pre class="col s4"><code class="language-php">(:= getCodeFile('views/place1.php') :)</code></pre>
+      <pre class="col s4"><code class="language-php">(:= getCodeFile('views/place2.php') :)</code></pre>
+      <pre class="col s4"><code class="language-php">(:= getCodeFile('views/place3.php') :)</code></pre>
     </div>
 
   </div>
@@ -83,34 +63,18 @@
       Para utilizar secciones se utiliza él método <code><strong>put</strong></code>:
     </p>
 
-    <div class="divide-section">
-      <table>
-        <tr>
-          <td class="s4">
-            <pre><code class="language-php">(:= getCodeFile('views/put.php') :)</code></pre>
-          </td>
-          <td class="s4">
-            <pre><code class="language-php">(:= getCodeFile('views/put-result.php') :)</code></pre>
-          </td>
-        </tr>
-      </table>
+    <div class="row divide-section">
+      <pre class="col s6"><code class="language-php">(:= getCodeFile('views/put.php') :)</code></pre>
+      <pre class="col s6"><code class="language-php">(:= getCodeFile('views/put-result.php') :)</code></pre>
     </div>
 
     <p>
       De esta forma, si una sección se vuelve a definir su contenido es sustituído por el nuevo. Se se desea conservar el contenido anterior se debe colocar el signo <code><strong>+</strong></code> antes despúes del nombre de la sección para indicar si el nuevo contenido se agrega al final o al principio.
     </p>
 
-    <div class="divide-section">
-      <table>
-        <tr>
-          <td class="s4">
-            <pre><code class="language-php">(:= getCodeFile('views/section-concat.php') :)</code></pre>
-          </td>
-          <td class="s4">
-            <pre><code class="language-php">(:= getCodeFile('views/section-concat-result.php') :)</code></pre>
-          </td>
-        </tr>
-      </table>
+    <div class="row divide-section">
+      <pre class="col s6"><code class="language-php">(:= getCodeFile('views/section-concat.php') :)</code></pre>
+      <pre class="col s6"><code class="language-php">(:= getCodeFile('views/section-concat-result.php') :)</code></pre>
     </div>
 
   </div>

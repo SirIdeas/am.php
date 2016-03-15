@@ -192,7 +192,7 @@ return array(
     ),
   ),
 
-  'routes' => array(
+  'server' => array(
     '#apache' => array(
       'txt' => 'Apache',
     ),

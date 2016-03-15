@@ -10,9 +10,9 @@
       (:= $siteTitle :) |
       (:= $pageTitle :)
     </title>
+    <link rel="stylesheet" href="(:/:)/vendor/prism/prism.css"/>
     <link rel="stylesheet" href="(:/:)/css/fonts.css"/>
     <link rel="stylesheet" href="(:/:)/css/styles.css"/>
-    <link rel="stylesheet" href="(:/:)/vendor/prism/prism.css"/>
     
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <link rel="stylesheet" href="(:/:)/fixes/ie10-viewport-bug-workaround.css">

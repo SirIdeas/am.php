@@ -12,18 +12,10 @@
   <p>
     Las configuración de las rutas son tomados de la propiedad de aplicación <code><strong>routing</strong></code>:
   </p>
-
-  <div class="divide-section">
-    <table>
-      <tr>
-        <td class="s6">
-          <pre><code class="language-php">(:= getCodeFile('routing/routing.conf.php') :)</code></pre>
-        </td>
-        <td class="s6">
-          <pre><code class="language-php">(:= getCodeFile('routing/am.conf.php') :)</code></pre>
-        </td>
-      </tr>
-    </table>
+  
+  <div class="row divide-section">
+    <pre class="col s6"><code class="language-php">(:= getCodeFile('routing/routing.conf.php') :)</code></pre>
+    <pre class="col s6"><code class="language-php">(:= getCodeFile('routing/am.conf.php') :)</code></pre>
   </div>
 
 </div>
@@ -33,32 +25,34 @@
   <p>
     Las rutas poseen 3 partes:
   </p>
-  <table class="table striped">
-    <thead>
-      <tr>
-        <th class="s2">Parte</th>
-        <th>Descripcón</th>
-      </tr>
-    </thead>
-    <tbody class="text-left">
-      <tr>
-        <td><code><strong>route</strong></code></td>
-        <td>String con el formato de la ruta.</td>
-      </tr>
-      <tr>
-        <td><code><strong>routes</strong></code></td>
-        <td>
-          Array de rutas hijas, las cuales se forman concatenando los valores de la ruta padre en cada ruta hija.
-        </td>
-      </tr>
-      <tr>
-        <th>Tipos</th>
-        <td>
-          Puede ser uno o varios y están representados por cada índice extra que contenga la ruta aparte de <code><strong>route</strong></code> y <code><strong>routes</strong></code>. Indican el blanco (target) de la ruta.
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="table-responsive">
+    <table class="table striped">
+      <thead>
+        <tr>
+          <th class="s2">Parte</th>
+          <th>Descripcón</th>
+        </tr>
+      </thead>
+      <tbody class="text-left">
+        <tr>
+          <td><code><strong>route</strong></code></td>
+          <td>String con el formato de la ruta.</td>
+        </tr>
+        <tr>
+          <td><code><strong>routes</strong></code></td>
+          <td>
+            Array de rutas hijas, las cuales se forman concatenando los valores de la ruta padre en cada ruta hija.
+          </td>
+        </tr>
+        <tr>
+          <th>Tipos</th>
+          <td>
+            Puede ser uno o varios y están representados por cada índice extra que contenga la ruta aparte de <code><strong>route</strong></code> y <code><strong>routes</strong></code>. Indican el blanco (target) de la ruta.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
 
 <div>
@@ -151,35 +145,36 @@
       El despachador recive 3 argumentos:
     </p>
 
-
-    <table class="table striped">
-      <thead>
-        <tr>
-          <th class="s2">Parte</th>
-          <th>Descripcón</th>
-        </tr>
-      </thead>
-      <tbody class="text-left">
-        <tr>
-          <td><code><strong>$target</strong></code></td>
-          <td>
-            Valor del índice correspondiente al tipo de ruta evaluado con los parámetros de la petición sustituidos.
-          </td>
-        </tr>
-        <tr>
-          <td><code><strong>$env</strong></code></td>
-          <td>
-            Hash con las variales de entorno de la propiedad de aplicación <code><strong>env</strong></code>.
-          </td>
-        </tr>
-        <tr>
-          <th><code><strong>$params</strong></code></th>
-          <td>
-            Hash con los parámetros obtenidos de la petición según indique el formato de la ruta.
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="table-responsive">
+      <table class="table striped">
+        <thead>
+          <tr>
+            <th class="s2">Parte</th>
+            <th>Descripcón</th>
+          </tr>
+        </thead>
+        <tbody class="text-left">
+          <tr>
+            <td><code><strong>$target</strong></code></td>
+            <td>
+              Valor del índice correspondiente al tipo de ruta evaluado con los parámetros de la petición sustituidos.
+            </td>
+          </tr>
+          <tr>
+            <td><code><strong>$env</strong></code></td>
+            <td>
+              Hash con las variales de entorno de la propiedad de aplicación <code><strong>env</strong></code>.
+            </td>
+          </tr>
+          <tr>
+            <th><code><strong>$params</strong></code></th>
+            <td>
+              Hash con los parámetros obtenidos de la petición según indique el formato de la ruta.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
     <p>
       Debe retorna <code><strong>true</strong></code> si logra despachar satisfactoriamente la petición, de lo contrario debe retornar <code><strong>false</strong></code> para indicar que se debe seguir intentando con otros despachadores.
     </p>

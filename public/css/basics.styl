@@ -82,7 +82,10 @@ $clear()
 // -----------------------------------------------------------------------------
 // Estilos para tablas
 // -----------------------------------------------------------------------------
-$generateTableStyles($tableClass = '.table', $color)
+$generateTableStyles($color, $tableClass = '.table', $tableResponsiveClass = '.table-responsive')
+  {$tableResponsiveClass}
+    overflow-x: auto
+    
   {$tableClass}
     margin-top              10px
     width                   100%
@@ -103,6 +106,17 @@ $generateTableStyles($tableClass = '.table', $color)
     &.bordered
       td,th
         border-bottom       1px solid lightness($color, 90%)
+
+// -----------------------------------------------------------------------------
+// Clearfix
+// -----------------------------------------------------------------------------
+$clearfix()
+  &:after
+  &:before
+    content               " "
+    display               table
+  &:after
+    clear                 both
 
 // -----------------------------------------------------------------------------
 // Grid
@@ -136,12 +150,7 @@ $generateGrid($numSections = 12, $contentCls = 'content', $rowCls = 'row', $colC
     
   // Estilos filas
   .{$rowCls}
-    &:after
-    &:before
-      content               " "
-      display               table
-    &:after
-      clear                 both
+    $clearfix()
   
   // Estilos Columnas
   .{$colCls}
