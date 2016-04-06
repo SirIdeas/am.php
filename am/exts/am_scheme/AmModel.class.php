@@ -11,6 +11,9 @@
  */
 class AmModel extends AmObject{
 
+  public static 
+    $autoMigrate = false;
+
   protected
 
     /**
@@ -324,7 +327,7 @@ class AmModel extends AmObject{
    * @param hash  $values Hash de valores a agregar.
    * @param array $fields Lista de campo que se deben tomar en cuenta.
    */
-  public function setValues(assh $values, array $fields = array()){
+  public function setValues(array $values, array $fields = array()){
 
     // Obtener la tabla
     $table = $this->__p->table;

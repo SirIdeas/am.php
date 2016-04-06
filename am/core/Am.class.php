@@ -223,6 +223,16 @@ final class Am{
   }
 
   /**
+   * Devuelve el directorio donde existe una clase.
+   * @param string $className Nombre de la clase a cargar.
+   */
+  public static function whereIs($className){
+
+    return itemOr($className, self::$pathClasses);
+
+  }
+
+  /**
    * Devuelve una texto con un determinado formato
    * @param  string $fmtKey formato a buscar
    * @return string         Texto formateado
@@ -250,6 +260,31 @@ final class Am{
   public static function e(/* Parametros */){
 
     return new AmError(call_user_func_array(array('Am', 't'), func_get_args()));
+
+  }
+
+  /**
+   * Devuelve un campo statico interno de la clase o un valor de un key
+   * específico de dicho campo.
+   * @param   string  $fieldName  Nombre del campo a retornar.
+   * @param   string  $key        Key a consultar dentro del campo.
+   * @param   mixed   $defValue   Valor a retornar si se pasa pide el valor de
+   *                              un campo específico pero no existe.
+   * @return  Valor de la variable estática de la clase o valor en el key
+   *          en la posicion indicada por key
+   */
+  public static function g($fieldName, $key = null, $defValue = null){
+
+    if(!isset($key))
+      return self::$$fieldName;
+
+    if(isset(self::$$fieldName->$key))
+      return self::$$fieldName->$key;
+
+    if(is_array(self::$$fieldName) && isset(self::$$fieldName[$key]))
+      return self::$$fieldName[$key];
+
+    return $defValue;
 
   }
 
@@ -463,6 +498,15 @@ final class Am{
   }
 
   /**
+   * Devuelve el contenido de un archivo de configuración
+   */
+  public static function getConf($filename){
+
+    return require "{$filename}.conf.php";
+
+  }
+
+  /**
    * Carga los archivos de configuración de una propiedad.
    * @param string $property Nombre de la propiedad a cargar.
    * 
@@ -505,6 +549,7 @@ final class Am{
   }
 
   /**
+   * PENDIENTE: Eliminar
    * Devuelve el valor de una propiedad global. Si la propiead no tiene valor
    * asignado se devuelve el valor por defacto ($default)
    * @param  string $property Nombre de la propiedad a consultar.

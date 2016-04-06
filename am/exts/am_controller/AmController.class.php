@@ -563,7 +563,8 @@ class AmController extends AmResponse{
     if(is_string($conf))
       $conf = array('root' => $conf);
 
-    $conf['root'] = realPath(itemOr('root', $conf, itemOr('root', $defaults)));
+    // $conf['root'] = realPath(itemOr('root', $conf, itemOr('root', $defaults)));
+    $conf['root'] = realPath(itemOr('root', $conf, dirname(Am::whereIs($controller))));
 
     if(is_file($realFile = "{$conf['root']}/am.init.php"))
       require_once $realFile;
