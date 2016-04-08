@@ -24,6 +24,17 @@ class AmController extends AmResponse{
       'filters' => 'merge_r_if_snd_first_not_false',
     );
 
+  public function __construct($data = null){
+
+    $data = AmObject::parse($data);
+    
+    $this->extend(itemOr('env', $data));
+    unset($data['env']);
+
+    parent::__construct($data);
+
+  }
+
   /**
    * Asigna el nombre de la vista a setView.
    * Es un Alias de la funcion setRender que agrega .php al final del valor

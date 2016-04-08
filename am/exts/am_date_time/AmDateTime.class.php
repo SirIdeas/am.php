@@ -1,9 +1,12 @@
 <?php
-
 /**
- * Clase para formato personalizado de fechas
+ * Amathista - PHP Framework
+ *
+ * @author Alex J. Rondón <arondn2@gmail.com>
+ * 
  */
-// PENDIENTE: Documentar
+
+// PENDIENTE documentar
 class AmDateTime extends DateTime{
 
   public static

@@ -990,7 +990,7 @@ class AmQuery extends AmObject{
     $r = $scheme->getFetchAssoc($this->result);
 
     // Si no existe mas registros
-    if(false === $r)
+    if(false === $r || $r === null)
       return false;
 
     // Preparar valores del array mediante los campos de la tabla.

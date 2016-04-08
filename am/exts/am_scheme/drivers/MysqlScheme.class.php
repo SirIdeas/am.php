@@ -231,10 +231,10 @@ class MysqlScheme extends AmScheme{
     // else look len into bytes used for native byte
     else
       $column['len']  = itemOr($nativeType, array_merge(
-                self::$intBytes,
-                self::$floatBytes,
-                self::$textBytes
-              ));
+        self::$intBytes,
+        self::$floatBytes,
+        self::$textBytes
+      ));
 
     if(in_array($column['type'], array('int', 'float'))){
 

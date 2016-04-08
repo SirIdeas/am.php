@@ -97,7 +97,7 @@ class AmFileResponse extends AmResponse{
    * @return bool Indica si la petición se puede resolver o no.
    */
   public function isResolved(){
-    return parent::isResolved() && is_file($this->__p->ilename);
+    return parent::isResolved() && is_file($this->__p->filename);
   }
 
   /**

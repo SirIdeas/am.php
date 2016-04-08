@@ -19,16 +19,22 @@ Am::on('route.addDispatcher', 'AmRoute::addDispatcher');
 /**
  * Agregar algunos de los métodos que atenderán cierto tipo de rutas.
  */
-Am::addRouteDispatcher('file',        'Am::file');
-Am::addRouteDispatcher('download',    'Am::download');
-Am::addRouteDispatcher('redirect',    'Am::redirect');
-Am::addRouteDispatcher('go',          'Am::go');
-Am::addRouteDispatcher('call',        'Am::call');
-Am::addRouteDispatcher('template',    'Am::template');
-Am::addRouteDispatcher('controller',  'Am::controller');
+Am::addRouteDispatcher('file', function($destiny, $env, $params){
+  return Am::file($destiny);
+});
+
+Am::addRouteDispatcher('download', function($destiny, $env, $params){
+  return Am::download($destiny);
+});
+
+Am::addRouteDispatcher('redirect', 'Am::redirect');
+Am::addRouteDispatcher('go', 'Am::go');
+Am::addRouteDispatcher('call', 'Am::call');
+Am::addRouteDispatcher('template', 'Am::template');
+Am::addRouteDispatcher('controller', 'Am::controller');
 
 // PENDIENTE Esto debe pasar a la extensión AmResource
-function resourcePrecall($route){
+Am::addRoutePreProcessor('resource', function($route){
 
   $route['control'] = $route['resource'];
   $route['routes'] = array_merge(
@@ -47,6 +53,4 @@ function resourcePrecall($route){
 
   return $route;
 
-}
-
-Am::addRoutePreProcessor('resource', 'resourcePrecall');
+});
