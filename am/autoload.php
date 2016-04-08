@@ -82,4 +82,4 @@ Am::start();
  * Esta es la última ruta donde se buscarán extensiones.
  * 
  */
-Am::addDir(dirname(__FILE__) . '/');
+Am::addDir(AM_ROOT . '/');
