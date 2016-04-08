@@ -24,4 +24,4 @@ include '../am/autoload.php';
  * configurada, de lo contrario se despachará como una petición HTTP.
  * 
  */
-Am::run();
+Am::run('../app');
