@@ -47,6 +47,11 @@ return array(
   'controllers' => array(),
 
   /**
+   * Extensión que manejará las sessiones
+   */
+  'session' => 'exts/am_normal_session',
+
+  /**
    * Formatos
    */
   'formats' => array(
