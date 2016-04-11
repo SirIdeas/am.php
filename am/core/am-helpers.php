@@ -331,6 +331,8 @@ function amGlobFiles($folders, array $options = array()){
     'include' => '/.*/',
     'exclude' => '/^$/',
     'return' => 0,
+    'relative' => true,
+    'root' => '',
   ), $options);
 
   // Variablle para el retorno.
@@ -338,6 +340,11 @@ function amGlobFiles($folders, array $options = array()){
 
   // recorer las careptas
   foreach ($folders as $folder) {
+
+    $folder = realpath($folder);
+
+    if(!$folder)
+      continue;
 
     $list = glob("{$folder}/*");
 
@@ -348,15 +355,21 @@ function amGlobFiles($folders, array $options = array()){
       // Si cumple con la regex
       if(preg_match_all($options['include'], $item, $m) && !preg_match($options['exclude'], $item)){
 
-        if((is_file($item) && $options['files']) ||
-          (is_dir($item) && $options['dirs'])){
-          $ret[] = $m[$options['return']][0];
+        if((is_file($item) && $options['files'] === true) ||
+          (is_dir($item) && $options['dirs'] === true)){
+          $path = $m[$options['return']][0];
+
+          if($options['relative'] === true)
+            $path = substr_replace($path, '', 0, strlen($options['root']));
+
+          $ret[] = $path;
+
         }
         
       }
 
       // Si es un directorio se pide explorar recursivamente
-      if(is_dir($item) && $options['recursive']){
+      if(is_dir($item) && $options['recursive'] === true){
 
         $ret = array_merge($ret, amGlobFiles($item, $options));
 
