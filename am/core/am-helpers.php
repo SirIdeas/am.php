@@ -333,6 +333,7 @@ function amGlobFiles($folders, array $options = array()){
     'return' => 0,
     'relative' => true,
     'root' => '',
+    'callback' => null,
   ), $options);
 
   // Variablle para el retorno.
@@ -362,7 +363,19 @@ function amGlobFiles($folders, array $options = array()){
           if($options['relative'] === true)
             $path = substr_replace($path, '', 0, strlen($options['root']));
 
-          $ret[] = $path;
+          if(is_callable($options['callback'])){
+            $key = null;
+            $callback = $options['callback'];
+            $newPath = $callback($path, $key);
+
+            if(isset($key))
+              $ret[$key] = $newPath;
+            else
+              $ret[] = $newPath;
+
+          }else{
+            $ret[$path] = $path;
+          }
 
         }
         
