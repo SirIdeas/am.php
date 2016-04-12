@@ -317,7 +317,7 @@ function isNameValid($str){
 }
 
 // PENDIENTE: documentar
-function amGlobFiles($folders, array $options = array()){
+function amGlob($folders, array $options = array()){
 
   // Convertir en array si no es un array.
   if(!is_array($folders))
@@ -331,10 +331,13 @@ function amGlobFiles($folders, array $options = array()){
     'include' => '/.*/',
     'exclude' => '/^$/',
     'return' => 0,
-    'relative' => true,
-    'root' => '',
+    'root' => null,
     'callback' => null,
   ), $options);
+
+  if(isset($options['root'])){
+    $options['root'] = realpath($options['root']);
+  }
 
   // Variablle para el retorno.
   $ret = array();
@@ -360,21 +363,21 @@ function amGlobFiles($folders, array $options = array()){
           (is_dir($item) && $options['dirs'] === true)){
           $path = $m[$options['return']][0];
 
-          if($options['relative'] === true)
-            $path = substr_replace($path, '', 0, strlen($options['root']));
+          if($options['root'])
+            $path = substr_replace($path, '', 0, strlen($options['root'])+1);
 
           if(is_callable($options['callback'])){
             $key = null;
             $callback = $options['callback'];
-            $newPath = $callback($path, $key);
+            $value = $callback($path, $key);
 
             if(isset($key))
-              $ret[$key] = $newPath;
+              $ret[$key] = $value;
             else
-              $ret[] = $newPath;
+              $ret[] = $value;
 
           }else{
-            $ret[$path] = $path;
+            $ret[] = $path;
           }
 
         }
@@ -384,7 +387,7 @@ function amGlobFiles($folders, array $options = array()){
       // Si es un directorio se pide explorar recursivamente
       if(is_dir($item) && $options['recursive'] === true){
 
-        $ret = array_merge($ret, amGlobFiles($item, $options));
+        $ret = array_merge($ret, amGlob($item, $options));
 
       }
 

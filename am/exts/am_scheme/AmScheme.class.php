@@ -272,7 +272,7 @@ abstract class AmScheme extends AmObject{
     $ret = array();
 
     // Buscar los modelo dentro de la carpeta del esquema
-    $ret = amGlobFiles($this->getDir(), array(
+    $ret = amGlob($this->getDir(), array(
 
       // Obtener solo los archivos de configuración
       'include' => '/.*[\/\\\\](.*)\.conf\.php/',
