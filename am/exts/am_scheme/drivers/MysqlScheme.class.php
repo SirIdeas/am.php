@@ -800,6 +800,8 @@ class MysqlScheme extends AmScheme{
 
     // Preparar otras propiedades
     $engine = empty($table->getEngine()) ? '' : "ENGINE={$table->getEngine()} ";
+    $engine = $table->getEngine();
+    $engine = empty($engine) ? '' : "ENGINE={$table->getEngine()} ";
     $charset = $this->sqlCharset($table->getCharset());
     $collation = $this->sqlCollation($table->getCollation());
 
