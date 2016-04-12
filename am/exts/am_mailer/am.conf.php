@@ -14,7 +14,7 @@ return array(
 
   'mergeFunctions' => array(
     'smtp' => 'merge_r_if_are_array',
-    'mails' => 'array_merge_recursive',
+    'mails' => 'merge_if_both_are_array',
   ),
 
   'extend' => array(
@@ -23,6 +23,7 @@ return array(
     'mails' => array(
       '' => array(
         'smtp' => false,
+        'a' => 1,
       ),
     ),
 

@@ -549,23 +549,6 @@ final class Am{
   }
 
   /**
-   * PENDIENTE: Eliminar
-   * Devuelve el valor de una propiedad global. Si la propiead no tiene valor
-   * asignado se devuelve el valor por defacto ($default)
-   * @param  string $property Nombre de la propiedad a consultar.
-   * @param  mixed  $default  Valor por defecto en caso que la propiedad aún no
-   *                          esté asignada.
-   * @return mixed            Valor de la propiedad o valor por defecto si la
-   *                          primera no existe.
-   */
-  public static function getProperty2($property, $default = null){
-
-    self::mergePropertiesFromAllFiles($property, $property);
-    return itemOr($property, self::$confs, $default);
-
-  }
-
-  /**
    * Mueve un archivo a la papelera.
    * Este archivo se ubicará en la papelera relativo al directorio en común del
    * mismo con el directorio actual.
