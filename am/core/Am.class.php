@@ -207,7 +207,7 @@ final class Am{
   public static function loadPathClases($dir, $recursive = false){
 
     // Obtener los paths de las clases en el directorios.
-    $classes = amGlobFiles($dir, array(
+    $classes = amGlob($dir, array(
       'recursive' => $recursive,
       'include' => '/(.*)\.class\.php$/',
       'return' => 1
