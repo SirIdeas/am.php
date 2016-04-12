@@ -799,7 +799,6 @@ class MysqlScheme extends AmScheme{
       $pks[$offset] = $this->getParseName($table->getField($pk)->getName());
 
     // Preparar otras propiedades
-    $engine = empty($table->getEngine()) ? '' : "ENGINE={$table->getEngine()} ";
     $engine = $table->getEngine();
     $engine = empty($engine) ? '' : "ENGINE={$table->getEngine()} ";
     $charset = $this->sqlCharset($table->getCharset());
