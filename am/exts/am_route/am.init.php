@@ -32,6 +32,7 @@ Am::addRouteDispatcher('go', 'Am::go');
 Am::addRouteDispatcher('call', 'Am::call');
 Am::addRouteDispatcher('template', 'Am::template');
 Am::addRouteDispatcher('controller', 'Am::controller');
+Am::addRouteDispatcher('assets', 'Am::assets');
 
 // PENDIENTE Esto debe pasar a la extensión AmResource
 Am::addRoutePreProcessor('resource', function($route){

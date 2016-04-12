@@ -144,6 +144,41 @@ class AmResponse extends AmObject{
   }
 
   /**
+   * Crear nueva petición.
+   * @param  $content Contentido de la respuesta.
+   * @return          Retorna la instancia de la petición.
+   */
+  public static function create($content = null){
+
+    return (new AmResponse())
+      ->content($content);
+
+  }
+
+  /**
+   * Cambia el content-type de la respuesta.
+   * @param  $type Mime Type
+   * @return $this
+   */
+  public function type($type){
+
+    return $this->addHeader("Content-Type: {$type}", 'contentType');
+
+  }
+
+  /**
+   * Cambia el content-type de la respuesta determinando el mime type desde el
+   * nombre de un archivo.
+   * @param  $basefile Nombre dek archivo
+   * @return $this
+   */
+  public function typeOf($file){
+
+    return $this->type(Am::mimeType($file));
+
+  }
+
+  /**
    * Devuelve el valor de una propiedad.
    */
   public function get($propertyName){

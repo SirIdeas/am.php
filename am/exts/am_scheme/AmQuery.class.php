@@ -1079,8 +1079,10 @@ class AmQuery extends AmObject{
     // Clonar el query
     $q = $this->copy()
 
+      // PENDIENTE
       // Selecionar el campo.
-      ->selectAs($field);
+      // ->selectAs($field)
+      ;
 
     // Array para retorno
     $ret = array();

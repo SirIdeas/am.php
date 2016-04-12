@@ -519,13 +519,13 @@ abstract class AmScheme extends AmObject{
 
       // Obtener charset y collation
       $charset = $this->realScapeString($this->getCharset());
-      $collaction = $this->realScapeString($this->getCollation());
+      $collation = $this->realScapeString($this->getCollation());
 
       // Asignar variables
       $this->setServerVar('character_set_server', $charset);
-      $this->setServerVar('collation_server', $collaction);
+      $this->setServerVar('collation_server', $collation);
       // PENDIENTE: Revisar
-      $this->setServerVar('names', $charset);
+      $this->execute("set names {$charset}");
 
     }
 
@@ -624,7 +624,7 @@ abstract class AmScheme extends AmObject{
    * @param  bool   $scope   Si se agrega la cláusula GLOBAL o SESSION.
    * @return bool            Resultado de la operación
    */
-  public function setServerVar($varName, $value, $scope = false){
+  public function setServerVar($varName, $value, $scope = ''){
 
     return !!$this->execute($this->sqlSetServerVar($varName, $value, $scope));
 
@@ -1454,7 +1454,7 @@ abstract class AmScheme extends AmObject{
    * @param  bool   $scope   Si se agrega la cláusula GLOBAL o SESSION.
    * @return string          SQL para la operación.
    */
-  abstract public function sqlSetServerVar($varName, $value, $scope = false);
+  abstract public function sqlSetServerVar($varName, $value, $scope = '');
 
   /**
    * SQL para seleccionar la BD

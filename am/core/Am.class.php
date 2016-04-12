@@ -649,6 +649,27 @@ final class Am{
   }
 
   /**
+   * Responde con la uníon de varios archivos indicados en la propiedad assets.
+   * @param  string $name Nombre de assets a devolver
+   * @return string       Contenido de los archivos correspondientes al assets
+   *                      concatenados.
+   */
+  public static function assets($name){
+
+    $assets = Am::getProperty('assets');
+    $assets = itemOr($name, $assets, array());
+
+    $content = '';
+    foreach($assets as $file)
+      if(file_exists($file))
+        $content .= file_get_contents($file);
+
+    return AmResponse::create($content)
+      ->typeOf($name);
+
+  }
+
+  /**
    * Responde la descarga de un archivo indicado por parámetro.
    * @param  string   $file     Ruta del archivo a descargar.
    * @param  string   $name     Nombre con el que se entregará el archivo.

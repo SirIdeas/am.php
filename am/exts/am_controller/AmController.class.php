@@ -641,7 +641,7 @@ class AmController extends AmResponse{
    */
   final private static function getControllerAndAction($actionStr){
 
-    if(preg_match('/^([a-zA-Z_][a-zA-Z0-9_]*)@([a-zA-Z_][a-zA-Z0-9_]*)$/',
+    if(preg_match('/^([a-zA-Z_][a-zA-Z0-9_]*)@([a-zA-Z_\{\}][a-zA-Z0-9_\{\}]*)$/',
           $actionStr, $m))
       return array(
         'controller' => $m[1],

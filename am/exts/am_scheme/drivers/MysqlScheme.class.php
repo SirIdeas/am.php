@@ -832,7 +832,7 @@ class MysqlScheme extends AmScheme{
     if($ignoreFk)
       $sql = $this->sqlSetServerVar('FOREIGN_KEY_CHECKS', 0).';'.
               $sql.';'.
-              $this->sqlSetServerVar('FOREIGN_KEY_CHECKS', 0);
+              $this->sqlSetServerVar('FOREIGN_KEY_CHECKS', 1);
 
     return $sql;
 
@@ -894,7 +894,7 @@ class MysqlScheme extends AmScheme{
    * @param  bool   $scope   Si se agrega la cláusula GLOBAL o SESSION.
    * @return string          SQL correspondiente.
    */
-  public function sqlSetServerVar($varName, $value, $scope = false){
+  public function sqlSetServerVar($varName, $value, $scope = ''){
 
     $scope = $scope === true? 'GLOBAL ' : $scope === false? 'SESSION ' : '';
     return "SET {$scope}{$varName}={$value}";
@@ -1139,7 +1139,7 @@ class MysqlScheme extends AmScheme{
     }elseif($collation instanceof AmQuery){
 
       // Si es una consulta entonces se obtiene el SQL
-      $collation = $collation->sqlSelectQuery();
+      $collation = $this->sqlSelectQuery($collation);
 
     }
 
