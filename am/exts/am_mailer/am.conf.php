@@ -23,7 +23,6 @@ return array(
     'mails' => array(
       '' => array(
         'smtp' => false,
-        'a' => 1,
       ),
     ),
 
