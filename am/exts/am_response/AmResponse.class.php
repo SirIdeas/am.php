@@ -110,6 +110,27 @@ class AmResponse extends AmObject{
   }
 
   /**
+   * Responde con la uníon de varios archivos indicados en la propiedad assets.
+   * @param  string $name Nombre de assets a devolver
+   * @return string       Contenido de los archivos correspondientes al assets
+   *                      concatenados.
+   */
+  public static function assets($name){
+
+    $assets = Am::getProperty('assets');
+    $assets = itemOr($name, $assets, array());
+
+    $content = '';
+    foreach($assets as $file)
+      if(file_exists($file))
+        $content .= file_get_contents($file);
+
+    return AmResponse::create($content)
+      ->typeOf($name);
+
+  }
+
+  /**
    * Agrega las cabeceras para indicar un error 404 a la respuesta.
    * @param string $msg $mensaje para el error a 404.
    */

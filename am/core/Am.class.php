@@ -45,6 +45,9 @@ final class Am{
       // Responder con una redirección
       'response.go' => null, // $url
 
+      // Responder con un archivo assets compuesto
+      'response.assets' => null, // $assets
+
       // Responder con un error 404
       'response.e404' => null, // $msg
 
@@ -639,16 +642,7 @@ final class Am{
    */
   public static function assets($name){
 
-    $assets = Am::getProperty('assets');
-    $assets = itemOr($name, $assets, array());
-
-    $content = '';
-    foreach($assets as $file)
-      if(file_exists($file))
-        $content .= file_get_contents($file);
-
-    return AmResponse::create($content)
-      ->typeOf($name);
+    return self::emit('response.assets', $name);
 
   }
 
