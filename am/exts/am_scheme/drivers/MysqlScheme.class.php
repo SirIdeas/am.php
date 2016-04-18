@@ -135,8 +135,10 @@ class MysqlScheme extends AmScheme{
    * @return int Resultado de la operación.
    */
   public function close() {
-    
-    return @mysqli_close($this->handler);
+
+    if($this->handler)
+      return @mysqli_close($this->handler);
+    return false;
 
   }
 
@@ -146,7 +148,9 @@ class MysqlScheme extends AmScheme{
    */
   public function getErrNo(){
     
-    return @mysqli_errno($this->handler);
+    if($this->handler)
+      return @mysqli_errno($this->handler);
+    return null;
 
   }
 
@@ -156,7 +160,9 @@ class MysqlScheme extends AmScheme{
    */
   public function getError(){
     
-    return @mysqli_error($this->handler);
+    if($this->handler)
+      return @mysqli_error($this->handler);
+    return null;
 
   }
 
@@ -168,7 +174,9 @@ class MysqlScheme extends AmScheme{
    */
   public function realScapeString($value){
 
-    $value = @mysqli_real_escape_string($this->handler, $value);
+    if($this->handler)
+      $value = @mysqli_real_escape_string($this->handler, $value);
+    
     // Si no tiene valor asignar NULL
     return isset($value)? "'{$value}'" : 'NULL';
 
@@ -181,7 +189,9 @@ class MysqlScheme extends AmScheme{
    */
   protected function query($sql){
     
-    return @mysqli_query($this->handler, $sql);
+    if($this->handler)
+      return @mysqli_query($this->handler, $sql);
+    return false;
 
   }
 
@@ -192,7 +202,9 @@ class MysqlScheme extends AmScheme{
    */
   public function getFetchAssoc($result){
 
-    return @mysqli_fetch_assoc($result);
+    if($this->handler)
+      return @mysqli_fetch_assoc($result);
+    return false;
 
   }
 
@@ -202,7 +214,9 @@ class MysqlScheme extends AmScheme{
    */
   public function getLastInsertedId(){
 
-    return @mysqli_insert_id($this->handler);
+    if($this->handler)
+      return @mysqli_insert_id($this->handler);
+    return false;
 
   }
 
