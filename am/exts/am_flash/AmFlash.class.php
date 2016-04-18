@@ -103,7 +103,7 @@ final class AmFlash{
   }
 
   // Funcion comun para obtener/agregar cada tipo de mensaje
-  private final static function __callStatic($name, $arguments = null){
+  public final static function __callStatic($name, $arguments = null){
 
     if(!empty($arguments))
       return self::add($name, $arguments[0]);
