@@ -1339,7 +1339,7 @@ final class Am{
       @chdir($appRoot);
 
       // Define el directorio de la papelera
-      @define('AM_TRASH', realpath($appRoot).'/.trash');
+      @define('AM_TRASH', realpath($appRoot).'/storage/trash');
 
     }
 
@@ -1383,6 +1383,12 @@ final class Am{
       }
 
     }
+
+    // Definir constantes
+    $consts = self::getProperty('consts', array());
+    foreach($consts as $key => $value)
+      if(!defined($key))
+        define($key, $value);
 
     // Include init file at app root if exists
     if(is_file($initFilePath = 'am.init.php'))
