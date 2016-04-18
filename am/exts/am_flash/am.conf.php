@@ -8,7 +8,6 @@
 
 return array(
   
-  // PENDIENTE
   'requires' => array(
     'exts/am_session/',
   ),

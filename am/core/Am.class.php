@@ -59,26 +59,9 @@ final class Am{
 
       // Renderiza de una vista
       'render.template' => array(), // $__tpl, $__vars, $__options
-      
-      // PENDIENTE: Volver a agregar cuando se agrege una extensión que las use
-      
-      // // Asignar identificador de la sesion
-      // 'session.id' => null, // $index
-      
-      // // Obtener el todos los datos de sesion
-      // 'session.all' => null, // $index
-      
-      // // Obtener elemento
-      // 'session.get' => null, // $index
-      
-      // // Indica si existe un elemento
-      // 'session.has' => null, // $index
-      
-      // // Asignar un elemento
-      // 'session.set' => null, // $index, $value
-      
-      // // Eliminar un elemento
-      // 'session.delete' => null, // $index
+
+      // Obtener la instancia de una sesion
+      'session.get' => null, // $id
       
       // Obtener una instancia del manejador de credenciales
       // 'credentials.handler' => array()
@@ -93,15 +76,8 @@ final class Am{
       'requires' => 'merge_if_snd_first_not_false',
       'env' => 'merge_if_both_are_array',
       'tasks' => 'array_merge_recursive',
-      'formats' => 'array_merge'
-    ),
-
-    // PENDIENTE: Revisar
-    /**
-     * Exteciones manejadoras de session
-     */
-    $aliasExts = array(
-      'normalSession' => 'exts/am_normal_session/'
+      'formats' => 'array_merge',
+      'aliases' => 'merge_if_snd_first_not_false',
     ),
 
     /**
@@ -154,6 +130,11 @@ final class Am{
      * Indica si ya se inicialicó la aplicación
      */
     $apped = false,
+
+    /**
+     * Hash de instancias de las sesiones.
+     */
+    $sessions = array(),
 
     /**
      * Instancia de AmObject que tiene como propiedades los valores los arrays
@@ -222,6 +203,8 @@ final class Am{
 
     // Emitir evento indicando que se cargó el directorio de clases
     self::emit('core.loadedPath', $dir);
+
+    return $classes;
 
   }
 
@@ -949,6 +932,14 @@ final class Am{
     // Quitar slash del final de archivo
     $file = preg_replace('/(.*)\/$/', '$1', $file);
 
+    // Si ya fué cargado retornar verdadero.
+    if(in_array($realDir = realpath(dirname("{$file}/am")), self::$loadedExts))
+      return true;
+
+    // Si es un directorio incluir dentro de los directorios de clases
+    if(is_dir($realDir))
+      $conf = self::loadPathClases($realDir, false);
+
     // Si existe el archivo retornar el mismo
     if(in_array($realFileConf = realpath("{$file}/am.conf.php"), self::$loadedExts))
       return true;
@@ -985,9 +976,6 @@ final class Am{
         // Obtener los directorios de clases.
         $autoload = itemOr('autoload', $conf, array());
 
-        // Agregar el directorios raíz
-        $autoload = array_merge(array('' => false), $autoload);
-
         foreach ($autoload as $path => $recursive) {
           
           // Si es un archivo existente cargarlo.
@@ -1020,7 +1008,7 @@ final class Am{
 
     // Si esta definida la variable $conf, entonces retornar verdadero.
     if(isset($conf)){
-      self::$loadedExts[] = $realFileConf;
+      self::$loadedExts[] = $realDir;
       return true;
     }
 
@@ -1050,8 +1038,9 @@ final class Am{
     }
 
     // Obtener el nombre del archivo si existe un alias con nombre de la extensión a acargar
-    if(isset(self::$aliasExts[$name]))
-      $name = self::$aliasExts[$name];
+    $aliases = self::getProperty('aliases');
+    if(isset($aliases[$name]))
+      $name = $aliases[$name];
 
     // Agregar extension
     if(self::load($name))
@@ -1326,31 +1315,6 @@ final class Am{
   }
 
   /////////////////////////////////////////////////////////////////////////////
-  // Manejo de session
-  /////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Realiza incializaciones para el manejo de session
-   */
-  // PENDIENTE: Revisar
-  public static function startSession(){
-
-    // Si ya esta cargada la clase AmSession es porque
-    // ya se realizó la inicializacion.
-
-    if(class_exists('AmSession'))
-      return;
-
-    self::requireExt(array(
-      // Incluir extension desde el aclias
-      self::$confs['sessionManager'],
-      // Incluir manejador principal de session
-      'core/am_session'
-    ));
-
-  }
-
-  /////////////////////////////////////////////////////////////////////////////
   // Inicio de Amathista
   /////////////////////////////////////////////////////////////////////////////
   
@@ -1480,6 +1444,31 @@ final class Am{
       self::emit('route.evaluate', self::getRequest());
       
     }
+
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
+  // SESSIONES
+  /////////////////////////////////////////////////////////////////////////////
+    
+  /**
+   * Retorna la sessión del usuario para un identificador.
+   * @param  string   $type Tipo de la sesión que desea obtener.
+   * @param  string   $id   ID de la sesión que desea obtener. Si no se indica
+   *                        se devuelve toma el ID de la aplicación.
+   * @return mixed          Instancia de la sesión.
+   */
+  public static function session($type = 'user', $id = null){
+
+    if(!isset($id))
+      $id = Am::getProperty('id');
+
+    $id .= "_{$type}";
+
+    if(!isset(self::$sessions[$id]))
+      self::$sessions[$id] = Am::emit('session.get', $id);
+
+    return self::$sessions[$id];
 
   }
 

@@ -7,5 +7,9 @@
  */
 
 return array(
+  
+  'requires' => array(
+    'exts/am_session/',
+  ),
 
 );

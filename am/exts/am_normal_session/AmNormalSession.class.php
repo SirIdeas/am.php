@@ -7,54 +7,54 @@
  */
 
 // PENDIENTE documentar
-final class AmNormalSession{
-  
-  protected static
-    $sessionId; // ID de la sesion
-  
-  // Asigna una ID de sesion
-  public final static function id($sessionId){
-    
-    self::$sessionId = $sessionId;
-    
+final class AmNormalSession extends AmSession{
+
+  public function __construct($id){
+    parent::__construct($id);
+      
     // Crear contendor de la sesion   
-    if(!isset($_SESSION[$sessionId]))
-      $_SESSION[$sessionId] = array();
-    
-  }
-    
-  // Devuelve un array con todas las variables de sesion
-  public final static function all(){
+    if(!isset($_SESSION[$this->id()]))
+      $_SESSION[$this->id()] = array();
 
-    return $_SESSION[self::$sessionId];
-    
-  }
-
-  // Devuelve el contenido de una variable de sesion
-  public final static function get($index){
-
-    return self::has($index) ? unserialize($_SESSION[self::$sessionId][$index]) : null;
-    
-  }
-
-  // Indica si existe o no una variable de sesion
-  public final static function has($index){
-
-    return isset($_SESSION[self::$sessionId][$index]);
-    
-  }
-
-  public final static function set($index, $value){
-
-    $_SESSION[self::$sessionId][$index] = serialize($value);
-    
   }
   
-  // Elimina una variable de la sesion
-  public final static function delete($index){
+  // Devuelve un array con todas las variables de sesion
+  public function all(){
 
-    unset($_SESSION[self::$sessionId][$index]);
+    $ret = $_SESSION[$this->id()];
+
+    foreach ($ret as $key => $value) 
+      $ret[$key] = $this[$key];
+
+    return $ret;
     
+  }
+
+  public function offsetGet($key){
+
+    $decode = $this->_decode;
+    return isset($this[$key]) ? $decode($_SESSION[$this->id()][$key]) : null;
+
+  }
+
+  // Función para crear una variable de sesión
+  public function offsetSet($key, $value){
+
+    $code = $this->_code;
+    $_SESSION[$this->id()][$key] = $code($value);
+
+  }
+
+  public function offsetExists($key){
+
+    return isset($_SESSION[$this->id()][$key]);
+
+  }
+
+  public function offsetUnset($key){
+
+    unset($_SESSION[$this->id()][$key]);
+
   }
 
 }

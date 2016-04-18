@@ -7,47 +7,133 @@
  */
 
 // PENDIENTE documentar
-final class AmSession{
+abstract class AmSession implements Iterator, Countable, ArrayAccess{
+
+  protected
+    $_collect = array(),
+    $_id = null,
+    $_code = 'serialize',
+    $_decode = 'unserialize';
   
-  // Devuelve un array con todas las variables de sesion
-  public final static function all(){
+  // Función para crear una variable de sesión
+  public function __construct($id){
 
-    return Am::emit('session.all');
+    $this->_id = $id;
     
   }
 
-  // Devuelve el contenido de una variable de sesion
-  public final static function get($index){
+  public function id(){
 
-    return Am::emit('session.get', $index);
-    
+    return $this->_id;
+
   }
 
-  // Indica si existe o no una variable de sesion
-  public final static function has($index){
+  public function __get($name){
 
-    return Am::emit('session.has', $index);
-    
+    return $this[$name];
+
   }
 
-  public final static function set($index, $value){
+  public function __set($name, $value){
 
-    return Am::emit('session.set', $index, $value);
+    $this[$name] = $value;
+
+  }
+
+  public function __isset($name){
+
+    return isset($this[$name]);
+
+  }
+
+  public function __unset($name){
+
+    unset($this[$name]);
+
+  }
+
+  public function rewind(){
+
+    $this->_collect = $this->all();
+    return $this;
+
+  }
+
+  public function end(){
+
+    end($this->_collect);
+    return $this;
+
+  }
+
+  public function key(){
+
+    return current($this->_collect);
+
+  }
+
+  public function current(){
+
+    $key = current($this);
+    return $this[$key];
+
+  }
+
+  public function next(){
+
+    next($this->_collect);
+    return $this;
+
+  }
+
+  public function prev(){
+
+    prev($this->_collect);
+    return $this;
+
+  }
+
+  public function valid(){
+
+    $key = current($this);
+    return isset($this[$key]);
+
+  }
+
+  public function count(){
+
+    $collect = $this->all();
+    return count($collect);
+
+  }
+
+  abstract public function all();
+
+  abstract public function offsetGet($key);
+  abstract public function offsetSet($key, $value);
+  abstract public function offsetExists($key);
+  abstract public function offsetUnset($key);
+
+  public static function get($id){
+
+    $class = Am::getProperty('session');
+    Am::requireExt($class);
+
+    return new $class($id);
+
+  }
+
+  public static function __callStatic($name, $arguments){
+
+    $session = Am::session();
+
+    if(!empty($arguments)){
+      $session[$name] = $arguments[0];
+      return $session;
+    }
     
+    return $session[$name];
+
   }
   
-  // Elimina una variable de la sesion
-  public final static function delete($index){
-
-    return Am::emit('session.delete', $index);
-    
-  }
-  
-  // Asigna una ID de sesion
-  public final static function id($id){
-
-    return Am::emit('session.id', $id);
-    
-  }
-
 }

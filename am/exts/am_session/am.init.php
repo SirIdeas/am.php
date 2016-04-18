@@ -6,4 +6,4 @@
  * 
  */
 
-Am::requireExt(Am::getProperty('session'));
+Am::on('session.get', 'AmSession::get');

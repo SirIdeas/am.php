@@ -32,6 +32,11 @@ return array(
   'requires' => array(),
 
   /**
+   * Hash con alias de extensiones
+   */
+  'aliases' => array(),
+
+  /**
    * Directorios para la auto carga.
    */
   'autoload' => array(),
@@ -49,7 +54,7 @@ return array(
   /**
    * Extensión que manejará las sessiones
    */
-  'session' => 'exts/am_normal_session',
+  'session' => 'AmNormalSession',
 
   /**
    * Formatos
