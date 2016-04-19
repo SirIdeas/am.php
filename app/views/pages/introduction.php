@@ -61,7 +61,7 @@
         <tr>
           <th>Archivo de inicio</th>
           <td>
-            Archivo <code><strong>am.init.php</strong></code> contiene al código de inicialización de una aplicación o extensión. Está ubicado en la raíz del mismo.
+            Archivo <code><strong>am.init.php</strong></code> contiene el código de inicialización de una aplicación o extensión. Está ubicado en el directorio raíz del mismo.
           </td>
         </tr>
         <tr>
@@ -97,7 +97,7 @@
         <tr>
           <th>Callback</th>
           <td>
-            Puede ser uina función, el nombre de una función, un método estático en formato de string (<code><strong>'Clase::metodo'</strong></code>) o formato array (<code><strong>array('Clase', 'metodo')</strong></code>) o un método de un objeto (<code><strong>array($obj, 'método')</strong></code>).
+            Puede ser una función, el nombre de una función, un método estático en formato de string (<code><strong>'Clase::metodo'</strong></code>) o formato array (<code><strong>array('Clase', 'metodo')</strong></code>) o un método de un objeto (<code><strong>array($obj, 'método')</strong></code>).
           </td>
         </tr>
       </tbody>
@@ -194,16 +194,16 @@
           <td>Archivo de rutas la aplicación.</td>
         </tr>
         <tr>
-          <td><code><strong>/app/Index.class.php</strong></code></td>
+          <td><code><strong>/app/tpls/tpl.php</strong></code></td>
+          <td>Plantilla inicial</td>
+        </tr>
+        <tr>
+          <td><code><strong>/app/controllers/Index.class.php</strong></code></td>
           <td>Controlador inicial</td>
         </tr>
         <tr>
-          <td><code><strong>/app/views/index.php</strong></code></td>
+          <td><code><strong>/app/controllers/views/index.php</strong></code></td>
           <td>Vista index del controlador Index</td>
-        </tr>
-        <tr>
-          <td><code><strong>/app/views/tpl.php</strong></code></td>
-          <td>Plantilla inicial</td>
         </tr>
         <tr>
           <td><code><strong>/public/index.php</strong></code></td>
@@ -234,7 +234,7 @@
   <h2 id="test-site">Sitio de pruebas</h2>
 
   <p>
-    Para verificar que todo vaya bien se puede ejcutar el sitio desde un navegador. En nuestro caso creamos el proyecto dentro de la carpeta <code><strong>testsite</strong></code> dentro de la carpeta web de nuestra instalación local de WAMPP:
+    Para verificar que todo vaya bien se puede ejecutar el sitio desde un navegador. En nuestro caso creamos el proyecto dentro de la carpeta <code><strong>testsite</strong></code> dentro de la carpeta web de nuestra instalación local de WAMPP:
   </p>
   <img class="def-img" src="(:/:)/images/testfile-folder.jpg" alt="testfile-folder.jpg">
 

@@ -1,6 +1,14 @@
 (:: parent:views/tpl.php :)
 (:: set:pageTitle='Amathista Framework' :)
 
+<header class="site-header primary bg-d1 spyscroll" data-height="#pageTitle" data-class="box-shadow-2">
+  <div class="content row">
+    <div class="inner col os-s2 col10 valign-middle spyscroll dispel on" data-equal="0" data-class="on">
+      <div>(:= $pageTitle :)</div>
+    </div>
+  </div>
+</header>
+
 <section id="pageTitle" class="page-title primary bg-d1 box-shadow-2">
   <div class="content row spyscroll dispel" data-not-equal="0" data-class="on">
     <div class="col col2 side">
@@ -11,18 +19,9 @@
     </div>
   </div>
 </section>
-
-<section class="site-header primary bg-d1 spyscroll" data-height="#pageTitle" data-class="box-shadow-2">
-  <div class="content row">
-    <div class="col os-s2 col10 valign-middle spyscroll dispel on" data-equal="0" data-class="on">
-      <div>(:= $pageTitle :)</div>
-    </div>
-  </div>
-</section>
-
 (:: child :)
-
-<section class="site-footer secondary bg-l3">
+ 
+<footer class="site-footer secondary bg-l3">
   <div class="content row">
     <div class="col s8 valign-middle">
       <small>© 2014-2016 <a href="http://sirideas.com" target="_blank" class="link">Sir Ideas, C. A.</a>, Todos los derechos reservados.</small>
@@ -33,4 +32,4 @@
       </small>
     </div>
   </div>
-</section>
+</footer>

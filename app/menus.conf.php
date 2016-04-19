@@ -49,8 +49,8 @@ return array(
     '#how-works' =>array(
       'txt' => 'Cómo funciona',
     ),
-    '#basics-events' =>array(
-      'txt' => 'Eventos Básicos',
+    '#basics-actions' =>array(
+      'txt' => 'Acciones Básicas',
     ),
     '#main-conf-file' =>array(
       'txt' => 'Archivo principal de configuración',

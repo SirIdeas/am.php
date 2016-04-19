@@ -3,12 +3,12 @@
 @import 'basics.styl'
 
 body
-  color                 #333
+  color #333
 
 // -----------------------------------------------------------------------------
 // Llamadas
 // -----------------------------------------------------------------------------
-$primaryColor           = #673AB7
+$primaryColor = #673AB7
 
 $clear()
 $generateShadows()
@@ -55,13 +55,13 @@ $generateTableStyles($primaryColor);
   $verticalAlignChilds  middle
 
 .link
-  font-weight           bold
-  color                 $primaryColor
+  font-weight bold
+  color $primaryColor
 
 .def-img
-  max-width             100%
-  display               block
-  margin                auto
+  max-width 100%
+  display block
+  margin auto
 
 // -----------------------------------------------------------------------------
 $toolbarHeight          = 60px
@@ -75,183 +75,187 @@ $logoHeight             = $pageTitleH1Hmargin*2 + $pageTitleH1Height + $toolbarH
 $sidePaddingRight       = 30px
 .logo-parent
   img
-    max-height          $logoHeight
-    display             block
-    margin              0 auto
+    max-height $logoHeight
+    display block
+    margin 0 auto
     
 .sidebar-left-footer
-  absolute              left right bottom
+  absolute left right bottom
   h4
-    margin              10px 0 0 0
+    margin 10px 0 0 0
   p
-    margin              5px 0 5px 0
+    margin 5px 0 5px 0
 
 // Effecto ocultar 
 .dispel
-  transition            opacity linear 0.1s
-  opacity               1
+  transition opacity linear 0.1s
+  opacity 1
   &.on
-    opacity             0
+    opacity 0
 
 .site-header
 .site-footer
-  fixed                 left right
-  z-index               1
+  fixed left right
+  z-index 1
   
 .site-header
-  top                   0
-  height                $siteHeaderHeight
+  top 0
+  z-index 2
   .content
-    padding             0 10px
-    font-size           130%
+    padding 0 10px
+    font-size 130%
+  .inner
+    height $siteHeaderHeight
 
 .site-footer
-  height                $siteFooterHeight
-  bottom                0
-  color                 #555
+  height $siteFooterHeight
+  bottom 0
+  color #555
   .content
-    padding             0 10px
+    padding 0 10px
   .col
-    height              $siteFooterHeight
-  a
-    color               inherit
+    height $siteFooterHeight
+  // a
+  //   color inherit
 
 .side
-  padding-right         $sidePaddingRight
+  padding-right $sidePaddingRight
   
 .site-sidebar
-  fixed                 top $siteHeaderHeight bottom $siteFooterHeight
+  fixed top $siteHeaderHeight bottom $siteFooterHeight
   .title-parent
   .nav
-    padding-right       $sidePaddingRight
+    padding-right $sidePaddingRight
   .title-parent
-    absolute            top left right
+    absolute top left right
   .nav
-    absolute            bottom left right top $pageTitleMinHeight
+    absolute bottom left right top $pageTitleMinHeight
     &:hover
-      overflow          auto
+      overflow auto
 
 .site-body
-  absolute              left right
-  margin-bottom         $siteFooterHeight
+  margin-bottom $siteFooterHeight
 
 .page-title
-  margin-top            $siteHeaderHeight
-  position              relative
-  z-index               1
+  margin-top $siteHeaderHeight
+  position relative
+  z-index 0
   
 .header-logo
-  display               block
-  height                $siteHeaderHeight - $siteLogoHeaderPadding*2
-  margin                $siteLogoHeaderPadding auto
+  display block
+  height $siteHeaderHeight - $siteLogoHeaderPadding*2
+  margin $siteLogoHeaderPadding auto
   
 .sub-header-logo
-  display               block
-  height                160px
-  margin                20px 0 0 auto
+  display block
+  height 160px
+  margin 20px 0 0 auto
       
 .nav-item
-  line-height           40px
-  display               inline-block
-  vertical-align        top
-  padding-left          10px
+  line-height 40px
+  display inline-block
+  vertical-align top
+  padding-left 10px
   
 .title-parent
-  position              relative
-  min-height            $pageTitleMinHeight
+  position relative
+  min-height $pageTitleMinHeight
   h1
-    absolute            bottom left right
-    margin              $pageTitleH1Hmargin 0
-    line-height         $pageTitleH1Height
+    absolute bottom left right
+    margin $pageTitleH1Hmargin 0
+    line-height $pageTitleH1Height
 
 .wrapper
-  margin                $siteHeaderHeight 0 $siteFooterHeight 0
+  margin $siteHeaderHeight 0 $siteFooterHeight 0
 
 .home-page-title
   h1
-    margin              0
-    font-size           300%
+    margin 0
+    font-size 300%
   img
-    max-height          300px
+    max-height 300px
   
 ul.page-nav
 ul.nav
-  margin                0
-  padding               20px 0  
+  margin 0
+  padding 20px 0  
   ul
-    padding             0 10px
+    padding 0 10px
   li
-    margin              0
-    list-style-type     none
+    margin 0
+    list-style-type none
     >a
     >span
-      text-decoration   none
-      display           block
-      padding           0 15px
+      text-decoration none
+      display block
+      padding 0 15px
       // &:hover
       //   background-color rgba(158,158,158,0.2)
   >li
-    padding-bottom      5px
+    padding-bottom 5px
 
 ul.nav
-  text-align            right
+  text-align right
   li
-    font-size           95%
+    font-size 95%
     color               
   >li
     >a
     >span
-      padding           5px 15px
-      font-size         120%
-      font-weight       bold
-      color             $primaryColor
+      padding 5px 15px
+      font-size 120%
+      font-weight bold
+      color $primaryColor
 
 ul.page-nav
   a
-    line-height         20px
+    line-height 20px
   li
-    font-size           90%
-    color               gray
+    font-size 90%
+    color gray
     li
-      font-weight       normal
+      font-weight normal
       
     &.active
-      font-weight       bold
-      color             $primaryColor
+      font-weight bold
+      color $primaryColor
       
   
 
 .sub-nav
-  margin-bottom         20px
+  margin-bottom 20px
 
 .inner
   h2
   h3
   h4
-    color               $primaryColor
+    color $primaryColor
   h2
-    margin-top          30px
-    padding-top         15px
-    border-top          2px solid lightness($primaryColor, 90%)
+    margin-top 30px
+    padding-top 15px
+    border-top 2px solid lightness($primaryColor, 90%)
 
   pre.mb5
-    margin-bottom       5px
+    margin-bottom 5px
+  
+  a
+    color $primaryColor
     
   .nested-list ul
-    padding-left        25px
+    padding-left 25px
 
 .table
   &.small
-    width               auto
+    width auto
   .table-pre
-    background-color    transparent
-    margin              0
-    padding             3px 10px
+    background-color transparent
+    margin 0
+    padding 3px 10px
 
 .divide-section
-  background-color      #f5f2f0  
+  background-color #f5f2f0  
   >pre.col
-    margin              0
+    margin 0
 
 .token.operator
-  background-color      transparent
+  background-color transparent

@@ -995,9 +995,11 @@ body {
   box-sizing: border-box;
   color: inherit;
 }
-html,
-body {
+html {
   position: relative;
+  min-height: 100%;
+}
+body {
   font-size: 16px;
   font-family: Arial, 'Helvetica Neue', sans-serif;
   margin: 0;
@@ -1407,11 +1409,14 @@ p {
 }
 .site-header {
   top: 0;
-  height: 60px;
+  z-index: 2;
 }
 .site-header .content {
   padding: 0 10px;
   font-size: 130%;
+}
+.site-header .inner {
+  height: 60px;
 }
 .site-footer {
   height: 35px;
@@ -1423,9 +1428,6 @@ p {
 }
 .site-footer .col {
   height: 35px;
-}
-.site-footer a {
-  color: inherit;
 }
 .side {
   padding-right: 30px;
@@ -1456,15 +1458,12 @@ p {
   overflow: auto;
 }
 .site-body {
-  position: absolute;
-  left: 0;
-  right: 0;
   margin-bottom: 35px;
 }
 .page-title {
   margin-top: 60px;
   position: relative;
-  z-index: 1;
+  z-index: 0;
 }
 .header-logo {
   display: block;
@@ -1573,6 +1572,9 @@ ul.page-nav li.active {
 }
 .inner pre.mb5 {
   margin-bottom: 5px;
+}
+.inner a {
+  color: #673ab7;
 }
 .inner .nested-list ul {
   padding-left: 25px;

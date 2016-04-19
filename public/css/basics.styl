@@ -4,9 +4,9 @@
 // mixins
 // -----------------------------------------------------------------------------
 $setBackground($color)
-  background-color          $color
-  color                     white if dark($color)
-  color                     black if !dark($color)
+  background-color $color
+  color white if dark($color)
+  color black if !dark($color)
 
 
 // -----------------------------------------------------------------------------
@@ -14,98 +14,100 @@ $setBackground($color)
 // -----------------------------------------------------------------------------
 $verticalAlignChilds($pos)
   &:before
-    content                 ' '
-    height                  100%
+    content ' '
+    height 100%
   &:before
   >*
-    display                 inline-block
-    vertical-align          $pos
+    display inline-block
+    vertical-align $pos
     
 // -----------------------------------------------------------------------------
 // Principales
 // -----------------------------------------------------------------------------
 $clear()
   *
-    box-sizing              border-box
-    color                   inherit
+    box-sizing border-box
+    color inherit
 
   html
+    position relative
+    min-height 100%
+    
   body
-    position                relative
-    font-size               16px
-    font-family             Arial, 'Helvetica Neue', sans-serif;
-    margin                  0
-    padding                 0
+    font-size 16px
+    font-family Arial, 'Helvetica Neue', sans-serif;
+    margin 0
+    padding 0
     
   a
-    text-decoration         none
+    text-decoration none
 
   ul,ol
-    padding-left            40px
+    padding-left 40px
     
   table
-    font-size               16px
+    font-size 16px
   
   th
-    font-weight             bold
+    font-weight bold
   
   thead th
-    text-align              center
+    text-align center
       
   td,th
-    vertical-align          middle
+    vertical-align middle
     
   p
-    line-height             1.8
+    line-height 1.8
 
   .text-center
-    text-align              center
+    text-align center
     
   .text-left
-    text-align              left
+    text-align left
     
   .text-right
-    text-align              right
+    text-align right
     
   .pull-right
-    float                   right
+    float right
     
   .pull-left
-    float                   left
+    float left
     
   .scrollable
-    overflow                auto
+    overflow auto
     
   .inner
-    padding                 10px
+    padding 10px
     
 // -----------------------------------------------------------------------------
 // Estilos para tablas
 // -----------------------------------------------------------------------------
 $generateTableStyles($color, $tableClass = '.table', $tableResponsiveClass = '.table-responsive')
   {$tableResponsiveClass}
-    overflow-x: auto
+    overflow-x auto
     
   {$tableClass}
-    margin-top              10px
-    width                   100%
-    border-collapse         collapse
+    margin-top 10px
+    width 100%
+    border-collapse collapse
       
     td,th
-      padding               10px 1.2em
+      padding 10px 1.2em
     
     thead
       td,th
-        border-bottom       1px solid lightness($color, 90%)
+        border-bottom 1px solid lightness($color, 90%)
     
     &.striped
       tbody
         tr:nth-of-type(odd)
-          $setBackground    lightness($color, 97.5%)
+          $setBackground lightness($color, 97.5%)
     
     &.bordered
       td,th
-        border-bottom       1px solid lightness($color, 90%)
+        border-bottom 1px solid lightness($color, 90%)
 
 // -----------------------------------------------------------------------------
 // Clearfix
@@ -113,10 +115,10 @@ $generateTableStyles($color, $tableClass = '.table', $tableResponsiveClass = '.t
 $clearfix()
   &:after
   &:before
-    content               " "
-    display               table
+    content " "
+    display table
   &:after
-    clear                 both
+    clear both
 
 // -----------------------------------------------------------------------------
 // Grid
@@ -146,7 +148,7 @@ $generateGrid($numSections = 12, $contentCls = 'content', $rowCls = 'row', $colC
   
   // Content en general
   .{$contentCls}
-    margin                  0 auto
+    margin 0 auto
     
   // Estilos filas
   .{$rowCls}
@@ -154,9 +156,9 @@ $generateGrid($numSections = 12, $contentCls = 'content', $rowCls = 'row', $colC
   
   // Estilos Columnas
   .{$colCls}
-    display                 inline-block
-    float                   left
-    box-sizing              border-box
+    display inline-block
+    float left
+    box-sizing border-box
   
   for $screenClass, $value in $screens
     $minWidth = $value + 32px
@@ -165,29 +167,29 @@ $generateGrid($numSections = 12, $contentCls = 'content', $rowCls = 'row', $colC
       if $value
         // Content max-width
         .{$contentCls}
-          max-width         $value
+          max-width $value
         
         // Ocultar elementos
         .{$hideCls}-{$screenClass}
-          display           none
+          display none
               
       for $i in (1..$numSections)
         
         // Columnas
         .{$screenClass}{$i}
-          width             $i*(100 / $numSections)*1%
+          width $i*(100 / $numSections)*1%
           
         // Width fijo
         if $constantCls
           if $value
             .{$constantCls}{$i}
             .{$constantCls}-{$screenClass}{$i}
-              width             $i*($value / $numSections)
+              width $i*($value / $numSections)
         
         // Margen anterior
         if $offsetCls
           .{$offsetCls}-{$screenClass}{$i}
-            margin-left     $i*(100 / $numSections)*1%
+            margin-left $i*(100 / $numSections)*1%
 
 // -----------------------------------------------------------------------------
 // Colores
@@ -196,11 +198,11 @@ $generatePallete($selector, $colors)
 
   if($colors[''])
     {$selector}
-      $setBackground        $colors['']
+      $setBackground $colors['']
     
   for $name, $color in $colors
     {$selector}.bg{$name}
-      $setBackground        $color
+      $setBackground $color
 
 // -----------------------------------------------------------------------------
 // Sombras
@@ -241,51 +243,52 @@ $generateButton(
   $miniSelector = '.btn-mini',
   $iconSelector = '.btn-icon')
   {$buttonSelector}
-    border-radius           3px
-    user-select             none
-    position                relative
-    outline                 0
-    border                  0
-    display                 inline-block
-    align-items             center
-    padding                 0 6px
-    line-height             36px
-    min-height              36px
-    min-width               88px
-    background              0 0
-    white-space             nowrap
-    letter-spacing          .01em
-    text-align              center
-    text-transform          uppercase
-    font-weight             500
-    text-decoration         none
-    cursor                  pointer
-    overflow                hidden
+    border-radius 3px
+    user-select none
+    position relative
+    outline 0
+    border 0
+    display inline-block
+    align-items center
+    padding 0 6px
+    line-height 36px
+    min-height 36px
+    min-width 88px
+    background 0 0
+    white-space nowrap
+    letter-spacing .01em
+    text-align center
+    text-transform uppercase
+    font-weight 500
+    text-decoration none
+    cursor pointer
+    overflow hidden
     &:not([disabled]):hover
-      background-color      rgba(158,158,158,0.2)
+      background-color rgba(158,158,158,0.2)
     &[disabled]
-      cursor                not-allowed
-      background-color      rgba(0,0,0,0)
-      color                 rgba(0,0,0,0.26)
+      cursor not-allowed
+      background-color rgba(0,0,0,0)
+      color rgba(0,0,0,0.26)
     &{$fabSelector}
-      width                 48px
-      height                48px
-      line-height           48px
-      border-radius         50%
-      min-width             0
-      padding               0
+      width 48px
+      height 48px
+      line-height 48px
+      border-radius 50%
+      min-width 0
+      padding 0
       {$iconSelector}
-        max-height          100%
-        max-width           100%
-        padding             20%
+        max-height 100%
+        max-width 100%
+        padding 20%
       &{$miniSelector}
-        line-height         40px
-        width               40px
-        height              40px
+        line-height 40px
+        width 40px
+        height 40px
     &{$raisedSelector}
       &:not([disabled])
-        box-shadow          0 2px 5px 0 rgba(0,0,0,.26)
+        box-shadow 0 2px 5px 0 rgba(0,0,0,.26)
         &:active
-          box-shadow        0 4px 8px 0 rgba(0,0,0,.4)
+          box-shadow 0 4px 8px 0 rgba(0,0,0,.4)
       &[disabled]
-        background-color    rgba(0,0,0,0.12)
+        background-color rgba(0,0,0,0.12)
+        
