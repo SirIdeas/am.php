@@ -131,7 +131,7 @@ class AmCallResponse extends AmResponse{
     $params[] = $env;
 
     // Si $this->__p->realCallback es un array entonces tiene un callback valido
-    if($this->__p->isResolved()){
+    if($this->isResolved()){
 
       return call_user_func_array($this->__p->realCallback, $params);
 
