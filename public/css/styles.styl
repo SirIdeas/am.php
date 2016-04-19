@@ -119,7 +119,8 @@ $sidePaddingRight       = 30px
 
 .side
   padding-right $sidePaddingRight
-  
+  position fixed
+    
 .site-sidebar
   fixed top $siteHeaderHeight bottom $siteFooterHeight
   .title-parent
@@ -147,8 +148,15 @@ $sidePaddingRight       = 30px
   
 .sub-header-logo
   display block
-  height 160px
+  height 180px
   margin 20px 0 0 auto
+  background-image url('../images/am_vlogo_p.png')
+  background-size auto 160px
+  background-repeat no-repeat
+  background-position right top
+  &.white
+    background-image url('../images/am_vlogo_w.png')
+    
       
 .nav-item
   line-height 40px

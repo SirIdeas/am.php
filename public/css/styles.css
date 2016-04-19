@@ -1430,6 +1430,7 @@ p {
 }
 .side {
   padding-right: 30px;
+  position: fixed;
 }
 .site-sidebar {
   position: fixed;
@@ -1471,8 +1472,17 @@ p {
 }
 .sub-header-logo {
   display: block;
-  height: 160px;
+  height: 180px;
   margin: 20px 0 0 auto;
+  background-image: url("../images/am_vlogo_p.png");
+  -webkit-background-size: auto 160px;
+  -moz-background-size: auto 160px;
+  background-size: auto 160px;
+  background-repeat: no-repeat;
+  background-position: right top;
+}
+.sub-header-logo.white {
+  background-image: url("../images/am_vlogo_w.png");
 }
 .nav-item {
   line-height: 40px;

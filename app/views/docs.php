@@ -7,7 +7,7 @@
 
       <div class="title-parent">
         <a href="(:/:)">
-          <img src="(:/:)/images/am_vlogo_p.png" alt="" class="sub-header-logo">
+          <div class="sub-header-logo"></div>
         </a>
       </div>
 
