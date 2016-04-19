@@ -13,6 +13,11 @@ return array(
    */
   'extend' => array(
 
+    /**
+     * Extensión que manejará las sessiones
+     */
+    'session' => 'AmNormalSession',
+
     'aliases' => array(
 
       'AmNormalSession' => 'exts/am_normal_session'

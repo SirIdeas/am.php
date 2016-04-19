@@ -1467,7 +1467,7 @@ final class Am{
   public static function session($type = 'user', $id = null){
 
     if(!isset($id))
-      $id = Am::getProperty('id');
+      $id = self::getProperty('id');
 
     $id .= "_{$type}";
 

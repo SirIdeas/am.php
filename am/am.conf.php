@@ -12,9 +12,19 @@
 return array(
 
   /**
+   * Identificador único de la aplicación.
+   */
+  'id' => 'am',
+
+  /**
    * Configuración del errorReporting.
    */
   'errorReporting' => E_ALL ^ E_DEPRECATED,
+
+  /**
+   * Hash con alias de extensiones
+   */
+  'consts' => array(),
 
   /**
    * Variables de entorno.
@@ -40,21 +50,6 @@ return array(
    * Directorios para la auto carga.
    */
   'autoload' => array(),
-
-  /**
-   * Configuración de las rutas (Ver ./routes.conf.php).
-   */
-  'routing' => array(),
-
-  /**
-   * Configuración de los controladores (Ver ./controllers.conf.php).
-   */
-  'controllers' => array(),
-
-  /**
-   * Extensión que manejará las sessiones
-   */
-  'session' => 'AmNormalSession',
 
   /**
    * Formatos
