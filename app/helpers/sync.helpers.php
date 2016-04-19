@@ -11,7 +11,7 @@ function getInfoFiles(array $files){
 }
 
 function getFilesWithInfo($folders, array $options = array()){
-  return getInfoFiles(amGlobFiles($folders, $options));
+  return getInfoFiles(amGlob($folders, $options));
 }
 
 function getInfoFilesAsServices(array $folders, array $options = array()){
