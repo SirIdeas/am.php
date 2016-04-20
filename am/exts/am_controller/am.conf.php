@@ -24,6 +24,14 @@ return array(
   ),
 
   /**
+   * Eventos a enlazar
+   */
+  'bind' => array(
+    // Atender las respuestas por controlador
+    'response.controller' => 'AmController::response',
+  ),
+
+  /**
    * Configuración a extender
    */
   'extend' => array(
@@ -37,17 +45,6 @@ return array(
     'controllers' => array(
       '' => array(
       
-        //////////////////// Para todo el controlador.
-
-        // Nombre del controlador.
-        'name' => null,
-
-        // Nombre del controlador padre.
-        'parent' => null,
-        
-        // Carpeta raíz del controlador.
-        'root' => 'controllers',
-
         // Directorio hijo donde se buscará las vistas.
         'views' => 'views',
 

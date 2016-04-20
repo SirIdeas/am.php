@@ -16,6 +16,19 @@ return array(
   ),
 
   /**
+   * Enlaces de eventos
+   */
+  'bind' => array(
+    'response.file'     => 'AmResponse::file',
+    'response.call'     => 'AmResponse::call',
+    'response.template' => 'AmResponse::template',
+    'response.go'       => 'AmResponse::go',
+    'response.assets'   => 'AmResponse::assets',
+    'response.e404'     => 'AmResponse::e404',
+    'response.e403'     => 'AmResponse::e403',
+  ),
+
+  /**
    * Configuración a extender.
    */
   'extend' => array(

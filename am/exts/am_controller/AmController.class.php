@@ -90,7 +90,7 @@ class AmController extends AmResponse{
   final public function checkIsActionAllow($action, $method){
     if(!$this->isActionAllow($action, $method))
       return Am::e403(Am::t('AMCONTROLLER_ACTION_FORBIDDEN',
-        $this->get('name'), $action, $method));
+        get_class($this), $action, $method));
   }
 
 
@@ -561,71 +561,51 @@ class AmController extends AmResponse{
    */
   final public static function includeController($controller){
 
+    // Obtener la carpeta donde esta ubicada el controlador
+    $root = realPath(dirname(Am::whereIs($controller)));
+
+    // Obtener el controlador parent
+    $parentController = get_parent_class($controller);
+
     // Obtener configuraciones del controlador
     $confs = Am::getProperty('controllers');
 
     // Obtener valores por defecto
-    $defaults = itemOr('', $confs, array());
+    $confDef = itemOr('', $confs, array());
 
     // Si no existe configuracion para el controlador
     $conf = itemOr($controller, $confs, array());
 
-    // Si no es un array, entonces el valor indica el path del controlador
-    if(is_string($conf))
-      $conf = array('root' => $conf);
+    // Obtener la configuracion del padre
+    if($parentController === get_class()){
 
-    // $conf['root'] = realPath(itemOr('root', $conf, itemOr('root', $defaults)));
-    $conf['root'] = realPath(itemOr('root', $conf, dirname(Am::whereIs($controller))));
-
-    if(is_file($realFile = "{$conf['root']}/am.init.php"))
-      require_once $realFile;
-
-    // Mezclar con el archivo de configuracion en la raiz del
-    // controlador.
-    if(is_file($realFile = "{$conf['root']}/am.conf.php"))
-      $conf = self::mergeConf($conf, require($realFile));
-
-    // Asignar el nombre del controlador si no lo tiene.
-    $conf['name'] = itemOr('name', $conf, $controller);
-
-    // Si tiene no tiene padre o si el padre esta vacío
-    // y se mezcla con la configuracion por defecto
-    if(!isset($conf['parent']) || empty($conf['parent'])){
-
-      // Mezclar con valores por defecto
-      $conf = self::mergeConf($defaults, $conf);
-
-      // Obtener el nombre del padre
-      $parentControllerName = null;
-
-    // Mezclar con configuracion del padre
+      // Mezclar con la configuración por defecto
+      $conf = self::mergeConf($confDef, $conf);
+      
     }else{
-
+      
       // Obtener la configuracion del padre
-      $confParent = self::includeController($conf['parent']);
+      $confParent = self::includeController($parentController);
 
       // Agregar carpeta de vistas por defecto del padre.
       $confParent['paths'][] = $confParent['root'] . '/' . $confParent['views'];
       // $confParent['paths'][] = $confParent['root'];
-
-      // Obtener el nombre del padre
-      $parentControllerName = itemOr('name', $confParent, null);
-
+      
       // Mezclar con la configuracion del padre
       $conf = self::mergeConf($confParent, $conf);
 
     }
 
-    if(!class_exists("{$conf['name']}") && $parentControllerName){
+    // Mezclar con el archivo de configuracion en la raiz del controlador.
+    if(is_file($realFile = realPath("{$root}/am.conf.php")))
 
-      // Si no tiene un archivo que incluir se asigna como nombre de
-      // controlador el nombre del controlador padre.
-      $conf['name'] = $parentControllerName;
-
-    }
+      $conf = self::mergeConf($conf, require($realFile));
 
     // Incluir como extension
-    Am::load($conf['root'] . '/');
+    Am::load($root . '/');
+
+    // Carpeta raíz del controlador
+    $conf['root'] = $root;
 
     // Retornar la configuracion obtenida
     return $conf;
@@ -714,12 +694,12 @@ class AmController extends AmResponse{
     );
 
     // Si no se puede instanciar el controlador retornar error.
-    if(!class_exists($conf['name']))
+    if(!class_exists($controller))
       return Am::e404(Am::t('AMCONTROLLER_ACTION_NOT_FOUND',
-        $conf['name'], $action));
+        $controller, $action));
     
     // Obtener la instancia del controlador.
-    $controller = Am::getInstance($conf['name'], $conf);
+    $controller = Am::getInstance($controller, $conf);
 
     // Asignación de propiedades como propiedades del controlador.
     foreach ($env as $propertyName => $value)

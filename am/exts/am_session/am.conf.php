@@ -9,6 +9,13 @@
 return array(
 
   /**
+   * Enlaces de eventos
+   */
+  'bind' => array(
+    'session.get' => 'AmSession::get',
+  ),
+
+  /**
    * Configuración a extender
    */
   'extend' => array(

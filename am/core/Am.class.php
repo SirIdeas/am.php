@@ -382,6 +382,17 @@ final class Am{
   }
 
   /**
+   * Enlaza varios eventos a determinados callbacks.
+   * @param  hash $binds Hash de eventos=>callbacks a enlazar.
+   */
+  public static function bind(array $binds){
+
+    foreach ($binds as $event => $callback)
+      Am::on($event, $callback);
+
+  }
+
+  /**
    * Realiza la mezcla de una propiedad.
    * @param string $property Nombre de la propiedad a cargar.
    */
@@ -960,15 +971,11 @@ final class Am{
         // Los items nuevos no sobreescriben los anteriores
         self::$mergeFunctions = array_merge($mergeFunctions, self::$mergeFunctions);
 
-        // Obtener dependencias
-        $requires = itemOr('requires', $conf, array());
-
-        // Incluir las dependencias
-        self::requireExt($requires);
+        // Obtener dependencias e incluirlas
+        self::requireExt(itemOr('requires', $conf, array()));
 
         // Extender propiedades por defecto
-        $extend = itemOr('extend', $conf, array());
-        self::extendProperties($extend, $realFile);
+        self::extendProperties(itemOr('extend', $conf, array()), $realFile);
 
         // Obtener el directorio raíz de la extensión.
         $dirbase = dirname($realFile);
@@ -976,21 +983,20 @@ final class Am{
         // Obtener los directorios de clases.
         $autoload = itemOr('autoload', $conf, array());
 
-        foreach ($autoload as $path => $recursive) {
+        foreach ($autoload as $path => $recursive)
           
           // Si es un archivo existente cargarlo.
           if(is_file($realFile = "{$dirbase}/{$path}"))
             require_once $realFile;
 
           // Cargar paths de clases en el directorio si existe.
-          elseif(is_dir($dir = realpath("{$dirbase}/{$path}"))){
-
+          elseif(is_dir($dir = realpath("{$dirbase}/{$path}")))
             self::loadPathClases($dir, $recursive);
-          }
-
-        }
 
       }
+
+      // Linkear callbacks con eventos
+      self::bind(itemOr('bind', $conf, array()));
 
     }
 
@@ -999,10 +1005,7 @@ final class Am{
       
       $conf = true;
       // Incluir el archivo init.
-      $init = require_once($realFile);
-      // Si es un array entonces representan parametros que extender del conf global.
-      if(is_array($init))
-        self::extendProperties($init);
+      require_once($realFile);
 
     }
 
@@ -1012,7 +1015,7 @@ final class Am{
       return true;
     }
 
-    // De lo contrarion no se pudo cargar la extension
+    // De lo contrario no se pudo cargar la extension
     return false;
 
   }

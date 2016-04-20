@@ -9,6 +9,14 @@
 return array(
 
   /**
+   * Enlaces de eventos
+   */
+  'bind' => array(
+    // Atender el llamado a renderiza vistas
+    'render.template' => 'AmTpl::renderize',
+  ),
+
+  /**
    * Configuración a extender
    */
   'extend' => array(

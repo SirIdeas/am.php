@@ -7,16 +7,6 @@
  */
 
 /**
- * Configuración de eventos globales que atenderá la extensión.
- */
-// Despachar rutas.
-Am::on('route.evaluate', 'AmRoute::evaluate');
-// Agregar precallbakcs.
-Am::on('route.addPreProcessor', 'AmRoute::addPreProcessor');
-// Agregar métodos de atención a tipos de rutas.
-Am::on('route.addDispatcher', 'AmRoute::addDispatcher');
-
-/**
  * Agregar algunos de los métodos que atenderán cierto tipo de rutas.
  */
 Am::addRouteDispatcher('file', function($destiny, $env, $params){

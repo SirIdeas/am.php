@@ -23,6 +23,18 @@ return array(
   ),
 
   /**
+   * Eventos a enlazar
+   */
+  'bind' => array(
+    // Despachar rutas.
+    'route.evaluate'        => 'AmRoute::evaluate',
+    // Agregar precallbakcs.
+    'route.addPreProcessor' => 'AmRoute::addPreProcessor',
+    // Agregar métodos de atención a tipos de rutas.
+    'route.addDispatcher'   => 'AmRoute::addDispatcher',
+  ),
+
+  /**
    * Configuración a extender
    */
   'extend' => array(
