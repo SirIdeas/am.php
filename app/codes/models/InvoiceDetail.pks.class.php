@@ -2,10 +2,11 @@
 <?php
 class InvoiceDetail extends AmModel{
 
-  // Clave primaria compuesta
-  protected $pks = array(
-    'id_invoice',
-    'id_item'
+  protected $sketch = array(
+    'pks' => array(
+      'id_invoice',
+      'id_item'
+    ),
   );
 
 }

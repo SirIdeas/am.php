@@ -1,4 +1,4 @@
-'/' => 'views => views/index.php', // Ignored
+'/' => 'views => views/index.php', // Ignorado
 array(
   'route' => '/admin/action1',
   'call' => 'Admin::act1'

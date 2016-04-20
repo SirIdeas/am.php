@@ -56,10 +56,10 @@
 </div>
 
 <div>
-  <h2 id="shapes">Forma simple o Forma explícita de las rutas</h2>
+  <h2 id="shapes">Forma simple y forma explícita</h2>
 
   <p>
-    Una ruta puede ser presentado de diferentes formas, sin embargo al final todas son convertidaas a una a la <i>forma explícita</i>. Por ejemplo:
+    Una ruta puede ser presentada de diferentes formas, sin embargo al final todas son convertidas a su <i>forma explícita</i>. Por ejemplo:
   </p>
   <pre><code class="language-php">(:= getCodeFile('routing/forms.php') :)</code></pre>
 </div>
@@ -86,7 +86,7 @@
   </div>
 
   <div>
-    <h3 id="redirect">Redirigir a otra URL de la aplicación: <code>redirect</code></h3>
+    <h3 id="redirect">Redirigir a una URL de la aplicación: <code>redirect</code></h3>
     <pre><code class="language-php">(:= getCodeFile('routing/redirect.php') :)</code></pre>
   </div>
 
@@ -106,7 +106,7 @@
 </div>
 
 <div>
-  <h2 id="nested-route">Rutas Anidadas</h2>
+  <h2 id="nested-route">Rutas anidadas</h2>
   <pre><code class="language-php">(:= getCodeFile('routing/nested.php') :)</code></pre>
 </div>
 
@@ -117,20 +117,28 @@
   </p>
   <pre><code class="language-php">(:= getCodeFile('routing/params.php') :)</code></pre>
   <p>
-    una petición <code><strong>/models/user/edit/3</strong></code>, renderizaría el template <code><strong></strong></code> y dentro de esta vista exisitirían las variables <code><strong>$model = 'user'</strong></code> y <code><strong>$id = '3'</strong></code>.
+    una petición <code><strong>/models/user/edit/3</strong></code>, renderizaría el template <code><strong></strong></code> el cual poseerá las variables indicadas en la propiedad de aplicación <code><strong>env</strong></code> aparte de las variables <code><strong>$model = 'user'</strong></code> y <code><strong>$id = '3'</strong></code> indicadas por parámetro en la ruta.
   </p>
   <p>
-    En el caso de que la ruta realice el llamado de un callback (ruta del tipo <code><strong>call</strong></code>), este recibirá como parámetros cada uno de los definidos en la ruta, agregando el parámetro extra con el entorno definido en la propiedad de aplicación <code><strong>env</strong></code>, por ejemplo:
+    En el caso de que la ruta realice el llamado de un callback (ruta del tipo <code><strong>call</strong></code>), este recibirá como parámetros los definidos en la ruta, agregando el parámetro extra con el entorno definido en la propiedad de aplicación <code><strong>env</strong></code>, por ejemplo:
   </p>
   <pre><code class="language-php">(:= getCodeFile('routing/params-callbacks.php') :)</code></pre>
   <div>
-    <h3 id="route-params-types">Tipos de los parámetros de ruta</h3>
+    <h3 id="route-params-types">Tipos de los parámetros</h3>
     <p>
-      Los tipos para los parámetros de ruta son definidos despues del nombre del parámetro con dos puntos (:). Los tipos principales son <code><strong>id</strong></code>, <code><strong>numeric</strong></code>, <code><strong>alphabetic</strong></code> y <code><strong>alphanumeric</strong></code>, sin embargo tambien puede definirse definirse una regex:
+      Los tipos para los parámetros de ruta son definidos después del nombre del parámetro con dos puntos (:). Los tipos principales son <code><strong>id</strong></code>, <code><strong>numeric</strong></code>, <code><strong>alphabetic</strong></code> y <code><strong>alphanumeric</strong></code>, sin embargo tambien puede definirse definirse una regex:
     </p>
     <pre><code class="language-php">(:= getCodeFile('routing/params-types.php') :)</code></pre>
 
   </div>
+</div>
+
+<div>
+  <h2 id="method-filter">Filtro de métodos</h2>
+  <p>
+    Para indicar que una ruta solo puede ser ejecutada para determinado request method se debe anteponer el mismo en la ruta con un espacio:
+  </p>
+  <pre><code class="language-php">(:= getCodeFile('routing/method-filter.php') :)</code></pre>
 </div>
 
 <div>
@@ -139,10 +147,10 @@
   <div>
     <h3 id="route-dispatcher">Despachadores de rutas</h3>
     <p>
-      Los despachadores son callbacks que se encargan de atender las peticiones HTTP según el tipo de ruta con el que coincidan.
+      Los despachadores de ruta son callbacks que se encargan de atender las peticiones HTTP según el tipo de ruta con el que coincidan.
     </p>
     <p>
-      El despachador recive 3 argumentos:
+      Un despachador de ruta recive 3 argumentos:
     </p>
 
     <div class="table-responsive">
@@ -189,12 +197,12 @@
   </div>
 
   <div>
-    <h3 id="route-pre-processor">Pre-procesadores de ruta</h3>
+    <h3 id="route-preprocessor">Preprocesadores de ruta</h3>
     <p>
-      Los pre-procesadores de rutas son callbacks que reparan una ruta antes de que esta sea evaluada. Estos  son asignados a un tipo de ruta. Reciben como primer parámetro la ruta en forma explícita y debe retornar la ruta transformada.
+      Los preprocesadores de rutas son callbacks que preparan una ruta antes de que esta sea evaluada. Estos  son asignados a un tipo de ruta. Reciben como primer parámetro la ruta en forma explícita y debe retornar la ruta transformada.
     </p>
     <p>
-      Para agregar el pre-procesador de ruta se utiliza el método <code><strong>Am::addRoutePreProcessor</strong></code>:
+      Para agregar el preprocesador de ruta se utiliza el método <code><strong>Am::addRoutePreProcessor</strong></code>:
     </p>
     <pre><code class="language-php">(:= getCodeFile('routing/preprocessor.php') :)</code></pre>
     <p>
@@ -210,7 +218,7 @@
   <div>
     <h3 id="flow-request">Flujo de petición</h3>
     <p>
-      El proceso seguido para determinar como despachar un ruta es el siguiente:
+      El proceso de como se despacha una petición es el siguiente:
     </p>
     <ul class="nested-list">
       <li><strong>Inicio</strong></li>

@@ -12,7 +12,7 @@
 <section id="pageTitle" class="page-title primary bg-d1 box-shadow-2">
   <div class="content row">
     <div class="col col2 side">
-      <div class="sub-header-logo white spyscroll" data-custom="true" style="height:100px"></div>
+      <div class="sub-header-logo white spyscroll" data-custom="true"></div>
     </div>
     <div class="col col10 os-s2 title-parent spyscroll dispel" data-not-equal="0" data-class="on">
       <h1>(:= $pageTitle :)</h1>

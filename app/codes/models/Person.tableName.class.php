@@ -2,6 +2,8 @@
 <?php
 class Person extends AmModel{
 
-  protected $tableName = 'persons';
-
+  protected $sketch = array(
+    'tableName' => 'persons',
+  );
+  
 }

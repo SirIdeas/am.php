@@ -1,7 +1,7 @@
-// Agrega un header final
+// Agrega una cabecera con el tipo mime
 $this->addHeader('content-type: text/plain');
 
-// Agrega una cabecera cabecera en 'contentType' (Solo para identificar)
+// Agrega una cabecera en 'contentType' (Solo para identificar)
 $this->addHeader('content-type: text/plain', 'contentType');
 
 // Eliminar la cabecera en 'contentType'

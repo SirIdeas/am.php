@@ -1,10 +1,10 @@
 // /app/am.init.php
-// Pre-procesador de ruta
+// Preprocesador de ruta
 function customRoutePreProcessor($route){
   $route['route'] = '/admin/'.$route['route'];
   $route['call'] = 'Admin::'.$route['myAdmin'];
   return $route;
 }
 
-// Agregando pre-procesador
+// Agregando preprocesador
 Am::addRoutePreProcessor('myAdmin', 'customRoutePreProcessor');

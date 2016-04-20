@@ -1,4 +1,4 @@
-'/echo/:lang/:msg' => 'myType => :msg',
+'/echo/{lang}/{msg}' => 'myType => {msg}',
 
 // Entonces con una petición HTTP: /echo/es/hello-world
 // Se llamaría el despachador 'customMyTypeDispatcher' con los argumentos:

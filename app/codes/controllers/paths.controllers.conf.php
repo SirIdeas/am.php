@@ -3,11 +3,10 @@
 return array(
 
   // directorios donde se buscarán las vistas
-  // - /app/controllers/foo/vistas  (Directorio principal)
-  // - /app/views                   (Directorio secundario)
-  // - /app/templates               (Directorio secundario)
+  // - /app/controllers/vistas  (Directorio principal)
+  // - /app/views               (Directorio secundario)
+  // - /app/templates           (Directorio secundario)
   'Foo' => array(
-    'root' => 'controllers/foo',
     'views' => 'vistas',
     'paths' => array(
       'views',
@@ -16,16 +15,15 @@ return array(
   ),
 
   // directorios donde se buscarán las vistas
-  // - /app/ctrl_bar/tpls           (Directorio principal)
-  // - /custom/tpls                 (Directorio secundario)
-  // - /app/controllers/foo/vistas  (Directorio principal del padre)
-  // - /app/views                   (Directorio secundario del padre)
-  // - /app/templates               (Directorio secundario del padre)
-  'Bar' => array(
-    'root' => 'ctrl_bar',
+  // - /app/controllers/tpls    (Directorio principal)
+  // - /app/custom/tpls         (Directorio secundario)
+  // - /app/controllers/vistas  (Directorio principal del padre)
+  // - /app/views               (Directorio secundario del padre)
+  // - /app/templates           (Directorio secundario del padre)
+  'Bar' => array( // Este controlador hereda de Foo
     'views' => 'tpls',
     'paths' => array(
-      '/custom/tpls'
+      'custom/tpls'
     )
   )
 

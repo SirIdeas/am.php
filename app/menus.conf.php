@@ -50,7 +50,7 @@ return array(
       'txt' => 'Cómo funciona',
     ),
     '#basics-actions' =>array(
-      'txt' => 'Acciones Básicas',
+      'txt' => 'Acciones básicas',
     ),
     '#main-conf-file' =>array(
       'txt' => 'Archivo principal de configuración',
@@ -71,7 +71,7 @@ return array(
       'txt' => 'Estructura de las rutas',
     ),
     '#shapes' => array(
-      'txt' => 'Forma simple o Forma explícita de las rutas',
+      'txt' => 'Forma simple y forma explícita',
     ),
     '#route-types' => array(
       'txt' => 'Tipos de rutas',
@@ -79,25 +79,25 @@ return array(
         '#file' => 'Reponder con un archivo',
         '#download' => 'Responder con la descarga de un archivo',
         '#template' => 'Renderizar un template',
-        '#redirect' => 'Redirigir a otra URL de la aplicación',
+        '#redirect' => 'Redirigir a una URL de la aplicación',
         '#goto' => 'Rediriguir a una URL externa',
         '#call' => 'Realizar la llamada de una función o método',
       ),
     ),
     '#nested-route' => array(
-      'txt' => 'Rutas Anidadas',
+      'txt' => 'Rutas anidadas',
     ),
     '#route-params' => array(
       'txt' => 'Parámetros de ruta',
       'items' => array(
-        '#route-params-types' => 'Tipos de los parámetros de ruta',
+        '#route-params-types' => 'Tipos de los parámetros',
       ),
     ),
     '#avanced-options' => array(
       'txt' => 'Opciones avanzadas',
       'items' => array(
         '#route-dispatcher' => 'Despachadores de rutas',
-        '#route-pre-processor' => 'Pre-procesadores de ruta',
+        '#route-preprocessor' => 'Preprocesadores de ruta',
         '#flow-request' => 'Flujo de petición',
       )
     ),
@@ -134,9 +134,6 @@ return array(
     '#properties' => array(
       'txt' => 'Propiedades',
       'items' => array(
-        '#property-name' => 'Nombre del controlador',
-        '#property-root' => 'Directorio raíz',
-        '#property-parent' => 'Controlador padre',
         '#property-views' => 'Directorio principal de vistas',
         '#property-paths' => 'Directorios secundarios de vistas',
         '#property-prefixs' => 'Prefijos',
@@ -159,7 +156,7 @@ return array(
         '#response-go' => 'Responder con una redirección',
         '#response-file' => 'Responder con un archivo',
         '#response-error' => 'Responder con un error',
-        '#response-services' => 'Responder como un web services',
+        '#response-services' => 'Responder como un webservices',
       ),
     ),
   ),

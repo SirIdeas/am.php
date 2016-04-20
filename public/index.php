@@ -11,12 +11,11 @@
  * -----------------------------------------------------------------------------
  * Inclusión del núcleo de Amathista. Esto incluye la clase principal Am,
  * helpers escenciales, manejo de errores personalizado.
- * 
  */
 if(file_exists('../../am/autoload.php'))
   include '../../am/autoload.php';
 else
-  include '../../am/master/autoload.php';
+  include '../../am/master/am/autoload.php';
 
 /**
  * -----------------------------------------------------------------------------
@@ -25,6 +24,5 @@ else
  * Si se esta ejecutando Amathista desde la línea de comandos, entonces se
  * entrará el interprete PHP con todas las dependecias de la aplicación
  * configurada, de lo contrario se despachará como una petición HTTP.
- * 
  */
 Am::run();

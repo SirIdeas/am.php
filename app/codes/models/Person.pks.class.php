@@ -2,7 +2,8 @@
 <?php
 class Person extends AmModel{
 
-  // Clave primaria simple
-  protected $pks = 'id';
-
+  protected $sketch = array(
+    'pks' => 'id',
+  );
+  
 }

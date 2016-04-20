@@ -3,7 +3,7 @@
 (:: set:subMenuItem='controllers' :)
 
 <p>
-  Los controladores son clases que poseen métodos llamados acciones, las cuales pueden ser asignadas como procesadores de las rutas. Además de esto, los controladores tambien poseen métodos que pueden ser configurados como filtros para las acciones, con el fin de validar su ejecución, realizar tareas antes y despues de la acción. Además de todo esto, cada acción renderiza una vista con el mismo nombre de la acción, a menos que se indique lo controrio.
+  Los controladores son clases que poseen métodos llamados acciones, las cuales pueden ser asignadas como procesadores de las rutas. Además de esto, los controladores tambien poseen métodos que pueden ser configurados como filtros para las acciones, con el fin de validar su ejecución, realizar tareas antes y después de una acción. Además de todo esto, cada acción renderiza una vista con el mismo nombre de la acción, a menos que se indique lo contrario.
 </p>
 
 <div>
@@ -35,16 +35,10 @@
   <h2 id="considerations">Consideraciones</h2>
   <ul>
     <li>
-      Por defecto el directorio raíz de los controladores es <code><strong>/app/controllers/</strong></code>.
+      Por defecto el directorio raíz de los controladores es <code><strong>/controllers/</strong></code> dentro del directorio raíz de la aplicación.
     </li>
     <li>
       Las clases de los controladores deben extender de la clase <code><strong>AmController</strong></code> o de cualquier otro controlador.
-    </li>
-    <li>
-      El nombre de la clase del controlador es el mismo nombre del controlador.
-    </li>
-    <li>
-      El nombre del archivo de declaración de un controlador es el nombre de clase con el extensión '<code><strong>.php</strong></code>' y se buscará en el directorio raíz.
     </li>
     <li>
       Por defecto las acciones de los controladores están representadas por los métodos del mismo con el prefijo <code><strong>action_</strong></code>.
@@ -53,7 +47,7 @@
       Por defecto el directorio de vistas de los controladores es la carpeta <code><strong>views</strong></code> dentro de la carpeta raíz del controlador.
     </li>
     <li>
-      Las acciones renderizan automáticamente la vista con el mismo que la acción y extensión <code><strong>.php</strong></code>.
+      Las acciones renderizan automáticamente la vista con el mismo nombre de la acción y extensión <code><strong>.php</strong></code> dentro del directorio de vistas.
     </li>
   </ul>
 </div>
@@ -65,89 +59,6 @@
   <p>
     Las propiedades configurables son:
   </p>
-
-  <div>
-    
-    <h3 id="property-name">Nombre del controlador</h3>
-
-    <table class="table striped small text-left">
-      <tr><th>Propiedad</th><td><code><strong>name</strong></code></td></tr>
-      <tr><th>Tipo</th><td><code><strong>string</strong></code></td></tr>
-      <tr>
-        <th>Valor por defecto</th>
-        <td><pre class="table-pre"><code class="language-php">'name' => null</code></pre></td>
-      </tr>
-    </table>
-
-    <p>
-      Define el nombre de la clases del controlador y el nombre de archivo que se incluirá. Si este no es indicado se tomará como nombre como haya sido mencionado en la ruta. En el caso de que no exista una clase con el nombre del controlador después de incluir el archivo correspondiente, el nombre del controlador pasará a ser el mismo que el padre si es que posee este último.
-    </p>
-
-    <div class="row divide-section">
-      <pre class="col s6"><code class="language-php">(:= getCodeFile('controllers/name.routing.conf.php') :)</code></pre>
-      <pre class="col s6"><code class="language-php">(:= getCodeFile('controllers/name.controllers.conf.php') :)</code></pre>
-      <pre class="col s6"><code class="language-php">(:= getCodeFile('controllers/name.Foo.php') :)</code></pre>
-      <pre class="col s6"><code class="language-php">(:= getCodeFile('controllers/name.BarCtrl.php') :)</code></pre>
-    </div>
-
-    <div>
-      <small>Nota: En el caso del controlador <code><strong>Foo</strong></code> no tiene configuración, sin embargo por defecto los controladores son buscados en la carpeta <code><strong>/app/controllers/</strong></code>. Para el controlador <code><strong>Bar</strong></code> se define el nombre como <code><strong>BarCtrl</strong></code>. Por último, el controlador <code><strong>Baz</strong></code> no posee configuración, ni archivo de declaración y tampoco fue declarada previamente la clase del controlador por lo que las rutas que hacen referencia a este generarán un error 404.</small>
-    </div>
-
-  </div>
-
-  <div>
-    <h3 id="property-root">Directorio raíz</h3>
-
-    <table class="table striped small text-left">
-      <tr><th>Propiedad</th><td><code><strong>root</strong></code></td></tr>
-      <tr><th>Tipo</th><td><code><strong>string</strong></code></td></tr>
-      <tr>
-        <th>Valor por defecto</th>
-        <td><pre class="table-pre"><code class="language-php">'root' => 'controllers'</code></pre></td>
-      </tr>
-    </table>
-
-    <p>
-      Directorio raíz del controlador relativo al directorio de la aplicación. Dentro de este directorio se busca el archivo de configuración propio (<code><strong>am.conf.php</strong></code>), el archivo de declaración y el directorio de vistas correspondiente al controlador.
-    </p>
-
-    <pre class="table-pre"><code class="language-php">(:= getCodeFile('controllers/root.controllers.conf.php') :)</code></pre>
-
-  </div>
-
-  <div>
-    <h3 id="property-parent">Controlador padre</h3>
-
-    <table class="table striped small text-left">
-      <tr><th>Propiedad</th><td><code><strong>parent</strong></code></td></tr>
-      <tr><th>Tipo</th><td><code><strong>string</strong></code></td></tr>
-      <tr>
-        <th>Valor por defecto</th>
-        <td><pre class="table-pre"><code class="language-php">'parent' => null</code></pre></td>
-      </tr>
-    </table>
-
-    <p>
-      Nombre del controlador padre y del cual se hereda la configuración. Este controlador es cargado antes de cargar el actual. En el caso de que no exista la clase del controlador actual se intentará instancia el controlador padre.
-    </p>
-
-    <div class="row divide-section">
-      <div class="col s6">
-        <pre col="col s6"><code class="language-php">(:= getCodeFile('controllers/parent.controllers.conf.php') :)</code></pre>
-      </div>
-      <div class="col s6">
-        <pre class="mb5"><code class="language-php">(:= getCodeFile('controllers/parent.Foo.php') :)</code></pre>
-        <pre class="mb5"><code class="language-php">(:= getCodeFile('controllers/parent.Bar.php') :)</code></pre>
-        <pre><code class="language-php">(:= getCodeFile('controllers/parent.Baz.php') :)</code></pre>
-      </div>
-    </div>
-    <div>
-      <small><strong>Nota</strong>: El controlador <code><strong>Foo</strong></code> se ubica en la carpeta <code><strong>/app/ctrls/</strong></code>. El controlador <code><strong>Bar</strong></code> hereda la configuración de <code><strong>Foo</strong></code> y su comportamiento (por la herencia en la clase), sin embargo se ubica en la carpeta <code><strong>/app/ctrls/bar/</strong></code>. El controlador <code><strong>Baz</strong></code> por su parte hereda solo la configuración de <code><strong>Foo</strong></code>, debido a que la clase hereda de <code><strong>AmController</strong></code>, pese a esto el controlador <code><strong>Foo</strong></code> tambien es cargado al llamar al controlador <code><strong>Baz</strong></code>. Por último el controlador <code><strong>Qux</strong></code> no posee una clase, pero, sus acciones son manejadas a través de una instancia del controlador <code><strong>Bar</strong></code> del cual hereda.
-      </small>
-    </div>
-
-  </div>
 
   <div>
     <h3 id="property-views">Directorio principal de vistas</h3>
@@ -167,6 +78,10 @@
 
     <pre class="table-pre"><code class="language-php">(:= getCodeFile('controllers/views.controllers.conf.php') :)</code></pre>
 
+    <p>
+      Si el controlador <code><strong>Foo</strong></code> está ubicado en el directorio <code><strong>/app/controllers</strong></code> entonces el directorio principal de vistas será <code><strong>/app/controllers/vistas/</strong></code>.
+    </p>
+
   </div>
 
   <div>
@@ -181,7 +96,7 @@
       </tr>
     </table>
     <p>
-      Lista de directorios secundarios ordenados por prioridad donde se buscarán las vistas de las acciones del controlador. A diferencia del directorio <code><strong>views</strong></code> que es relativo al directorio raíz de la controlador, estos directorios deben ser realitivos al directorios raíz de la aplicación. Un controlador con la propiedad <code><strong>parent</strong></code> hereda el directorio <code><strong>views</strong></code> y los paths del padre.
+      Lista de directorios secundarios ordenados por prioridad donde se buscarán las vistas de las acciones del controlador. A diferencia del directorio <code><strong>views</strong></code> que es relativo al directorio raíz de la controlador, estos directorios deben ser realitivos al directorios raíz de la aplicación. Un controlador con la propiedad que herede de otro controlador hereda el directorio <code><strong>views</strong></code> y los paths del padre como directorios dentro esta propiedad.
     </p>
     <pre class="table-pre"><code class="language-php">(:= getCodeFile('controllers/paths.controllers.conf.php') :)</code></pre>
 
@@ -200,7 +115,7 @@
     </table>
 
     <p>
-      Prefijos utilizados para identificar cada tipo de métodos del controlador. Básicamente posee dos tiupos: <strong>acciones</strong> que puede ser solicitadas por los diferentes requests methods y <strong>filtros</strong> que puede ser ejecutados antes y/o después del método de una acción.
+      Prefijos utilizados para identificar cada tipo de métodos del controlador. Básicamente posee dos tipos: <strong>acciones</strong> que puede ser solicitadas por los diferentes requests methods y <strong>filtros</strong> que puede ser ejecutados antes y/o después del método de una acción.
     </p>
 
     <pre class="table-pre"><code class="language-php">(:= getCodeFile('controllers/prefixs.Foo.php') :)</code></pre>
@@ -220,7 +135,7 @@
     </table>
 
     <p>
-      Hash que indica que acciones y por cuales request methods están permitidas. Los controladores que heredan la configuración de un padre mazcla el contenido de esta propiedad en el padre con las del hijo, prevaleciendo las del último.
+      Hash que indica que acciones y por cuales request methods están permitidas.
     </p>
 
     <pre class="table-pre"><code class="language-php">(:= getCodeFile('controllers/allows.controllers.conf.php') :)</code></pre>
@@ -228,7 +143,7 @@
   </div>
 
   <div>
-    <h3 id="property-services">Formato de respuesta de los web services</h3>
+    <h3 id="property-services">Formato de respuesta de los webservices</h3>
 
     <table class="table striped small text-left">
       <tr><th>Propiedad</th><td><code><strong>servicesFormat</strong></code></td></tr>
@@ -264,13 +179,13 @@
     </table>
 
     <p>
-      Definiciones de los filtros. Los filtros pueden ser configurados para ejecutarse antes y/o después de ciertas acciones y ciertos request methods. Tienen el objetivo de validar condiciones antes de la ejecución de una acción o realizar tareas anteriores o posteriores a una acción.
+      Definiciones de los filtros. Los filtros pueden ser configurados para ejecutarse antes y/o después de ciertas acciones y ciertos request methods. Tienen el objetivo de validar condiciones antes de la ejecución de una acción o realizar tareas antes o después de las mismas.
     </p>
 
     <pre class="table-pre"><code class="language-php">(:= getCodeFile('controllers/filters.controllers.conf.php') :)</code></pre>
 
     <p>
-      En el caso un filtro ejecutado antes de la acción devuela <code><strong>false</strong></code> o devuelva una instancia de <code><strong>AmResponse</strong></code>, indica que la acción de debe ejecutarse.
+      En el caso un filtro ejecutado antes de la acción devuela <code><strong>false</strong></code> o devuelva una instancia de <code><strong>AmResponse</strong></code>, indica que la acción no debe ejecutarse.
     </p>
 
     <pre class="table-pre"><code class="language-php">(:= getCodeFile('controllers/filters.Foo.php') :)</code></pre>
@@ -290,7 +205,7 @@
     </table>
 
     <p>
-      Listado de cabeceras a incluir en la respuesta. Si el controlador posee un controlador padre, el primero hereda las cabeceras del segundo.
+      Listado de cabeceras a incluir en la respuesta.
     </p>
 
     <p>
@@ -321,7 +236,7 @@
 <div>
   <h2 id="rendering-views">Renderizado de vistas</h2>
   <p>
-    Por defecto, al terminar ejecutar una acción se renderiza una vista con el mismo nombre de la acción y extensión <code><strong>.php</strong></code>, la cual es buscada dentro de los directorios de vistas del controlador. En el caso de que no exista simplemente no se realiza acción alguna. La vista tampoco de renderiza en el caso de que se devuelva un array o la instancia de un objecto.
+    Por defecto, al terminar ejecutar una acción se renderiza una vista con el mismo nombre de la acción y extensión <code><strong>.php</strong></code>, la cual es buscada dentro de los directorios de vistas del controlador. En el caso de que no exista simplemente no se realiza acción alguna. La vista tampoco es renderizada en el caso de que se devuelva un array o la instancia de un objeto.
   </p>
 
   <pre class="table-pre"><code class="language-php">(:= getCodeFile('controllers/render.Foo.php') :)</code></pre>
@@ -348,7 +263,7 @@
   <pre class="table-pre"><code class="language-php">(:= getCodeFile('controllers/render.setRender.php') :)</code></pre>
 
   <p>
-    Para renderizar la una vista y terminar la acción se utiliza el método <code><strong>AmController:view</strong></code>
+    Para renderizar la una vista y terminar la acción se retorna lo devuelto por el método <code><strong>AmController:view</strong></code>
   </p>
 
   <pre class="table-pre"><code class="language-php">(:= getCodeFile('controllers/render.view.php') :)</code></pre>
@@ -383,7 +298,7 @@
   </div>
 
   <div>
-    <h3 id="response-services">Responder como un web services</h3>
+    <h3 id="response-services">Responder como un webservices</h3>
     <pre class="table-pre"><code class="language-php">(:= getCodeFile('controllers/response.services.php') :)</code></pre>
   </div>
 

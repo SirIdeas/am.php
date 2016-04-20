@@ -3,15 +3,14 @@
 (:: set:subMenuItem='models' :)
 
 <p>
-  Los modelos son abstracciones de la información manejada por lo general gestionada a través de un Sistema Manejador de Base de datos (SMDB). Los modelos permiten buscar agregar, buscar, actualizar y eliminar registros de las tablas de las base de datos configuradas. También permite la realización
-  de consulta complejas de una forma sencilla y entendible, creación e eliminación de tablas, vistas y base de datos, entre otros. Todas estas acciones son logradas a través del Mapeo Objeto-Relación (ORM por sus siglas en inglés) propio de Amathista.
+  Los modelos son abstracciones de la información manejada, por lo general gestionada a través de un Sistema Manejador de Base de datos (SMDB). Los modelos permiten buscar agregar, buscar, actualizar y eliminar registros de las tablas de las base de datos configuradas. También permite la realización de consulta complejas de una forma sencilla y entendible, crear y eliminar de tablas, vistas y base de datos, entre otros. Todas estas acciones son logradas a través del Mapeo Objeto-Relación (ORM por sus siglas en inglés) propio de Amathista.
 </p>
 
 <div>
   <h2 id="configuration">Configuración</h2>
 
   <p>
-    La utilización del ORM comienza con la configuración de las conexiones a las BDs mendiante la propiedad de aplicación <code><strong>schemes</strong></code> la cual es un hash donde cada clave representa el nombre de una conexión y su valor la confuiguración de conexión.
+    La utilización del ORM comienza con la configuración de las conexiones a las BDs mendiante la propiedad de aplicación <code><strong>schemes</strong></code> la cual es un hash donde cada clave representa el nombre de una conexión y su valor la configuración.
   </p>
 
   <div class="row divide-section">
@@ -91,7 +90,7 @@
           <td><code><strong>charset</strong></code></td>
           <td><code><strong>string</strong></code></td>
           <td>
-            Set de caracteres de la basa de datos.
+            Set de caracteres de la base de datos.
           </td>
           <td><pre class="table-pre"><code class="language-php">'charset' => 'utf8'</code></pre></td>
         </tr>
@@ -99,7 +98,7 @@
           <td><code><strong>collation</strong></code></td>
           <td><code><strong>string</strong></code></td>
           <td>
-            Reglas de caracteres de la basa de datos.
+            Reglas de caracteres de la base de datos.
           </td>
           <td><pre class="table-pre"><code class="language-php">'collation' => 'utf8_unicode_ci'</code></pre></td>
         </tr>
@@ -118,11 +117,15 @@
 
   <pre><code class="language-php">(:= getCodeFile('models/Person.class.php') :)</code></pre>
 
+  <p>
+    Dentro de la propiedad <code><strong>sketch</strong></code> se define la estructura del modelo mediante las siguientes atributos:
+  </p>
+
   <div>
     <h3 id="scheme-name">Nombre de esquema</h3>
     
     <p>
-      El nombre del esquema al que pertenece el modelo se define mediante el atributo <code><strong>$schemeName</strong></code>. Si no es indicado o si es un string vacío, el modelo pertenecerá al esquema por defecto.
+      El nombre del esquema al que pertenece el modelo se define mediante el atributo <code><strong>schemeName</strong></code>. Si no es indicado o si es un string vacío, el modelo pertenecerá al esquema por defecto.
     </p>
     <pre><code class="language-php">(:= getCodeFile('models/Person.schemeName.class.php') :)</code></pre>
 
@@ -132,7 +135,7 @@
     <h3 id="table-name">Nombre de tabla</h3>
     
     <p>
-      Para indicar el nombre de la tabla se utiliza el atributo <code><strong>$tableName</strong></code>. Si no se define se tomá como nombre de tabla el nombre de la clase en plurar según la gramática inglesa.
+      Para indicar el nombre de la tabla se utiliza el atributo <code><strong>tableName</strong></code>. Si no se define se tomá como nombre de tabla el nombre de la clase en plural según la gramática inglesa.
     </p>
     <pre><code class="language-php">(:= getCodeFile('models/Person.tableName.class.php') :)</code></pre>
 
@@ -142,7 +145,7 @@
     <h3 id="fields">Campos</h3>
 
     <p>
-      Hash de campos y su descripción. Para definirlos se utiliza el atributo <code><strong>$fields</strong></code>.
+      Hash de campos y su descripción. Para definirlos se utiliza el atributo <code><strong>fields</strong></code>.
     </p>
 
     <div>
@@ -190,13 +193,13 @@
             <tr>
               <td><code><strong>len</strong></code></td>
               <td><code><strong>int</strong></code></td>
-              <td>Longuitud del campo. En campos del tipo <code><strong>int</strong></code>, <code><strong>float</strong></code> y <code><strong>text</strong></code> representa el tamaño del campo y en campos de texto del tipo <code><strong>char</strong></code>, <code><strong>varchar</strong></code> y <code><strong>bit</strong></code></td> representa la longuitud en caracteres.
+              <td>Longuitud del campo. En campos del tipo <code><strong>int</strong></code>, <code><strong>float</strong></code> y <code><strong>text</strong></code> representa el tamaño del campo y en campos de texto del tipo <code><strong>char</strong></code>, <code><strong>varchar</strong></code> y <code><strong>bit</strong></code> representa la longuitud en caracteres</td>.
               <td><pre class="table-pre"><code class="language-php">'len' => null</code></pre></td></td>
             </tr>
             <tr>
               <td><code><strong>charset</strong></code></td>
               <td><code><strong>string</strong></code></td>
-              <td>Set de caracteres. Solo se toma en cuenta en campos de texto (<code><strong>char</strong></code>, <code><strong>varchar</strong></code> y <code><strong>text</strong></code></td>
+              <td>Set de caracteres. Solo se toma en cuenta en campos de texto (<code><strong>char</strong></code>, <code><strong>varchar</strong></code> y <code><strong>text</strong></code>)</td>
               <td><pre class="table-pre"><code class="language-php">'charset' => null</code></pre></td></td>
             </tr>
             <tr>
@@ -265,59 +268,59 @@
           <tbody class="text-left">
             <tr>
               <td><code><strong>int</strong></code></td>
-              <td>Tipos de datos enteros</td>
+              <td>Números enteros</td>
             </tr>
             <tr>
               <td><code><strong>float</strong></code></td>
-              <td>Números punto flotantes.</td>
+              <td>Números punto flotantes</td>
             </tr>
             <tr>
               <td><code><strong>date</strong></code></td>
-              <td>Fechas.</td>
+              <td>Fechas</td>
             </tr>
             <tr>
               <td><code><strong>datetime</strong></code></td>
-              <td>Fecha y hora.</td>
+              <td>Fecha y hora</td>
             </tr>
             <tr>
               <td><code><strong>timestamp</strong></code></td>
-              <td>Fecha y hora (menor rango).</td>
+              <td>Fecha y hora (menor rango)</td>
             </tr>
             <tr>
               <td><code><strong>time</strong></code></td>
-              <td>Hora.</td>
+              <td>Hora</td>
             </tr>
             <tr>
               <td><code><strong>char</strong></code></td>
-              <td>Cadena de caracteres de longuitud constante.</td>
+              <td>Cadena de caracteres de longuitud constante</td>
             </tr>
             <tr>
               <td><code><strong>varchar</strong></code></td>
-              <td>Cadena de caracteres de longuitud variable.</td>
+              <td>Cadena de caracteres de longuitud variable</td>
             </tr>
             <tr>
               <td><code><strong>text</strong></code></td>
-              <td>Cadena de caracteres larga.</td>
+              <td>Cadena de caracteres larga</td>
             </tr>
             <tr>
               <td><code><strong>year</strong></code></td>
-              <td>Entero que representa un año.</td>
+              <td>Entero que representa un año</td>
             </tr>
             <tr>
               <td><code><strong>bit</strong></code></td>
-              <td>Cadena de bits.</td>
+              <td>Cadena de bits</td>
             </tr>
             <tr>
               <td><code><strong>id</strong></code></td>
-              <td>Campo enter sin signo que forma parte de la clave primaria del modelo.</td>
+              <td>Campo enter sin signo que forma parte de la clave primaria del modelo</td>
             </tr>
             <tr>
               <td><code><strong>autoIncrement</strong></code></td>
-              <td>Campo enter sin signo.</td>
+              <td>Campo enter sin signo</td>
             </tr>
             <tr>
               <td><code><strong>unsigned</strong></code></td>
-              <td>Campo entero sin signo.</td>
+              <td>Campo entero sin signo</td>
             </tr>
           </tbody>
         </table>
@@ -336,7 +339,7 @@
     <h3 id="primary-key">Clave primaria</h3>
 
     <p>
-      Nombre el campo o lista de los nombres de los campos que forman la clave primaria del modelo. Se define mediante el atributo <code><strong>$pks</strong></code>. Tenga en cuenta que si algún campo es marcado como campo primario dentro de la propiedad <code><strong>$fields</strong></code> este tambien será parte de la clave primaria incluso si no se señala dentro de esta propiedad.
+      Nombre el campo o lista de los nombres de los campos que forman la clave primaria del modelo. Se define mediante el atributo <code><strong>pks</strong></code>. Tenga en cuenta que si algún campo es marcado como campo primario dentro de la propiedad <code><strong>$fields</strong></code> este tambien será parte de la clave primaria incluso si no se señala dentro de esta propiedad.
     </p>
 
     <div class="row divide-section">
@@ -350,8 +353,7 @@
     <h3 id="created-at-and-updated-at">Fecha de creación y modificación</h3>
   
     <p>
-      Para indicar o crear los campos de fechas de creación y modificación de un modelo utilice los atributos <code><strong>$createdAtField</strong></code> y <code><strong>$updatedAtField</strong></code> respectivamente.
-      Estos modelos añaden si no existen campos del tipo <code><strong>timestamp</strong></code> con los nombres <code><strong>created_at</strong></code> y <code><strong>updated_at</strong></code>. Estos campos son manejados de forma automática.
+      Para indicar o agregar los campos de fechas de creación y modificación de un modelo utilice los atributos <code><strong>createdAtField</strong></code> y <code><strong>updatedAtField</strong></code> respectivamente. Estos atributos añaden si no existen campos del tipo <code><strong>timestamp</strong></code> con los nombres <code><strong>created_at</strong></code> y <code><strong>updated_at</strong></code>. Estos campos son manejados de forma automática.
     </p>
     <pre><code class="language-php">(:= getCodeFile('models/Person.createdAndUpdatedField.class.php') :)</code></pre>
     <p>
@@ -431,7 +433,7 @@
     <h3 id="delete">Eliminar</h3>
 
     <p>
-      Para eliminar un registro se utiliza el método <code><strong>delete</strong></code> el cual retorna <code><strong>true</strong></code> so logra eliminar satisfactoriamente <code><strong>false</strong></code> de lo contrario.
+      Para eliminar un registro se utiliza el método <code><strong>delete</strong></code> el cual retorna <code><strong>true</strong></code> si logra eliminar satisfactoriamente <code><strong>false</strong></code> de lo contrario.
     </p>
     <pre><code class="language-php">(:= getCodeFile('models/delete.php') :)</code></pre>
 

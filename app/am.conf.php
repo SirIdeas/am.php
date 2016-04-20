@@ -12,14 +12,14 @@ return array(
 
   'routing' => array(
 
-    '/' => 'template => views/pages/index.php',
-    '/{view}' => 'template => views/pages/{view}.php',
+    'GET /' => 'template => views/pages/index.php',
+    'GET /{view}' => 'template => views/pages/{view}.php',
     
-    '/model' => 'Main@model',
+    'GET /model' => 'Main@model',
 
-    '/controller/{p1}/{p2}' => 'Index@index2',
-    '/main' => 'Main@index',
-
+    'GET /controller/{p1}/{p2}' => 'Index@index2',
+    'GET /main' => 'Main@index',
+    
   ),
 
   'controllers' => array(

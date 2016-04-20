@@ -2,6 +2,8 @@
 <?php
 class Person extends AmModel{
 
-  protected $schemeName = '';
+  protected $sketch = array(
+    'schemeName' => '',
+  );
 
 }
