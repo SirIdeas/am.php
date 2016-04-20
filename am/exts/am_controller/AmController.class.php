@@ -693,6 +693,8 @@ class AmController extends AmResponse{
       )
     );
 
+    $conf['env'] = array_merge(itemOr('env', $conf, array()), $env);
+
     // Si no se puede instanciar el controlador retornar error.
     if(!class_exists($controller))
       return Am::e404(Am::t('AMCONTROLLER_ACTION_NOT_FOUND',
@@ -700,10 +702,6 @@ class AmController extends AmResponse{
     
     // Obtener la instancia del controlador.
     $controller = Am::getInstance($controller, $conf);
-
-    // Asignación de propiedades como propiedades del controlador.
-    foreach ($env as $propertyName => $value)
-      $controller->$propertyName = $value;
 
     // Devolver controlador
     return $controller;
