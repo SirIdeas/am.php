@@ -42,7 +42,7 @@ class AmCommand{
   public static function execArray(array $argv){
 
     // Obtener los targets del archivo de configuracion
-    $targets = Am::getAttribute('commands', array());
+    $targets = Am::getProperty('commands', array());
 
     // 1er: origen de la peticion: HTTP/consola
     $file = array_shift($argv);
@@ -59,7 +59,7 @@ class AmCommand{
                                     // $argv queda con el resto de los parametros recibidos
 
     // Incluir el archivo si existe
-    $functionFile = Am::findFileIn("{$cmd}.php", self::$paths);
+    $functionFile = findFileIn("{$cmd}.php", self::$paths);
     require_once $functionFile;
 
     // Determinar el nombre de la funcion que ejecuta el comando

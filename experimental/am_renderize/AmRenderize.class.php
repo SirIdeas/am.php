@@ -81,7 +81,7 @@ final class AmRenderize extends AmObject{
   // Busca una vista en los paths definidos
   public function findView($file){
     // Si no existe la vista mostrar error
-    if(false === ($fileRet = Am::findFileIn($file, $this->paths))){
+    if(false === ($fileRet = findFileIn($file, $this->paths))){
       $this->errors[] = "Am: No existe view '{$file}.'";
       $this->ignore or die(implode(" ", $this->errors));
     }
@@ -148,7 +148,7 @@ final class AmRenderize extends AmObject{
   public static function renderize($file, $paths, $options = array()){
 
     // Obtener configuraciones del controlador
-    $confs = Am::getAttribute('views', array());
+    $confs = Am::getProperty('views', array());
 
     // Obtener valores por defecto
     $defaults = itemOr('defaults', $confs, array());

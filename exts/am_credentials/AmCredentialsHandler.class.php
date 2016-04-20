@@ -47,7 +47,7 @@ final class AmCredentialsHandler{
   public function __construct(){
 
     // Obtener la configuracion
-    $conf = Am::getAttribute('credentials', array());
+    $conf = Am::getProperty('credentials', array());
 
     // Inicializar parametros
     $this->authUrl = itemOr('authUrl', $conf);

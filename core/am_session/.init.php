@@ -27,4 +27,4 @@
 session_start();
 
 // Asignar id de la sesion
-Am::call('session.id', Am::getAttribute('session'));
+Am::call('session.id', Am::getProperty('session'));

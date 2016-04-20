@@ -23,6 +23,22 @@
  * SOFTWARE.
  **/
 
+
+// Busca un archivo en los paths indicados
+function findFileIn($file, array $paths){
+
+  // Si existe el archivo retornar el mismo
+  if(is_file($file)) return $file;
+
+  // Buscar un archivo dentro de las carpetas
+  foreach($paths as $path)
+    if(is_file($realPath = "{$path}/{$file}"))
+      return $realPath;
+
+  return false;
+
+}
+
 // Convierte un valor a booleano
 function parseBool($value){
   if(in_array($value, array(true, 1, 'true', '1'))) return true;
