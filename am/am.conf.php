@@ -52,6 +52,11 @@ return array(
   'autoload' => array(),
 
   /**
+   * Enlaces de eventos.
+   */
+  'bind' => array(),
+
+  /**
    * Formatos
    */
   'formats' => array(

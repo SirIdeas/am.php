@@ -993,10 +993,10 @@ final class Am{
           elseif(is_dir($dir = realpath("{$dirbase}/{$path}")))
             self::loadPathClases($dir, $recursive);
 
-      }
+        // Linkear callbacks con eventos
+        self::bind(itemOr('bind', $conf, array()));
 
-      // Linkear callbacks con eventos
-      self::bind(itemOr('bind', $conf, array()));
+      }
 
     }
 
