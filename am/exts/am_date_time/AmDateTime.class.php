@@ -11,7 +11,7 @@ class AmDateTime extends DateTime{
 
   public static
 
-    // Los indices a seran del formaro {i}. ejemplo: {d}/{M}/{Y} => '29/11/2014'
+    // Los indices q seran del formaro {i}. ejemplo: {d}/{M}/{Y} => '29/11/2014'
     $indexes = '/(\{([dDjlNSwzWFmMntLoYyaABgGhHisueIOPTZcrU]?)\})/',
 
     // Nombre de los meses
@@ -44,7 +44,7 @@ class AmDateTime extends DateTime{
       'D' => 'w:weekDaysAbr',   // Nombre de días de semana abreviado
       'F' => 'n:monthsName:-1', // Nombre de meses
       'M' => 'n:monthsAbr:-1',  // Nombre de meses abreviados
-    ); 
+    );
 
   // Obtiene el valor truncado de para in indice y un $time determinado
   protected static function getTruncateValue($i, $time){

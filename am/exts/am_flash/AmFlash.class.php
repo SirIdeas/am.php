@@ -7,7 +7,6 @@
  */
 
 // PENDIENTE documentar
-
 /**
  * Clase para el manejo de mensajes mensajes flash.
  * Los mensajes Flash son mesajes que guardados en 

@@ -245,14 +245,17 @@ function merge_if_both_are_array_and_snd_first_not_false(
   return merge_if_both_are_array($arr1, $arr2);
 }
 
-// PENDIENTE: documentar
-// Devuelve la cadena 's' convertida en formato under_score
+/**
+ * Devuelve una cadena convertida en formato under_score. Agrega un underscore
+ * antes de cada lera mayúscula y convierte esta letra a minúsculas.
+ * @param  string $s Cadena a convertir.
+ * @return string    Cadena en unserscore.
+ */
 function underscore($s) {
 
   // Primer caracter en miniscula
-  if(!empty($s)){
+  if(!empty($s))
     $s[0] = strtolower($s[0]);
-  }
 
   // Crear funcion para convertir en minuscula
   $func = create_function('$c', 'return "_" . strtolower($c[1]);');
@@ -277,29 +280,43 @@ function pluralize($cad){
 }
 
 // PENDIENTE: documentar
-// Devuelve una cadena 's' en formato camelCase. Si 'cfc == true' entonces
-// el primer caracter tambien es convertido en mayusculas
-function camelCase($s, $cfc = false){
+// 
+// 
+/**
+ * Devuelve una cadena  en formato camelCase. Elimina todos los underscore
+ * seguidos de una letra minúscula y los convierte la letra en mayúsulas. Si
+ * $cfc es true entonces el primer caracter tambien es convertido en mayúsculas.
+ * @param  string  $cad Cadena a convertir.
+ * @param  boolean $cfc Indica si el primer caracter de la cadena tambien debe
+ *                      ser mayuscula.
+ * @return string       Cadena en camelCase.
+ */
+function camelCase($cad, $cfc = false){
 
   // Primer caracter en mayuscula o en miniscula
-  if(!empty($s)){
-    if($cfc){
-      $s[0] = strtoupper($s[0]);
-    }else{
-      $s[0] = strtolower($s[0]);
-    }
+  if(!empty($cad)){
+    if($cfc)
+      $cad[0] = strtoupper($cad[0]);
+    else
+      $cad[0] = strtolower($cad[0]);
   }
 
   // Funcion para convertir cada caracter en miniscula
   $func = create_function('$c', 'return strtoupper($c[1]);');
 
   // Operar
-  return preg_replace_callback('/_([a-z])/', $func, $s);
+  return preg_replace_callback('/_([a-z])/', $func, $cad);
 
 }
 
-// PENDIENTE: documentar
-// Convierte un valor a booleano
+/**
+ * Convierte un valor al tipo booleano. El valor será verdadero si $value es
+ * el literal true, el entero 1 o los strings 'true' o '1'; false si $value es 
+ * el literal false, el entero 0, o los strings 'false' o '0'; de lo contrario
+ * retornará null.
+ * @param  mixed $value Valor a convertir
+ * @return bool         Valor convertido
+ */
 function parseBool($value){
 
   if(in_array($value, array(true, 1, 'true', '1'))) return true;
@@ -309,7 +326,13 @@ function parseBool($value){
 
 }
 
-// PENDIENTE: documentar
+/**
+ * Indica si una cadena es un identificador válido. Un identificador válido es
+ * una cadena que comienza con cualquier letra o el caracter underscore y esta
+ * seguido de cualquier cantidad de letras, números y caracteres underscore.
+ * @param  [type]  $str [description]
+ * @return boolean      [description]
+ */
 function isNameValid($str){
 
   return preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $str) != 0;
@@ -317,6 +340,36 @@ function isNameValid($str){
 }
 
 // PENDIENTE: documentar
+/**
+ * Lista el contenido de un o varios directorios.
+ * @param  mixed $folders Directorio o lista de directorios de los que se desea
+ *                        listar el contenido.
+ * @param  array $options Opciones para elaborar el listado:
+ *                        - files|bool|true: Indica si se debe incluir los
+ *                          archivos.
+ *                        - dirs|bool|true: Indica si se debe incluir los
+ *                          directorios.
+ *                        - recursive|bool|true: Indica si se debe buscar en los
+ *                          niveles internos del directorio.
+ *                        - inlude|string: Regex que indica que elementos se
+ *                          deben incluir. Se aplican a la ruta absoluta de los
+ *                          elementos listados.
+ *                        - exclude|string: Regex que indica que elementos se
+ *                          deben exluir. Se aplican a la ruta absoluta de los
+ *                          elementos listados.
+ *                        - return|int|0: Indica que elemento resultado de la
+ *                          comparación con el parametro 'include' se retornará.
+ *                          Por defecto retornará el resultado de la posición 0
+ *                          que el contenido completo que hizo match.
+ *                        - root|string|null: Indica la raíz donde se buscará.
+ *                          Si este parámetro es indicado los parmátros
+ *                          'include' y 'exclude' compararán la ruta del
+ *                          elemento removiendo del inicio el contenido del este
+ *                          parámetro.
+ *                        - callback|callback|nul: Callback que se llamará por
+ *                          cada item que se incluirá en el resultado.
+ * @return array          Lista de archivo y/o carpetas listados.
+ */
 function amGlob($folders, array $options = array()){
 
   // Convertir en array si no es un array.
