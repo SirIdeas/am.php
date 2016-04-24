@@ -49,7 +49,7 @@ function task_copy($origin, $destiny, array $regexs, $rewrite = false, $vervose 
       $dest = $destiny.$file;
 
       // Crear carpeta donde se copiará el archivo
-      @mkdir(dirname($dest), 0755, true);
+      Am::mkdir(dirname($dest));
 
       // Si el archivo no existe se copia
       if(!is_file($dest) && !is_dir($dest)){

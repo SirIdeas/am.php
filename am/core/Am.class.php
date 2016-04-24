@@ -535,6 +535,29 @@ final class Am{
   }
 
   /**
+   * Crear un directorio
+   * @param  [type] $dir [description]
+   * @return [type]      [description]
+   */
+  public static function mkdir($dir, $perms = 0755, $recursive = true){
+
+    // Se verifica que el directorio no sea una ruta de una archivo
+    if(is_file($dir))
+      throw Am::e('AM_DIR_IS_FILE', $dir);
+
+    // Se verifica que el directorio sea escribible
+    if(!is_writable($dir))
+      throw Am::e('AM_DIR_NOT_IS_WRITABLE', $dir);
+
+    // Crear carpeta si no existe
+    if(!is_dir($dir))
+      return mkdir($dir, $perms, $recursive);
+
+    return true;
+
+  }
+
+  /**
    * Agrega un directorio al tareas de la aplicación.
    * @param string $dir Directorio a agregar.
    */
@@ -582,9 +605,9 @@ final class Am{
 
     // Obtener ubicación real del archivo donde se copiará
     $dest = $trahsFolder.$relativeFile;
-
-    // Crear carpeta
-    @mkdir(dirname($dest), 0755, true);
+    
+    // Crear el directorio
+    Am::mkdir(dirname($dest));
 
     // Mover archivo
     return !!rename($file, $dest);

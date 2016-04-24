@@ -65,6 +65,8 @@ return array(
     'AM_NOT_FOUND_EXT' => 'Am: No se encontró la extensión "%s"',
     'AM_NOT_FOUND_COMMAND' => 'Am: No se encontró el comando %s',
     'AM_NOT_FOUND_VIEW' => 'Am: No existe view "%s"',
+    'AM_DIR_IS_FILE' => 'Am: Se espera que "%s" sea un directorio pero es un archivo',
+    'AM_DIR_NOT_IS_WRITABLE' => 'Am: No se pude escribir en "%s"',
     'AMOBJECT_CANNOT_ACCESS_PROPERTY' => 'Am: No puede acceder al atributo protegido/privado %s::$%s',
   ),
 

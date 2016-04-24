@@ -72,7 +72,7 @@ class AmCoder{
       $data = self::prepare($data);
 
     // Crear directorio donde se ubicará el archivo
-    @mkdir(dirname($file), 0775, true);
+    Am::mkdir(dirname($file));
 
     // Si el archivo no existe se crea el archivo
     file_put_contents($file, self::encode($data));

@@ -390,7 +390,7 @@ abstract class AmScheme extends AmObject{
     $path = $this->getBaseModelClassFilename($table->getTableName());
     
     // Crear directorio donde se ubicará el archivo si no existe
-    @mkdir(dirname($path), 755, true);
+    Am::mkdir(dirname($path));
 
     // Generar el archivo
     return !!@file_put_contents($path, "<?php\n\n" .
