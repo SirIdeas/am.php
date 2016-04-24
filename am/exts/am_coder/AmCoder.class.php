@@ -12,91 +12,6 @@
 class AmCoder{
 
   /**
-   * Decodifica un archivo de configuracion con el mismo formato.
-   * La decodificación se basa solo en obtener lo retornado en el archivo.
-   * @param  string      $file    Ruta del archivo a decodificar.
-   * @param  mixed       $default Valor por defecto a devolver si el archivo no
-   *                              existe.
-   * @return mixed/array          Retorno del archivo, sino el archivo no existe
-   *                              devuelve el valor por defecto.
-   */
-  public static function decode($file, $default = array()){
-
-    // Si el archivo exite retornar lo que devuelva el mismo
-    if(is_file($file))
-      return require $file;
-
-    // Si no existe el archivo retornan el valor por defecto
-    return $default;
-
-  }
-
-  /**
-   * Leer el archivo.
-   * @param  string      $file    Ruta del archivo a decodificar.
-   * @param  mixed       $default Valor por defecto a devolver si el archivo no
-   *                              existe.
-   * @return mixed/array          Retorno del archivo, sino el archivo no existe
-   *                              devuelve el valor por defecto.
-   */
-  public static function read($file, $default = array()) {
-
-    // Si existe decodificar el contenido
-    if(self::exists($file))
-      return self::decode($file, $default);
-
-    // Si no existe el archivo retornan el valor por defecto
-    return $default;
-
-  }
-
-  /**
-   * Indica si el archivo existe.
-   * @param  string $file Ruta del archivo que desean consultar.
-   * @return bool         Si el archivo existe.
-   */
-  public static function exists($file){
-    return is_file($file);
-  }
-
-  /**
-   * Escribir contenido del archivo.
-   * @param string $file    Ruta del archivo que desean escribir.
-   * @param array  $data    Array con la información a escribir.
-   * @param bool   $prepare Indica si se preparará o no la información.
-   */
-  public static function write($file, array $data, $prepare = true) {
-
-    // Preparar la data si es necesario
-    if($prepare)
-      $data = self::prepare($data);
-
-    // Crear directorio donde se ubicará el archivo
-    Am::mkdir(dirname($file));
-
-    // Si el archivo no existe se crea el archivo
-    file_put_contents($file, self::encode($data));
-
-  }
-
-  /**
-   * Guarda una configuración en archivo.
-   * @param  string $path Archivo donde se guardará la configuración.
-   * @param  hash   $conf Hash con la configuración q se guadará.
-   * @param  bool   $rw   Indica si el archivo se debe sobreescribir en el caso
-   *                      de que no exista.
-   * @return hash         Hash de propiedades del modelo.
-   */
-  public static function generate($path, $conf, $rw = true){
-
-    if(!is_file($path) || $rw){
-      self::write($path, $conf);
-      return true;
-    }
-    return false;
-  }
-
-  /**
    * Preparación de la información para escribir en el archivo.
    * Consiste en crear array anidados en aquellas posiciones cuya key tenga el
    * caractere _
@@ -159,7 +74,11 @@ class AmCoder{
    * @param  array  $data Array a codificar.
    * @return string       Resultado de la codificación.
    */
-  public static function encode($data){
+  public static function encode($data, $prepare = true){
+
+    // Preparar la data si es necesario
+    if($prepare)
+      $data = self::prepare($data);
     
     $str = var_export($data, true);
     $lines = explode("\n", $str);

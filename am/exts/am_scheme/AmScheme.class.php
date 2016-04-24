@@ -372,7 +372,7 @@ abstract class AmScheme extends AmObject{
   
     // Si el archivo existe retornar la configuración    
     if(is_file($confFilePath = $this->getBaseModelConfFilename($model)))
-      return AmCoder::decode($confFilePath);
+      return require $confFilePath;
 
     // Si no existe retornar falso
     return false;
@@ -405,18 +405,26 @@ abstract class AmScheme extends AmObject{
    *                        configuración y el modelo.
    */
   public function generateBaseModel(AmTable $table){
+    
+    // Obtener la ruta del archivo
+    $file = $this->getBaseModelConfFilename($table->getTableName());
+
+    // Crear directorio donde se ubicará el archivo
+    Am::mkdir(dirname($file));
+
+    // Crear archivo de configuración
+    $writed = file_put_contents($file, AmCoder::encode($table->toArray()));
+
     return array(
 
-      // Crear archivo de configuración
-      'conf' => AmCoder::generate(
-        $this->getBaseModelConfFilename($table->getTableName()),
-        $table->toArray()
-      ),
+      // Si el archivo fue creado o no
+      'conf' => $writed,
 
       // Crear clase
       'model' => $this->generateBaseModelFile($table)
 
     );
+    
   }
 
   /**
