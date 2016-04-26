@@ -282,11 +282,25 @@ final class Am{
     self::loadPathClases(realpath(AM_ROOT . '/core/'));
 
     self::$server = new AmObject($_SERVER);
-    self::$get = new AmObject($_GET);
-    self::$post = new AmObject($_POST);
     self::$cookie = new AmObject($_COOKIE);
-    self::$request = new AmObject($_REQUEST);
     self::$env = new AmObject($_ENV);
+
+    $vars = array(
+      'get' => $_GET,
+      'post' => $_POST,
+      'request' => $_REQUEST,
+    );
+
+    // Hacer los parámetros GET y POST seguros.
+    foreach($vars as $key => $arr){
+
+      // PENDIENTE Revisar como hacer los parámetros seguros
+      foreach($arr as $i => $value)
+        $arr[$i] = $value;
+
+      self::$$key = new AmObject($arr);
+
+    }
 
   }
 

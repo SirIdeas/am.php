@@ -9,7 +9,7 @@
 /**
  * Validación de campos no nulos.
  */
-class NullValidator extends AmValidator{
+class NotNullValidator extends AmValidator{
   
   /**
    * Implementación de la validación.

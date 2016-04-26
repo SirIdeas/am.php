@@ -9,6 +9,7 @@
 /**
  * Clase para generar clases de los modelos del ORM
  */
+// PENDIENTE Rehacer esta clase
 final class AmGenerator{
 
   /**
@@ -115,7 +116,7 @@ final class AmGenerator{
 
       // Add notnull validator if no added any validators
       if(empty($validators) && !$f->allowNull())
-        $validators[] = "    \$this->setValidator('{$fieldName}', 'null');";
+        $validators[] = "    \$this->setValidator('{$fieldName}', 'not_null');";
 
       // Add validators if has any
       if(!empty($validators)){

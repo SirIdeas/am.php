@@ -9,7 +9,7 @@
 /**
  * Validación de campos no vacíos.
  */
-class EmptyValidator extends NullValidator{
+class NotEmptyValidator extends NotNullValidator{
 
   /**
    * Implementación de la validación.

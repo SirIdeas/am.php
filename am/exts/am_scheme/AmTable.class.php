@@ -9,7 +9,7 @@
 /**
  * Clase para representar las tablas de las BD
  */
-class AmTable extends AmObject{
+final class AmTable extends AmObject{
 
   protected static
     
@@ -191,7 +191,7 @@ class AmTable extends AmObject{
         // Configuración de los validadores en el campo
         $fieldValidators = itemOr('validators', $options, null);
 
-        unset($options['validatos']);
+        unset($options['validators']);
 
         // Agregar instancia del campo
         $this->addField($name, $options); 
@@ -295,7 +295,7 @@ class AmTable extends AmObject{
     $type = $field->getType();
 
     // Obtener validators hasta el momento
-    $validators = $this->validators[$name];
+    $validators = itemOr($name, $this->validators, false);
 
     // posee validator entonces se continua con el siguiente campo
     if($validators === false || $field->isAutoIncrement())
@@ -322,7 +322,7 @@ class AmTable extends AmObject{
 
       // Validadores de campos no nulos
       if(!$field->allowNull())
-        $validators['null'] = true;
+        $validators['not_null'] = true;
 
       // Validadores de campos no nulos
       if($field->isUnique())
@@ -366,9 +366,8 @@ class AmTable extends AmObject{
       }
 
       // Si es una configuración
-      if(is_array($options)){
+      if(is_array($options))
         $this->setValidator($name, $type, $options);
-      }
 
     }
 

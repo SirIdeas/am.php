@@ -279,9 +279,6 @@ function pluralize($cad){
   return $cad.'s';
 }
 
-// PENDIENTE: documentar
-// 
-// 
 /**
  * Devuelve una cadena  en formato camelCase. Elimina todos los underscore
  * seguidos de una letra minúscula y los convierte la letra en mayúsulas. Si
@@ -339,7 +336,6 @@ function isNameValid($str){
 
 }
 
-// PENDIENTE: documentar
 /**
  * Lista el contenido de un o varios directorios.
  * @param  mixed $folders Directorio o lista de directorios de los que se desea

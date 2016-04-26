@@ -9,7 +9,7 @@
 /**
  * Clase para conexión con BD en MySQL
  */
-class MysqlScheme extends AmScheme{
+final class MysqlScheme extends AmScheme{
 
   // Puerto por defecto para la conexion
   const DEFAULT_PORT = 3306;
