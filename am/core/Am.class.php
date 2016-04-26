@@ -560,8 +560,8 @@ final class Am{
       throw Am::e('AM_DIR_IS_FILE', $dir);
 
     // Se verifica que el directorio sea escribible
-    if(!is_writable($dir))
-      throw Am::e('AM_DIR_NOT_IS_WRITABLE', $dir);
+    // if(!is_writable($dir))
+    //   throw Am::e('AM_DIR_NOT_IS_WRITABLE', $dir);
 
     // Crear carpeta si no existe
     if(!is_dir($dir))
