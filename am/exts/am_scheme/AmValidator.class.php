@@ -177,7 +177,7 @@ class AmValidator extends AmObject{
    */
   protected function getValidatorName(){
 
-    return strtolower(preg_replace("/(.*)Validator$/", "$1", get_class($this)));
+    return underscore(preg_replace("/(.*)Validator$/", "$1", get_class($this)));
 
   }
 
