@@ -22,6 +22,7 @@ class AmController extends AmResponse{
       'allows'  => 'merge_if_both_are_array',
       'headers' => 'merge_unique',
       'filters' => 'merge_r_if_snd_first_not_false',
+      'env'     => 'array_merge',
     );
 
   public function __construct($data = null){

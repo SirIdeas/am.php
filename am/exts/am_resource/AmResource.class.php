@@ -20,20 +20,54 @@ class AmResource extends AmController{
     if($model)
       $this->table = $model::me();
 
-    // Obtener las columnas si no se han indicado
-    if(empty($this->columns) && $this->table){
-      $columns = array_keys($this->table->getFields());
-      $this->columns = array_combine($columns, $columns);
-    }
-
-    $this->columnsNames = array_keys($this->columns);
-
-    // Los campos a setear son los campos de la tabla - los ocultos
-    if(empty($this->fields))
-      $this->fields = array_diff($this->columnsNames, $this->hides);
-
     if(empty($this->form))
       $this->form = $this->model;
+
+    $this->forms = array(
+      'new' => array(),
+      'edit' => array(),
+      'cou' => array(),
+      'detail' => array(),
+      'delete' => array(),
+      'list' => array(),
+    );
+
+    if($this->table){
+
+      // Obtener las columnas si no se han indicado
+      if(empty($this->fields)){
+        $fields = array_keys($this->table->getFields());
+        $this->fields = array_combine($fields, array_fill(0, count($fields), true));
+      }
+
+      foreach($this->fields as $fieldName => $field){
+        $this->fields[$fieldName] = $field = array_merge(
+          array(
+            'label' => $fieldName,
+            'type' => 'text',
+            'required' => false,
+            'new' => true,
+            'edit' => true,
+            'cou' => true,
+            'detail' => true,
+            'delete' => true,
+            'list' => true,
+          ),
+          $field === true ? array() : $field
+        );
+
+        foreach($this->forms as $key => $_){
+          if($field[$key]){
+            $this->forms[$key][$fieldName] = array_merge(
+              $field,
+              $field[$key] === true ? array() : $field[$key]
+            );
+          }
+        }
+
+      }
+
+    }
 
   }
 
@@ -44,20 +78,25 @@ class AmResource extends AmController{
   private static function handleAction(AmModel $r, $actionResult = true){
 
     $ret = array('success' => $actionResult);
+
     if(!$actionResult)
       $ret['errors'] = $r->getErrors();
+
     return $ret;
 
   }
 
   // Procesamiento para guardar un formulario
-  private function handleForm(AmModel $r){
+  private function handleForm(AmModel $r, $formType){
 
     $params = Am::g('request');
+
     // Obtener los datos recibidos por post del formulario
     $data = $params[$this->form];
-    $r->setValues($data, $this->fields);
+
+    $r->setValues($data, array_keys($this->forms[$formType]));
     $this->callback_setValuesRecord($r);
+
     return self::handleAction($r, $r->save());
 
   }
@@ -68,14 +107,15 @@ class AmResource extends AmController{
     $r = new $this->model;
     $this->callback_newRecord($r);
     $this->r = $r;
-    return $this->handleForm($this->r);
+
+    return $this->handleForm($this->r, 'new');
 
   }
 
   // Procesamiento del formulario edit
   public function post_edit($id){
 
-    return $this->handleForm($this->r);
+    return $this->handleForm($this->r, 'edit');
 
   }
 
@@ -83,6 +123,37 @@ class AmResource extends AmController{
   public function post_delete($id){
 
     return self::handleAction($this->r, $this->r->delete());
+
+  }
+
+  // Procesamiento del formulario edit
+  public function post_cou(){
+
+    $params = Am::g('request');
+
+    $model = $this->model;
+    $table = $model::me();
+    $pkValues = AmObject::mask($params[$this->form], $table->getPks());
+
+    $this->r = $table->find($pkValues, $model);
+
+    if(!$this->r){
+      $r = new $model;
+      $this->callback_newRecord($r);
+      $this->r = $r;
+    }
+
+    return $this->handleForm($this->r, 'cou');
+
+  }
+
+  // Obtener los datos de un registro
+  public function post_detail($id){
+
+    return array(
+      'success' => true,
+      'data' => AmObject::mask($this->r->toArray(), array_keys($this->forms['detail'])),
+    );
 
   }
 
@@ -96,31 +167,10 @@ class AmResource extends AmController{
       AmFlash::danger('No se encontró el registro');
       return false;
     }
+
     return true;
 
   }
-
-  // // Procesamiento del formulario edit
-  // public function post_cou(){
-  //   $classModel = $this->model;
-  //   $table = $classModel::me();
-  //   $pkValues = AmObject::mask($this->request[$this->form], $table->getPks());
-  //   $this->r = $table->find($pkValues, $classModel);
-  //   if(!$this->r){
-  //     $r = new $classModel;
-  //     $this->callback_newRecord($r);
-  //     $this->r = $r;
-  //   }
-  //   return $this->handleForm($this->r);
-  // }
-
-  // // Obtener los datos de un registro
-  // public function post_detail($id){
-  //   return array(
-  //     'success' => true,
-  //     'data' => $this->r->getValues($this->fields)
-  //   );
-  // }
 
   // public function action_data(){
 
