@@ -195,7 +195,7 @@ class AmController extends AmResponse{
     foreach($filters[$when] as $filterName => $filter){
 
       // Si filter es un string se asume que es el scope
-      if(is_string($filter) || (is_array($filter) && isHash($filter)))
+      if(is_string($filter) || (is_array($filter) && !isHash($filter)))
         $filter = array('to' => $filter);
 
       // Valores por defecto del filtro
@@ -597,7 +597,7 @@ class AmController extends AmResponse{
     }
 
     // Mezclar con el archivo de configuracion en la raiz del controlador.
-    if(is_file($realFile = realPath("{$root}/am.conf.php")))
+    if(is_file($realFile = realPath("{$root}/{$controller}.conf.php")))
 
       $conf = self::mergeConf($conf, require($realFile));
 

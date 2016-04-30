@@ -23,25 +23,3 @@ Am::addRouteDispatcher('call', 'Am::call');
 Am::addRouteDispatcher('template', 'Am::template');
 Am::addRouteDispatcher('controller', 'Am::controller');
 Am::addRouteDispatcher('assets', 'Am::assets');
-
-// PENDIENTE Esto debe pasar a la extensión AmResource
-Am::addRoutePreProcessor('resource', function($route){
-
-  $route['control'] = $route['resource'];
-  $route['routes'] = array_merge(
-    itemOr('routes', $route, array()),
-    array(
-      ''            => 'control => @index',
-      '/new'        => 'control => @new',
-      '/data.json'  => 'control => @data',
-      '/:id/detail' => 'control => @detail',
-      '/:id/edit'   => 'control => @edit',
-      '/:id/delete' => 'control => @delete',
-      '/cou'        => 'control => @cou',
-      '/search'     => 'control => @search',
-    )
-  );
-
-  return $route;
-
-});
