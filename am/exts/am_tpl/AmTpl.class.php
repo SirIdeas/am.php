@@ -472,7 +472,9 @@ final class AmTpl extends AmObject{
       return ob_get_clean();
     };
 
-    $this->parent = null;
+    $child = $call($viewCode);
+
+    return $child;
 
   }
 
