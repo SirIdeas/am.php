@@ -25,7 +25,8 @@ return array(
       'AMTPL_METHOD_NOT_FOUND' => 'AmTpl: Método no encontrado AmTpl::"%s"',
       'AMTPL_SET_BAD_ARGS_NUMBER' => 'AmTpl::set(): Número de argumentos inválido',
       'AMTPL_SUBVIEW_NOT_FOUND' => 'AmTpl: Subvista "%s" en "%s" no encontrada',
-      'AMTPL_UNOPENED_SECTION' => 'AmTpl: closing section unopened'
+      'AMTPL_UNOPENED_SECTION' => 'AmTpl: No se ha abierto ninguna sección',
+      'AMTPL_SECTION_CREATE_INTO_OTHER_SECTION' => 'AmTpl: No se pueden crear secciones dentro de otras secciones',
     ),
   ),
 

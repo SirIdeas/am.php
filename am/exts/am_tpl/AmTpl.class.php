@@ -19,16 +19,6 @@ final class AmTpl extends AmObject{
     $file = null,
 
     /**
-     * Ruta real de la vista a renderizar.
-     */
-    $realFile = null,
-
-    /**
-     * Contenido del archivo.
-     */
-    $content = '',
-
-    /**
      * Contenido del archivo.
      */
     $buffer = '',
@@ -46,7 +36,7 @@ final class AmTpl extends AmObject{
     /**
      * Listado de nonmbres de secciones abiertas.
      */
-    $openSections = array(),
+    $openSectionName = null,
 
     /**
      * Contenido de las secciones.
@@ -108,13 +98,6 @@ final class AmTpl extends AmObject{
     // Asignar atributos
     $this->options = $options;
     $this->file = $file;
-
-    // Determinar ruta real de la vista
-    $this->realFile = $this->findView($file);
-
-    // Leer archivo
-    if($this->realFile !== false)
-      $this->content = file_get_contents($this->realFile);
 
     // // Obtener padre
     // preg_match_all('/\(::[ ]*parent:(.*):\)/', $this->content, $parents);
@@ -398,17 +381,12 @@ final class AmTpl extends AmObject{
 
   }
 
-  public function place($view){
-
-    // $file = $this->findView($view);
-    // if($file)
-    //   $this->_render(file_get_contents($file));
-
-  }
-
   public function section($name){
 
-    $this->openSections[] = $name;
+    if(isset($this->openSectionName))
+      throw Am::e('AMTPL_SECTION_CREATE_INTO_OTHER_SECTION');
+
+    $this->openSectionName = $name;
     ob_start();
 
   }
@@ -419,11 +397,12 @@ final class AmTpl extends AmObject{
   public function endSection(){
 
     // Si no existen secciones abiertas entonces mostrar error
-    if(empty($this->openSections))
+    if(!isset($this->openSectionName))
       throw Am::e('AMTPL_UNOPENED_SECTION');
 
     // Obtener el nombre de la ultima seccion abierta
-    $name = array_pop($this->openSections);
+    $name = $this->openSectionName;
+    $this->openSectionName = null;
 
     $content = ob_get_clean();
 
@@ -450,7 +429,23 @@ final class AmTpl extends AmObject{
 
   }
 
-  public function put($view){
+  public function place($view, $env = array()){
+
+    $file = $this->findView($view);
+    if($file);
+      return $this->r(file_get_contents($file), $env);
+
+  }
+
+  public function insert($view, $env = array()){
+
+    echo $this->place($view, $env);
+
+  }
+
+  public function put($sectionName, $env = array()){
+
+    echo $this->r($this->sections[$sectionName], $env);
 
   }
 
@@ -458,46 +453,81 @@ final class AmTpl extends AmObject{
 
   }
 
-  /**
-   * Renderiza compila la vista e imprime el contenido.
-   */
-  public function render(){
+  private function r($content, array $env = array()){
+
+    $content = explode('(:', $content);
+
+    $__ = array_merge($this->env, $env);
 
     ob_start();
-    $this->_render($this->content);
+    echo array_shift($content);
+    $this->isOpenSection = false;
+    $this->_r($content);
     $viewCode = ob_get_clean();
-    // echo $viewCode;
-    eval("?>{$viewCode}");
-    var_dump($this->sections);
+    $call = function($_) use ($__){
+      ob_start();
+      unset($__['_']);
+      extract($__);
+      eval("?>{$_}");
+      return ob_get_clean();
+    };
+
+    $this->parent = null;
 
   }
 
-  public function _render($content){
+  private function _r(array $content){
 
-    $reg = '/(parent|place|section|endSection|put|child)\:?(.*)/';
-    $parts = explode('(:', $content);
-    echo array_shift($parts);
-    
-    foreach($parts as $line){
-      $part = explode(':)', $line);
-      if(count($part)===1){
-        $part = explode("\n", $part[0]);
-        if(count($part)===2){
-          $part[1] = "\n".$part[1];
-        }
+    if(empty($content)) return;
+
+    $reg = '/(parent|insert|section|endSection|put|child)\:?(.*)/';
+
+    $line = array_shift($content);
+
+    $part = explode(':)', $line);
+    if(count($part)===1){
+      $part = explode("\n", $part[0]);
+      if(count($part)===2){
+        $part[1] = "\n".$part[1];
       }
-      $code = trim($part[0]);
-      $str = itemOr(1, $part, '');
+    }
+    $code = trim($part[0]);
+    $str = itemOr(1, $part, '');
+    $method = false;
 
-      if(preg_match_all($reg, $code, $m)){
-        $method = $m[1][0];
-        $params = $m[2][0];
+    if(preg_match_all($reg, $code, $m)){
+      $method = $m[1][0];
+      $params = $m[2][0];
+
+      if(in_array($method, array('put', 'place')))
+        $code = "\$this->$method($params, get_defined_vars())";
+      else
         $code = "\$this->$method($params)";
-      }
-
-      echo "<?php {$code} ?>{$str}";
 
     }
+
+    if($method === 'endSection'){
+      if($this->isOpenSection === true)
+        $this->isOpenSection = false;
+      else
+        throw Am::e('AMTPL_UNOPENED_SECTION');
+    }
+
+    if($this->isOpenSection === true)
+      echo "(:$line";
+    else
+      echo "<?php {$code} ?>{$str}";
+
+    if($method === 'section'){
+
+      if($this->isOpenSection === true)
+        throw Am::e('AMTPL_SECTION_CREATE_INTO_OTHER_SECTION');
+      else
+        $this->isOpenSection = true;
+
+    } 
+
+    $this->_r($content);
 
     // // Obtener contenido compilado de la vista
     // $this->result = $this->compile($this->child);
@@ -508,6 +538,16 @@ final class AmTpl extends AmObject{
     //   extract($this->getEnv());  // Crear variables
     //   eval("? > {$this->result['content']}");
     // }
+
+  }
+
+  /**
+   * Renderiza compila la vista e imprime el contenido.
+   */
+  public function render(){
+
+    // Determinar ruta real de la vista
+    return $this->place($this->file);
 
   }
 
@@ -531,7 +571,7 @@ final class AmTpl extends AmObject{
   public static function renderize($tpl, array $vars = array(),
                                    array $options = array()){
 
-    header('content-type:text/plain');
+    // header('content-type:text/plain');
 
     // Determinar las variables de entorno
     // Mazclar las que viene enlas opciones con las recibidas por parámetro
@@ -541,7 +581,7 @@ final class AmTpl extends AmObject{
     $view = new self($tpl, $options);
 
     // Compilar y guardar
-    $view->render();
+    echo $view->render();
 
     return !$view->hasError();
 
