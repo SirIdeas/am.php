@@ -19,11 +19,6 @@ final class AmTpl extends AmObject{
     $file = null,
 
     /**
-     * Contenido del archivo.
-     */
-    $buffer = '',
-
-    /**
      * Variables de entorno.
      */
     $env = array(),
@@ -44,14 +39,9 @@ final class AmTpl extends AmObject{
     $sections = array(),
 
     /**
-     * Contenido de la sección abierta
+     * Contenido de la vista hija.
      */
-    $currentSection = '',
-
-    // /**
-    //  * Contenido de la vista hija.
-    //  */
-    // $child = null,
+    $child = null,
 
     // /**
     //  * Indica si se imprimó el contenido de la vista hija
@@ -361,20 +351,6 @@ final class AmTpl extends AmObject{
 
   // }
 
-  private function e($str){
-
-    if(empty($this->openSections)){
-
-      $this->buffer .= $str;
-
-    }else{
-
-      $this->currentSection .= $str;      
-
-    }
-
-  }
-
   public function parent($view){
 
     $this->parent = $view;
@@ -451,6 +427,9 @@ final class AmTpl extends AmObject{
 
   public function child(){
 
+    echo $this->child;
+    $this->child = null;
+
   }
 
   private function r($content, array $env = array()){
@@ -472,8 +451,16 @@ final class AmTpl extends AmObject{
       return ob_get_clean();
     };
 
+    $prevParent = $this->parent;
+    $this->parent = null;
     $child = $call($viewCode);
 
+    if(isset($this->parent)){
+      $this->child = $child;
+      $child = $this->place($this->parent, $this->env);
+    }
+
+    $this->parent = $prevParent;
     return $child;
 
   }
