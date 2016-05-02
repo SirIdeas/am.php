@@ -434,6 +434,12 @@ final class AmTpl extends AmObject{
 
   private function r($content, array $env = array()){
 
+    $content = explode('(:/:)', $content);
+    $content = implode('(:= Am::url() :)', $content);
+
+    $content = explode('(:=', $content);
+    $content = implode('(: echo ', $content);
+
     $content = explode('(:', $content);
     $__ = array_merge($this->env, $env);
     $this->isOpenSection = false;
