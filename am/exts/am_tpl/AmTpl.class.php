@@ -408,7 +408,7 @@ final class AmTpl extends AmObject{
   public function place($view, $env = array()){
 
     $file = $this->findView($view);
-    if($file);
+    if($file)
       return $this->r(file_get_contents($file), $env);
 
   }
@@ -421,7 +421,7 @@ final class AmTpl extends AmObject{
 
   public function put($sectionName, $env = array()){
 
-    echo $this->r($this->sections[$sectionName], $env);
+    echo $this->r(itemOr($sectionName, $this->sections), $env);
 
   }
 
@@ -435,26 +435,30 @@ final class AmTpl extends AmObject{
   private function r($content, array $env = array()){
 
     $content = explode('(:', $content);
-
     $__ = array_merge($this->env, $env);
+    $this->isOpenSection = false;
+    $prevParent = $this->parent;
+    $this->parent = null;
 
     ob_start();
     echo array_shift($content);
-    $this->isOpenSection = false;
     $this->_r($content);
     $viewCode = ob_get_clean();
-    $call = function($_) use ($__){
-      ob_start();
+
+    $before = array_keys($__);
+    $call = function($_) use (&$__){
       unset($__['_']);
+      unset($__['__']);
       extract($__);
+      ob_start();
       eval("?>{$_}");
+      $__ = get_defined_vars();
       return ob_get_clean();
     };
 
-    $prevParent = $this->parent;
-    $this->parent = null;
     $child = $call($viewCode);
 
+    $this->env = $__;
     if(isset($this->parent)){
       $this->child = $child;
       $child = $this->place($this->parent, $this->env);
@@ -473,22 +477,23 @@ final class AmTpl extends AmObject{
 
     $line = array_shift($content);
 
-    $part = explode(':)', $line);
+
+    $glue = ':)';
+    $part = explode($glue, $line);
     if(count($part)===1){
-      $part = explode("\n", $part[0]);
-      if(count($part)===2){
-        $part[1] = "\n".$part[1];
-      }
+      $glue = "\n";
+      $part = explode($glue, $line);
     }
-    $code = trim($part[0]);
-    $str = itemOr(1, $part, '');
+
+    $code = trim(array_shift($part));
+    $str = implode($glue, $part);
     $method = false;
 
     if(preg_match_all($reg, $code, $m)){
       $method = $m[1][0];
       $params = $m[2][0];
 
-      if(in_array($method, array('put', 'place')))
+      if(in_array($method, array('put', 'insert')))
         $code = "\$this->$method($params, get_defined_vars())";
       else
         $code = "\$this->$method($params)";
