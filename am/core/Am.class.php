@@ -40,7 +40,7 @@ final class Am{
       'response.call' => null, // $callback, $env, $params
 
       // Responde con el renderizado de una vista
-      'response.template' => array(), // $tpl, $vars, $options, $checkView
+      'response.template' => null, // $tpl, $vars, $options, $checkView
 
       // Responder con una redirección
       'response.go' => null, // $url
@@ -58,13 +58,13 @@ final class Am{
       'response.controller' => null, // $action, $params, $env
 
       // Renderiza de una vista
-      'render.template' => array(), // $__tpl, $__vars, $__options
+      'render.template' => null, // $__tpl, $__vars, $__options
 
       // Obtener la instancia de una sesion
       'session.get' => null, // $id
       
       // Obtener una instancia del manejador de credenciales
-      // 'credentials.handler' => array()
+      'credentials.get' => null, // $name
       
     ),
 
@@ -1062,7 +1062,7 @@ final class Am{
    * recibido por parámetro es un alias de otra extensión. Si la extensión no
    * existe se busca en cada uno de los directorios del entorno
    * @param string/array $name Nombre o alias de la extensión que se desea
-   *                          cargar.
+   *                           cargar.
    */
   public static function requireExt($name){
 
@@ -1106,22 +1106,27 @@ final class Am{
 
   /**
    * Devuelve la instancia del manejador de credenciales.
-   * @return object Instancia del manejador de credenciales.
+   * @param   string $name  Nombre del manejador de credenciales que desea
+   *                        obtener.
+   * @return  object        Instancia del manejador de credenciales.
    */
-  public static function getCredentialsHandler(){
+  public static function getCredentialsHandler($name = ''){
 
-    return self::emit('credentials.handler');
+    return self::emit('credentials.get', $name);
 
   }
   
   /**
    * Devuelve las credenciales actuales.
-   * @return object Instancia de las credenciales actuales.
+   * @param   string $name  Nombre del manejador de credenciales que desea
+   *                        obtener del cual se desea obtener las credenciales
+   *                        actuales.
+   * @return  object        Instancia de las credenciales actuales.
    */
-  public static function getCredentials(){
+  public static function getCredentials($name = ''){
 
     // Si no existe la instancai del manejador de credenciales
-    if(!($credentialsManager = self::getCredentialsHandler()))
+    if(!($credentialsManager = self::getCredentialsHandler($name)))
       return null;
 
     // Devuelve la instancia del usuario actual
@@ -1131,26 +1136,31 @@ final class Am{
   
   /**
    * Devuelve si está autenticado un usuario.
-   * @return bool Si esta autenticado o no.
+   * @param   string $name  Nombre del manejador de credenciales que desea
+   *                        saber si está o no autenticado.
+   * @return  bool          Si esta autenticado o no.
    */
-  public static function isAuth(){
+  public static function isAuth($name = ''){
 
-    return null !== self::getCredentials();
+    return null !== self::getCredentials($name);
 
   }
   
   /**
    * Devuelve si hay un usuario autenticado y si tiene las credenciales
    * recividas por parámetro
-   * @param  string/array $credential String o array de strings con las
-   *                                  credenciales a consultar
-   * @return bool                     Si el usuario autenticado tiene las
-   *                                  credenciales consultadas.
+   * @param   string/array $credential  String o array de strings con las
+   *                                    credenciales a consultar.
+   * @param   string $name              Nombre del manejador de credenciales del
+   *                                    cual se desea saber si tiene una
+   *                                    determinada credencial.
+   * @return  bool                      Si el usuario autenticado tiene las
+   *                                    credenciales consultadas.
    */
-  public static function hasCredentials($credential){
+  public static function hasCredentials($credential, $name = ''){
 
     // Si no existe la instancai del manejador de credenciales
-    if(!($credentialsManager = self::getCredentialsHandler()))
+    if(!($credentialsManager = self::getCredentialsHandler($name)))
       return false;
 
     // Verificar si el usuario logeado tiene las credenciales
