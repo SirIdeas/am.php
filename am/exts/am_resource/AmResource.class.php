@@ -7,8 +7,9 @@
  */
 
 /**
- * Clase para controlador estandar. 
+ * Controlador con acciones CRUDs para un modelo. 
  */
+// PENDIENTE: Documentar
 class AmResource extends AmController{
 
   public function __construct($data = null){
