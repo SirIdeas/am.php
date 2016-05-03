@@ -52,7 +52,7 @@
   </thead>
   <tfoot>
     <tr>
-      <td colspan="(:= count($columns)+($allow['opciones']? 1:0) :)">
+      <td colspan="(:= count($forms['list'])+($allow['opciones']? 1:0) :)">
         <p id="dinamic-table-count-record" class="text-muted pull-left table-count-record">
           <i>
             <small dinamic-table-msg="showing">Mostrando registros del {$rf} - {$rt} de {$fc} encontrados de un total {$co} en la tabla</small>
