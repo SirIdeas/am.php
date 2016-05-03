@@ -14,7 +14,7 @@ Am::addRoutePreProcessor('resource', function($route){
     array(
       ''              => 'controller => @index',
       '/new'          => 'controller => @new',
-      // '/data.json'    => 'controller => @data',
+      '/data'         => 'controller => @data',
       '/{id}/detail'  => 'controller => @detail',
       '/{id}/edit'    => 'controller => @edit',
       '/{id}/delete'  => 'controller => @delete',

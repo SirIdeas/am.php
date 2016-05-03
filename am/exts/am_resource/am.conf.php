@@ -14,6 +14,7 @@ return array(
   'requires' => array(
     'exts/am_controller/',
     'exts/am_scheme/',
+    'helpers/dinamicTableServer',
   ),
 
 );

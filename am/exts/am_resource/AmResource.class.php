@@ -172,18 +172,28 @@ class AmResource extends AmController{
 
   }
 
-  // public function action_data(){
+  public function action_data(){
 
-  //   // Obtener el listado de elementos
-  //   $q = $this->table->all()
-  //       ->setSelects(array_combine($this->columnsNames, $this->columnsNames));
+    $columnNames = array_keys($this->forms['list']);
 
-  //   // Return el objeto para la tabla dinamica
-  //   return dinamicTableServer($this->request, $q,
-  //     array($this, 'callback_formatList'), false
-  //   );
+    // return [[$columnNames]];
 
-  // }
+    // Obtener el listado de elementos
+    $q = $this->table->all()
+      ->setFormatter(array($this, 'callback_formatList'))
+      ->setSelects(array_combine($columnNames, $columnNames));
+
+    // Return el objeto para la tabla dinamica
+    return dinamicTableServer(Am::g('request'), $q, false);
+
+  }
+
+  // El formateador agregará una clase al registro dependiendo
+  // del estado de la inscripcion
+  public function callback_formatList($r){
+  //   $r['cls'] = '';
+    return $r;
+  }
 
   // public function action_search(){
   //   $classModel = $this->model;
@@ -209,13 +219,6 @@ class AmResource extends AmController{
   // }
 
   // public function callback_querySearchSetup(AmQuery $q){}
-
-  // // El formateador agregará una clase al registro dependiendo
-  // // del estado de la inscripcion
-  // public function callback_formatList($r){
-  //   $r['cls'] = '';
-  //   return $r;
-  // }
 
   // // El formateador agregará una clase al registro dependiendo
   // // del estado de la inscripcion
