@@ -3,16 +3,16 @@
 (: endSection
 
 (: section:'formlabel'
-  <label for="(:= $formLoginName.'_'.$fieldname :)">
+  <label for="(:= $form.'_'.$fieldname :)">
     (:= $field['label'] :)
   </label>
 (: endSection
 
 (: section:'forminput'
   <input
-    id="(:= $formLoginName.'_'.$fieldname :)"
+    id="(:= $form.'_'.$fieldname :)"
     type="(:= $field['type'] :)"
-    name="(:= $formLoginName.'['.$fieldname.']' :)"
+    name="(:= $form.'['.$fieldname.']' :)"
     (:= $field['required'] ? 'required' : '' :)
     (:= isset($field['len']) ? 'maxlength="'.$field['len'].'"' : '' :) />
 (: endSection
@@ -40,7 +40,7 @@
 (: endSection
 
 (: section:'formform'
-  <form method="post" name="(:= $formLoginName :)" >
+  <form method="post" name="(:= $form :)" >
     (: put:'formhead'
     (: put:'formbody'
     (: put:'formfooter'
