@@ -1115,6 +1115,18 @@ final class Am{
     return self::emit('credentials.get', $name);
 
   }
+
+  /**
+   * Asigna las credenciales para un determinado nombre.
+   * @param   string $name  Nombre del manejador de credenciales que desea
+   *                        asignar del cual se desea obtener las credenciales
+   *                        actuales.
+   */
+  public static function setAuthenticated($credentials = null, $name = ''){
+
+    self::getCredentialsHandler($name)->setAuthenticated($credentials);
+
+  }
   
   /**
    * Devuelve las credenciales actuales.

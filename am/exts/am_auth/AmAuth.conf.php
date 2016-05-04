@@ -38,6 +38,17 @@ return array(
     'keyPrivate' => null,
     'keyPublic' => null,
     'keyPassPhrase' => null,
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Nombres de los formularios
+    'formSignupName' => 'signup',
+    'formLoginName' => 'login',
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Nombres de los formularios
+    'encriptedFields' => array(
+      // 'login' => array('username', 'password'),
+    ),
     
   ),
 
