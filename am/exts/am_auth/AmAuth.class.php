@@ -110,14 +110,15 @@ class AmAuth extends AmController{
     $attrs = $this->decryptFields('signup', $params[$this->formSignupName]);
 
     // Instanciar usuario
-    $u = new $class;
+    $ret = $class::register($attrs);
 
     $ret = array(
-      'success' => $class::register($u, $attrs),
+      'success' => !!$ret,
     );
 
     // Usuario esta autenticado
     if($ret['success']){
+      $ret['data'] = $ret;
     }
 
     return $ret;
