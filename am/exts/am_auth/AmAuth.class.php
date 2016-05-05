@@ -12,6 +12,12 @@
 // PENDIENTE: Documentar
 class AmAuth extends AmController{
 
+  public function action(){
+
+    $this->authClass = Am::getCredentialsHandler($this->credentials)->getCredentialsClass();
+
+  }
+
   public function action_login(){
 
     $this->form = $this->formLoginName;
