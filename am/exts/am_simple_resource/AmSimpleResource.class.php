@@ -77,7 +77,7 @@ class AmSimpleResource extends AmResource{
   private function handleActionSimple(array $ret, $msgSuccess, $msgFail){
     if($ret['success']){
       AmFlash::success($msgSuccess);
-      return Am::redirect($this->url);
+      return Am::go($this->url);
     }else{
       AmFlash::danger($msgFail);
       $this->errors = $ret['errors'];
@@ -90,7 +90,7 @@ class AmSimpleResource extends AmResource{
 
     if($ret['success'] !== true){
       AmFlash::danger('No se encontró el registro');
-      return Am::redirect($this->url);
+      return Am::go($this->url);
     }
 
     return true;

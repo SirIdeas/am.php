@@ -1,14 +1,16 @@
-(: section:'formhead'
+(: insert:'_flash.php'
+
+(: section:'form-head'
   <h2>(:= $formTitle :)</h2>
 (: endSection
 
-(: section:'formlabel'
+(: section:'form-label'
   <label for="(:= $form.'_'.$fieldname :)">
     (:= $field['label'] :)
   </label>
 (: endSection
 
-(: section:'forminput'
+(: section:'form-input'
   <input
     id="(:= $form.'_'.$fieldname :)"
     type="(:= $field['type'] :)"
@@ -17,32 +19,35 @@
     (:= isset($field['len']) ? 'maxlength="'.$field['len'].'"' : '' :) />
 (: endSection
 
-(: section:'formfield'
+(: section:'form-field'
   <div>
-    (: put:'formlabel'
-    (: put:'forminput'
+    (: put:'form-label'
+    (: put:'form-input'
   </div>
 (: endSection
 
-(: section:'formbody'
+(: section:'form-body'
   (: foreach($fields as $fieldname => $field):
-    (: put:'formfield'
+    (: put:'form-field'
   (: endforeach
 (: endSection
 
-(: section:'formsubmit'
+(: section:'form-submit'
   <button type="submit">Enviar</button>
 (: endSection
 
-(: section:'formfooter'
-  (: put:'formsubmit'
+(: section:'form-footer'
+  (: put:'form-submit'
   <button type="reset">Resetear</button>
 (: endSection
 
-(: section:'formform'
+(: section:'form'
+  (: put:'flash-messages'
   <form method="post" name="(:= $form :)" >
-    (: put:'formhead'
-    (: put:'formbody'
-    (: put:'formfooter'
+    (: put:'form-head'
+    (: put:'form-body'
+    (: put:'form-footer'
   </form>
 (: endSection
+
+(: insert:'form-post.php'

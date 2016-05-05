@@ -11,8 +11,11 @@ return array(
   'env' => array(
 
     ////////////////////////////////////////////////////////////////////////////
-    // Url Raíz del recurso
-    'url' => Am::serverUrl('/'),
+    // Urls utilizadas
+    'urls' => array(
+      'in' => Am::serverUrl('/'),
+      'out' => Am::serverUrl('/')
+    ),
 
   ),
 

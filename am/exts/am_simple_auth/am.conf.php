@@ -7,10 +7,9 @@
  */
 
 return array(
-  
+
   'requires' => array(
-    'exts/am_resource/',
-    'exts/am_flash/',
+    'exts/am_auth/',
   ),
 
 );

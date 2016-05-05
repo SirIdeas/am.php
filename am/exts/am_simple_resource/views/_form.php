@@ -50,3 +50,5 @@
     (: put:'form-footer'
   </form>
 (: endSection
+
+(: insert:'_form-post.php'
