@@ -80,7 +80,7 @@ class AmResource extends AmController{
 
     $ret = array('success' => $actionResult);
 
-    if(!$actionResult)
+    if(!$actionResult){
       $ret['errors'] = $r->getErrors();
 
     return $ret;
@@ -149,7 +149,7 @@ class AmResource extends AmController{
   }
 
   // Obtener los datos de un registro
-  public function post_detail($id){
+  public function get_detail($id){
 
     return array(
       'success' => true,
@@ -165,8 +165,10 @@ class AmResource extends AmController{
 
     // Si no se encontró el registro mostrar un mensaje
     if(!$this->r){
-      AmFlash::danger('No se encontró el registro');
-      return false;
+      return $this->responseService(array(
+        'success' => false,
+        'notFound' => true,
+      ));
     }
 
     return true;
@@ -176,8 +178,6 @@ class AmResource extends AmController{
   public function action_data(){
 
     $columnNames = array_keys($this->forms['list']);
-
-    // return [[$columnNames]];
 
     // Obtener el listado de elementos
     $q = $this->table->all()
