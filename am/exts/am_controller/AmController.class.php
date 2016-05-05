@@ -227,16 +227,16 @@ class AmController extends AmResponse{
       $filterRealName = $this->getPrefix('filters') . $filterName;
 
       // Llamar el filtro
-      $ret = call_user_func_array(array(&$this, $filterRealName), $params   );
+      $ret = call_user_func_array(array(&$this, $filterRealName), $params);
+
+      // El retorna una respuesta entonces devolver dicha respuesta.
+      if($ret instanceof parent)
+        return $ret;
 
       // Si la accion pasa el filtro o no se trata de un filtro before se debe
       // continuar con el siguiente filtro
       if($ret !== false || $when != 'before')
         continue;
-
-      // El retornna una respuesta entonces devolver dicha respuesta.
-      if($ret instanceof parent)
-        return $ret;
 
       // Si se indica una ruta de redirección se lleva a esa ruta
       if(isset($filter['redirect']))
@@ -450,7 +450,7 @@ class AmController extends AmResponse{
    * @param  array/object $content Contenido de la respuesta.
    * @return AmResponse            Respuesta
    */
-  final private function responseService($content, $as = null){
+  final protected function responseService($content, $as = null){
 
     // Si no se indica como se desea responder entonces se busca la propiedad
     // servicesFormat
@@ -589,7 +589,9 @@ class AmController extends AmResponse{
       $confParent = self::includeController($parentController);
 
       // Agregar carpeta de vistas por defecto del padre.
-      $confParent['paths'][] = $confParent['root'] . '/' . $confParent['views'];
+      array_unshift(
+        $confParent['paths'], $confParent['root'] . '/' . $confParent['views']
+      );
       // $confParent['paths'][] = $confParent['root'];
       
       // Mezclar con la configuracion del padre
