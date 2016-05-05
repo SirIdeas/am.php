@@ -80,7 +80,7 @@ class AmResource extends AmController{
 
     $ret = array('success' => $actionResult);
 
-    if(!$actionResult){
+    if(!$actionResult)
       $ret['errors'] = $r->getErrors();
 
     return $ret;
