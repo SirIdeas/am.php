@@ -32,7 +32,7 @@ function dinamicTableServer(AmObject $params, AmQuery $query, $toArray = true){
       ->limit($params->iLen)
       ->offSet($params->iPage * $params->iLen);
 
-  $records = $query->get('array', function($record) use ($fields){
+  $records = $query->get(function($record) use ($toArray, $fields){
     $record = AmObject::mask($record, $fields);
     if($toArray === true)
       return array_values($record);

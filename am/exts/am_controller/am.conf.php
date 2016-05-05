@@ -20,7 +20,7 @@ return array(
    */
   'requires' => array(
     'exts/am_response/',
-    // 'exts/am_credentials/',
+    'exts/am_credentials/',
   ),
 
   /**

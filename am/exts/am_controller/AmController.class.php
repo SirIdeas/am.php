@@ -252,6 +252,85 @@ class AmController extends AmResponse{
 
   }
 
+  // Verificar su un accion necesita la credencial solicitada
+  final private static function actionNeedCredentials($action, $credential){
+
+    // si la credenciale soliocitada no es un array se
+    // se entenderá que todas las acciones nececitan
+    // dicha credencial.
+    if(!is_array($credential))
+      return true;
+
+    // Si esta definido el parametro only se chequea
+    // que la accion este dentro de las acciones que necesitan
+    // esta credencial.
+    if(isset($credential['only']) && is_array($credential['only']))
+      return in_array($action, $credential['only']);
+
+    // Si esta definido el parametro except se chequea
+    // que la accion este dentro de las acciones que no
+    // necesitan esta credencial.
+    if(isset($credential['except']) && is_array($credential['except']))
+      return !in_array($action, $credential['except']);
+
+    // De lo contrario la accion no requiere dicha credencial
+    return true;
+
+  }
+
+  final private static function goToAuthOf($name = ''){
+
+    $handler = Am::getCredentialsHandler($name);
+    if(isset($handler))
+      return $handler->redirectToAuth();
+    return Am::e403();
+
+  }
+
+  /**
+   *
+   */
+  final protected function chechCredentials($action){
+
+    $credentials = $this->get('credentials');
+
+    // Si las credenciales no es un array no se realiza la verificacion
+    if(!is_array($credentials))
+      return;
+
+    // Si un array vacío solo se debe verificar que
+    // existe un usuario logeado.
+    if(empty($credentials) || $this->credentials === true)
+      if(!Am::isAuth())
+        return self::goToAuthOf();
+
+    // Verificar cada crendencial
+    foreach($credentials as $credential){
+
+      // Si la accion que se ejecutada no necetida dicha
+      // credencial se continua con la verificacion de la próxima
+      if(!self::actionNeedCredentials($action, $credential))
+        continue;
+
+      // Convertir la credencia en array si no lo es.
+      if(!is_array($credential))
+        $credential = array($credential);
+
+      $name = itemOr('auth', $credential, '');
+
+      // Si es un arrahy asociativo se debe obtener el item 'roles'
+      if(isHash($credential))
+        $credential = itemOr('roles', $credential, array());
+
+      // Si no posee dichas credenciales rediriguir a la pantalla de logueo.
+      if(!Am::hasCredentials($credential, $name)){
+        return self::goToAuthOf($name);
+      }
+
+    }
+
+  }
+
   /**
    * Ejecuta una acción, con un método y unos parámetros.
    * @param  string     $action Nombre de la acción a ejecutar.
@@ -267,11 +346,11 @@ class AmController extends AmResponse{
     if($ret instanceof parent)
       return $ret;
 
-    // PENDIENTE
-    // // Verificar las credenciales
-    // Am::getCredentialsHandler()
-    //   ->checkCredentials($action, $this->credentials);
-    
+    $ret = $this->chechCredentials($action);
+
+    if($ret instanceof parent)
+      return $ret;
+
     $return = null;
     // Para guardar métodos ejecutados.
     $executed = array();

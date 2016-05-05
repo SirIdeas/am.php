@@ -27,6 +27,9 @@ return array(
     '' => true
   ),
 
+  // Configuraciones de credenciales requeridas para las acciones
+  'credentials' => false,
+
   // Tipo de respuesta para el servicio: json, txt.
   'servicesFormat' => 'json',
 

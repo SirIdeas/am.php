@@ -968,15 +968,17 @@ class AmQuery extends AmObject{
    *                             señalado.
    */
   public function row($as = null, $formatter = null){
+
+    if(isValidCallback($as)){
+      $formatter = $as;
+      $as = null;
+    }
     
     // Obtener la fuente de datos
     $scheme = $this->getScheme();
 
     if(!isset($as))
       $as = $this->getModel();
-
-    if(!isset($formatter))
-      $formatter = $this->getFormatter();
 
     // Se ejecuta el query si no se ha ejecutado
     if(null === $this->result)
@@ -1035,6 +1037,10 @@ class AmQuery extends AmObject{
 
     }
 
+    $localFormatter = $this->getFormatter();
+    if(isset($localFormatter))
+      $r = call_user_func_array($localFormatter, array($r));
+
     // Formatear el valor
     if(isset($formatter))
       $r = call_user_func_array($formatter, array($r));
@@ -1045,7 +1051,7 @@ class AmQuery extends AmObject{
 
   /**
    * Devuelve un array con los registros resultantes del query.
-   * @param  string   $as       Modelo con el que se devolverá el regsitro.
+   * @param  string   $as       Modelo con el que se devolverá el registro.
    *                            puede ser 'array', 'am', 'object', el nombre
    *                            de un modelom, o el nombre de una clase. Si no
    *                            sae indica se utiliza el modelo del query.

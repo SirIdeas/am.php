@@ -14,7 +14,7 @@ class AmAuth extends AmController{
 
   public function action(){
 
-    $this->authClass = Am::getCredentialsHandler($this->credentials)->getCredentialsClass();
+    $this->authClass = Am::getCredentialsHandler($this->auth)->getCredentialsClass();
 
   }
 

@@ -12,6 +12,7 @@ class AmSimpleResource extends AmResource{
   public function action(){
 
     $this->msgsKeys = array('success', 'danger');
+    $this->allows = $this->get('allows');
     
   }
 

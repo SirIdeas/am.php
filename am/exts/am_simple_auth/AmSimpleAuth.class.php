@@ -14,7 +14,7 @@ class AmSimpleAuth extends AmAuth{
 
   protected function in(AmCredentials $user){
 
-    Am::getCredentialsHandler($this->credentials)->setAuthenticated($user);
+    Am::getCredentialsHandler($this->auth)->setAuthenticated($user);
 
   }
 
@@ -22,6 +22,9 @@ class AmSimpleAuth extends AmAuth{
   public function action_login(){
 
     $this->form = $this->formLoginName;
+
+    $this->username = '';
+    $this->password = '';
 
     $this->fields = array(
       'username' => array(
@@ -107,7 +110,7 @@ class AmSimpleAuth extends AmAuth{
 
   public function action_logout(){
 
-    Am::getCredentialsHandler($this->credentials)->setAuthenticated(null);
+    Am::getCredentialsHandler($this->auth)->setAuthenticated(null);
 
     return Am::go($this->urls['out']);  // Ir a index
 

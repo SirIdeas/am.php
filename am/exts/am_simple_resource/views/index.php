@@ -36,7 +36,7 @@
           (: endif
         </th>
       (: endforeach
-      (: if ($allow['opciones']):
+      (: if (isset($allows['opciones']) && $allows['opciones']):
         <th data-param-show="false"></th>
         <th data-param-sort="false" data-param-class="text-center">
           <div>Opciones</div>
@@ -47,7 +47,7 @@
   </thead>
   <tfoot>
     <tr>
-      <td colspan="(:= count($forms['list'])+($allow['opciones']? 1:0) :)">
+      <td colspan="(:= count($forms['list'])+(isset($allows['detail'])||isset($allows['edit'])||isset($allows['delete'])? 1:0) :)">
         <p id="dinamic-table-count-record" class="text-muted pull-left table-count-record">
           <i>
             <small dinamic-table-msg="showing">Mostrando registros del {$rf} - {$rt} de {$fc} encontrados de un total {$co} en la tabla</small>
@@ -71,14 +71,14 @@
 <!-- The template to display files available for upload -->
 <script id="template-options" type="text/x-tmpl">
   <small>
-    (: if ($allow["detail"]):
+    (: if ($allows['detail']):
       <a href="/admin/(:= $menu :)/{%=o.id%}/detail">Detalle</a>&nbsp;|
     (: endif
-    (: if ($allow["edit"]):
+    (: if ($allows['edit']):
       <a href="/admin/(:= $menu :)/{%=o.id%}/edit">Editar</a>&nbsp;|
     (: endif
-    (: if ($allow["remove"]):
-      <a href="/admin/(:= $menu :)/{%=o.id%}/remove">Delete</a>
+    (: if ($allows['delete']):
+      <a href="/admin/(:= $menu :)/{%=o.id%}/delete">Delete</a>
     (: endif
     (: put:'recordOptions'
   </small>

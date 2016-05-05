@@ -94,7 +94,7 @@ final class AmCredentialsHandler{
   // Redirigue al enlace para autenticar al usuario
   public function redirectToAuth(){
 
-    Am::gotoUrl($this->authUrl);
+    return Am::go($this->authUrl);
 
   }
 
@@ -102,15 +102,6 @@ final class AmCredentialsHandler{
   public function getCredentials(){
 
     return $this->credentials;
-
-  }
-
-  // Chequea su hay un usuario logeado. De lo contrario
-  // Redirige al enlace de autenticacion.
-  public function checkAuth(){
-
-    if(!$this->isAuth())
-      $this->redirectToAuth();
 
   }
 
@@ -169,69 +160,6 @@ final class AmCredentialsHandler{
     }
 
     // Tiene todas las credenciales
-    return true;
-
-  }
-
-  // Chequear los permisos para una accion especifica.
-  public function checkCredentials($action, $credentials){
-
-    // Si las credenciales no es un array no se realiza la verificacion
-    if(!is_array($credentials))
-      return;
-
-    // Si un array vacío solo se debe verificar que
-    // existe un usuario logeado.
-    if(empty($credentials)){
-      $this->checkAuth();
-      return;
-    }
-
-    // Verificar cada crendencial
-    foreach($credentials as $credential){
-
-      // Si la accion que se ejecutada no necetida dicha
-      // credencial se continua con la verificacion de la próxima
-      if(!self::actionNeedCredentials($action, $credential))
-        continue;
-
-      // Convertir la credencia en array si no lo es.
-      if(!is_array($credential))
-        $credential = array($credential);
-      // Si es un arrahy asociativo se debe obtener el item 'roles'
-      elseif(isAssocArray($credential))
-        $credential = itemOr('roles', $credential, array());
-
-      // Si no posee dichas credenciales rediriguir a la pantalla de logueo.
-      if(!$this->hasCredentials($credential))
-        $this->redirectToAuth();
-
-    }
-
-  }
-
-  // Verificar su un accion necesita la credencial solicitada
-  private static function actionNeedCredentials($action, $credential){
-
-    // si la credenciale soliocitada no es un array se
-    // se entenderá que todas las acciones nececitan
-    // dicha credencial.
-    if(!is_array($credential))
-      return true;
-
-    // Si esta definido el parametro only se chequea
-    // que la accion este dentro de las acciones que necesitan
-    // esta credencial.
-    if(isset($credential['only']) && is_array($credential['only']))
-      return in_array($action, $credential['only']);
-
-    // Si esta definido el parametro except se chequea
-    // que la accion este dentro de las acciones que no
-    // necesitan esta credencial.
-    if(isset($credential['except']) && is_array($credential['except']))
-      return !in_array($action, $credential['except']);
-
-    // De lo contrario la accion no requiere dicha credencial
     return true;
 
   }
