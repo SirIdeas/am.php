@@ -560,7 +560,7 @@ class AmController extends AmResponse{
    * @param  string $control Nombre del controlador a incluir.
    * @return array           Configuración del controlador
    */
-  final public static function includeController($controller){
+  final protected static function includeController($controller){
 
     // Obtener la carpeta donde esta ubicada el controlador
     $root = realPath(dirname(Am::whereIs($controller)));
@@ -578,7 +578,7 @@ class AmController extends AmResponse{
     $conf = itemOr($controller, $confs, array());
 
     // Obtener la configuracion del padre
-    if($parentController === get_class()){
+    if($parentController === get_parent_class()){
 
       // Mezclar con la configuración por defecto
       $conf = self::mergeConf($confDef, $conf);
@@ -604,7 +604,7 @@ class AmController extends AmResponse{
 
       $conf = self::mergeConf($conf, require($realFile));
 
-    // Incluir como extension
+    // Incluir como extensión
     Am::load($root . '/');
 
     // Carpeta raíz del controlador
@@ -682,6 +682,10 @@ class AmController extends AmResponse{
 
     $controller = $action['controller'];
     $action = $action['action'];
+
+    // Verificar si es un controlador
+    if(!is_subclass_of($controller, get_class()))
+      throw Am::e('AMCONTROLLER_CLASS_IS_NOT_A_CONTROLLER');
 
     // Valores por defecto
     $conf = array_merge(

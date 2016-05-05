@@ -14,11 +14,11 @@ Am::addRoutePreProcessor('resource', function($route){
     array(
       ''              => 'controller => @index',
       '/new'          => 'controller => @new',
-      '/data'         => 'controller => @data',
-      '/{id}/detail'  => 'controller => @detail',
       '/{id}/edit'    => 'controller => @edit',
-      '/{id}/delete'  => 'controller => @delete',
       '/cou'          => 'controller => @cou',
+      '/{id}/delete'  => 'controller => @delete',
+      '/{id}/detail'  => 'controller => @detail',
+      '/data'         => 'controller => @data',
       // '/search'       => 'controller => @search',
     )
   );

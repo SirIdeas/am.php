@@ -35,10 +35,8 @@ return array(
 //   ),
 
 //   'requires' => array(
-//     'exts/am_credentials/',
 //     'exts/am_flash/',
 //     'exts/am_mailer/',
-//     'exts/am_token/',
 //   ),
 
 // );

@@ -40,52 +40,10 @@ return array(
     'autoload' => array(
       'controllers' => true,
     ),
-
-    // Configuración inicial de los controladores
-    'controllers' => array(
-      '' => array(
-      
-        // Directorio hijo donde se buscará las vistas.
-        'views' => 'views',
-
-        // Directorios alternativos donde se buscará las vistas.
-        'paths' => array(),
-
-        // Prefijos.
-        'prefixs' => array(
-          'filters' => 'filter_',
-          'actions' => 'action_',
-          'getActions' => 'get_',
-          'postActions' => 'post_',
-        ),
-
-        // Acciones permitidas.
-        'allows' => array(
-          '' => true
-        ),
-
-        // Tipo de respuesta para el servicio: json, txt.
-        'servicesFormat' => 'json',
-
-        // Filtros.
-        'filters' => array(),
-
-        //////////////////// Solo para la petición actual
-        
-        // Acción a ejecutar.
-        'action' => null,
-
-        // Parémetros para ejecutar la acción.
-        'params' => array(),
-
-        // Nombre de la vista a renderizar.
-        'view' => null,
-
-      ),
-    ),
-
+    
     // Formatos
     'formats' => array(
+      'AMCONTROLLER_CLASS_IS_NOT_A_CONTROLLER' => 'AmController: "%s" no es un controlador',
       'AMCONTROLLER_ACTION_NOT_FOUND' => 'AmController: No se encontró la acción "%s@%s"',
       'AMCONTROLLER_ACTION_FORBIDDEN' => 'AmController: Acción prohibida "%s@%s por el método %s"'
     )

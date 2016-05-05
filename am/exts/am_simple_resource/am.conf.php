@@ -7,7 +7,9 @@
  */
 
 return array(
-
+  
+  //////////////////////////////////////////////////////////////////////////////
+  // Modulos requeridos
   'requires' => array(
     'exts/am_resource/',
     'exts/am_flash/',

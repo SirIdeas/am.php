@@ -24,12 +24,13 @@ return array(
   //////////////////////////////////////////////////////////////////////////////
   // Acciones permitidas
   'allows' => array(
-    'list'    => true,
+    'index'   => true,
     'new'     => true,
-    'detail'  => true,
     'edit'    => true,
-    'delete'  => true,
     'cou'     => true,
+    'delete'  => true,
+    'detail'  => true,
+    'data'    => true,
   ),
 
   //////////////////////////////////////////////////////////////////////////////
