@@ -7,17 +7,6 @@
  */
 
 return array(
-
-  //////////////////////////////////////////////////////////////////////////////
-  // Acciones permitidas
-  'allow' => array(
-    'login'    => true,
-    'signup'    => true,
-    'logout'    => true,
-    'recovery'  => true,
-    'reset'     => true,
-  ),
-
   //////////////////////////////////////////////////////////////////////////////
   // Asegurar los valores para los siguientes metodos
   'prefixs' => array(
@@ -26,6 +15,16 @@ return array(
     'postActions' => 'post_',
     'filters'     => 'filter_',
   ),
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Acciones permitidas
+  'allow' => array(
+    ''          => false,
+    'login'     => true,
+    'signup'    => true,
+    'logout'    => true,
+  ),
+
 
   'env' => array(
 

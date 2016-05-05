@@ -24,6 +24,7 @@ return array(
   //////////////////////////////////////////////////////////////////////////////
   // Acciones permitidas
   'allows' => array(
+    ''        => false,
     'index'   => true,
     'new'     => true,
     'edit'    => true,

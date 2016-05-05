@@ -9,7 +9,7 @@
 /**
  * Controlador para autenticación de usuarios simple.
  */
-// PENDIENTE: Documentar
+// PENDIENTE Documentar
 class AmSimpleAuth extends AmAuth{
 
   protected function in(AmCredentials $user){

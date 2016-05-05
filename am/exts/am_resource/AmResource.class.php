@@ -164,14 +164,14 @@ class AmResource extends AmController{
     $this->r = $this->table->find($id);
 
     // Si no se encontró el registro mostrar un mensaje
-    if(!$this->r){
-      return $this->responseService(array(
-        'success' => false,
-        'notFound' => true,
-      ));
-    }
+    if(!$this->r)
+      return true;
 
-    return true;
+    return $this->responseService(array(
+      'success' => false,
+      'notFound' => true,
+    ));
+
 
   }
 
@@ -195,36 +195,5 @@ class AmResource extends AmController{
   //   $r['cls'] = '';
     return $r;
   }
-
-  // public function action_search(){
-  //   $classModel = $this->model;
-
-  //   // Obtener el texto a buscar
-  //   $txtSearch = strtolower($this->request->search);
-
-  //   // Obtener la posicion a cargar
-  //   $offset = $this->request->offset * $this->request->limit;
-  //   $q = $classModel::qSearch($txtSearch, $this->request->limit, $offset);
-  //   if(!$q)
-  //     $q = $classModel::q($this->request->limit, $offset);
-    
-  //   $this->callback_querySearchSetup($q);
-  //   $haveNext = $q->haveNextPage();
-
-  //   return array(
-  //     'success'   => true,
-  //     'items'     => $q->getResult('array', array($this, 'callback_formatSearch')),
-  //     'haveNext'  => $haveNext,
-  //   );
-
-  // }
-
-  // public function callback_querySearchSetup(AmQuery $q){}
-
-  // // El formateador agregará una clase al registro dependiendo
-  // // del estado de la inscripcion
-  // public function callback_formatSearch($r){
-  //   return $r;
-  // }
 
 }
