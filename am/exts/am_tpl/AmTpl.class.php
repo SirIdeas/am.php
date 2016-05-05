@@ -405,6 +405,12 @@ final class AmTpl extends AmObject{
 
   }
 
+  public function deleteSection($name){
+
+    unset($this->sections[$name]);
+
+  }
+
   public function place($view, $env = array()){
 
     $file = $this->findView($view);
@@ -479,7 +485,7 @@ final class AmTpl extends AmObject{
 
     if(empty($content)) return;
 
-    $reg = '/(parent|insert|section|endSection|put|child)\:?(.*)/';
+    $reg = '/(parent|insert|section|endSection|deleteSection|put|child)\:?(.*)/';
 
     $line = array_shift($content);
 

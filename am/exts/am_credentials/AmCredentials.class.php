@@ -37,6 +37,6 @@ interface AmCredentials {
   public static function auth($nick, $password);
 
   // Registra un usuario
-  public static function register(AmCredentials $user, array $attrs);
+  public static function register(array $attrs);
   
 }

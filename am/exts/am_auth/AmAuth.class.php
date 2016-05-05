@@ -14,6 +14,8 @@ class AmAuth extends AmController{
 
   public function action_login(){
 
+    $this->form = $this->formLoginName;
+
     $this->fields = array(
       'username' => array(
         'label' => 'Email',
@@ -60,15 +62,9 @@ class AmAuth extends AmController{
 
   }
 
-  public function action_logout(){
-
-    return array(
-      'success' => $this->out($this->request->token)
-    );
-
-  }
-
   public function action_signup(){
+
+    $this->form = $this->formSignupName;
 
     $this->fields = array(
       'email' => array(
@@ -110,18 +106,15 @@ class AmAuth extends AmController{
     $attrs = $this->decryptFields('signup', $params[$this->formSignupName]);
 
     // Instanciar usuario
-    $ret = $class::register($attrs);
+    return $class::register($attrs);
 
-    $ret = array(
-      'success' => !!$ret,
+  }
+
+  public function action_logout(){
+
+    return array(
+      'success' => $this->out($this->request->token)
     );
-
-    // Usuario esta autenticado
-    if($ret['success']){
-      $ret['data'] = $ret;
-    }
-
-    return $ret;
 
   }
 
