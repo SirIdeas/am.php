@@ -72,7 +72,7 @@ return array(
   'mergeFunctions' => array(
     'models' => 'array_merge_recursive',
     'schemes' => 'array_merge_recursive',
-    'validators' => 'array_merge_recursive',
+    'validators' => 'merge_if_both_are_array',
   )
   
 );
