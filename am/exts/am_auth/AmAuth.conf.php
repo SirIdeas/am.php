@@ -21,7 +21,6 @@ return array(
   'allow' => array(
     ''          => false,
     'login'     => true,
-    'signup'    => true,
     'logout'    => true,
   ),
 
@@ -33,21 +32,8 @@ return array(
     'auth' => '',
 
     ////////////////////////////////////////////////////////////////////////////
-    // RSA Params
-    'keyPrivate' => null,
-    'keyPublic' => null,
-    'keyPassPhrase' => null,
-
-    ////////////////////////////////////////////////////////////////////////////
     // Nombres de los formularios
-    'formSignupName' => 'signup',
-    'formLoginName' => 'login',
-
-    ////////////////////////////////////////////////////////////////////////////
-    // Nombres de los formularios
-    'encriptedFields' => array(
-      // 'login' => array('username', 'password'),
-    ),
+    'formName' => 'login',
     
   ),
 

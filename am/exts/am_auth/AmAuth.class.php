@@ -26,7 +26,7 @@ class AmAuth extends AmController{
     // Obtener el nombre de la clase
     $class = $this->authClass;
 
-    $this->attrs = $this->decryptFields('login', $params[$this->formLoginName]);
+    $this->attrs = $this->decrypt($attrs, array('username', 'password'));
 
     $this->username = itemOr('username', $this->attrs);
     $this->password = itemOr('password', $this->attrs);
@@ -46,20 +46,6 @@ class AmAuth extends AmController{
     }
 
     return $ret;
-
-  }
-
-  public function post_signup(){
-
-    $params = Am::g('post');
-
-    // Obtener el nombre de la clase
-    $class = $this->authClass;
-    
-    $attrs = $this->decryptFields('signup', $params[$this->formSignupName]);
-
-    // Instanciar usuario
-    return $class::register($attrs);
 
   }
 
@@ -89,39 +75,6 @@ class AmAuth extends AmController{
       return $token->delete();
     return true;
     
-  }
-
-  public function decryptFields($actionName, array $attrs){
-
-    $fields = itemOr($actionName, $this->encriptedFields, array());
-
-    foreach($fields as $field)
-      $attrs[$key] = $this->decrypt(itemOr($field, $attrs, null));
-
-    return $attrs;
-
-  }
-
-  public function decrypt($str){
-
-    $str = base64_decode($str);
-    if(!isset($this->keyPrivate) || !isset($this->keyPassPhrase))
-      return $str;
-    if(!openssl_private_decrypt($str, $str, openssl_pkey_get_private($this->keyPrivate, $this->keyPassPhrase)))
-      return false;
-    return $str;
-
-  }
-
-  public function encrypt($str){
-
-    if(!isset($this->keyPublic))
-      return $str;  
-      // Validations
-    openssl_public_encrypt($str, $encrypted, $this->keyPublic);
-    $str = base64_encode($str);
-    return $str;
-
   }
 
 }

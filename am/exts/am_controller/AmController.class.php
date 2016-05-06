@@ -591,6 +591,18 @@ class AmController extends AmResponse{
     return $ret->addContentToBegin($buffer);
 
   }
+
+  // PENDIENTE Documentar
+  public function decrypt(array $attrs, array $fields){
+
+    $ssl = AmSSL::get($this->ssl);
+
+    foreach($fields as $field)
+      $attrs[$key] = $ssl->decrypt(itemOr($field, $attrs, null));
+
+    return $attrs;
+
+  }
   
   /**
    * Devuelve el nombre de la vista a renderizar para una acción.

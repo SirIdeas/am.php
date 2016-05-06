@@ -5,16 +5,16 @@
 (: endSection
 
 (: section:'form-label'
-  <label for="(:= $form.'_'.$fieldname :)">
+  <label for="(:= $formName.'_'.$fieldname :)">
     (:= $field['label'] :)
   </label>
 (: endSection
 
 (: section:'form-input'
   <input
-    id="(:= $form.'_'.$fieldname :)"
+    id="(:= $formName.'_'.$fieldname :)"
     type="(:= $field['type'] :)"
-    name="(:= $form.'['.$fieldname.']' :)"
+    name="(:= $formName.'['.$fieldname.']' :)"
     (:= $field['required'] ? 'required' : '' :)
     (:= isset($field['len']) ? 'maxlength="'.$field['len'].'"' : '' :) />
 (: endSection
@@ -43,11 +43,12 @@
 
 (: section:'form'
   (: put:'flash-messages'
-  <form method="post" name="(:= $form :)" >
+  <form method="post" name="(:= $formName :)" >
     (: put:'form-head'
     (: put:'form-body'
     (: put:'form-footer'
   </form>
+  (: put:'form-links'
 (: endSection
 
 (: insert:'form-post.php'

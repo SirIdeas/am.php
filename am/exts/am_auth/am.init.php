@@ -12,7 +12,6 @@ Am::addRoutePreProcessor('auth', function($route){
   $route['routes'] = array_merge(
     itemOr('routes', $route, array()),
     array(
-      '/signup' => 'controller => @signup',
       '/login'  => 'controller => @login',
       '/logout' => 'controller => @logout',
     )

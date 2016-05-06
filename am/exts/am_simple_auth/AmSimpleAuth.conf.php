@@ -13,8 +13,8 @@ return array(
     ////////////////////////////////////////////////////////////////////////////
     // Urls utilizadas
     'urls' => array(
-      'in' => Am::serverUrl('/'),
-      'out' => Am::serverUrl('/')
+      'home' => Am::serverUrl('/'),
+      'login' => Am::serverUrl('/'),
     ),
 
   ),

@@ -282,7 +282,7 @@ class AmMailer extends PHPMailer{
     }
 
     // Crear instancia del mailer
-    return new AmMailer($name, $options);
+    return new self($name, $options);
 
   }
 

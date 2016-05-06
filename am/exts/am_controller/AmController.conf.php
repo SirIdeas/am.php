@@ -33,6 +33,12 @@ return array(
   // Tipo de respuesta para el servicio: json, txt.
   'servicesFormat' => 'json',
 
+  // SSL configuration
+  'ssl' => '',
+
+  // Variables de entorno dentro del controlador
+  'env' => array(),
+
   // Filtros.
   'filters' => array(),
 
@@ -46,8 +52,5 @@ return array(
 
   // Nombre de la vista a renderizar.
   'view' => null,
-
-  // Variables de entorno dentro del controlador
-  'env' => array(),
 
 );
