@@ -11,6 +11,13 @@
  */
 // PENDIENTE Documentar
 class AmSimpleAuth extends AmAuth{
+  
+  public function action(){
+
+    $this->msgsKeys = array('success', 'danger');
+    $this->allows = $this->get('allows');
+
+  }
 
   protected function in(AmCredentials $user){
 
@@ -32,7 +39,7 @@ class AmSimpleAuth extends AmAuth{
       ),
       'password' => array(
         'label' => 'Password',
-        'type' => 'text',
+        'type' => 'password',
         'required' => true
       ),
     );

@@ -331,7 +331,9 @@ class AmField extends AmObject{
       return $value;
 
     $fn = self::$parseFuncs[$this->getType()];
-    return $fn($value);
+    if(function_exists($fn))
+      return $fn($value);
+    return $value;
     
   }
 
