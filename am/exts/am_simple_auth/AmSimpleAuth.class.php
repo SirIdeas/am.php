@@ -13,6 +13,7 @@
 class AmSimpleAuth extends AmAuth{
   
   public function action(){
+    parent::action();
 
     $this->msgsKeys = array('success', 'danger');
     $this->allows = $this->get('allows');
