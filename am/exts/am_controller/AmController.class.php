@@ -340,14 +340,14 @@ class AmController extends AmResponse{
    */
   final protected function executeAction($action, $method, array $params){
 
-    // Chequear si esta permitida o no la acción.
-    // Si devuelve una respuesta devolver dicha respuesta.
-    $ret = $this->checkIsActionAllow($action, $method);
+    // Chequear si la acción requiere creenciales
+    $ret = $this->chechCredentials($action);
     if($ret instanceof parent)
       return $ret;
 
-    $ret = $this->chechCredentials($action);
-
+    // Chequear si esta permitida o no la acción.
+    // Si devuelve una respuesta devolver dicha respuesta.
+    $ret = $this->checkIsActionAllow($action, $method);
     if($ret instanceof parent)
       return $ret;
 
