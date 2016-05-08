@@ -330,7 +330,7 @@ class AmField extends AmObject{
     if(!isset($value))
       return $value;
 
-    $fn = self::$parseFuncs[$this->getType()];
+    $fn = itemOr($this->getType(), self::$parseFuncs);
     if(function_exists($fn))
       return $fn($value);
     return $value;

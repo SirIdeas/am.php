@@ -28,7 +28,7 @@ class AmToken extends AmObject{
   public function __construct($id, $timeExpiration = null, $maxTimeNoUse = null){
 
     $this->id = $id;
-    $this->fileName = self::ROOT_FOLDER . $id;
+    $this->fileName = AM_STORAGE.'/'.self::ROOT_FOLDER.$id;
     $this->timeExpiration = isset($timeExpiration)? $timeExpiration : self::TIME_EXPIRATION_DEF;
     $this->maxTimeNoUse = isset($maxTimeNoUse)? $maxTimeNoUse : self::MAX_TIME_NO_USE_DEF;
 

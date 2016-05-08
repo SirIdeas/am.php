@@ -177,6 +177,11 @@ final class AmTable extends AmObject{
     $this->pks = array();
     $this->fields = array();
 
+    $missingsValidators = array_diff(
+      array_keys($this->validators),
+      array_keys($fields)
+    );
+
     // Preparar los campos
     if(is_array($fields)){
       foreach($fields as $name => $options){
@@ -201,6 +206,10 @@ final class AmTable extends AmObject{
 
       }
     }
+
+    // Agregar validadores faltantes
+    foreach($missingsValidators as $name)
+      $this->buildValidatorsTo($name);
 
     // Preparar los primary keys.
     if(is_array($pks))
@@ -287,64 +296,68 @@ final class AmTable extends AmObject{
    * @param  array/bool $fieldValidators Array con configuracion obtenida de la 
    *                                     configuración del campo.
    */
-  private function buildValidatorsTo($name, $fieldValidators){
-
-    // Obtener el campo
-    $field = $this->getField($name);
-    $len = $field->getLen();
-    $type = $field->getType();
+  private function buildValidatorsTo($name, $fieldValidators = array()){
 
     // Obtener validators hasta el momento
     $validators = itemOr($name, $this->validators, false);
 
-    // posee validator entonces se continua con el siguiente campo
-    if($validators === false || $field->isAutoIncrement())
-      return;
+    // Obtener el campo
+    $field = $this->getField($name);
 
-    // Si es true entonces se definen los valores por defecto
-    if($validators === true){
+    if($field){
 
-      $validators = array();
-      
-      // Campos sin parámetros de configuración para los validadores
-      if(in_array($type, array('int', 'bit', 'date', 'datetime',
-        'timestamp', 'time', 'year')))
-        $validators[$type] = true;
+      $len = $field->getLen();
+      $type = $field->getType();
 
-      // Campos con validación de max_len
-      if(in_array($type, array('char', 'varchar', 'bit', 'text'))
-        && isset($len))
-        $validators['max_len'] = true;
+      // posee validator entonces se continua con el siguiente campo
+      if($validators === false || $field->isAutoIncrement())
+        return;
 
-      // Campos para validar la precisión de los nros flotantes
-      if($type === 'float')
-        $validators['float'] = true;
+      // Si es true entonces se definen los valores por defecto
+      if($validators === true){
 
-      // Validadores de campos no nulos
-      if(!$field->allowNull())
-        $validators['not_null'] = true;
+        $validators = array();
+        
+        // Campos sin parámetros de configuración para los validadores
+        if(in_array($type, array('int', 'bit', 'date', 'datetime',
+          'timestamp', 'time', 'year')))
+          $validators[$type] = true;
 
-      // Validadores de campos no nulos
-      if($field->isUnique())
-        $validators['unique'] = true;
+        // Campos con validación de max_len
+        if(in_array($type, array('char', 'varchar', 'bit', 'text'))
+          && isset($len))
+          $validators['max_len'] = true;
+
+        // Campos para validar la precisión de los nros flotantes
+        if($type === 'float')
+          $validators['float'] = true;
+
+        // Validadores de campos no nulos
+        if(!$field->allowNull())
+          $validators['not_null'] = true;
+
+        // Validadores de campos no nulos
+        if($field->isUnique())
+          $validators['unique'] = true;
+
+      }
+
+      // Si contiene configuración de validator entonces se mezclan o asignan
+      // a los validadores
+      if(is_array($fieldValidators) && !empty($fieldValidators))
+
+        $validators = merge_if_both_are_array_and_snd_first_not_false(
+          $validators,
+          $fieldValidators
+        );
+
+      elseif(is_bool($fieldValidators))
+        $validators = array_fill_keys(array_keys($validators), $fieldValidators);
+      // Preparar la instanciación de los validadores
+      $this->validators[$name] = array();
 
     }
-
-    // Si contiene configuración de validator entonces se mezclan o asignan
-    // a los validadores
-    if(is_array($fieldValidators) && !empty($fieldValidators))
-
-      $validators = merge_if_both_are_array_and_snd_first_not_false(
-        $validators,
-        $fieldValidators
-      );
-
-    elseif(is_bool($fieldValidators))
-      $validators = array_fill_keys(array_keys($validators), $fieldValidators);
-
-    // Preparar la instanciación de los validadores
-    $this->validators[$name] = array();
-
+    
     foreach ($validators as $type => $options) {
 
       if($options === true){
@@ -972,7 +985,6 @@ final class AmTable extends AmObject{
 
         foreach($validators as $name => $validator){
 
-          // Si el modelo no cumple con la validacion
           if(!$validator->isValid($model))
             // Se agrega el error
             $model->addError($field, $name, $validator->getMessage($model));

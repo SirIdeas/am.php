@@ -50,7 +50,7 @@ class AmValidator extends AmObject{
    */
   public function __construct($data = null) {
 
-    if(!isset($data['messages'])){
+    if(!isset($data['message'])){
 
       // Obtener la configuraciones de los validators
       if(!isset(self::$conf))

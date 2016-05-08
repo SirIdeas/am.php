@@ -598,7 +598,7 @@ final class Am{
 
     // Si AM_TRASH esta definida como false, indica que no se desea tener una
     // papelera
-    if(AM_TRASH===false)
+    if(defined(AM_TRASH))
       return !!unlink($file);
 
     // Definir directorio de la papelera
@@ -1398,10 +1398,8 @@ final class Am{
       self::addDir($appRoot);
       
       // Moverse a la carpeta de la aplicación
-      @chdir($appRoot);
-
-      // Define el directorio de la papelera
-      @define('AM_TRASH', realpath($appRoot).'/storage/trash');
+      if(is_dir($appRoot))
+        chdir($appRoot);
 
     }
 

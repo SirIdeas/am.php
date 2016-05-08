@@ -55,6 +55,10 @@ if(defined('AM_BOOTDIR'))
 // Definir constante
 define('AM_BOOTDIR', dirname(AM_BOOTFILE));
 
+// Define el directorio de la papelera
+if(!defined('AM_STORAGE'))
+  define('AM_STORAGE', '../storage');
+
 /**
  * Versión del framework.
  * Define la versión del framework si no esta definida.
