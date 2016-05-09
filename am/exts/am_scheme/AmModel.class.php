@@ -27,7 +27,7 @@ class AmModel extends AmObject{
    * @param array $params Valores iniciales del registro.
    * @param bool  $isNew  Si es un resgistro nuevo.
    */
-  final public function __construct($params = array(), $isNew = true) {
+  public function __construct($params = array(), $isNew = true) {
 
     // Instancia el objeto de las propiedades internas
     $this->__p = new AmObject;
