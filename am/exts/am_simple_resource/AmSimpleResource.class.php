@@ -89,12 +89,11 @@ class AmSimpleResource extends AmResource{
 
     $ret = parent::filter_loadRecord($id);
 
-    if($ret['success'] !== true){
-      AmFlash::danger('No se encontró el registro');
-      return Am::go($this->url);
-    }
-
-    return true;
+    if($ret === true)
+      return true;
+    
+    AmFlash::danger('No se encontró el registro');
+    return Am::go($this->url);
 
   }
 

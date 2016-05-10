@@ -2,7 +2,7 @@
 (: insert:'_flash.php'
 (: $title = "Lista de $model"
 (: $titulo = "Lista de $model"
-
+(: $showOptions = isset($allows['detail']) || isset($allows['edit']) || isset($allows['delete']);
 (: put:'flash-messages'
 
 <div>
@@ -36,8 +36,7 @@
           (: endif
         </th>
       (: endforeach
-      (: if (isset($allows['opciones']) && $allows['opciones']):
-        <th data-param-show="false"></th>
+      (: if($showOptions):
         <th data-param-sort="false" data-param-class="text-center">
           <div>Opciones</div>
           <div class="with-200"></div>
@@ -47,7 +46,7 @@
   </thead>
   <tfoot>
     <tr>
-      <td colspan="(:= count($forms['list'])+(isset($allows['detail'])||isset($allows['edit'])||isset($allows['delete'])? 1:0) :)">
+      <td colspan="(:= count($forms['list'])+($showOptions? 1:0) :)">
         <p id="dinamic-table-count-record" class="text-muted pull-left table-count-record">
           <i>
             <small dinamic-table-msg="showing">Mostrando registros del {$rf} - {$rt} de {$fc} encontrados de un total {$co} en la tabla</small>
@@ -70,17 +69,14 @@
 
 <!-- The template to display files available for upload -->
 <script id="template-options" type="text/x-tmpl">
+  (:
+    $opts = [];
+    if($allows['detail'])  $opts[] = '<a href="./admin/'.$menu.'/{%=o.id%}/detail">Ver</a>';
+    if($allows['edit'])    $opts[] = '<a href="./admin/'.$menu.'/{%=o.id%}/edit">Editar</a>';
+    if($allows['delete'])  $opts[] = '<a href="./admin/'.$menu.'/{%=o.id%}/delete">Eliminar</a>';
+  :)
   <small>
-    (: if ($allows['detail']):
-      <a href="/admin/(:= $menu :)/{%=o.id%}/detail">Detalle</a>&nbsp;|
-    (: endif
-    (: if ($allows['edit']):
-      <a href="/admin/(:= $menu :)/{%=o.id%}/edit">Editar</a>&nbsp;|
-    (: endif
-    (: if ($allows['delete']):
-      <a href="/admin/(:= $menu :)/{%=o.id%}/delete">Delete</a>
-    (: endif
-    (: put:'recordOptions'
+    (:= implode('&nbsp;|&nbsp;', $opts)
   </small>
 </script> 
 
@@ -96,7 +92,6 @@
       
       $('#dinamic-table').dinamictable({
         fnRecord: function(data, rowNumber, row){
-
           var result = [];
 
           for(var i in data){

@@ -39,7 +39,7 @@ class AmSimpleAuth extends AmAuth{
         'required' => true
       ),
       'password' => array(
-        'label' => 'Password',
+        'label' => 'Contraseña',
         'type' => 'password',
         'required' => true
       ),

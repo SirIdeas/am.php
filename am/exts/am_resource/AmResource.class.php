@@ -96,6 +96,7 @@ class AmResource extends AmController{
     $data = $params[$this->form];
 
     $r->setValues($data, array_keys($this->forms[$formType]));
+
     $this->callback_setValuesRecord($r);
 
     return self::handleAction($r, $r->save());
@@ -164,7 +165,7 @@ class AmResource extends AmController{
     $this->r = $this->table->find($id);
 
     // Si no se encontró el registro mostrar un mensaje
-    if(!$this->r)
+    if($this->r)
       return true;
 
     return $this->responseService(array(
