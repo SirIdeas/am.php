@@ -114,7 +114,12 @@ final class AmTable extends AmObject{
     /**
      * Array de índices únicos.
      */
-    $uniqes = array();
+    $uniqes = array(),
+
+    /**
+     * Callback para filtrar las consultas 'all'
+     */
+    $filter = null;
 
   /**
    * Constructor para la clase.
@@ -740,6 +745,22 @@ final class AmTable extends AmObject{
   }
 
   /**
+   * Asigna un callback que filtrará filtrará la consulta retornada por 'all' de
+   * la tabla.
+   * @param   callback  callback a asignar
+   * @return  callback  Callback anterior.
+   */
+  public function setFilter($callback){
+
+    $oldCallback = $this->filter;
+
+    $this->filter = $callback;
+
+    return $oldCallback;
+
+  }
+
+  /**
    * Asigna el valor valor de NOW a los modelos o consulta AmQuery en un
    * determinado campo.
    * @param array/AmQuery $values Array de modelos o una instancia de AmQuery.
@@ -1131,6 +1152,10 @@ final class AmTable extends AmObject{
       $q->setSelects($fields);
       
     }
+
+    // Llamar filtro
+    if(isValidCallback($this->filter))
+      call_user_func_array($this->filter, array($q));
 
     // Devolver consulta
     return $q;

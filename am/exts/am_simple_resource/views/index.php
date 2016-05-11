@@ -2,7 +2,7 @@
 (: insert:'_flash.php'
 (: $title = "Lista de $model"
 (: $titulo = "Lista de $model"
-(: $showOptions = isset($allows['detail']) || isset($allows['edit']) || isset($allows['delete']);
+(: $showOptions = (isset($allows['detail']) && $allows['detail']) || (isset($allows['edit']) && $allows['edit']) || (isset($allows['delete']) && $allows['delete']);
 (: put:'flash-messages'
 
 <div>
