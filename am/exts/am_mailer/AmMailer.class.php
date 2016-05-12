@@ -74,20 +74,21 @@ class AmMailer extends PHPMailer{
   }
 
   // Para agregar un destinatario con un determinado método
-  public function parseAndAdd($addMethod, $addresses){
+  public function parseAndAdd($addMethod, $addresses, $name = ''){
     // Si es un array y tiene un elemento 'user'
     if($addresses instanceof AmAddress){
-      $this->$addMethod($addresses->getMail(), $addresses->getName());
+      parent::$addMethod($addresses->getMail(), $addresses->getName());
     }elseif(isset($addresses['user'])){
       // El parametro es un array con la direccion a enviar y el nombre
       $to = $addresses['user'];
-      $toName = isset($addresses['as'])? $addresses['as'] : $to;
-      $this->$addMethod($to, $toName);
+      $toName = isset($addresses['as'])? $addresses['as'] : empty($name)? $to : $name;
+      parent::$addMethod($to, $toName);
       return true;
     }elseif(is_string($addresses)){
       // El parametro e la direccion de email destino
-      $to = $toName = $addresses;
-      $this->$addMethod($to, $toName);
+      $to = $addresses;
+      $toName = empty($name)? $to : $name;
+      parent::$addMethod($to, $toName);
       return true;
     }
     return false;
@@ -112,16 +113,56 @@ class AmMailer extends PHPMailer{
 
   }
 
-  // Asiigna el directorio donde se buscará la vista a renderizar
-  public function dir($dir){
-    $this->dir = $dir;
-    return $this;
+  public function getFrom(){
+    return $this->From;
+  }
+
+  public function getFromName(){
+    return $this->From;
+  }
+
+  public function getDir(){
+    return $this->dir;
+  }
+
+  public function getTemplate(){
+    return $this->template;
+  }
+
+  public function getCharset(){
+    return $this->CharSet;
+  }
+
+  public function getWordWrap(){
+    return $this->WordWrap;
+  }
+
+  public function getSubject(){
+    return $this->Subject;
+  }
+
+  public function getAltBody(){
+    return $this->AltBody;
+  }
+
+  public function getBody(){
+    return $this->Body;
+  }
+
+  public function getWith(){
+    return $this->with;
   }
 
   // Método para asignar remitente
   public function from($email, $as = null){
     $this->From = $email;
     $this->FromName = $as;
+    return $this;
+  }
+
+  // Asiigna el directorio donde se buscará la vista a renderizar
+  public function dir($dir){
+    $this->dir = $dir;
     return $this;
   }
 
@@ -161,6 +202,12 @@ class AmMailer extends PHPMailer{
     return $this;
   }
 
+  // Asigna las variables con las que se renderizará el mensaje
+  public function with(array $values){
+    $this->with = $values;
+    return $this;
+  }
+
   // Funcion para asignar el cuerpo del mensaje
   public function isHTML($value = null){
     if(isset($value)){
@@ -171,33 +218,27 @@ class AmMailer extends PHPMailer{
     return $this->isHTML;
   }
 
-  // Asigna las variables con las que se renderizará el mensaje
-  public function with(array $values){
-    $this->with = $values;
-    return $this;
-  }
-
   // Metodo para agregar direccion destinataria
   public function addAddress($address, $name = '') {
-    parent::addAddress($address, $name);
+    $this->parseAndAdd('addAddress', $address, $name);
     return $this;
   }
 
   // Metodo para agregar direccion de respuesta
   public function addReplyTo($address, $name = '') {
-    parent::addReplyTo($address, $name);
+    $this->parseAndAdd('addReplyTo', $address, $name);
     return $this;
   }
 
   // Metodo para agregar direccion con copia
   public function addCC($address, $name = '') {
-    parent::addCC($address, $name);
+    $this->parseAndAdd('address', $address, $name);
     return $this;
   }
 
   // Metodo para agregar direccion con copia oculta
   public function addBCC($address, $name = '') {
-    parent::addBCC($address, $name);
+    $this->parseAndAdd('addBCC', $address, $name);
     return $this;
   }
 
