@@ -3,6 +3,7 @@
 function dinamicTableServer(AmObject $params, AmQuery $query, $toArray = true){
 
   $fields = $query->getSelects();
+  $formatter = $query->getFormatter();
 
   if(empty($fields))
     $fields = $query->getTable(true)->getFields();
@@ -25,14 +26,16 @@ function dinamicTableServer(AmObject $params, AmQuery $query, $toArray = true){
     foreach($params->oSearch as $pos => $val)
       $query->andWhere("{$fields[$pos]} LIKE '%{$val}%'");
   
-  $countResult = $query->count();
+  $countResult = $query->copy()->count();
   
   if($params->iLen != -1)
     $query
       ->limit($params->iLen)
       ->offSet($params->iPage * $params->iLen);
 
-  $records = $query->get(function($record) use ($toArray, $fields){
+  $query->setFormatter($formatter);
+
+  $records = $query->get(function($record, $realRecord) use ($toArray, $fields){
     $record = AmObject::mask($record, $fields);
     if($toArray === true)
       return array_values($record);

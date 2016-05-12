@@ -686,7 +686,7 @@ class AmQuery extends AmObject{
       }elseif($upperCondition == 'NOT'){
         // Si es el operator booleano de negacion agregar para la siguiente condicion
         $nextPrefijo = $upperCondition;
-      }else{
+      }elseif(!empty($condition)){
 
         // Sino es un operador booleano se agrega al listado de condiciones de retorno
         $ret[] = array(
@@ -1038,12 +1038,15 @@ class AmQuery extends AmObject{
     }
 
     $localFormatter = $this->getFormatter();
-    if(isset($localFormatter))
-      $r = call_user_func_array($localFormatter, array($r));
+
+    $realRecord = $r;
 
     // Formatear el valor
     if(isset($formatter))
-      $r = call_user_func_array($formatter, array($r));
+      $r = call_user_func_array($formatter, array($r, $realRecord));
+
+    if(isset($localFormatter))
+      $r = call_user_func_array($localFormatter, array($r, $realRecord));
 
     return $r;
 

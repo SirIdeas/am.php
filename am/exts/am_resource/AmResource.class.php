@@ -178,12 +178,12 @@ class AmResource extends AmController{
 
   public function action_data(){
 
-    $columnNames = array_keys($this->forms['list']);
+    $this->columnNames = array_keys($this->forms['list']);
 
     // Obtener el listado de elementos
     $q = $this->table->all()
       ->setFormatter(array($this, 'callback_formatList'))
-      ->setSelects(array_combine($columnNames, $columnNames));
+      ->setSelects(array_combine($this->columnNames, $this->columnNames));
 
     // Return el objeto para la tabla dinamica
     return dinamicTableServer(Am::g('request'), $q, false);
@@ -192,9 +192,9 @@ class AmResource extends AmController{
 
   // El formateador agregará una clase al registro dependiendo
   // del estado de la inscripcion
-  public function callback_formatList($r){
-  //   $r['cls'] = '';
-    return $r;
+  public function callback_formatList($record, $realRecord){
+    $record['cls'] = '';
+    return $record;
   }
 
 }

@@ -36,6 +36,7 @@
           (: endif
         </th>
       (: endforeach
+      <th data-param-show="false"></th>
       (: if($showOptions):
         <th data-param-sort="false" data-param-class="text-center">
           <div>Opciones</div>
