@@ -776,7 +776,7 @@ class AmController extends AmResponse{
 
     // Verificar si es un controlador
     if(!is_subclass_of($controller, get_class()))
-      throw Am::e('AMCONTROLLER_CLASS_IS_NOT_A_CONTROLLER');
+      throw Am::e('AMCONTROLLER_CLASS_IS_NOT_A_CONTROLLER', $controller);
 
     // Valores por defecto
     $conf = array_merge(
