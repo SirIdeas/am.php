@@ -26,7 +26,9 @@ class AmAuth extends AmController{
     // Obtener el nombre de la clase
     $class = $this->authClass;
 
-    $this->attrs = $this->decrypt($params[$this->formName], array('username', 'password'));
+    // PENDIENTE encriptar antes de enviar y desencritar al recibir
+    // $this->attrs = $this->decrypt($params[$this->formName], array('username', 'password'));
+    $this->attrs = $params[$this->formName];
 
     $this->username = itemOr('username', $this->attrs);
     $this->password = itemOr('password', $this->attrs);

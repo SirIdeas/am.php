@@ -598,7 +598,7 @@ class AmController extends AmResponse{
     $ssl = AmSSL::get($this->ssl);
 
     foreach($fields as $field)
-      $attrs[$key] = $ssl->decrypt(itemOr($field, $attrs, null));
+      $attrs[$field] = $ssl->decrypt(itemOr($field, $attrs, null));
 
     return $attrs;
 
