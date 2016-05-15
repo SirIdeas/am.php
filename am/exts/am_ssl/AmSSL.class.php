@@ -27,10 +27,40 @@ class AmSSL{
       $this->$key = $value;
 
     if(is_file($this->keyPublicFile))
-      $this->keyPublic = file_get_contents($this->keyPublic);
+      $this->keyPublic = file_get_contents($this->keyPublicFile);
 
     if(is_file($this->keyPrivateFile))
       $this->keyPrivate = file_get_contents($this->keyPrivateFile);
+
+  }
+
+  public function getKeyPassPhrase(){
+
+    return $this->keyPassPhrase;
+
+  }
+
+  public function getKeyPublic(){
+
+    return $this->keyPublic;
+
+  }
+
+  public function getKeyPrivate(){
+
+    return $this->keyPrivate;
+
+  }
+
+  public function getKeyPublicFile(){
+
+    return $this->keyPublicFile;
+
+  }
+
+  public function getKeyPrivateFile(){
+
+    return $this->keyPrivateFile;
 
   }
 
@@ -56,7 +86,7 @@ class AmSSL{
 
   }
 
-  public static function get($name, array $options = array()){
+  public static function get($name = '', array $options = array()){
 
     if(!isset(self::$instances[$name])){
 

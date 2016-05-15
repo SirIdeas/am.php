@@ -9,7 +9,7 @@
 return array(
 
   'mergeFunctions' => array(
-    'ssl' => 'merge_r_if_are_array',
+    'ssl' => 'merge_if_both_are_array',
   ),
 
   'extend' => array(

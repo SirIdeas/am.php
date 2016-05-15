@@ -36,12 +36,14 @@ class AmSimpleAuth extends AmAuth{
       'username' => array(
         'label' => 'Email',
         'type' => 'email',
-        'required' => true
+        'required' => true,
+        'encripted' => true,
       ),
       'password' => array(
         'label' => 'Contraseña',
         'type' => 'password',
-        'required' => true
+        'required' => true,
+        'encripted' => true,
       ),
     );
 

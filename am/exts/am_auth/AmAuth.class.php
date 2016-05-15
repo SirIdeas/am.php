@@ -21,14 +21,9 @@ class AmAuth extends AmController{
   // Bandeja de la administracion
   public function post_login(){
 
-    $params = Am::g('post');
-
     // Obtener el nombre de la clase
     $class = $this->authClass;
-
-    // PENDIENTE encriptar antes de enviar y desencritar al recibir
-    // $this->attrs = $this->decrypt($params[$this->formName], array('username', 'password'));
-    $this->attrs = $params[$this->formName];
+    $this->attrs = $this->getParams($this->formName, 'post');
 
     $this->username = itemOr('username', $this->attrs);
     $this->password = itemOr('password', $this->attrs);

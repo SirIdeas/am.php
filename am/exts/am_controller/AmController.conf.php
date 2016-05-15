@@ -26,6 +26,9 @@ return array(
   'allows' => array(
     '' => true
   ),
+    
+  // Campos encriptados
+  'encriptedFields' => array(),
 
   // Configuraciones de credenciales requeridas para las acciones
   'credentials' => false,

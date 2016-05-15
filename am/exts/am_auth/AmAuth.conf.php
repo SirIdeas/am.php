@@ -23,7 +23,12 @@ return array(
     'login'     => true,
     'logout'    => true,
   ),
-
+    
+  //////////////////////////////////////////////////////////////////////////////
+  // Campos encriptados
+  'encriptedFields' => array(
+    'login' => array('username', 'password'),
+  ),
 
   'env' => array(
 
@@ -34,7 +39,7 @@ return array(
     ////////////////////////////////////////////////////////////////////////////
     // Nombres de los formularios
     'formName' => 'login',
-    
+
   ),
 
 );

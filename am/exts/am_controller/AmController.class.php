@@ -17,12 +17,13 @@ class AmController extends AmResponse{
      * Callbacks para mezclar atributos.
      */
     $mergeFunctions = array(
-      'paths'   => 'merge_unique',
+      'paths' => 'merge_unique',
       'prefixs' => 'array_merge',
-      'allows'  => 'merge_if_both_are_array',
+      'allows' => 'merge_if_both_are_array',
       'headers' => 'merge_unique',
       'filters' => 'merge_r_if_snd_first_not_false',
-      'env'     => 'array_merge',
+      'encriptedFields' => 'merge_r_if_snd_first_not_false',
+      'env' => 'array_merge',
     );
 
   public function __construct($data = null){
@@ -593,14 +594,26 @@ class AmController extends AmResponse{
   }
 
   // PENDIENTE Documentar
-  public function decrypt(array $attrs, array $fields){
+  public function decrypt(array $attrs, $formName){
 
     $ssl = AmSSL::get($this->ssl);
+    $fields = $this->get('encriptedFields');
+    $fields = itemOr($formName, $fields, array());
 
     foreach($fields as $field)
       $attrs[$field] = $ssl->decrypt(itemOr($field, $attrs, null));
 
     return $attrs;
+
+  }
+
+  // PENDIENTE Documentar
+  public function getParams($formName, $params = 'post'){
+
+    if(is_string($params))
+      $params = Am::g($params);
+
+    return $this->decrypt(itemOr($formName, $params, array()), $formName);
 
   }
   
