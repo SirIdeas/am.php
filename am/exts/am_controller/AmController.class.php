@@ -613,6 +613,11 @@ class AmController extends AmResponse{
     if(is_string($params))
       $params = Am::g($params);
 
+    if($params instanceof AmObject)
+      $params = $params->toArray();
+    elseif($params instanceof stdClass)
+      $params = (array)$params;
+
     return $this->decrypt(itemOr($formName, $params, array()), $formName);
 
   }

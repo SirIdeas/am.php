@@ -598,11 +598,11 @@ final class Am{
 
     // Si AM_TRASH esta definida como false, indica que no se desea tener una
     // papelera
-    if(defined(AM_TRASH))
+    if(!defined('AM_TRASH') || !AM_TRASH)
       return !!unlink($file);
 
     // Definir directorio de la papelera
-    $trahsFolder = AM_TRASH.'/'.AM_START;
+    $trahsFolder = AM_TRASH.'/'.date('Ymd');
 
     // Obtener el directorio actual y el directorio del archivo a mover
     $dirBase = getcwd();

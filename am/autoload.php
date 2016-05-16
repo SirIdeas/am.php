@@ -59,11 +59,15 @@ define('AM_BOOTDIR', dirname(AM_BOOTFILE));
 if(!defined('AM_STORAGE'))
   define('AM_STORAGE', '../storage');
 
+// Definir directorio de la papelera
+if(!defined('AM_TRASH'))
+  define('AM_TRASH', AM_STORAGE . '/.trash');
+
 /**
  * Versión del framework.
  * Define la versión del framework si no esta definida.
  */
-@define('AM_VERSION', '0.1.0');
+define('AM_VERSION', '0.1.0');
 
 /**
  * Inclusión del núcleo.
