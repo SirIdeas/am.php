@@ -594,9 +594,30 @@ class AmController extends AmResponse{
   }
 
   // PENDIENTE Documentar
-  public function decrypt(array $attrs, $formName){
+  public function getSSL(){
 
-    $ssl = AmSSL::get($this->ssl);
+    return AmSSL::get($this->ssl);
+
+  }
+
+  // PENDIENTE Documentar
+  public function encrypt($str){
+
+    return $this->getSSL()->encrypt($str);
+
+  }
+
+  // PENDIENTE Documentar
+  public function decrypt($str){
+
+    return $this->getSSL()->decrypt($str);
+
+  }
+
+  // PENDIENTE Documentar
+  public function decryptParams(array $attrs, $formName){
+
+    $ssl = $this->getSSL();
     $fields = $this->get('encriptedFields');
     $fields = itemOr($formName, $fields, array());
 
@@ -618,7 +639,7 @@ class AmController extends AmResponse{
     elseif($params instanceof stdClass)
       $params = (array)$params;
 
-    return $this->decrypt(itemOr($formName, $params, array()), $formName);
+    return $this->decryptParams(itemOr($formName, $params, array()), $formName);
 
   }
   

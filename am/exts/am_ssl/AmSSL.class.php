@@ -69,20 +69,20 @@ class AmSSL{
     $str = base64_decode($str);
     if(!isset($this->keyPrivate) || !isset($this->keyPassPhrase))
       return $str;
-    if(!openssl_private_decrypt($str, $str, openssl_pkey_get_private($this->keyPrivate, $this->keyPassPhrase)))
+    if(!openssl_private_decrypt($str, $decrypt, openssl_pkey_get_private($this->keyPrivate, $this->keyPassPhrase)))
       return false;
-    return $str;
+    return $decrypt;
 
   }
 
   public function encrypt($str){
 
     if(!isset($this->keyPublic))
-      return $str;  
+      return $str;
       // Validations
     openssl_public_encrypt($str, $encrypted, $this->keyPublic);
-    $str = base64_encode($str);
-    return $str;
+    $encrypted = base64_encode($encrypted);
+    return $encrypted;
 
   }
 
