@@ -1042,11 +1042,17 @@ class AmQuery extends AmObject{
     $realRecord = $r;
 
     // Formatear el valor
-    if(isset($formatter))
-      $r = call_user_func_array($formatter, array($r, $realRecord));
+    if(isset($formatter)){
+      $newRecord = call_user_func_array($formatter, array($r, $realRecord));
+      if(isset($newRecord))
+        $r = $newRecord;
+    }
 
-    if(isset($localFormatter))
-      $r = call_user_func_array($localFormatter, array($r, $realRecord));
+    if(isset($localFormatter)){
+      $newRecord = call_user_func_array($localFormatter, array($r, $realRecord));
+      if(isset($newRecord))
+        $r = $newRecord;
+    }
 
     return $r;
 
