@@ -244,7 +244,9 @@ class AmForeign extends AmObject{
         $fromTbl = array(
           'belongTo' => $model::me(),
           'hasMany' => $tbl,
-        )[$type];
+        );
+
+        $fromTbl = $fromTbl[$type];
 
         // Obtener tabla y campos PK
         $pks = $fromTbl->getPks();
