@@ -31,6 +31,7 @@ class AmResource extends AmController{
       'detail' => array(),
       'delete' => array(),
       'list' => array(),
+      'query' => array(),
     );
 
     if($this->table){
@@ -53,6 +54,7 @@ class AmResource extends AmController{
             'detail' => true,
             'delete' => true,
             'list' => true,
+            'query' => true,
           ),
           $field === true ? array() : $field
         );
@@ -75,6 +77,8 @@ class AmResource extends AmController{
   public function callback_newRecord(AmModel &$r){}
 
   public function callback_setValuesRecord(AmModel &$r){}
+
+  public function callback_getAllQuery(AmQuery &$q){}
 
   private static function handleAction(AmModel $r, $actionResult = true){
 
@@ -178,15 +182,8 @@ class AmResource extends AmController{
 
   public function action_data(){
 
-    $this->columnNames = array_keys($this->forms['list']);
-
-    // Obtener el listado de elementos
-    $q = $this->table->all()
-      ->setFormatter(array($this, 'callback_formatList'))
-      ->setSelects(array_combine($this->columnNames, $this->columnNames));
-
     // Return el objeto para la tabla dinamica
-    return dinamicTableServer(Am::g('request'), $q, false);
+    return dinamicTableServer(Am::g('request'), $this->getAllQuery(), false);
 
   }
 
@@ -195,6 +192,22 @@ class AmResource extends AmController{
   public function callback_formatList($record, $realRecord){
     $record['cls'] = '';
     return $record;
+  }
+
+  public function getAllQuery(){
+
+    $columnNames = array_keys($this->forms['query']);
+    $selects = array();
+    $q = $this->table->all()->setFormatter(array($this, 'callback_formatList'));
+
+    // Obtener el listado de elementos
+    foreach($columnNames as $field)
+      $q->selectAs("q.{$field}", $field);
+    
+    $this->callback_getAllQuery($q);
+
+    return $q;
+
   }
 
 }
