@@ -179,6 +179,8 @@ class AmForeign extends AmObject{
 
     // Agregar condiciones de la relacion
     foreach($cols as $from => $field){
+      if($this->type === 'belongTo')
+        list($from, $field) = array($field, $from);
       $sqlField = $through? "{$through}.$from" : $from;
       $query->where("{$sqlField}='{$model->getRealValue($field)}'");
     }
@@ -239,20 +241,27 @@ class AmForeign extends AmObject{
       // Definir columnas si no esta definidas
       if(!isset($conf['cols'])){
 
-        $formTbl = array(
+        $fromTbl = array(
           'belongTo' => $model::me(),
           'hasMany' => $tbl,
         )[$type];
 
         // Obtener tabla y campos PK
-        $pks = $formTbl->getPks();
+        $pks = $fromTbl->getPks();
 
         // Si la clave primaria no tiene campos generar un error.
         if(empty($pks))
-          throw Am::e('AMSCHEME_MODEL_DONT_HAVE_PK', $formTbl->getModel());
+          throw Am::e('AMSCHEME_MODEL_DONT_HAVE_PK', $fromTbl->getModel());
+
+        $conf['cols'] = array();
 
         // Guardar columnas
-        $conf['cols'] = array_combine($pks, $pks);
+        if($type == 'belongTo')
+          foreach ($pks as $pk)
+            $conf['cols']["{$pk}_{$fromTbl->getTableName()}"] = $pk;
+        else
+          foreach ($pks as $pk)
+            $conf['cols'][$pk] = "{$pk}_{$fromTbl->getTableName()}";
 
       }
 

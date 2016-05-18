@@ -212,10 +212,6 @@ final class AmTable extends AmObject{
       }
     }
 
-    // Agregar validadores faltantes
-    foreach($missingsValidators as $name)
-      $this->buildValidatorsTo($name);
-
     // Preparar los primary keys.
     if(is_array($pks))
       foreach($pks as $pk)
@@ -293,6 +289,10 @@ final class AmTable extends AmObject{
 
     }
 
+    // Agregar validadores faltantes
+    foreach($missingsValidators as $name)
+      $this->buildValidatorsTo($name);
+
   }
   
   /**
@@ -362,8 +362,15 @@ final class AmTable extends AmObject{
       $this->validators[$name] = array();
 
     }
-    
-    foreach ($validators as $type => $options) {
+
+    if(!is_array($validators)){
+
+      // PENDIENTE Agregar validators para relaciones
+      return;
+      
+    }
+
+    foreach($validators as $type => $options) {
 
       if($options === true){
 
