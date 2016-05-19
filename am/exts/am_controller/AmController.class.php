@@ -21,7 +21,7 @@ class AmController extends AmResponse{
       'prefixs' => 'array_merge',
       'allows' => 'merge_if_both_are_array',
       'headers' => 'merge_unique',
-      'filters' => 'merge_r_if_snd_first_not_false',
+      'filters' => 'merge_if_both_are_array',
       'encriptedFields' => 'merge_r_if_snd_first_not_false',
       'env' => 'array_merge',
     );
@@ -236,7 +236,7 @@ class AmController extends AmResponse{
 
       // Si la accion pasa el filtro o no se trata de un filtro before se debe
       // continuar con el siguiente filtro
-      if($ret !== false || $when != 'before')
+      if($ret !== false || !in_array($when, array('before', 'before_get', 'before_post')))
         continue;
 
       // Si se indica una ruta de redirección se lleva a esa ruta

@@ -29,5 +29,10 @@ return array(
       'AMTPL_SECTION_CREATE_INTO_OTHER_SECTION' => 'AmTpl: No se pueden crear secciones dentro de otras secciones',
     ),
   ),
+  
+  'requires' => array(
+    'exts/am_csrfguard/',
+  ),
+
 
 );
