@@ -1021,7 +1021,7 @@ final class AmTable extends AmObject{
     }else{
 
       // Preparar campos
-      $model->prepare();
+      $model->emit('before.validate');
 
       // Obtener nombre de validator definidos
       $validators = (array)$this->getValidators();
@@ -1399,7 +1399,10 @@ final class AmTable extends AmObject{
         // Insetar en la BD. Ret será igual a de generado del registro en el
         // caso de tener como PK un campo autoincrementable o false si se
         // generá un error
+        $model->emit('insert');
+        
         if(false !== ($ret = $this->insert($model))){
+
           // Obtener todos los campos de la tabla del modelo
           $fields = $this->getFields();
 
@@ -1421,6 +1424,8 @@ final class AmTable extends AmObject{
 
             }
 
+          $model->emit('inserted');
+
           // Si ret == 0 es xq se interto correctamenre pero la tabla no tiene
           // una columna autoincrement Se retorna verdadero o el valor del ID
           // generado para el registro si se agregó correctamenre de lo
@@ -1429,13 +1434,21 @@ final class AmTable extends AmObject{
 
         }
 
+        $model->emit('insert.fail');
+
       }else{
 
         // Se intenta actualizar los datos del registro en la BD
-        if($this->update($model))
+        $model->emit('update');
+        if($this->update($model)){
+
+          $model->emit('updated');
 
           // retornar true indicando el exito de la operacion
           return true;
+        }
+
+        $model->emit('update.fail');
 
 
       }

@@ -11,10 +11,12 @@
  */
 class AmObject implements Iterator, Countable, ArrayAccess{
 
-  /**
-   * Lista de propiedades creados dinamicamente
-   */
-  private $_f = array();
+  private static
+    $_cc = array(); // Callbacks por clase
+
+  private
+    $_oc = array(), // Callbacks del objeto
+    $_f = array();  // Nombre de los campos del objeto
 
   /**
    * Llamada del constructor. Inicializa los atributos indicados en el array
@@ -297,6 +299,81 @@ class AmObject implements Iterator, Countable, ArrayAccess{
     $className = get_class($this);
 
     return new $className(array_merge($this->toArray(), $params));
+
+  }
+
+  /**
+   * Realiza el llamado de los callbacks asignados a un objeto.
+   * @param  string $event Nombre del evento a emitir
+   * @return mixed         Valor retornado por el último callback ejecutado.
+   */
+  public function emit($event/*, ...*/){
+    
+    // Obtener los parámetros
+    $options = func_get_args();
+    
+    // Quitar el primer parametros, corresponde a $action
+    array_shift($options);
+
+    // Llamar todos los callbacks por clase
+    $prevValue = null;
+    if(isset(self::$_cc[$event]))
+      foreach(self::$_cc[$event] as $value)
+        if($this instanceof $value['class'])
+          if(isValidCallback($value['callback']))
+            $prevValue = call_user_func_array(
+              $value['callback'],
+              array($this, $prevValue)
+            );
+
+    // Llamar a los eventos del objeto
+    if(isset($this->_oc[$event]))
+      foreach($this->_oc[$event] as $callback)
+        if(isValidCallback($callback))
+          $prevValue = call_user_func_array(
+            $callback,
+            array($this, $prevValue)
+          );
+
+
+    return $prevValue;
+
+  }
+
+  /**
+   * Agrega un callback a evento de un objeto.
+   * @param  string   $event    Nombre del evento al que se agregará el
+   *                            callback.
+   * @param  callback $callback Callback que se agregará.
+   * @return $this
+   */
+  public function bind($event, $callback){
+
+    if(!isset($this->_oc[$event]))
+      $this->_oc[$event] = array();
+
+    $this->_oc[$event][] = $callback;
+
+    return $this;
+  }
+
+  /**
+   * Agrega un callback a un evento de un objeto.
+   * @param  string   $event    Nombre del evento al que se agregará el
+   *                            callback.
+   * @param  callback $callback Callback que se agregará.
+   */
+  public static function on($event, $callback){
+
+    $className = get_called_class();
+
+    if(!isset(self::$_cc[$event]))
+      self::$_cc[$event] = array();
+
+    self::$_cc[$event][] = array(
+      'class' => $className,
+      'callback' => $callback,
+    );
 
   }
 

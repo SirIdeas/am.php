@@ -367,7 +367,7 @@ final class Am{
     if(isValidCallback($callback))
 
       // Llamar los callbacks
-      return call_user_func_array(self::$callbacks[$action], $options);
+      return call_user_func_array($callback, $options);
 
   }
 

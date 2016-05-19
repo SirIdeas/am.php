@@ -168,8 +168,7 @@ class AmModel extends AmObject{
     // Tomar valores reales
     $this->__p->realValues = $this->toArray();
 
-    // Llamar el metodo init del modelo
-    $this->init();
+    $this->emit('init');
 
   }
 
@@ -177,16 +176,6 @@ class AmModel extends AmObject{
    * Para la inizialización de los validadores de la tabla.
    */
   protected function start(AmTable $table){}
-
-  /**
-   * Método redefinido el usuario para inicializaciones customizadas del modelo.
-   */
-  public function init(){}
-
-  /**
-   * Funcion para preparar los valores del model antes de guardar.
-   */
-  public function prepare(){}
 
   /**
    * Devuelve el valor de un registro en un campo.
@@ -400,12 +389,12 @@ class AmModel extends AmObject{
       $relation->beforeSave($relationName);
     }
 
-    // Obener la tabla
-    $ret = $this->__p->table->save($this);
-
     // Si retorna false salir.
-    if($ret === false)
+    $this->emit('save');
+    if(false === $this->__p->table->save($this)){
+      $this->emit('save.fail');
       return false;
+    }
 
     // Se guardó satisfactoriamente
     // Indicar que ya no es registro nuevo
@@ -419,6 +408,8 @@ class AmModel extends AmObject{
       $relation = $this->getRelation($relationName);
       $relation->afterSave($relationName);
     }
+
+    $this->emit('saved');
 
     return true;
 
