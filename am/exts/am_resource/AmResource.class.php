@@ -190,7 +190,6 @@ class AmResource extends AmController{
   // El formateador agregará una clase al registro dependiendo
   // del estado de la inscripcion
   public function callback_formatList($record, $realRecord){
-    $record['cls'] = '';
     return $record;
   }
 

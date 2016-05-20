@@ -22,7 +22,7 @@
       $('#dinamic-table').dinamictable({
         fnRecord: function(data, rowNumber, row){
           var result = [];
-
+          
           for(var i in data){
             result.push(data[i]);
           }
@@ -77,7 +77,6 @@
             (: endif
           </th>
         (: endforeach
-        <th data-param-show="false"></th>
         (: if($showOptions):
           <th data-param-sort="false" data-param-class="text-center">
             <div>Opciones</div>
