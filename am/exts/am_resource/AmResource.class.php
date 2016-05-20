@@ -199,10 +199,11 @@ class AmResource extends AmController{
     $columnNames = array_keys($this->forms['query']);
     $selects = array();
     $q = $this->table->all()->setFormatter(array($this, 'callback_formatList'));
+    $tableName = $this->table->getTableName();
 
     // Obtener el listado de elementos
     foreach($columnNames as $field)
-      $q->selectAs("q.{$field}", $field);
+      $q->selectAs("{$tableName}.{$field}", $field);
     
     $this->callback_getAllQuery($q);
 

@@ -496,7 +496,7 @@ class AmModel extends AmObject{
    * @return AmQuery             Query select para obtener todos los registro de
    *                             la tabla.
    */
-  public static function all($alias = 'q', $withFields = false){
+  public static function all($alias = null, $withFields = false){
 
     return self::me()->all($alias, $withFields);
 
@@ -572,7 +572,7 @@ class AmModel extends AmObject{
    *                            de la tabla (true) o con * (false).
    * @return AmQuery            Query select.
    */
-  public static function by($field, $value, $alias = 'q', $withFields = false){
+  public static function by($field, $value, $alias = null, $withFields = false){
 
     return self::me()->by($field, $value, $alias, $withFields);
 
@@ -630,7 +630,7 @@ class AmModel extends AmObject{
    *                                      (false).
    * @return AmQuery                      Query select.
    */
-  public static function byId($id, $alias = 'q', $withFields = false){
+  public static function byId($id, $alias = null, $withFields = false){
 
     return self::me()->byId($id, $alias, $withFields);
 

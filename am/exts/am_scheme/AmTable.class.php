@@ -1138,12 +1138,12 @@ final class AmTable extends AmObject{
    *                            de la tabla (true) o con * (false).
    * @return AmQuery            Query select.
    */
-  public function all($alias = 'q', $withFields = false){
+  public function all($alias = null, $withFields = false){
 
     // por si se obvio el primer parametro
     if(is_bool($alias)){
       $withFields = $alias;
-      $alias = 'q';
+      $alias = null;
     }
 
     // Crear consultar
@@ -1178,7 +1178,7 @@ final class AmTable extends AmObject{
    *                            de la tabla (true) o con * (false).
    * @return AmQuery            Query select.
    */
-  public function by($field, $value, $alias = 'q', $withFields = false){
+  public function by($field, $value, $alias = null, $withFields = false){
 
     return $this->all($alias, $withFields)->where("{$field}='{$value}'");
 
@@ -1235,7 +1235,7 @@ final class AmTable extends AmObject{
    *                                      (false).
    * @return AmQuery                      Query select.
    */
-  public function byId($id, $alias = 'q', $withFields = false){
+  public function byId($id, $alias = null, $withFields = false){
 
     // Obtener consultar para obtener todos los registros
     $q = $this->all($alias, $withFields);
@@ -1315,7 +1315,7 @@ final class AmTable extends AmObject{
    *                             los campos especificados en el modelo.
    * @return AmQuery             Query select para obtener el registro de la BD.
    */
-  public function querySelectModel(AmModel $model, $alias = 'q',
+  public function querySelectModel(AmModel $model, $alias = null,
     $withFields = false){
 
     // Obtener el índice del modelo

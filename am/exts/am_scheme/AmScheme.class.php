@@ -580,7 +580,7 @@ abstract class AmScheme extends AmObject{
    * @param  string         $alias Alias del from recibido.
    * @return AmQuery               Instancia de l query creado.
    */
-  public function q($from = null, $alias = 'q'){
+  public function q($from = null, $alias = null){
 
     // Crear instancia
     $q = new AmQuery(array('scheme' => $this));

@@ -400,7 +400,7 @@ class AmQuery extends AmObject{
    * @param  string $alias Alias del query actual en el query resultando.
    * @return AmQuery       Instancia creada.
    */
-  public function encapsulate($alias = 'q'){
+  public function encapsulate($alias = null){
 
     return $this->getScheme()->q($this, $alias);
 
@@ -627,24 +627,35 @@ class AmQuery extends AmObject{
       // Si no se indicó el parametro $alias
       if($from instanceof AmQuery){
         // Si es un query se agrega al final
-        $this->froms[] = $from;
+        $alias = $from->getModel();
+        if(is_subclass_of($alias, 'AmModel'))
+          $alias = $alias::me()->getTableName();
       }elseif($from instanceof AmTable){
         // Si es nua tabla se asigna en una posicion especifica
-        $this->froms[$from->getTableName()] = $from;
+        $alias = $from->getTableName();
       }elseif (isNameValid($from)){
         // Se asigna en una posicion especifica
-        $this->froms[$from] = $from;
+        $alias = $from;
       }else{
         // Agregar al final
-        $this->froms[] = $from;
+        $alias = null;
       }
 
-    }elseif(isNameValid($alias)){
-      // Adicion en posicion determinada
-      $this->froms[$alias] = $from;
-    }else{
-      // Adicion al final de la lista de tablas
+    }elseif(!isNameValid($alias)){
+      $alias = null;
+    }
+
+    if(!isset($alias))
       $this->froms[] = $from;
+    else{
+
+      $i = 0;
+      $finalAlias = $alias;
+      while(isset($this->froms[$finalAlias]))
+        $finalAlias = $alias . $i++;
+
+      $this->froms[$finalAlias] = $from;
+
     }
 
     return $this;
@@ -762,7 +773,7 @@ class AmQuery extends AmObject{
    * @param  string         $type  Tipo de join.
    * @return $this
    */
-  public function join($table, $on, $as, $type = 'inner'){
+  public function join($table, $on, $as = null, $type = 'inner'){
 
     // Agregar los joins
     $this->joins[] = array(
@@ -850,7 +861,7 @@ class AmQuery extends AmObject{
    */
   public function orderByAsc(/**/){
 
-    return $this->orderBy('ASC', func_get_args());
+    return $this->orderBy(func_get_args(), 'ASC');
 
   }
 
@@ -861,7 +872,7 @@ class AmQuery extends AmObject{
    */
   public function orderByDesc(/**/){
 
-    return $this->orderBy('DESC', func_get_args());
+    return $this->orderBy(func_get_args(), 'DESC');
 
   }
 
