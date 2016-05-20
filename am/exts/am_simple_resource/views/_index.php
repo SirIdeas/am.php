@@ -80,7 +80,6 @@
         (: if($showOptions):
           <th data-param-sort="false" data-param-class="text-center">
             <div>Opciones</div>
-            <div class="with-200"></div>
           </th>
         (: endif
       </tr>

@@ -38,7 +38,8 @@ class AmCSRFGuard{
 
   public function remove(){
 
-    unset($this->session[$this->name]);
+    if(isset($this->name))
+      unset($this->session[$this->name]);
 
   }
 
