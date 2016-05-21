@@ -54,7 +54,7 @@ abstract class AmCollectionAbstractRelation extends AmRelation{
    */
   private function keyOf(AmModel $model){
 
-    return json_encode($model->getTable()->indexof($model));
+    return json_encode($model->getTable()->indexOf($model));
 
   }
 
@@ -118,7 +118,7 @@ abstract class AmCollectionAbstractRelation extends AmRelation{
   public function beforeSave(){
 
     $record = $this->getRecord();
-    $this->beforeIndex = $record->getTable()->indexof($record);
+    $this->beforeIndex = $record->getTable()->indexOf($record);
 
   }
 
