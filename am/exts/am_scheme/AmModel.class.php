@@ -389,13 +389,20 @@ class AmModel extends AmObject{
       $relation->beforeSave($relationName);
     }
 
-    // Si retorna false salir.
-    $this->emit('save');
-    if(false === $this->__p->table->save($this)){
-      $this->emit('save.fail');
-      return false;
-    }
+    return $this->__p->table->save($this);
 
+  }
+
+  /**
+   * Marca el registro como existente. Solo la tabla correspondiente al modelo
+   * puede llamar este método.
+   * 
+   */
+  public function markAsUpdated(AmTable $table){
+
+    if($table !== $this->__p->table)
+      throw Am::e('AMSCHEME_MODEL_CALL_MARK_AS_UPDATED');
+    
     // Se guardó satisfactoriamente
     // Indicar que ya no es registro nuevo
     $this->__p->isNew = false;
@@ -408,10 +415,6 @@ class AmModel extends AmObject{
       $relation = $this->getRelation($relationName);
       $relation->afterSave($relationName);
     }
-
-    $this->emit('saved');
-
-    return true;
 
   }
 

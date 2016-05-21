@@ -1390,6 +1390,9 @@ final class AmTable extends AmObject{
    */
   public function save(AmModel $model){
 
+    // Si retorna false salir.
+    $model->emit('save');
+
     // Si todos los campos del registro son válidos
     if($model->isValid()){
 
@@ -1424,7 +1427,9 @@ final class AmTable extends AmObject{
 
             }
 
+          $model->markAsUpdated($this);
           $model->emit('inserted');
+          $model->emit('saved');
 
           // Si ret == 0 es xq se interto correctamenre pero la tabla no tiene
           // una columna autoincrement Se retorna verdadero o el valor del ID
@@ -1442,7 +1447,9 @@ final class AmTable extends AmObject{
         $model->emit('update');
         if($this->update($model)){
 
+          $model->markAsUpdated($this);
           $model->emit('updated');
+          $model->emit('saved');
 
           // retornar true indicando el exito de la operacion
           return true;
@@ -1465,6 +1472,8 @@ final class AmTable extends AmObject{
       );
 
     }
+
+    $model->emit('save.fail');
 
     return false;
 
