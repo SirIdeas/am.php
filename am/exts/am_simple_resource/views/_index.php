@@ -2,9 +2,7 @@
   <link rel="stylesheet" href="vendor/dinamictable/jquery.dinamictable.css">
 (: endSection
 
-(: section:'foot+'
-  <script src="vendor/tmpl.min.js"></script>
-  <script src="vendor/dinamictable/jquery.dinamictable.js"></script>
+(: section:'template-options'
   <script id="template-options" type="text/x-tmpl">
     (:
       $opts = [];
@@ -16,6 +14,12 @@
       (:= implode('&nbsp;|&nbsp;', $opts)
     </small>
   </script>
+(: endSection
+
+(: section:'foot+'
+  <script src="vendor/tmpl.min.js"></script>
+  <script src="vendor/dinamictable/jquery.dinamictable.js"></script>
+  (: put:'template-options'
   <script>
     $(function(){
       
@@ -23,13 +27,11 @@
         fnRecord: function(data, rowNumber, row){
           var result = [];
           
-          for(var i in data){
+          for(var i in data)
             result.push(data[i]);
-          }
           
-          if($('#template-options').length>0){
+          if($('#template-options').length>0)
             result.push(tmpl('template-options', data));
-          }
 
           return result;
         }
