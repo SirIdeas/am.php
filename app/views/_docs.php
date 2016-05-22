@@ -1,5 +1,5 @@
-(: parent:'views/base.php'
-(: $menu=Am::getProperty('menus')
+(: parent:'views/_base.php'
+(: $menu = Am::getProperty('menus')
 
 <section class="site-body">
   <div class="content content-s row">

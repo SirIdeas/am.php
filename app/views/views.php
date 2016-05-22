@@ -1,6 +1,6 @@
-(: parent:'views/docs.php'
-(: $pageTitle='Vistas'
-(: $subMenuItem='views'
+(: parent:'view/_docs.php'
+(: $pageTitle = 'Vistas'
+(: $subMenuItem = 'views'
   
 <p>
   El sistema de templates de Amathista permite incluir vistas una dentro de otras, definir secciones, definir variables, imprimir variables, definir herencia y embeber código PHP, todo a través de <i>directivas</i>.

@@ -1,5 +1,5 @@
-(: parent:'views/tpl.php'
-(: $pageTitle='Amathista Framework'
+(: parent:'views/_tpl.php'
+(: $pageTitle = 'Amathista Framework'
 
 <header class="site-header primary bg-d1 spyscroll" data-height="#pageTitle" data-class="box-shadow-2">
   <div class="content content-v row">

@@ -1,6 +1,6 @@
-(: parent:'views/docs.php'
-(: $pageTitle='Modelos'
-(: $subMenuItem='models'
+(: parent:'views/_docs.php'
+(: $pageTitle = 'Modelos'
+(: $subMenuItem = 'models'
 
 <p>
   Los modelos son abstracciones de la información manejada, por lo general gestionada a través de un Sistema Manejador de Base de datos (SMDB). Los modelos permiten buscar agregar, buscar, actualizar y eliminar registros de las tablas de las base de datos configuradas. También permite la realización de consulta complejas de una forma sencilla y entendible, crear y eliminar de tablas, vistas y base de datos, entre otros. Todas estas acciones son logradas a través del Mapeo Objeto-Relación (ORM por sus siglas en inglés) propio de Amathista.

@@ -1,6 +1,6 @@
-(: parent:'views/docs.php'
-(: $pageTitle='Introducción'
-(: $subMenuItem='introduction'
+(: parent:'views/_docs.php'
+(: $pageTitle = 'Introducción'
+(: $subMenuItem = 'introduction'
 
 <div>
   <h2 id="terms">Términos</h2>

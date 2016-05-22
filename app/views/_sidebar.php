@@ -1,4 +1,4 @@
-(: $menu=array()
+(: $menu = array()
 
 <div class="title-parent">
   <a href="(:/:)">

@@ -1,6 +1,6 @@
-(: parent:'views/docs.php'
-(: $pageTitle='Configuración del servidor'
-(: $subMenuItem='routes'
+(: parent:'views/_docs.php'
+(: $pageTitle = 'Configuración del servidor'
+(: $subMenuItem = 'routes'
 
 <p>
   El servidor web debe ser configurado para tomar el directorio <code><strong>/public/</strong></code> como directorio base de la aplicación.

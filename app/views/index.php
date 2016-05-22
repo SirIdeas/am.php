@@ -1,4 +1,4 @@
-(: parent:'views/base.php'
+(: parent:'views/_base.php'
 
 <div id="pageTitle" class="home-page-title primary bg-d1 box-shadow-2">
   <div class="content inner text-center">

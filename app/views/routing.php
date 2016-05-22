@@ -1,6 +1,6 @@
-(: parent:'views/docs.php'
-(: $pageTitle='Rutas'
-(: $subMenuItem='routes'
+(: parent:'views/_docs.php'
+(: $pageTitle = 'Rutas'
+(: $subMenuItem = 'routes'
 
 <p>
   Las rutas son configuradas en la propiedad de aplicación <code><strong>routing</strong></code>.
