@@ -1,5 +1,5 @@
-(:: set:siteTitle='Amathista Framework' :)
-(:: set:pageTitle='Home' :)
+(: $siteTitle='Amathista Framework'
+(: $pageTitle='Home'
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -7,10 +7,9 @@
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="shortcut icon" href="(:/:)/favicon.ico"/>
+    <!-- <link rel="shortcut icon" href="(:/:)/favicon.ico"/> -->
     <title>
-      (:= $siteTitle :) |
-      (:= $pageTitle :)
+      (:= $siteTitle :) | (:= $pageTitle :)
     </title>
     
     <link rel="stylesheet" href="(:/:)/vendor/prism/prism.css"/>
@@ -30,8 +29,8 @@
     <![endif]-->
   </head>
   <body>
-    (:: child :)
-    (: if($_SERVER['SERVER_NAME'] != 'localhost'): :)
+    (: child
+    (: if($_SERVER['SERVER_NAME'] != 'localhost'):
       <script>
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
         (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -40,7 +39,7 @@
         ga('create', 'UA-41615550-14', 'auto');
         ga('send', 'pageview');
       </script>
-    (: endif :)
+    (: endif
     <script type="text/javascript" src="(:/:)/vendor/jquery/jquery.js"></script>
     <script type="text/javascript" src="(:/:)/vendor/prism/prism.js"></script>
     <script type="text/javascript" src="(:/:)/js/main.js"></script>

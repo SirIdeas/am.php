@@ -1,6 +1,6 @@
-(:: parent:views/docs.php :)
-(:: set:pageTitle='Controladores' :)
-(:: set:subMenuItem='controllers' :)
+(: parent:'views/docs.php'
+(: $pageTitle='Controladores'
+(: $subMenuItem='controllers'
 
 <p>
   Los controladores son clases que poseen métodos llamados acciones, las cuales pueden ser asignadas como procesadores de las rutas. Además de esto, los controladores tambien poseen métodos que pueden ser configurados como filtros para las acciones, con el fin de validar su ejecución, realizar tareas antes y después de una acción. Además de todo esto, cada acción renderiza una vista con el mismo nombre de la acción, a menos que se indique lo contrario.

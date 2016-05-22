@@ -1,4 +1,4 @@
-(:: set:menu=array() :)
+(: $menu=array()
 
 <div class="title-parent">
   <a href="(:/:)">
@@ -7,22 +7,22 @@
 </div>
 
 <ul class="nav spyscroll" data-height="#pageTitle" data-str="float">
-  (: foreach($menu as $url => $item): :)
+  (: foreach($menu as $url => $item):
     <li>
       <a href="(:/:)(:= $url :)">
-        (:= $item['txt'] :)
+        (:= $item['txt']
       </a>
       <ul class="sub-nav">
-        (: foreach($item['items'] as $subUrl => $subItem): :)
+        (: foreach($item['items'] as $subUrl => $subItem):
           <li>
             <a href="(:/:)(:= $subUrl :)">
-              (:= $subItem['txt'] :)
+              (:= $subItem['txt']
             </a>
           </li>
-        (: endforeach :)
+        (: endforeach
       </ul>
     </li>
-  (: endforeach :)
+  (: endforeach
   <!--
   <li>
     <a href="(:/:)/api">API</a>

@@ -1,6 +1,6 @@
-(:: parent:views/docs.php :)
-(:: set:pageTitle='Comenzando' :)
-(:: set:subMenuItem='get-started' :)
+(: parent:'views/docs.php'
+(: $pageTitle='Comenzando'
+(: $subMenuItem='get-started'
 
 <div>
   <h2 id="how-works">Cómo funciona</h2>

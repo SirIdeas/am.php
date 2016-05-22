@@ -1,6 +1,6 @@
-(:: parent:views/docs.php :)
-(:: set:pageTitle='Rutas' :)
-(:: set:subMenuItem='routes' :)
+(: parent:'views/docs.php'
+(: $pageTitle='Rutas'
+(: $subMenuItem='routes'
 
 <p>
   Las rutas son configuradas en la propiedad de aplicación <code><strong>routing</strong></code>.
@@ -126,7 +126,7 @@
   <div>
     <h3 id="route-params-types">Tipos de los parámetros</h3>
     <p>
-      Los tipos para los parámetros de ruta son definidos después del nombre del parámetro con dos puntos (:). Los tipos principales son <code><strong>id</strong></code>, <code><strong>numeric</strong></code>, <code><strong>alphabetic</strong></code> y <code><strong>alphanumeric</strong></code>, sin embargo tambien puede definirse definirse una regex:
+      Los tipos para los parámetros de ruta son definidos después del nombre del parámetro con dos puntos <span>(</span>:<span>)</span>. Los tipos principales son <code><strong>id</strong></code>, <code><strong>numeric</strong></code>, <code><strong>alphabetic</strong></code> y <code><strong>alphanumeric</strong></code>, sin embargo tambien puede definirse definirse una regex:
     </p>
     <pre><code class="language-php">(:= getCodeFile('routing/params-types.php') :)</code></pre>
 
