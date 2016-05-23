@@ -206,49 +206,39 @@ class AmTpl extends AmObject{
 
   }
 
-  public function a(array $originalAttrs){
-    $attrs = $originalAttrs;
-    array_walk($attrs, function(&$a, $b) { $a = $b.'="'.$a.'"'; });
-    return implode(' ', $attrs);
-  }
-
-  public function t($tag, array $attrs){
-    $attrs = $this->a($attrs);
-    return "<{$tag} {$attrs}>";
-  }
-
-  public function endt($tag){
-    return "</{$tag}>";
-  }
-
-  public function tag($tag, array $attrs){
-    echo $this->t($tag, $attrs);
-  }
-
-  public function endTag($tag){
-    echo $this->endt($tag);
-  }
-
   public function form(array $attrs){
     $csrf = AmCSRFGuard::create();
 
-    echo $this->t('form', $attrs);
-    echo $this->t('input', array(
-      'type' => 'hidden',
-      'name' => AmCSRFGuard::FieldnameName,
-      'value' => $csrf->name,
-    ));
-    echo $this->t('input', array(
-      'type' => 'hidden',
-      'name' => AmCSRFGuard::FieldnameToken,
-      'value' => $csrf->token,
-    ));
+    echo
+      AmHTML::tag('form', $attrs).
+      AmHTML::tag('input', array(
+        'type' => 'hidden',
+        'name' => AmCSRFGuard::FieldnameName,
+        'value' => $csrf->name,
+      )).
+      AmHTML::tag('input', array(
+        'type' => 'hidden',
+        'name' => AmCSRFGuard::FieldnameToken,
+        'value' => $csrf->token,
+      ));
 
   }
 
   public function endForm(){
 
-    echo $this->endt('form');
+    echo AmHTML::endt('form');
+
+  }
+
+  protected function sanity($str){
+
+    echo htmlentities($str);
+
+  }
+
+  protected function tag($str){
+
+    echo htmlentities($str);
 
   }
 
@@ -256,6 +246,12 @@ class AmTpl extends AmObject{
 
     $content = explode('(:/:)', $content);
     $content = implode('(:= Am::url() :)', $content);
+
+    $content = explode('(:e ', $content);
+    $content = implode('(: sanity:', $content);
+
+    $content = explode('(:t ', $content);
+    $content = implode('(: tag:', $content);
 
     $content = explode('(:=', $content);
     $content = implode('(: echo ', $content);
@@ -313,16 +309,22 @@ class AmTpl extends AmObject{
     $str = implode($glue, $part);
     $method = false;
 
-    $reg = '/^(parent|insert|section|endSection|deleteSection|put|child|tag|endTag|form|endForm)\:?(.*)/';
+    $reg1 = '/^(parent|insert|section|deleteSection|put|form|tag|sanity)\:(.*)$/';
+    $reg2 = '/^(endSection|child|endForm)$/';
 
-    if(preg_match_all($reg, $code, $m)){
+    if(!($ret = preg_match_all($reg1, $code, $m)))
+      $ret = preg_match_all($reg2, $code, $m);
+
+    if($ret){
       $method = $m[1][0];
-      $params = $m[2][0];
+      $params = isset($m[2][0])? $m[2][0] : '';
 
-      if(in_array($method, array('put', 'insert')))
-        $code = "\$this->$method($params, get_defined_vars())";
+      if(in_array($method, array('tag')))
+        $code = "echo AmHTML::{$params}";
+      elseif(in_array($method, array('put', 'insert')))
+        $code = "\$this->$method({$params}, get_defined_vars())";
       else
-        $code = "\$this->$method($params)";
+        $code = "\$this->$method({$params})";
 
     }
 
