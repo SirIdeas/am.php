@@ -141,6 +141,15 @@ class AmMailer extends PHPMailer{
     return $this->Subject;
   }
 
+  public function getAllRecipients(){
+    return array(
+      'to' => $this->to,
+      'cc' => $this->cc,
+      'bcc' => $this->bcc,
+      'ReplyTo' => $this->ReplyTo,
+    );
+  }
+
   public function getAltBody(){
     return $this->AltBody;
   }
