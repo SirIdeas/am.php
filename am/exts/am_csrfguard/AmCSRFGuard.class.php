@@ -70,7 +70,7 @@ class AmCSRFGuard{
     return $token;
   }
 
-  public static function validate($params){
+  public static function validate(array $params){
 
     $csrf = new self;
 
