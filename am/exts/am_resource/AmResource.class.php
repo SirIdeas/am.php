@@ -63,7 +63,7 @@ class AmResource extends AmController{
           if($field[$key]){
             $this->forms[$key][$fieldName] = array_merge(
               $field,
-              $field[$key] === true ? array() : $field[$key]
+              is_array($field[$key]) ? $field[$key] : array()
             );
           }
         }
@@ -195,14 +195,18 @@ class AmResource extends AmController{
 
   public function getAllQuery(){
 
-    $columnNames = array_keys($this->forms['query']);
+    $columnNames = $this->forms['query'];
     $selects = array();
     $q = $this->table->all()->setFormatter(array($this, 'callback_formatList'));
     $tableName = $this->table->getTableName();
 
     // Obtener el listado de elementos
-    foreach($columnNames as $field)
-      $q->selectAs("{$tableName}.{$field}", $field);
+    foreach($columnNames as $field => $conf){
+      $fieldStr = "{$tableName}.{$field}";
+      if(isset($conf['query']) && is_string($conf['query']))
+        $fieldStr = $conf['query'];
+      $q->selectAs($fieldStr, $field);
+    }
     
     $this->callback_getAllQuery($q);
 
