@@ -18,6 +18,8 @@ class AmBelongToRelation extends AmRelation{
      */
     $value = null,
 
+    $seted = false,
+
     /**
      * Modelo real actual de la relación.
      */
@@ -63,6 +65,8 @@ class AmBelongToRelation extends AmRelation{
     // Asignar valor.
     $this->value = $record;
 
+    $this->seted = true;
+
     return $this;
 
   }
@@ -74,7 +78,7 @@ class AmBelongToRelation extends AmRelation{
   public function beforeSave(){
 
     // Si se asignó un valor diferente a la relación se guarda.
-    if($this->value !== $this->current){
+    if($this->value !== $this->current && (isset($this->value) || $this->seted)){
 
       // Obtener el registro al que pertenece la relación
       $record = $this->getRecord();
