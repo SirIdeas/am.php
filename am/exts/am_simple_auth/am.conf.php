@@ -10,6 +10,7 @@ return array(
 
   'requires' => array(
     'exts/am_auth/',
+    'exts/am_flash/',
   ),
 
 );
