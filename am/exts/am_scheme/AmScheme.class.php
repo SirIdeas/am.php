@@ -16,17 +16,7 @@ abstract class AmScheme extends AmObject{
     /**
      * Instancias de los esquemas cargados.
      */
-    $schemes = array(),
-
-    /**
-     * Directorio por defecto de los modelos base.
-     */
-    $schemesDir = 'schemes',
-
-    /**
-     * Directorio por defecto de los modelos.
-     */
-    $modelsDir = 'models';
+    $schemes = array();
 
   protected
 
@@ -96,7 +86,7 @@ abstract class AmScheme extends AmObject{
   }
 
   /**
-   * El destructor del objecto cierra la conexión
+   * El destructor del objeto cierra la conexión
    */
   public function __destruct() {
 
@@ -206,23 +196,47 @@ abstract class AmScheme extends AmObject{
   }
 
   /**
-   * Carga la instancia de una tabla.
-   * @param  string/AmTable $table Nombre o instancia de la tabla. 
-   * @return AmTable               Instancia de la tabla solicitada.
+   * Devuelve el nombre de un objeto de la BD pasado por realScapeString y por
+   * nameWrapper.
+   * @param  string $name Nombre que se desea escapar y colocar entre comillas.
+   * @return string       Resultado de la operación.
    */
-  public function loadTable($table){
-    
-    // Instanciar la tabla si el parámetro es un string.
-    if(is_string($table))
-      $table = self::table($table, $this->getName());
+  public function nameWrapperAndRealScape($name){
 
-    // Agregar tabla
-    $this->addTable($table);
-
-    // Retornar tabla
-    return $table;
+    return $this->nameWrapper($this->realScapeString($name));
 
   }
+
+  /**
+   * Devuelve una cadena espacada y entre comillas.
+   * @param  string $string Cadena que se desea escapar y colocar entre
+   *                        comillas.
+   * @return string         Resultado de la operación.
+   */
+  public function stringWrapperAndRealScape($string){
+
+    return $this->stringWrapper($this->realScapeString($string));
+    
+  }
+
+  // /**
+  //  * Carga la instancia de una tabla.
+  //  * @param  string/AmTable $table Nombre o instancia de la tabla. 
+  //  * @return AmTable               Instancia de la tabla solicitada.
+  //  */
+  // public function loadTable($table){
+    
+  //   // Instanciar la tabla si el parámetro es un string.
+  //   if(is_string($table))
+  //     $table = self::table($table, $this->getName());
+
+  //   // Agregar tabla
+  //   $this->addTable($table);
+
+  //   // Retornar tabla
+  //   return $table;
+
+  // }
 
   /**
    * Agrega una tabla a la conexión.
@@ -300,7 +314,7 @@ abstract class AmScheme extends AmObject{
 
     // Obtener el nombre del esquema por defecto su directorio raíz es el mismo
     // directorio de esquemas.
-    return self::getSchemesDir() . (!empty($name)?'/' . $name : '');
+    return Am::getDir('schemes') . (!empty($name)? "/{$name}" : '');
 
   }
 
@@ -334,7 +348,7 @@ abstract class AmScheme extends AmObject{
    */
   public function getBaseModelConfFilename($model){
 
-    return $this->getDir() . '/'. underscore($model) .'.conf.php';
+    return $this->getDir() .'/'. underscore($model) .'.conf.php';
 
   }
 
@@ -345,7 +359,7 @@ abstract class AmScheme extends AmObject{
    */
   public function getBaseModelClassFilename($model){
 
-    return "{$this->getDir()}/{$this->getBaseModelClassName($model)}.class.php";
+    return $this->getDir() .'/'. $this->getBaseModelClassName($model) .'.class.php';
 
   }
 
@@ -379,86 +393,86 @@ abstract class AmScheme extends AmObject{
 
   }
 
-  /**
-   * Crea el archivo con la clase del modelo base basando en una tabla.
-   * @param  AmTable $table Tabla en el que se basará el modelo a generar.
-   * @return bool           Si se generó o no el modelo.
-   */
-  public function generateBaseModelFile(AmTable $table){
+  // /**
+  //  * Crea el archivo con la clase del modelo base basando en una tabla.
+  //  * @param  AmTable $table Tabla en el que se basará el modelo a generar.
+  //  * @return bool           Si se generó o no el modelo.
+  //  */
+  // public function generateBaseModelFile(AmTable $table){
 
-    // Obtener el nombre del archivo destino
-    $path = $this->getBaseModelClassFilename($table->getTableName());
+  //   // Obtener el nombre del archivo destino
+  //   $path = $this->getBaseModelClassFilename($table->getTableName());
     
-    // Crear directorio donde se ubicará el archivo si no existe
-    Am::mkdir(dirname($path));
+  //   // Crear directorio donde se ubicará el archivo si no existe
+  //   Am::mkdir(dirname($path));
 
-    // Generar el archivo
-    return !!@file_put_contents($path, "<?php\n\n" .
-      AmGenerator::classBaseModel($this, $table));
+  //   // Generar el archivo
+  //   return !!@file_put_contents($path, "<?php\n\n" .
+  //     AmGenerator::classBaseModel($this, $table));
     
-  }
+  // }
 
-  /**
-   * Genera la clase base del modelo y su archivo de configuración.
-   * @param  AmTable $table Tabla en el que se basará el modelo a generar.
-   * @return Hash           Resultado de la generación del archivo de
-   *                        configuración y el modelo.
-   */
-  public function generateBaseModel(AmTable $table){
+  // /**
+  //  * Genera la clase base del modelo y su archivo de configuración.
+  //  * @param  AmTable $table Tabla en el que se basará el modelo a generar.
+  //  * @return Hash           Resultado de la generación del archivo de
+  //  *                        configuración y el modelo.
+  //  */
+  // public function generateBaseModel(AmTable $table){
     
-    // Obtener la ruta del archivo
-    $file = $this->getBaseModelConfFilename($table->getTableName());
+  //   // Obtener la ruta del archivo
+  //   $file = $this->getBaseModelConfFilename($table->getTableName());
 
-    // Crear directorio donde se ubicará el archivo
-    Am::mkdir(dirname($file));
+  //   // Crear directorio donde se ubicará el archivo
+  //   Am::mkdir(dirname($file));
 
-    // Crear archivo de configuración
-    $writed = file_put_contents($file, AmCoder::encode($table->toArray()));
+  //   // Crear archivo de configuración
+  //   $writed = file_put_contents($file, AmCoder::encode($table->toArray()));
 
-    return array(
+  //   return array(
 
-      // Si el archivo fue creado o no
-      'conf' => $writed,
+  //     // Si el archivo fue creado o no
+  //     'conf' => $writed,
 
-      // Crear clase
-      'model' => $this->generateBaseModelFile($table)
+  //     // Crear clase
+  //     'model' => $this->generateBaseModelFile($table)
 
-    );
+  //   );
     
-  }
+  // }
 
-  /**
-   * Genera todos los modelos bases correspondientes a las tablas de un esquema.
-   * @return hash Resultado de la generación de la configuración y el modelo.
-   */
-  public function generateScheme(){
+  // /**
+  //  * Genera todos los modelos bases correspondientes a las tablas de un esquema.
+  //  * @return hash Resultado de la generación de la configuración y el modelo.
+  //  */
+  // public function generateScheme(){
 
-     // Para retorno
-    $ret = array(
-      'tables' => array(),
-    );
+  //    // Para retorno
+  //   $ret = array(
+  //     'tables' => array(),
+  //   );
 
-    // Obtener listado de nombres de tablas
-    $tables = $this->q($this->sqlGetTables())->col('tableName');
+  //   // Obtener listado de nombres de tablas
+  //   $tables = $this->q($this->sqlGetTables())->col('tableName');
 
-    foreach ($tables as $tableName)
+  //   foreach ($tables as $tableName)
 
-      // Obtener instancia de la tabla
-      $ret['tables'][$tableName] = $this->generateBaseModel(
-        $this->getTableFromScheme($tableName)
-      );
+  //     // Obtener instancia de la tabla
+  //     $ret['tables'][$tableName] = $this->generateBaseModel(
+  //       $this->getTableFromScheme($tableName)
+  //     );
 
-    return $ret;
+  //   return $ret;
 
-  }
+  // }
 
   /**
    * Devuelve el nombre de la BD para ser reconocida en el DBSM.
    * @return string Nombre de la BD para ser utilizada dentro del DBSM.
    */
-  public function getParseDatabaseName(){
+  public function getDatabaseSanitize(){
 
-    return $this->getParseName($this->getDatabase());
+    return $this->nameWrapperAndRealScape($this->getDatabase());
 
   }
 
@@ -472,7 +486,7 @@ abstract class AmScheme extends AmObject{
    *                                      datos.
    * @return string                       Nombre de tabla obtenido.
    */
-  public function getParseObjectDatabaseName($table, $only = false){
+  public function getDatabaseObjectSanitize($table, $only = false){
 
     // Si es una instancia de AmTable se debe obtener el nombre
     if($table instanceof AmQuery)
@@ -485,14 +499,14 @@ abstract class AmScheme extends AmObject{
     // Si es un nombre válido
     if(isNameValid($table)){
 
-      $table = $this->getParseName($table);
+      $table = $this->nameWrapperAndRealScape($table);
 
       // Si se desea obtener solo el nombre
       if($only)
         return $table;
 
       // Retornar el nombre de la tabla con la BD
-      return $this->getParseDatabaseName().'.'.$table;
+      return $this->getDatabaseSanitize().'.'.$table;
 
     }
 
@@ -525,15 +539,11 @@ abstract class AmScheme extends AmObject{
     // Cambiar la condificacion con la que se trabajará
     if($ret){
 
-      // Obtener charset y collation
-      $charset = $this->realScapeString($this->getCharset());
-      $collation = $this->realScapeString($this->getCollation());
-
       // Asignar variables
-      $this->setServerVar('character_set_server', $charset);
-      $this->setServerVar('collation_server', $collation);
+      $this->setServerVar('character_set_server', $this->getCharset());
+      $this->setServerVar('collation_server', $this->getCollation());
       // PENDIENTE: Revisar
-      $this->execute("set names {$charset}");
+      $this->execute("set names {$this->getCharset()}");
 
     }
 
@@ -725,18 +735,6 @@ abstract class AmScheme extends AmObject{
   }
 
   /**
-   * Indica si la tabla existe.
-   * @param  string/AmTable $table Nombre o instancia de la tabla.
-   * @return bool                  Si la tabla existe.
-   */
-  public function existsTable($table){
-
-    // Intenta obtener la descripcion de la tabla para saber si existe.
-    return !!$this->getTableDescription($table);
-
-  }
-
-  /**
    * Eliminar todos los registros de una tabla y reinicia los campos
    * autoincrementables.
    * @param  string/AmTable $table    Nombre o instancia de la tabla.
@@ -749,189 +747,201 @@ abstract class AmScheme extends AmObject{
 
   }
 
-  /**
-   * Devuelve un array con el listado de tablas de la BD y su descripción.
-   * @return array Array de hash con las descripción de las tablas.
-   */
-  public function getTables(){
+  // /**
+  //  * Indica si la tabla existe.
+  //  * @param  string/AmTable $table Nombre o instancia de la tabla.
+  //  * @return bool                  Si la tabla existe.
+  //  */
+  // public function existsTable($table){
 
-    return $this->q($this->sqlGetTables())
-                ->get();
+  //   // Intenta obtener la descripcion de la tabla para saber si existe.
+  //   return !!$this->getTableDescription($table);
 
-  }
+  // }
 
-  /**
-   * Obtiene la descripción de una tabla en el BD.
-   * @param  string/AmTable $table Nombre o instancia de la tabla.
-   * @return hash                  Hash con la descripcion de la tabla.
-   */
-  public function getTableDescription($table){
+  // /**
+  //  * Devuelve un array con el listado de tablas de la BD y su descripción.
+  //  * @return array Array de hash con las descripción de las tablas.
+  //  */
+  // public function getTables(){
+
+  //   return $this->q($this->sqlGetTables())
+  //               ->get();
+
+  // }
+
+  // /**
+  //  * Obtiene la descripción de una tabla en el BD.
+  //  * @param  string/AmTable $table Nombre o instancia de la tabla.
+  //  * @return hash                  Hash con la descripcion de la tabla.
+  //  */
+  // public function getTableDescription($table){
     
-    // Obtener nombre de la tabla
-    $table = $table instanceof AmTable? $table->getTableName() : $table;
+  //   // Obtener nombre de la tabla
+  //   $table = $table instanceof AmTable? $table->getTableName() : $table;
 
-    return $this->q($this->sqlGetTables())
-                ->where("tableName = '{$table}'")
-                ->row();
+  //   return $this->q($this->sqlGetTables())
+  //               ->where("tableName = '{$table}'")
+  //               ->row();
 
-  }
+  // }
 
-  /**
-   * Obtener un listado de las columnas de una tabla.
-   * @param  string/AmTable $table Nombre o instancia de la tabla.
-   * @return hash                  Array de hash con la descripcion de los
-   *                               campos.
-   */
-  public function getTableColumns($table){
+  // /**
+  //  * Obtener un listado de las columnas de una tabla.
+  //  * @param  string/AmTable $table Nombre o instancia de la tabla.
+  //  * @return hash                  Array de hash con la descripcion de los
+  //  *                               campos.
+  //  */
+  // public function getTableColumns($table){
 
-    return $this->q($this->sqlGetTableColumns($table))
-                ->get(null, array($this, 'sanitize'));
+  //   return $this->q($this->sqlGetTableColumns($table))
+  //               ->get(null, array($this, 'sanitize'));
                 
-  }
+  // }
 
-  /**
-   * Obtener un listado de las claves foráneas de una tabla.
-   * @param  string/AmTable $table Nombre o instancia de la tabla.
-   * @return array                 Array de hash conla descripción de las
-   *                               claves foráneas.
-   */
-  public function getTableForeignKeys($table){
+  // /**
+  //  * Obtener un listado de las claves foráneas de una tabla.
+  //  * @param  string/AmTable $table Nombre o instancia de la tabla.
+  //  * @return array                 Array de hash conla descripción de las
+  //  *                               claves foráneas.
+  //  */
+  // public function getTableForeignKeys($table){
 
-    $ret = array(); // Para el retorno
+  //   $ret = array(); // Para el retorno
 
-    // Obtener el nombre de la fuente
-    $schemeName = $this->getName();
+  //   // Obtener el nombre de la fuente
+  //   $schemeName = $this->getName();
 
-    // Obtener los ForeignKeys
-    $fks = $this->q($this->sqlGetTableForeignKeys($table))
-                ->get();
+  //   // Obtener los ForeignKeys
+  //   $fks = $this->q($this->sqlGetTableForeignKeys($table))
+  //               ->get();
 
-    foreach($fks as $fk){
+  //   foreach($fks as $fk){
 
-      // Dividir el nombre del FK
-      $name = explode('.', $fk['name']);
+  //     // Dividir el nombre del FK
+  //     $name = explode('.', $fk['name']);
 
-      // Obtener el ultimo elemento
-      $name = array_pop($name);
+  //     // Obtener el ultimo elemento
+  //     $name = array_pop($name);
 
-      // Si no existe el elmento en el array se crea
-      if(!isset($ret[$name])){
-        $ret[$name] = array(
-          'scheme' => $schemeName,
-          'table' => $fk['toTable'],
-          'cols' => array()
-        );
-      }
+  //     // Si no existe el elmento en el array se crea
+  //     if(!isset($ret[$name])){
+  //       $ret[$name] = array(
+  //         'scheme' => $schemeName,
+  //         'table' => $fk['toTable'],
+  //         'cols' => array()
+  //       );
+  //     }
 
-      // Agregar la columna a la lista de columnas
-      $ret[$name]['cols'][$fk['columnName']] = $fk['toColumn'];
+  //     // Agregar la columna a la lista de columnas
+  //     $ret[$name]['cols'][$fk['columnName']] = $fk['toColumn'];
 
-    }
+  //   }
 
-    return $ret;
+  //   return $ret;
 
-  }
+  // }
 
-  /**
-   * Obtener el listado de referencias a una tabla.
-   * @param  string/AmTable $table Nombre o instancia de la tabla.
-   * @return array                 Array de hash con la descripción de las
-   *                               referencias.
-   */
-  public function getTableReferences($table){
+  // /**
+  //  * Obtener el listado de referencias a una tabla.
+  //  * @param  string/AmTable $table Nombre o instancia de la tabla.
+  //  * @return array                 Array de hash con la descripción de las
+  //  *                               referencias.
+  //  */
+  // public function getTableReferences($table){
 
-    $ret = array(); // Para el retorno
+  //   $ret = array(); // Para el retorno
 
-    // Obtener el nombre de la fuente
-    $schemeName = $this->getName();
+  //   // Obtener el nombre de la fuente
+  //   $schemeName = $this->getName();
 
-    // Obtener las referencias a una tabla
-    $fks = $this->q($this->sqlGetTableReferences($table))
-                ->get();
+  //   // Obtener las referencias a una tabla
+  //   $fks = $this->q($this->sqlGetTableReferences($table))
+  //               ->get();
 
-    // Recorrer los FKs
-    foreach($fks as $fk){
+  //   // Recorrer los FKs
+  //   foreach($fks as $fk){
 
-      // Dividir el nombre del FK
-      $name = explode('.', $fk['name']);
+  //     // Dividir el nombre del FK
+  //     $name = explode('.', $fk['name']);
 
-      // Obtener el ultimo elemento
-      $name = array_shift($name);
+  //     // Obtener el ultimo elemento
+  //     $name = array_shift($name);
 
-      // Si no existe el elmento en el array se crea
-      if(!isset($ret[$name])){
-        $ret[$name] = array(
-          'scheme' => $schemeName,
-          'table' => $fk['fromTable'],
-          'cols' => array()
-        );
-      }
+  //     // Si no existe el elmento en el array se crea
+  //     if(!isset($ret[$name])){
+  //       $ret[$name] = array(
+  //         'scheme' => $schemeName,
+  //         'table' => $fk['fromTable'],
+  //         'cols' => array()
+  //       );
+  //     }
 
-      // Agregar la columna a la lista de columnas
-      $ret[$name]['cols'][$fk['toColumn']] = $fk['columnName'];
+  //     // Agregar la columna a la lista de columnas
+  //     $ret[$name]['cols'][$fk['toColumn']] = $fk['columnName'];
 
-    }
+  //   }
 
-    return $ret;
+  //   return $ret;
 
-  }
+  // }
 
-  /**
-   * Obtener un listado de las claves restricciones únicas de una tabla.
-   * @param  string/AmTable $table Nombre o instancia de la tabla.
-   * @return array                 Array de hash con la descripción de
-   *                               claves únicas.
-   */
-  public function getTableUniques($table){
+  // /**
+  //  * Obtener un listado de las claves restricciones únicas de una tabla.
+  //  * @param  string/AmTable $table Nombre o instancia de la tabla.
+  //  * @return array                 Array de hash con la descripción de
+  //  *                               claves únicas.
+  //  */
+  // public function getTableUniques($table){
 
-    $uniques = $this->q($this->sqlGetTableUniques($table))
-                    ->get();
+  //   $uniques = $this->q($this->sqlGetTableUniques($table))
+  //                   ->get();
 
-    // Group fields of unique indices for name.
-    $realUniques = array();
+  //   // Group fields of unique indices for name.
+  //   $realUniques = array();
 
-    foreach ($uniques as $value) {
-      $realUniques[$value['name']] = itemOr($value['name'],
-        $realUniques, array());
-      $realUniques[$value['name']][] = $value['columnName'];
-    }
+  //   foreach ($uniques as $value) {
+  //     $realUniques[$value['name']] = itemOr($value['name'],
+  //       $realUniques, array());
+  //     $realUniques[$value['name']][] = $value['columnName'];
+  //   }
 
-    return $realUniques;
+  //   return $realUniques;
 
-  }
+  // }
 
-  /**
-   * Devuelve la descripción completa de una tabla incluyendo los campos.
-   * @param  string  $tableName Nombre de la tabla.
-   * @return AmTable            Instancia de la tabla.
-   */
-  public function getTableFromScheme($tableName){
+  // /**
+  //  * Devuelve la descripción completa de una tabla incluyendo los campos.
+  //  * @param  string  $tableName Nombre de la tabla.
+  //  * @return AmTable            Instancia de la tabla.
+  //  */
+  // public function getTableFromScheme($tableName){
 
-    // Obtener la descripcion basica
-    $table = $this->getTableDescription($tableName);
+  //   // Obtener la descripcion basica
+  //   $table = $this->getTableDescription($tableName);
 
-    // Si no se encontró la tabla retornar falso
-    if($table === false)
-      return false;
+  //   // Si no se encontró la tabla retornar falso
+  //   if($table === false)
+  //     return false;
 
-    // Crear instancia anonima de la tabla
-    $table = new AmTable(array_merge($table, array(
+  //   // Crear instancia anonima de la tabla
+  //   $table = new AmTable(array_merge($table, array(
 
-      // Asignar fuente
-      'schemeName'    => $this->getName(),
+  //     // Asignar fuente
+  //     'schemeName'    => $this->getName(),
 
-      // Detalle de la tabla
-      'fields'        => $this->getTableColumns($tableName),
-      // 'referencesTo'  => $this->getTableForeignKeys($tableName),
-      // 'referencesBy'  => $this->getTableReferences($tableName),
-      // 'uniques'       => $this->getTableUniques($tableName),
+  //     // Detalle de la tabla
+  //     'fields'        => $this->getTableColumns($tableName),
+  //     // 'referencesTo'  => $this->getTableForeignKeys($tableName),
+  //     // 'referencesBy'  => $this->getTableReferences($tableName),
+  //     // 'uniques'       => $this->getTableUniques($tableName),
 
-    )));
+  //   )));
 
-    // Retornar tabla
-    return $table;
+  //   // Retornar tabla
+  //   return $table;
 
-  }
+  // }
 
   /**
    * Crea una vista.
@@ -958,205 +968,181 @@ abstract class AmScheme extends AmObject{
 
   }
 
-  /**
-   * Obtiene el SQL de una Query dependiendo de su tipo.
-   * @param  AmQuery $q Instancia de query.
-   * @return string     SQL obtenido.
-   */
-  public function sqlOf(AmQuery $q){
-    $type = $q->getType();
+  // /**
+  //  * Obtiene el SQL de una Query dependiendo de su tipo.
+  //  * @param  AmQuery $q Instancia de query.
+  //  * @return string     SQL obtenido.
+  //  */
+  // public function sqlOf(AmQuery $q){
+  //   $type = $q->getType();
 
-    // Consulta de seleción
-    if($type == 'select')
-      return $this->sqlSelectQuery($q);
+  //   // Consulta de seleción
+  //   if($type == 'select')
+  //     return $this->sqlSelectQuery($q);
 
-    // Consulta de inserción
-    if($type == 'insert')
-      return $this->sqlInsert($q, $q->getInsertTable(), $q->getInsertFields());
+  //   // Consulta de inserción
+  //   if($type == 'insert')
+  //     return $this->sqlInsert($q, $q->getInsertTable(), $q->getInsertFields());
 
-    // Consulta de actualización
-    if($type == 'update')
-      return $this->sqlUpdateQuery($q);
+  //   // Consulta de actualización
+  //   if($type == 'update')
+  //     return $this->sqlUpdateQuery($q);
 
-    // Consulta de eliminación
-    if($type == 'delete')
-      return $this->sqlDeleteQuery($q);
+  //   // Consulta de eliminación
+  //   if($type == 'delete')
+  //     return $this->sqlDeleteQuery($q);
 
-    throw Am::e('AMSCHEME_QUERY_TYPE_UNKNOW', var_export($q, true));
+  //   throw Am::e('AMSCHEME_QUERY_TYPE_UNKNOW', var_export($q, true));
 
-  }
+  // }
 
-  /**
-   * Funcion para preparar la ejeción de un insert.
-   * @param  array/AmQuery  $values Array hash de valores, array
-   *                                de instancias de AmModels, array de
-   *                                AmObjects o AmQuery con consulta select
-   *                                a insertar.
-   * @param  string/AmTable $model  Nombre del modelo o instancia de la
-   *                                tabla donde se insertará los valores.
-   * @param  array          $fields Campos que recibirán con los valores que
-   *                                se insertarán.
-   * @return hash                   Devuelve un hash que contiene el string
-   *                                con el nombre de la tabla, string de
-   *                                valores y el string de campos.
-   */
-  protected function prepareInsert($values, $model, array $fields = array()){
+  // /**
+  //  * Funcion para preparar la ejeción de un insert.
+  //  * @param  array/AmQuery  $values Array hash de valores, array
+  //  *                                de instancias de AmModels, array de
+  //  *                                AmObjects o AmQuery con consulta select
+  //  *                                a insertar.
+  //  * @param  string/AmTable $model  Nombre del modelo o instancia de la
+  //  *                                tabla donde se insertará los valores.
+  //  * @param  array          $fields Campos que recibirán con los valores que
+  //  *                                se insertarán.
+  //  * @return hash                   Devuelve un hash que contiene el string
+  //  *                                con el nombre de la tabla, string de
+  //  *                                valores y el string de campos.
+  //  */
+  // protected function prepareInsert($values, $model, array $fields = array()){
 
-    $table = $model;
+  //   $table = $model;
 
-    // Obtener la instancia de la tabla
-    if(!$table instanceof AmTable)
-      $table = $this->getTableInstance($table);
+  //   // Obtener la instancia de la tabla
+  //   if(!$table instanceof AmTable)
+  //     $table = $this->getTableInstance($table);
 
-    if($table){
+  //   if($table){
 
-      // Agregar fechas de creacion y modificacion si existen en la tabla
-      $table->setAutoCreatedAt($values);
-      $table->setAutoUpdatedAt($values);
+  //     // Agregar fechas de creacion y modificacion si existen en la tabla
+  //     $table->setAutoCreatedAt($values);
+  //     $table->setAutoUpdatedAt($values);
 
-    }else{
+  //   }else{
 
-      $table = $model;
+  //     $table = $model;
 
-    }
+  //   }
 
-    if($values instanceof AmQuery){
+  //   if($values instanceof AmQuery){
 
-      // Si los campos recibidos estan vacíos se tomará
-      // como campos los de la consulta
-      if(count($fields) == 0)
-        $fields = array_keys($values->getSelects());
+  //     // Si los campos recibidos estan vacíos se tomará
+  //     // como campos los de la consulta
+  //     if(count($fields) == 0)
+  //       $fields = array_keys($values->getSelects());
 
-    // Si los valores es un array con al menos un registro
-    }elseif(is_array($values) && count($values)>0){
+  //   // Si los valores es un array con al menos un registro
+  //   }elseif(is_array($values) && count($values)>0){
 
-      // Indica si
-      $mergeWithFields = count($fields) == 0;
+  //     // Indica si
+  //     $mergeWithFields = count($fields) == 0;
 
-      $rawValues = array();
+  //     $rawValues = array();
 
-      // Recorrer cada registro en $values par obtener los valores a insertar
-      foreach($values as $i => $v){
+  //     // Recorrer cada registro en $values par obtener los valores a insertar
+  //     foreach($values as $i => $v){
 
-        if($v instanceof AmModel){
-          // Si el registro es AmModel obtener sus valores como array
-          // asociativo o simple
-          $values[$i] = $v->getTable()->dataToArray($v, !$mergeWithFields);
-          $rawValues[$i] = $v->getRawValues();
+  //       if($v instanceof AmModel){
+  //         // Si el registro es AmModel obtener sus valores como array
+  //         // asociativo o simple
+  //         $values[$i] = $v->getTable()->dataToArray($v, !$mergeWithFields);
+  //         $rawValues[$i] = $v->getRawValues();
 
-        }elseif($v instanceof AmObject)
-          // Si es una instancia de AmObjet se obtiene como array asociativo
-          $values[$i] = $v->toArray();
+  //       }elseif($v instanceof AmObject)
+  //         // Si es una instancia de AmObjet se obtiene como array asociativo
+  //         $values[$i] = $v->toArray();
 
-        // Si no se recibieron campos, entonces se mezclaran con los
-        // indices obtenidos
-        if($mergeWithFields)
-          $fields = merge_unique($fields, array_keys($values[$i]));
+  //       // Si no se recibieron campos, entonces se mezclaran con los
+  //       // indices obtenidos
+  //       if($mergeWithFields)
+  //         $fields = merge_unique($fields, array_keys($values[$i]));
 
-      }
+  //     }
 
-      // Preparar registros para crear SQL
-      $resultValues = array();
-      foreach($values as $i => $v){
+  //     // Preparar registros para crear SQL
+  //     $resultValues = array();
+  //     foreach($values as $i => $v){
 
-        // Asignar array vacío
-        $resultValues[$i] = array();
+  //       // Asignar array vacío
+  //       $resultValues[$i] = array();
 
-        // Agregar un valor por cada campo de la consulta
-        foreach($fields as $f){
-          $val = isset($v[$f])? $v[$f] : null;
-          // Obtener el valor del registro actual en el campo actual
-          if(isset($rawValues[$i][$f]) && $rawValues[$i][$f] === true){
-            $resultValues[$i][] = $val;
-          }else{
-            $resultValues[$i][] = $this->realScapeString($val);
-          }
-        }
+  //       // Agregar un valor por cada campo de la consulta
+  //       foreach($fields as $f){
+  //         $val = isset($v[$f])? $v[$f] : null;
+  //         // Obtener el valor del registro actual en el campo actual
+  //         if(isset($rawValues[$i][$f]) && $rawValues[$i][$f] === true){
+  //           $resultValues[$i][] = $val;
+  //         }else{
+  //           $resultValues[$i][] = $this->realScapeString($val);
+  //         }
+  //       }
 
-      }
+  //     }
 
-      // Asignar nuevos valores
-      $values = $resultValues;
+  //     // Asignar nuevos valores
+  //     $values = $resultValues;
 
-    }
+  //   }
 
-    // Si es una consulta
-    if($values instanceof AmQuery){
+  //   // Si es una consulta
+  //   if($values instanceof AmQuery){
 
-      // Los valores a insertar son el SQL de la consulta
-      $values = $values->sql();
+  //     // Los valores a insertar son el SQL de la consulta
+  //     $values = $values->sql();
 
-    }
+  //   }
 
-    // Obtener el listado de campos
-    foreach ($fields as $key => $field)
-      $fields[$key] = $this->getParseName($field);
+  //   // Obtener el listado de campos
+  //   foreach ($fields as $key => $field)
+  //     $fields[$key] = $this->getParseName($field);
 
-    return array(
-      'table' => $this->getParseObjectDatabaseName($table),
-      'values' => $this->sqlInsertValues($values),
-      'fields' => $this->sqlInsertFields($fields),
-    );
+  //   return array(
+  //     'table' => $this->getParseObjectDatabaseName($table),
+  //     'values' => $this->sqlInsertValues($values),
+  //     'fields' => $this->sqlInsertFields($fields),
+  //   );
 
-  }
+  // }
 
-  /**
-   * Inserta registros en una tabla.
-   * @param  array/AmQuery  $values Array hash de valores, array de instancias
-   *                                de AmModels, array de AmObjects o AmQuery
-   *                                con consulta select a insertar.
-   * @param  string/AmTable $model  Nombre del modelo o instancia de la tabla
-   *                                donde se insertará los valores.
-   * @param  array          $fields Campos que recibirán con los valores que se
-   *                                insertarán.
-   * @return bool/int               Boolean se se logró insertar los registros,
-   *                                o el id del registro insertado en el caso
-   *                                de corresponda.
-   */
-  public function insertInto($values, $model, array $fields = array()){
+  // /**
+  //  * Inserta registros en una tabla.
+  //  * @param  array/AmQuery  $values Array hash de valores, array de instancias
+  //  *                                de AmModels, array de AmObjects o AmQuery
+  //  *                                con consulta select a insertar.
+  //  * @param  string/AmTable $model  Nombre del modelo o instancia de la tabla
+  //  *                                donde se insertará los valores.
+  //  * @param  array          $fields Campos que recibirán con los valores que se
+  //  *                                insertarán.
+  //  * @return bool/int               Boolean se se logró insertar los registros,
+  //  *                                o el id del registro insertado en el caso
+  //  *                                de corresponda.
+  //  */
+  // public function insertInto($values, $model, array $fields = array()){
 
-    // Si los valores es una instancia de AmModel entonces convierte en un array
-    // que contenga solo dicha instancia.
-    if($values instanceof AmModel)
-      $values = array($values);
+  //   // Si los valores es una instancia de AmModel entonces convierte en un array
+  //   // que contenga solo dicha instancia.
+  //   if($values instanceof AmModel)
+  //     $values = array($values);
 
-    // Obtener el SQL para saber si es valido
-    $sql = $this->sqlInsert($values, $model, $fields);
+  //   // Obtener el SQL para saber si es valido
+  //   $sql = $this->sqlInsert($values, $model, $fields);
 
-    // Si el SQL está vacío o si se genera un error en la inserción devuelve
-    // falso
-    if(trim($sql) == '' || $this->execute($sql) === false)
-      return false;
+  //   // Si el SQL está vacío o si se genera un error en la inserción devuelve
+  //   // falso
+  //   if(trim($sql) == '' || $this->execute($sql) === false)
+  //     return false;
     
-    // De lo contrario retornar verdadero.
-    return true;
+  //   // De lo contrario retornar verdadero.
+  //   return true;
 
-  }
+  // }
 
-  public static function getLenByType(){
-
-  }
-
-  /**
-   * Devuelve la carpeta destino para los modelos base de los esquemas.
-   * @return string Directorio de modelos base.
-   */
-  public static function getSchemesDir(){
-
-    return self::$schemesDir;
-
-  }
-
-  /**
-   * Devuelve la carpeta destino para los modelos definidos.
-   * @return string Directorio de modelos.
-   */
-  public static function getModelsDir(){
-
-    return self::$modelsDir;
-
-  }
-  
   /**
    * Devuelve la configuración de un determinado esquema.
    * @param  string $name Nombre del esquema buscado.
@@ -1294,9 +1280,7 @@ abstract class AmScheme extends AmObject{
       $models = Am::getProperty('models');
 
       // Obtener el directorio del modelo actual.
-      $modelDir = realPath(
-        itemOr($model, $models, itemOr('', $models, self::getModelsDir()))
-      );
+      $modelDir = realPath(itemOr($model, $models, Am::getDir('models')));
 
       // Cargar los paths de clases en dicho directorio.
       Am::loadPathClases($modelDir);
@@ -1358,7 +1342,7 @@ abstract class AmScheme extends AmObject{
   abstract public function getError();
 
   /**
-   * Obtiene una cade con un valor seguro para el manejador de DBSM.
+   * Obtiene una cadena con un valor seguro para el manejador de DBSM.
    * @param  mixed  $value Valor que se desea procesar.
    * @return string        Valor procesado.
    */
@@ -1387,73 +1371,31 @@ abstract class AmScheme extends AmObject{
   abstract public function getLastInsertedId();
 
   /**
-   * Procesa un hash de propiedades de una columna de una tabla para
-   * convertirlo en una forma estandar.
-   * @param  hash $column Hash de atributos de la columna sin procesar.
-   * @return hash         Hash de atributos de la columna procesado.
+   * Ingresa el nombre de un objeto de la BD dentro de las comillas
+   * correspondientes.
+   * @param  string $name Nombre que se desea entre comillas.
+   * @return string       Nombre entre comillas.
    */
-  abstract public function sanitize(array $column);
+  abstract public function nameWrapper($name);
+
+  /**
+   * Devuelve una cadena de caracteres entre comillas.
+   * @param  string $string Cadena que se desea entre comillas.
+   * @return string         Cadena entre comillas.
+   */
+  abstract public function stringWrapper($string);
+
+  // /**
+  //  * Procesa un hash de propiedades de una columna de una tabla para
+  //  * convertirlo en una forma estandar.
+  //  * @param  hash $column Hash de atributos de la columna sin procesar.
+  //  * @return hash         Hash de atributos de la columna procesado.
+  //  */
+  // abstract public function sanitize(array $column);
 
   //////////////////////////////////////////////////////////////////////////////
   // Metodo para obtener los SQL a ejecutar.
   //////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Devuelve un nombre de un objeto de BD entendible para el DBSM.
-   * @param   string  $name   Nombre que se desea obtener.
-   * @return  string          Identificador válido.
-   */
-  abstract public function getParseName($name);
-
-  /**
-   * Obener el SQL de una query.
-   * @param  AmQuery $q Query.
-   * @return string     SQL de query.
-   */
-  abstract public function sqlSelectQuery(AmQuery $q);
-
-  /**
-   * SQL de valores para ejecutar un query insert.
-   * @param  array/AmQuery $values Array de hash de valores, object y/o
-   *                               instancias de AmModels o implementaciones.
-   *                               También puede puede ser un consulta select.
-   * @return string                SQL para los valores.
-   */
-  abstract protected function sqlInsertValues($values);
-
-  /**
-   * SQL para campos para ejecutar un query insert.
-   * @param  array  $fields Array con los nombres de los campos.
-   * @return string         SQL con los nombres de los campos.
-   */
-  abstract protected function sqlInsertFields(array $fields);
-
-  /**
-   * SQL para una query insert.
-   * @param  array/AmQuery  $values Array de hash de valores, object y/o
-   *                                instancias de AmModels o implementaciones.
-   *                                También puede puede ser un consulta select.
-   * @param  string/AmTable $table  Nombre o instancia de la tabla donde, o
-   *                                nombre del modelo donde se desea insertar
-   *                                los valores.
-   * @param  array          $fields Listado de campos.
-   * @return string                 SQL de la query insert.
-   */
-  abstract public function sqlInsert($values, $table, array $fields = array());
-
-  /**
-   * SQL para query update.
-   * @param  AmQuery $q Query de la que se desea obtener el SQL.
-   * @return string     SQL del query.
-   */
-  abstract public function sqlUpdateQuery(AmQuery $q);
-
-  /**
-   * SQL para un query delete.
-   * @param  AmQuery $q [description]
-   * @return string     [description]
-   */
-  abstract public function sqlDeleteQuery(AmQuery $q);
 
   /**
    * SQL para setear una variable del DBSM
@@ -1471,70 +1413,6 @@ abstract class AmScheme extends AmObject{
   abstract public function sqlSelectDatabase();
 
   /**
-   * SQL para la clausula SELECT de una query de selección.
-   * @param  AmQuery $q Query del que se desea obtener la clausula.
-   * @return string     SQL de la clausula.
-   */
-  abstract public function sqlSelect(AmQuery $q);
-  
-  /**
-   * SQL para la clausula FROM de una query de selección o actualización.
-   * @param  AmQuery $q Query del que se desea obtener la clausula.
-   * @return string     SQL de la clausula.
-   */
-  abstract public function sqlFrom(AmQuery $q);
-  
-  /**
-   * SQL para la clausulas JOINS de una query de selección o actualización.
-   * @param  AmQuery $q Query del que se desea obtener la clausula.
-   * @return string     SQL de la clausula.
-   */
-  abstract public function sqlJoins(AmQuery $q);
-  
-  /**
-   * SQL para la clausula WHERE de una query de selección, actualización o
-   * eliminación.
-   * @param  AmQuery $q Query del que se desea obtener la clausula.
-   * @return string     SQL de la clausula.
-   */
-  abstract public function sqlWhere(AmQuery $q);
-  
-  /**
-   * SQL para la clausula GROUP BY de una query de selección.
-   * @param  AmQuery $q Query del que se desea obtener la clausula.
-   * @return string     SQL de la clausula.
-   */
-  abstract public function sqlGroups(AmQuery $q);
-  
-  /**
-   * SQL para la clausula ORDER BY de una query de selección.
-   * @param  AmQuery $q Query del que se desea obtener la clausula.
-   * @return string     SQL de la clausula.
-   */
-  abstract public function sqlOrders(AmQuery $q);
-  
-  /**
-   * SQL para la clausula LIMIT de una query de selección.
-   * @param  AmQuery $q Query del que se desea obtener la clausula.
-   * @return string     SQL de la clausula.
-   */
-  abstract public function sqlLimit(AmQuery $q);
-  
-  /**
-   * SQL para la clausula OFFSET de una query de selección.
-   * @param  AmQuery $q Query del que se desea obtener la clausula.
-   * @return string     SQL de la clausula.
-   */
-  abstract public function sqlOffSet(AmQuery $q);
-  
-  /**
-   * SQL para la clausula SET de una query de actualización.
-   * @param  AmQuery $q Query del que se desea obtener la clausula.
-   * @return string     SQL de la clausula.
-   */
-  abstract public function sqlSets(AmQuery $q);
-
-  /**
    * SQL para crear una BD.
    * @param  bool   $ifNotExists Si se agregará o no la clausula IF NOT EXISTS.
    * @return string              SQL para la operación.
@@ -1546,46 +1424,6 @@ abstract class AmScheme extends AmObject{
    * @return string SQL para la operación.
    */
   abstract public function sqlDrop();
-  
-  /**
-   * SQL para obtener la información de una BD.
-   * @return string SQL para la operación.
-   */
-  abstract public function sqlGetInfo();
-
-  /**
-   * SQL para obtener la descripción de las tablas del esquema.
-   * @return string SQL para la operación.
-   */
-  abstract public function sqlGetTables();
-  
-  /**
-   * SQL para obtener la descripción de las columnas de una tabla.
-   * @param  string $table Nombre de la tabla.
-   * @return string        SQL para la operación.
-   */
-  abstract public function sqlGetTableColumns($table);
-  
-  /**
-   * SQL para obtener la descripción de las claves unicas de una tabla.
-   * @param  string $table Nombre de la tabla.
-   * @return string        SQL para la operación.
-   */
-  abstract public function sqlGetTableUniques($table);
-  
-  /**
-   * SQL para obtener la descripción de las claves foráneas de una tabla.
-   * @param  string $table Nombre de la tabla.
-   * @return string        SQL para la operación.
-   */
-  abstract public function sqlGetTableForeignKeys($table);
-  
-  /**
-   * SQL para obtener la descripción de las referencias a una tabla.
-   * @param  string $table Nombre de la tabla.
-   * @return string        SQL para la operación.
-   */
-  abstract public function sqlGetTableReferences($table);
 
   /**
    * SQL para indicar el set de caracteres.
@@ -1646,5 +1484,166 @@ abstract class AmScheme extends AmObject{
    * @return string           SQL para la operación.
    */
   abstract public function sqlDropView($q, $ifExists = true);
+
+  // /**
+  //  * Devuelve un nombre de un objeto de BD entendible para el DBSM.
+  //  * @param   string  $name   Nombre que se desea obtener.
+  //  * @return  string          Identificador válido.
+  //  */
+  // abstract public function getSanitize($string);
+
+  // /**
+  //  * Obener el SQL de una query.
+  //  * @param  AmQuery $q Query.
+  //  * @return string     SQL de query.
+  //  */
+  // abstract public function sqlSelectQuery(AmQuery $q);
+
+  // /**
+  //  * SQL de valores para ejecutar un query insert.
+  //  * @param  array/AmQuery $values Array de hash de valores, object y/o
+  //  *                               instancias de AmModels o implementaciones.
+  //  *                               También puede puede ser un consulta select.
+  //  * @return string                SQL para los valores.
+  //  */
+  // abstract protected function sqlInsertValues($values);
+
+  // /**
+  //  * SQL para campos para ejecutar un query insert.
+  //  * @param  array  $fields Array con los nombres de los campos.
+  //  * @return string         SQL con los nombres de los campos.
+  //  */
+  // abstract protected function sqlInsertFields(array $fields);
+
+  // /**
+  //  * SQL para una query insert.
+  //  * @param  array/AmQuery  $values Array de hash de valores, object y/o
+  //  *                                instancias de AmModels o implementaciones.
+  //  *                                También puede puede ser un consulta select.
+  //  * @param  string/AmTable $table  Nombre o instancia de la tabla donde, o
+  //  *                                nombre del modelo donde se desea insertar
+  //  *                                los valores.
+  //  * @param  array          $fields Listado de campos.
+  //  * @return string                 SQL de la query insert.
+  //  */
+  // abstract public function sqlInsert($values, $table, array $fields = array());
+
+  // /**
+  //  * SQL para query update.
+  //  * @param  AmQuery $q Query de la que se desea obtener el SQL.
+  //  * @return string     SQL del query.
+  //  */
+  // abstract public function sqlUpdateQuery(AmQuery $q);
+
+  // /**
+  //  * SQL para un query delete.
+  //  * @param  AmQuery $q [description]
+  //  * @return string     [description]
+  //  */
+  // abstract public function sqlDeleteQuery(AmQuery $q);
+
+  // /**
+  //  * SQL para la clausula SELECT de una query de selección.
+  //  * @param  AmQuery $q Query del que se desea obtener la clausula.
+  //  * @return string     SQL de la clausula.
+  //  */
+  // abstract public function sqlSelect(AmQuery $q);
+  
+  // /**
+  //  * SQL para la clausula FROM de una query de selección o actualización.
+  //  * @param  AmQuery $q Query del que se desea obtener la clausula.
+  //  * @return string     SQL de la clausula.
+  //  */
+  // abstract public function sqlFrom(AmQuery $q);
+  
+  // /**
+  //  * SQL para la clausulas JOINS de una query de selección o actualización.
+  //  * @param  AmQuery $q Query del que se desea obtener la clausula.
+  //  * @return string     SQL de la clausula.
+  //  */
+  // abstract public function sqlJoins(AmQuery $q);
+  
+  // /**
+  //  * SQL para la clausula WHERE de una query de selección, actualización o
+  //  * eliminación.
+  //  * @param  AmQuery $q Query del que se desea obtener la clausula.
+  //  * @return string     SQL de la clausula.
+  //  */
+  // abstract public function sqlWhere(AmQuery $q);
+  
+  // /**
+  //  * SQL para la clausula GROUP BY de una query de selección.
+  //  * @param  AmQuery $q Query del que se desea obtener la clausula.
+  //  * @return string     SQL de la clausula.
+  //  */
+  // abstract public function sqlGroups(AmQuery $q);
+  
+  // /**
+  //  * SQL para la clausula ORDER BY de una query de selección.
+  //  * @param  AmQuery $q Query del que se desea obtener la clausula.
+  //  * @return string     SQL de la clausula.
+  //  */
+  // abstract public function sqlOrders(AmQuery $q);
+  
+  // /**
+  //  * SQL para la clausula LIMIT de una query de selección.
+  //  * @param  AmQuery $q Query del que se desea obtener la clausula.
+  //  * @return string     SQL de la clausula.
+  //  */
+  // abstract public function sqlLimit(AmQuery $q);
+  
+  // /**
+  //  * SQL para la clausula OFFSET de una query de selección.
+  //  * @param  AmQuery $q Query del que se desea obtener la clausula.
+  //  * @return string     SQL de la clausula.
+  //  */
+  // abstract public function sqlOffSet(AmQuery $q);
+  
+  // /**
+  //  * SQL para la clausula SET de una query de actualización.
+  //  * @param  AmQuery $q Query del que se desea obtener la clausula.
+  //  * @return string     SQL de la clausula.
+  //  */
+  // abstract public function sqlSets(AmQuery $q);
+  
+  /**
+   * SQL para obtener la información de una BD.
+   * @return string SQL para la operación.
+   */
+  abstract public function sqlGetInfo();
+
+  // /**
+  //  * SQL para obtener la descripción de las tablas del esquema.
+  //  * @return string SQL para la operación.
+  //  */
+  // abstract public function sqlGetTables();
+  
+  // /**
+  //  * SQL para obtener la descripción de las columnas de una tabla.
+  //  * @param  string $table Nombre de la tabla.
+  //  * @return string        SQL para la operación.
+  //  */
+  // abstract public function sqlGetTableColumns($table);
+  
+  // /**
+  //  * SQL para obtener la descripción de las claves unicas de una tabla.
+  //  * @param  string $table Nombre de la tabla.
+  //  * @return string        SQL para la operación.
+  //  */
+  // abstract public function sqlGetTableUniques($table);
+  
+  // /**
+  //  * SQL para obtener la descripción de las claves foráneas de una tabla.
+  //  * @param  string $table Nombre de la tabla.
+  //  * @return string        SQL para la operación.
+  //  */
+  // abstract public function sqlGetTableForeignKeys($table);
+  
+  // /**
+  //  * SQL para obtener la descripción de las referencias a una tabla.
+  //  * @param  string $table Nombre de la tabla.
+  //  * @return string        SQL para la operación.
+  //  */
+  // abstract public function sqlGetTableReferences($table);
 
 }

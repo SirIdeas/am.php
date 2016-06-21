@@ -74,6 +74,7 @@ final class Am{
     $mergeFunctions = array(
       'autoload' => 'array_merge',
       'requires' => 'merge_if_snd_first_not_false',
+      'dirs' => 'merge_unique',
       'env' => 'merge_if_both_are_array',
       'tasks' => 'array_merge_recursive',
       'formats' => 'array_merge',
@@ -483,6 +484,19 @@ final class Am{
 
     // Devolver propiedad
     return itemOr($property, self::$confs, $default);
+
+  }
+
+  /**
+   * Devuelve el directorio correspondiente a un nombre
+   * @param  string $name Nombre del directorio deseado.
+   * @return return       Directorio deseado o null si no existe.
+   */
+  public static function getDir($name){
+
+    $dirs = self::getProperty('dirs');
+
+    return itemOr($name, $dirs);
 
   }
 

@@ -30,13 +30,18 @@ return array(
 
     // Directorios de los modelos.
     'models' => array(
-      '' => 'models',
     ),
 
     // Configuraciones de los esquemas
     'schemes' => array(),
 
-    // Confivuraciones de los validadores.
+    // Directorios generales
+    'dirs' => array(
+      'models' => 'models',
+      'schemes' => 'schemes',
+    ),
+
+    // Configuraciones de los validadores.
     'validators' => array(
       'messages' => array(
         'bit' => 'Formato de bit no coincide',
