@@ -208,6 +208,30 @@ abstract class AmScheme extends AmObject{
   }
 
   /**
+   * Prepara el nombre complete de un objeto. Primero los separa por partes en
+   * puntos luego los pasa por la función <code>nameWrapperAndRealScape</code>.
+   * @param  string $name Nombre relativo del objeto.
+   * @return string       Nombre procesado.
+   */
+  public function nameWrapperAndRealScapeComplete($name){
+
+    // Dividir en puntos
+    $nameArr = explode('.', (string)$name);
+
+    // Preparar el nombre de cada parte del campo
+    foreach ($nameArr as $key => $value) {
+      if(!isNameValid($value))
+        throw Am::e('AMSCHEME_INVALID_NAME', $name);
+        
+      $nameArr[$key] = $this->nameWrapperAndRealScape($value);
+    }
+
+    // Pegar campos
+    return implode('.', $nameArr);
+
+  }
+
+  /**
    * Devuelve una cadena espacada y entre comillas.
    * @param  string $string Cadena que se desea escapar y colocar entre
    *                        comillas.
@@ -481,12 +505,9 @@ abstract class AmScheme extends AmObject{
    * @param  string/AmTable/AmQuey $table Tabla de la que se desea obtener le
    *                                      nombre. Puede ser un string y una
    *                                      instancia de AmTable.
-   * @param  bool                  $only  Si se devuelve el nombre de la tabla
-   *                                      relativo al nombre de la base de
-   *                                      datos.
    * @return string                       Nombre de tabla obtenido.
    */
-  public function getDatabaseObjectSanitize($table, $only = false){
+  public function getDatabaseObjectSanitize($table){
 
     // Si es una instancia de AmTable se debe obtener el nombre
     if($table instanceof AmQuery)
@@ -496,19 +517,14 @@ abstract class AmScheme extends AmObject{
     if($table instanceof AmTable)
       $table = $table->getTableName();
 
-    // Si es un nombre válido
-    if(isNameValid($table)){
+    // Si no es un nombre válido
+    if(!isNameValid($table))
+      return $this->nameWrapperAndRealScapeComplete($table);
 
-      $table = $this->nameWrapperAndRealScape($table);
+    $table = $this->nameWrapperAndRealScapeComplete($table);
 
-      // Si se desea obtener solo el nombre
-      if($only)
-        return $table;
-
-      // Retornar el nombre de la tabla con la BD
-      return $this->getDatabaseSanitize().'.'.$table;
-
-    }
+    // Retornar el nombre de la tabla
+    return $table;
 
   }
   
@@ -968,33 +984,33 @@ abstract class AmScheme extends AmObject{
 
   }
 
-  // /**
-  //  * Obtiene el SQL de una Query dependiendo de su tipo.
-  //  * @param  AmQuery $q Instancia de query.
-  //  * @return string     SQL obtenido.
-  //  */
-  // public function sqlOf(AmQuery $q){
-  //   $type = $q->getType();
+  /**
+   * Obtiene el SQL de una Query dependiendo de su tipo.
+   * @param  AmQuery $q Instancia de query.
+   * @return string     SQL obtenido.
+   */
+  public function sqlOf(AmQuery $q){
+    $type = $q->getType();
 
-  //   // Consulta de seleción
-  //   if($type == 'select')
-  //     return $this->sqlSelectQuery($q);
+    // Consulta de seleción
+    if($type == 'select')
+      return $this->sqlSelectQuery($q);
 
-  //   // Consulta de inserción
-  //   if($type == 'insert')
-  //     return $this->sqlInsert($q, $q->getInsertTable(), $q->getInsertFields());
+    // // Consulta de inserción
+    // if($type == 'insert')
+    //   return $this->sqlInsert($q, $q->getInsertTable(), $q->getInsertFields());
 
-  //   // Consulta de actualización
-  //   if($type == 'update')
-  //     return $this->sqlUpdateQuery($q);
+    // // Consulta de actualización
+    // if($type == 'update')
+    //   return $this->sqlUpdateQuery($q);
 
-  //   // Consulta de eliminación
-  //   if($type == 'delete')
-  //     return $this->sqlDeleteQuery($q);
+    // // Consulta de eliminación
+    // if($type == 'delete')
+    //   return $this->sqlDeleteQuery($q);
 
-  //   throw Am::e('AMSCHEME_QUERY_TYPE_UNKNOW', var_export($q, true));
+    throw Am::e('AMSCHEME_QUERY_TYPE_UNKNOW', var_export($q, true));
 
-  // }
+  }
 
   // /**
   //  * Funcion para preparar la ejeción de un insert.
@@ -1142,6 +1158,29 @@ abstract class AmScheme extends AmObject{
   //   return true;
 
   // }
+  // 
+  // 
+  /**
+   * Devuelve un alias no existente en una colección. Si en la colección existe
+   * algún key igual al alias se le irá agregando contador al final hasta
+   * obtener uno que no exista.
+   * @param  array  $collection Colección donde se buscará si el alias existe.
+   * @param  string $alias      Alias base.
+   * @return string             Alias generados
+   */
+  public static function alias(array $collection, $alias){
+
+    if(!isNameValid($alias))
+      throw Am::e('AMSCHEME_INVALID_ALIAS', $alias);
+
+    $i = 0;
+    $finalAlias = $alias;
+    while(isset($collection[$finalAlias]))
+      $finalAlias = $alias . $i++;
+
+    return $finalAlias;
+
+  }
 
   /**
    * Devuelve la configuración de un determinado esquema.
@@ -1492,12 +1531,12 @@ abstract class AmScheme extends AmObject{
   //  */
   // abstract public function getSanitize($string);
 
-  // /**
-  //  * Obener el SQL de una query.
-  //  * @param  AmQuery $q Query.
-  //  * @return string     SQL de query.
-  //  */
-  // abstract public function sqlSelectQuery(AmQuery $q);
+  /**
+   * Obener el SQL de una query.
+   * @param  AmQuery $q Query.
+   * @return string     SQL de query.
+   */
+  abstract public function sqlSelectQuery(AmQuery $q);
 
   // /**
   //  * SQL de valores para ejecutar un query insert.
@@ -1542,62 +1581,62 @@ abstract class AmScheme extends AmObject{
   //  */
   // abstract public function sqlDeleteQuery(AmQuery $q);
 
-  // /**
-  //  * SQL para la clausula SELECT de una query de selección.
-  //  * @param  AmQuery $q Query del que se desea obtener la clausula.
-  //  * @return string     SQL de la clausula.
-  //  */
-  // abstract public function sqlSelect(AmQuery $q);
+  /**
+   * SQL para la clausula SELECT de una query de selección.
+   * @param  AmQuery $q Query del que se desea obtener la clausula.
+   * @return string     SQL de la clausula.
+   */
+  abstract public function sqlSelect(AmQuery $q);
   
-  // /**
-  //  * SQL para la clausula FROM de una query de selección o actualización.
-  //  * @param  AmQuery $q Query del que se desea obtener la clausula.
-  //  * @return string     SQL de la clausula.
-  //  */
-  // abstract public function sqlFrom(AmQuery $q);
+  /**
+   * SQL para la clausula FROM de una query de selección o actualización.
+   * @param  AmQuery $q Query del que se desea obtener la clausula.
+   * @return string     SQL de la clausula.
+   */
+  abstract public function sqlFrom(AmQuery $q);
   
-  // /**
-  //  * SQL para la clausulas JOINS de una query de selección o actualización.
-  //  * @param  AmQuery $q Query del que se desea obtener la clausula.
-  //  * @return string     SQL de la clausula.
-  //  */
-  // abstract public function sqlJoins(AmQuery $q);
+  /**
+   * SQL para la clausulas JOINS de una query de selección o actualización.
+   * @param  AmQuery $q Query del que se desea obtener la clausula.
+   * @return string     SQL de la clausula.
+   */
+  abstract public function sqlJoins(AmQuery $q);
   
-  // /**
-  //  * SQL para la clausula WHERE de una query de selección, actualización o
-  //  * eliminación.
-  //  * @param  AmQuery $q Query del que se desea obtener la clausula.
-  //  * @return string     SQL de la clausula.
-  //  */
-  // abstract public function sqlWhere(AmQuery $q);
+  /**
+   * SQL para la clausula WHERE de una query de selección, actualización o
+   * eliminación.
+   * @param  AmQuery $q Query del que se desea obtener la clausula.
+   * @return string     SQL de la clausula.
+   */
+  abstract public function sqlWhere(AmQuery $q);
   
-  // /**
-  //  * SQL para la clausula GROUP BY de una query de selección.
-  //  * @param  AmQuery $q Query del que se desea obtener la clausula.
-  //  * @return string     SQL de la clausula.
-  //  */
-  // abstract public function sqlGroups(AmQuery $q);
+  /**
+   * SQL para la clausula GROUP BY de una query de selección.
+   * @param  AmQuery $q Query del que se desea obtener la clausula.
+   * @return string     SQL de la clausula.
+   */
+  abstract public function sqlGroups(AmQuery $q);
   
-  // /**
-  //  * SQL para la clausula ORDER BY de una query de selección.
-  //  * @param  AmQuery $q Query del que se desea obtener la clausula.
-  //  * @return string     SQL de la clausula.
-  //  */
-  // abstract public function sqlOrders(AmQuery $q);
+  /**
+   * SQL para la clausula ORDER BY de una query de selección.
+   * @param  AmQuery $q Query del que se desea obtener la clausula.
+   * @return string     SQL de la clausula.
+   */
+  abstract public function sqlOrders(AmQuery $q);
   
-  // /**
-  //  * SQL para la clausula LIMIT de una query de selección.
-  //  * @param  AmQuery $q Query del que se desea obtener la clausula.
-  //  * @return string     SQL de la clausula.
-  //  */
-  // abstract public function sqlLimit(AmQuery $q);
+  /**
+   * SQL para la clausula LIMIT de una query de selección.
+   * @param  AmQuery $q Query del que se desea obtener la clausula.
+   * @return string     SQL de la clausula.
+   */
+  abstract public function sqlLimit(AmQuery $q);
   
-  // /**
-  //  * SQL para la clausula OFFSET de una query de selección.
-  //  * @param  AmQuery $q Query del que se desea obtener la clausula.
-  //  * @return string     SQL de la clausula.
-  //  */
-  // abstract public function sqlOffSet(AmQuery $q);
+  /**
+   * SQL para la clausula OFFSET de una query de selección.
+   * @param  AmQuery $q Query del que se desea obtener la clausula.
+   * @return string     SQL de la clausula.
+   */
+  abstract public function sqlOffset(AmQuery $q);
   
   // /**
   //  * SQL para la clausula SET de una query de actualización.

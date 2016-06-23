@@ -344,8 +344,8 @@ class AmQuery extends AmObject{
    */
   public function setSelects(array $value){
 
-    $this->selects = $value;
-    return $this;
+    $this->selects = array();
+    return $this->setArrayAttribute('selectAs', array($value));
 
   }
 
@@ -356,8 +356,8 @@ class AmQuery extends AmObject{
    */
   public function setFrom(array $value){
 
-    $this->froms = $value;
-    return $this;
+    $this->froms = array();
+    return $this->setArrayAttribute('fromAs', array($value));
 
   }
 
@@ -522,7 +522,7 @@ class AmQuery extends AmObject{
       }
 
       // Si tiene un nombre válido retornar el nombre de la tabla
-      if(isNameValid($from))
+      if(!$returnTableInstance && isNameValid($from))
         return $from;
       
     }
@@ -579,24 +579,13 @@ class AmQuery extends AmObject{
    * @return $this
    */
   public function selectAs($field, $alias = null){
-
     $this->type = 'select';
 
-    // Si no se indicó el argumento $alias
-    if(empty($alias)){
-      if (isNameValid($field)){
-        // Agregar en una posición específica
-        $this->selects[$field] = $field;
-      }else{
-        // Agregar al final
-        $this->selects[] = $field;
-      }
-    }elseif(isNameValid($alias)){
-      // Agregar en una posición específica
+    // Guardar select
+    if(isset($alias)){
       $this->selects[$alias] = $field;
     }else{
-      // Agregar al final
-      $this->selects[$alias] = $field;
+      $this->selects[] = $field;
     }
 
     return $this;
@@ -621,41 +610,11 @@ class AmQuery extends AmObject{
    */
   public function fromAs($from, $alias = null){
 
-    // Asignacion del from
-    if(empty($alias)){
-
-      // Si no se indicó el parametro $alias
-      if($from instanceof AmQuery){
-        // Si es un query se agrega al final
-        $alias = $from->getModel();
-        if(is_subclass_of($alias, 'AmModel'))
-          $alias = $alias::me()->getTableName();
-      }elseif($from instanceof AmTable){
-        // Si es nua tabla se asigna en una posicion especifica
-        $alias = $from->getTableName();
-      }elseif (isNameValid($from)){
-        // Se asigna en una posicion especifica
-        $alias = $from;
-      }else{
-        // Agregar al final
-        $alias = null;
-      }
-
-    }elseif(!isNameValid($alias)){
-      $alias = null;
-    }
-
-    if(!isset($alias))
+    // Guardar select
+    if(isset($alias)){
+      $this->froms[$alias] = $from;
+    }else{
       $this->froms[] = $from;
-    else{
-
-      $i = 0;
-      $finalAlias = $alias;
-      while(isset($this->froms[$finalAlias]))
-        $finalAlias = $alias . $i++;
-
-      $this->froms[$finalAlias] = $from;
-
     }
 
     return $this;

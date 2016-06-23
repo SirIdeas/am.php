@@ -374,26 +374,26 @@ final class MysqlScheme extends AmScheme{
     
   // }
 
-  // /**
-  //  * Devuelve el SQL de un query SELECT
-  //  * @param  AmQuery $q Query.
-  //  * @return string     SQL del query.
-  //  */
-  // public function sqlSelectQuery(AmQuery $q){
+  /**
+   * Devuelve el SQL de un query SELECT
+   * @param  AmQuery $q Query.
+   * @return string     SQL del query.
+   */
+  public function sqlSelectQuery(AmQuery $q){
 
-  //   return !empty($q->sql) ? $q->sql :
-  //     trim(implode(' ', array(
-  //     trim($this->sqlSelect($q)),
-  //     trim($this->sqlFrom($q)),
-  //     trim($this->sqlJoins($q)),
-  //     trim($this->sqlWhere($q)),
-  //     trim($this->sqlGroups($q)),
-  //     trim($this->sqlOrders($q)),
-  //     trim($this->sqlLimit($q)),
-  //     trim($this->sqlOffSet($q))
-  //   )));
+    return !empty($q->sql) ? $q->sql :
+      trim(implode(' ', array(
+      trim($this->sqlSelect($q)),
+      trim($this->sqlFrom($q)),
+      // trim($this->sqlJoins($q)),
+      // trim($this->sqlWhere($q)),
+      // trim($this->sqlGroups($q)),
+      // trim($this->sqlOrders($q)),
+      // trim($this->sqlLimit($q)),
+      // trim($this->sqlOffset($q))
+    )));
 
-  // }
+  }
 
   // /**
   //  * Devuelve el SQL de la sección VALUES para un query INSERT.
@@ -503,215 +503,258 @@ final class MysqlScheme extends AmScheme{
 
   // }
 
-  // /**
-  //  * SQL Para la cláusula SELECT.
-  //  * @param  AmQuery $q Query.
-  //  * @return string     SQL correspondiente.
-  //  */
-  // public function sqlSelect(AmQuery $q){
+  /**
+   * SQL Para la cláusula SELECT.
+   * @param  AmQuery $q Query.
+   * @return string     SQL correspondiente.
+   */
+  public function sqlSelect(AmQuery $q){
 
-  //   $selectsOri = $q->getSelects();  // Obtener argmuentos en la clausula SELECT
-  //   $distinct = $q->getDistinct();
-  //   $selects = array();  // Lista de retorno
+    $selectsOri = $q->getSelects();  // Obtener argmuentos en la clausula SELECT
+    $distinct = $q->getDistinct();
+    $selects = array();  // Lista de retorno
 
-  //   // Recorrer argumentos del SELECT
-  //   foreach($selectsOri as $alias => $field){
+    // Recorrer argumentos del SELECT
+    foreach($selectsOri as $alias => $field){
 
-  //     // Si es una consulta se incierra entre parentesis
-  //     if($field instanceof AmQuery)
-  //       $field = "({$field->sql()})";
+      // Obtener un alias alternativo
+      if(empty($alias)){
+        $alias = str_replace('.', '_', (string)$field);
+      }
 
-  //     // Agregar parametro AS
-  //     $selects[] = !empty($alias) ? "{$field} AS '{$alias}'" :
-  //       (string)$field;
+      // Obtener alias
+      $alias = AmScheme::alias($selects, $alias);
 
-  //   }
+      // Si es una consulta se incierra entre parentesis
+      if($field instanceof AmQuery){
+        $field = "({$field->sql()})";
+      }else{
+        // Obtener el objeto de esquema
+        $field = $this->nameWrapperAndRealScapeComplete($field);
+      }
 
-  //   // Unir campos
-  //   $selects = trim(implode(', ', $selects));
+      $aliasNew = $this->stringWrapper($alias);
+      $field = "{$field} AS {$aliasNew}";
 
-  //   // Si no se seleccionó ningun campo entonces se tomaran todos
-  //   $selects = empty($selects) ? '*' : $selects;
+      // Agregar parametro AS
+      $selects[$alias] = $field;
 
-  //   // Agregar SELECT
-  //   return 'SELECT '.trim(($distinct ? 'DISTINCT ' : '').$selects);
+    }
 
-  // }
+    // Unir campos
+    $selects = trim(implode(', ', $selects));
 
-  // /**
-  //  * Obtener el SQL para la clausula FROM.
-  //  * @param  AmQuery $q Query.
-  //  * @return string     SQL correspondiente.
-  //  */
-  // public function sqlFrom(AmQuery $q){
+    // Si no se seleccionó ningun campo entonces se tomaran todos
+    $selects = empty($selects) ? '*' : $selects;
 
-  //   $fromsOri = $q->getFroms();   // Listado de argumentos de la clausula FROM
-  //   $froms = array();             // Listado de retorno
+    // Agregar SELECT
+    return 'SELECT '.trim(($distinct ? 'DISTINCT ' : '').$selects);
 
-  //   // Recorrer lista del FROM
-  //   foreach($fromsOri as $alias => $from){
+  }
 
-  //     if($from instanceof AmTable || isNameValid($from)){
-  //       // Si es una tabla se concatena el nombre de la BD y el de la tabla como strin
-  //       $from = $this->getParseObjectDatabaseName($from);
-  //     }elseif($from instanceof AmQuery){
-  //       // Si es una consulta se encierra en parentesis
-  //       $from = "({$from->sql()})";
-  //     }elseif(false !== (preg_match('/^([a-zA-Z_][a-zA-Z0-9_]*)\.([a-zA-Z_][a-zA-Z0-9_]*)$/', $from, $matches)!= 0)){
-  //       // Dividir por el punto
-  //       $from = $this->getParseName($matches[1]).'.'.$this->getParseName($matches[2]);
-  //     }elseif(is_string($from)){
-  //       $from = $from = "({$from})";
-  //     }
+  /**
+   * Obtener el SQL para la clausula FROM.
+   * @param  AmQuery $q Query.
+   * @return string     SQL correspondiente.
+   */
+  public function sqlFrom(AmQuery $q){
 
-  //     // Agregar parametro AS
-  //     $froms[] = isNameValid($alias) ? "{$from} AS {$alias}" : $from;
+    $fromsOri = $q->getFroms();   // Listado de argumentos de la clausula FROM
+    $froms = array();             // Listado de retorno
+    $requireAlias = false;
 
-  //   }
+    // Recorrer lista del FROM
+    foreach($fromsOri as $alias => $from){
 
-  //   // Unir argumentos procesados
-  //   $froms = trim(implode(', ', $froms));
+      // Asignacion del from
+      if(empty($alias)){
 
-  //   // Agregar FROM
-  //   return (empty($froms) ? '' : "FROM {$froms}");
+        if($from instanceof AmQuery){
+          // Si es un query se agrega al final
+          $alias = $from->getModel();
+          if(is_subclass_of($alias, 'AmModel'))
+            $alias = $alias::me()->getTableName();
 
-  // }
+        }elseif($from instanceof AmTable){
+          // Si es nua tabla se asigna en una posicion especifica
+          $alias = $from->getTableName();
 
-  // /**
-  //  * Obtener el SQL para la clausula WHERE.
-  //  * @param  AmQuery $q Query.
-  //  * @return string     SQL correspondiente.
-  //  */
-  // public function sqlWhere(AmQuery $q){
+        }else{
+          // Se asigna en una posicion especifica
+          $alias = str_replace('.', '_', (string)$from);
+          
+        }
 
-  //   $where = trim($this->parseWhere($q->getWheres()));
+      }
 
-  //   return (empty($where) ? '' : "WHERE {$where}");
+      // Obtener alias
+      $alias = AmScheme::alias($froms, $alias);
 
-  // }
+      if($from instanceof AmTable || isNameValid($from)){
+        // Si es una tabla se concatena el nombre de la BD y el de la tabla como strin
+        $from = $this->getDatabaseObjectSanitize($from);
+      }elseif($from instanceof AmQuery){
+        // Si es una consulta se encierra en parentesis
+        $from = "({$from->sql()})";
+        $requireAlias = true;
+      }else{
+        $from = $this->nameWrapperAndRealScapeComplete($from);
+      }
 
-  // /**
-  //  * Obtener el SQL para la clausula JOIN.
-  //  * @param  AmQuery $q Query.
-  //  * @return string     SQL correspondiente.
-  //  */
-  // public function sqlJoins(AmQuery $q){
+      // Generar error si el se require el alias y no ha sido indicado
+      if($requireAlias && !isNameValid($alias)){
+        throw Am::e('AMSCHEME_INVALID_ALIAS', $alias);
+      }
 
-  //   // Resultado
-  //   $joins = $q->getJoins();
-  //   $joinsResult = array();
+      // Agregar parametro AS
+      $aliasNew = $this->stringWrapper($alias);
+      $froms[$alias] = "{$from} AS {$aliasNew}";
 
-  //   // Recorrer cada join
-  //   foreach($joins as $join){
+    }
 
-  //       // Declarar posiciones del array como variables
-  //       // Define $on, $as y $table
-  //       extract($join);
+    // Unir argumentos procesados
+    $froms = trim(implode(', ', $froms));
 
-  //       // Eliminar espacios iniciales y finales
-  //       $on = trim($on);
-  //       $as = trim($as);
+    // Agregar FROM
+    return (empty($froms) ? '' : "FROM {$froms}");
 
-  //       if($table instanceof AmQuery){
-  //         // Si es una consulta insertar SQL dentro de parenteris
-  //         $table = "({$table->sql()})";
-  //         if(!isset($as)){
-  //           $as = $table->getModel();
-  //           if(is_subclass_of($as, 'AmModel'))
-  //             $as = $as::me()->getTableName();
-  //         }
-  //       }elseif($table instanceof AmTable){
-  //         // Si es una tabla obtener el nombre
-  //         $table = $table->getTableName();
-  //         if(!isset($as))
-  //           $as = $table;
-  //       }
+  }
 
-  //       // Si los parametros quedan vacios
-  //       if(!empty($on)) $on = " ON {$on}";
-  //       if(!empty($as)) $as = " AS {$as}";
+  /**
+   * Obtener el SQL para la clausula WHERE.
+   * @param  AmQuery $q Query.
+   * @return string     SQL correspondiente.
+   */
+  public function sqlWhere(AmQuery $q){
 
-  //       // Agrgar parte de join
-  //       $joinsResult[] = " $type JOIN {$table}{$as}{$on}";
+    $where = trim($this->parseWhere($q->getWheres()));
 
-  //       // Liberar variables
-  //       unset($table, $as, $on);
+    return (empty($where) ? '' : "WHERE {$where}");
 
-  //   }
+  }
 
-  //   // Unir todas las partes
-  //   return trim(implode(' ', $joinsResult));
+  /**
+   * Obtener el SQL para la clausula JOIN.
+   * @param  AmQuery $q Query.
+   * @return string     SQL correspondiente.
+   */
+  public function sqlJoins(AmQuery $q){
 
-  // }
+    // Resultado
+    $joins = $q->getJoins();
+    $joinsResult = array();
 
-  // /**
-  //  * Obtener el SQL para la clausula ORDER BY.
-  //  * @param  AmQuery $q Query.
-  //  * @return string     SQL correspondiente.
-  //  */
-  // public function sqlOrders(AmQuery $q){
+    // Recorrer cada join
+    foreach($joins as $join){
 
-  //   $ordersOri = $q->getOrders(); // Obtener orders agregados
-  //   $orders = array();  // Orders para retorno
+        // Declarar posiciones del array como variables
+        // Define $on, $as y $table
+        extract($join);
 
-  //   // Recorrer lista de campos para ordenar
-  //   foreach($ordersOri as $order => $dir){
-  //     $orders[] = "{$order} {$dir}";
-  //   }
+        // Eliminar espacios iniciales y finales
+        $on = trim($on);
+        $as = trim($as);
 
-  //   // Unir resultado
-  //   $orders = trim(implode(', ', $orders));
+        if($table instanceof AmQuery){
+          // Si es una consulta insertar SQL dentro de parenteris
+          $table = "({$table->sql()})";
+          if(!isset($as)){
+            $as = $table->getModel();
+            if(is_subclass_of($as, 'AmModel'))
+              $as = $as::me()->getTableName();
+          }
+        }elseif($table instanceof AmTable){
+          // Si es una tabla obtener el nombre
+          $table = $table->getTableName();
+          if(!isset($as))
+            $as = $table;
+        }
 
-  //   // Agregar ORDER BY
-  //   return (empty($orders) ? '' : "ORDER BY {$orders}");
+        // Si los parametros quedan vacios
+        if(!empty($on)) $on = " ON {$on}";
+        if(!empty($as)) $as = " AS {$as}";
 
-  // }
+        // Agrgar parte de join
+        $joinsResult[] = " $type JOIN {$table}{$as}{$on}";
 
-  // /**
-  //  * Obtener el SQL para la clausula GROUP BY.
-  //  * @param  AmQuery $q Query.
-  //  * @return string     SQL correspondiente.
-  //  */
-  // public function sqlGroups(AmQuery $q){
+        // Liberar variables
+        unset($table, $as, $on);
 
-  //   // Unir grupos
-  //   $groups = trim(implode(', ', $q->getGroups()));
+    }
 
-  //   // Agregar GROUP BY
-  //   return (empty($groups) ? '' : "GROUP BY {$groups}");
+    // Unir todas las partes
+    return trim(implode(' ', $joinsResult));
 
-  // }
+  }
 
-  // /**
-  //  * Obtener el SQL para la clausula LIMIT.
-  //  * @param  AmQuery $q Query.
-  //  * @return string     SQL correspondiente.
-  //  */
-  // public function sqlLimit(AmQuery $q){
+  /**
+   * Obtener el SQL para la clausula ORDER BY.
+   * @param  AmQuery $q Query.
+   * @return string     SQL correspondiente.
+   */
+  public function sqlOrders(AmQuery $q){
 
-  //   // Obtener limite
-  //   $limit = trim($q->getLimit());
+    $ordersOri = $q->getOrders(); // Obtener orders agregados
+    $orders = array();  // Orders para retorno
 
-  //   // Agregar LIMIT
-  //   return (empty($limit) ? '' : "LIMIT {$limit}");
+    // Recorrer lista de campos para ordenar
+    foreach($ordersOri as $order => $dir){
+      $orders[] = "{$order} {$dir}";
+    }
 
-  // }
+    // Unir resultado
+    $orders = trim(implode(', ', $orders));
 
-  // /**
-  //  * Obtener el SQL para la clausula OFFSET.
-  //  * @param  AmQuery $q Query.
-  //  * @return string     SQL correspondiente.
-  //  */
-  // public function sqlOffset(AmQuery $q){
+    // Agregar ORDER BY
+    return (empty($orders) ? '' : "ORDER BY {$orders}");
 
-  //   // Obtener punto de partida
-  //   $offset = $q->getOffset();
-  //   $limit = $q->getLimit();
+  }
 
-  //   // Agregar OFFSET
-  //   return (!isset($offset) || !isset($limit) ? '' : "OFFSET {$offset}");
+  /**
+   * Obtener el SQL para la clausula GROUP BY.
+   * @param  AmQuery $q Query.
+   * @return string     SQL correspondiente.
+   */
+  public function sqlGroups(AmQuery $q){
 
-  // }
+    // Unir grupos
+    $groups = trim(implode(', ', $q->getGroups()));
+
+    // Agregar GROUP BY
+    return (empty($groups) ? '' : "GROUP BY {$groups}");
+
+  }
+
+  /**
+   * Obtener el SQL para la clausula LIMIT.
+   * @param  AmQuery $q Query.
+   * @return string     SQL correspondiente.
+   */
+  public function sqlLimit(AmQuery $q){
+
+    // Obtener limite
+    $limit = trim($q->getLimit());
+
+    // Agregar LIMIT
+    return (empty($limit) ? '' : "LIMIT {$limit}");
+
+  }
+
+  /**
+   * Obtener el SQL para la clausula OFFSET.
+   * @param  AmQuery $q Query.
+   * @return string     SQL correspondiente.
+   */
+  public function sqlOffset(AmQuery $q){
+
+    // Obtener punto de partida
+    $offset = $q->getOffset();
+    $limit = $q->getLimit();
+
+    // Agregar OFFSET
+    return (!isset($offset) || !isset($limit) ? '' : "OFFSET {$offset}");
+
+  }
 
   // /**
   //  * Obtener el SQL para la clausula SET de un query UPDATE.
@@ -1010,9 +1053,10 @@ final class MysqlScheme extends AmScheme{
   public function sqlGetInfo(){
 
     $sql = $this
-      ->q('information_schema.SCHEMATA')
-      ->where("SCHEMA_NAME='{$this->getDatabase()}'")
-      ->selectAs('s.DEFAULT_CHARACTER_SET_NAME', 'charset')
+      ->q('information_schema.SCHEMATA', 's')
+      ->where('SCHEMA_NAME', $this->getDatabase())
+      ->where('s.SCHEMA_NAME', $this->getDatabase())
+      ->selectAs('DEFAULT_CHARACTER_SET_NAME', 'charset')
       ->selectAS('s.DEFAULT_COLLATION_NAME', 'collation')
       ->sql();
 
