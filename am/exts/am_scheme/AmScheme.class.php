@@ -431,7 +431,7 @@ abstract class AmScheme extends AmObject{
   //   Am::mkdir(dirname($path));
 
   //   // Generar el archivo
-  //   return !!@file_put_contents($path, "<?php\n\n" .
+  //   return !!file_put_contents($path, "<?php\n\n" .
   //     AmGenerator::classBaseModel($this, $table));
     
   // }
@@ -763,201 +763,201 @@ abstract class AmScheme extends AmObject{
 
   }
 
-  // /**
-  //  * Indica si la tabla existe.
-  //  * @param  string/AmTable $table Nombre o instancia de la tabla.
-  //  * @return bool                  Si la tabla existe.
-  //  */
-  // public function existsTable($table){
+  /**
+   * Indica si la tabla existe.
+   * @param  string/AmTable $table Nombre o instancia de la tabla.
+   * @return bool                  Si la tabla existe.
+   */
+  public function existsTable($table){
 
-  //   // Intenta obtener la descripcion de la tabla para saber si existe.
-  //   return !!$this->getTableDescription($table);
+    // Intenta obtener la descripcion de la tabla para saber si existe.
+    return !!$this->getTableDescription($table);
 
-  // }
+  }
 
-  // /**
-  //  * Devuelve un array con el listado de tablas de la BD y su descripción.
-  //  * @return array Array de hash con las descripción de las tablas.
-  //  */
-  // public function getTables(){
+  /**
+   * Devuelve un array con el listado de tablas de la BD y su descripción.
+   * @return array Array de hash con las descripción de las tablas.
+   */
+  public function getTables(){
 
-  //   return $this->q($this->sqlGetTables())
-  //               ->get();
+    return $this->q($this->sqlGetTables())
+                ->get();
 
-  // }
+  }
 
-  // /**
-  //  * Obtiene la descripción de una tabla en el BD.
-  //  * @param  string/AmTable $table Nombre o instancia de la tabla.
-  //  * @return hash                  Hash con la descripcion de la tabla.
-  //  */
-  // public function getTableDescription($table){
+  /**
+   * Obtiene la descripción de una tabla en el BD.
+   * @param  string/AmTable $table Nombre o instancia de la tabla.
+   * @return hash                  Hash con la descripcion de la tabla.
+   */
+  public function getTableDescription($table){
     
-  //   // Obtener nombre de la tabla
-  //   $table = $table instanceof AmTable? $table->getTableName() : $table;
+    // Obtener nombre de la tabla
+    $table = $table instanceof AmTable? $table->getTableName() : $table;
 
-  //   return $this->q($this->sqlGetTables())
-  //               ->where("tableName = '{$table}'")
-  //               ->row();
+    return $this->q($this->sqlGetTables())
+                ->where("tableName = '{$table}'")
+                ->row();
 
-  // }
+  }
 
-  // /**
-  //  * Obtener un listado de las columnas de una tabla.
-  //  * @param  string/AmTable $table Nombre o instancia de la tabla.
-  //  * @return hash                  Array de hash con la descripcion de los
-  //  *                               campos.
-  //  */
-  // public function getTableColumns($table){
+  /**
+   * Obtener un listado de las columnas de una tabla.
+   * @param  string/AmTable $table Nombre o instancia de la tabla.
+   * @return hash                  Array de hash con la descripcion de los
+   *                               campos.
+   */
+  public function getTableColumns($table){
 
-  //   return $this->q($this->sqlGetTableColumns($table))
-  //               ->get(null, array($this, 'sanitize'));
+    return $this->q($this->sqlGetTableColumns($table))
+                ->get(null, array($this, 'sanitize'));
                 
-  // }
+  }
 
-  // /**
-  //  * Obtener un listado de las claves foráneas de una tabla.
-  //  * @param  string/AmTable $table Nombre o instancia de la tabla.
-  //  * @return array                 Array de hash conla descripción de las
-  //  *                               claves foráneas.
-  //  */
-  // public function getTableForeignKeys($table){
+  /**
+   * Obtener un listado de las claves foráneas de una tabla.
+   * @param  string/AmTable $table Nombre o instancia de la tabla.
+   * @return array                 Array de hash conla descripción de las
+   *                               claves foráneas.
+   */
+  public function getTableForeignKeys($table){
 
-  //   $ret = array(); // Para el retorno
+    $ret = array(); // Para el retorno
 
-  //   // Obtener el nombre de la fuente
-  //   $schemeName = $this->getName();
+    // Obtener el nombre de la fuente
+    $schemeName = $this->getName();
 
-  //   // Obtener los ForeignKeys
-  //   $fks = $this->q($this->sqlGetTableForeignKeys($table))
-  //               ->get();
+    // Obtener los ForeignKeys
+    $fks = $this->q($this->sqlGetTableForeignKeys($table))
+                ->get();
 
-  //   foreach($fks as $fk){
+    foreach($fks as $fk){
 
-  //     // Dividir el nombre del FK
-  //     $name = explode('.', $fk['name']);
+      // Dividir el nombre del FK
+      $name = explode('.', $fk['name']);
 
-  //     // Obtener el ultimo elemento
-  //     $name = array_pop($name);
+      // Obtener el ultimo elemento
+      $name = array_pop($name);
 
-  //     // Si no existe el elmento en el array se crea
-  //     if(!isset($ret[$name])){
-  //       $ret[$name] = array(
-  //         'scheme' => $schemeName,
-  //         'table' => $fk['toTable'],
-  //         'cols' => array()
-  //       );
-  //     }
+      // Si no existe el elmento en el array se crea
+      if(!isset($ret[$name])){
+        $ret[$name] = array(
+          'scheme' => $schemeName,
+          'table' => $fk['toTable'],
+          'cols' => array()
+        );
+      }
 
-  //     // Agregar la columna a la lista de columnas
-  //     $ret[$name]['cols'][$fk['columnName']] = $fk['toColumn'];
+      // Agregar la columna a la lista de columnas
+      $ret[$name]['cols'][$fk['columnName']] = $fk['toColumn'];
 
-  //   }
+    }
 
-  //   return $ret;
+    return $ret;
 
-  // }
+  }
 
-  // /**
-  //  * Obtener el listado de referencias a una tabla.
-  //  * @param  string/AmTable $table Nombre o instancia de la tabla.
-  //  * @return array                 Array de hash con la descripción de las
-  //  *                               referencias.
-  //  */
-  // public function getTableReferences($table){
+  /**
+   * Obtener el listado de referencias a una tabla.
+   * @param  string/AmTable $table Nombre o instancia de la tabla.
+   * @return array                 Array de hash con la descripción de las
+   *                               referencias.
+   */
+  public function getTableReferences($table){
 
-  //   $ret = array(); // Para el retorno
+    $ret = array(); // Para el retorno
 
-  //   // Obtener el nombre de la fuente
-  //   $schemeName = $this->getName();
+    // Obtener el nombre de la fuente
+    $schemeName = $this->getName();
 
-  //   // Obtener las referencias a una tabla
-  //   $fks = $this->q($this->sqlGetTableReferences($table))
-  //               ->get();
+    // Obtener las referencias a una tabla
+    $fks = $this->q($this->sqlGetTableReferences($table))
+                ->get();
 
-  //   // Recorrer los FKs
-  //   foreach($fks as $fk){
+    // Recorrer los FKs
+    foreach($fks as $fk){
 
-  //     // Dividir el nombre del FK
-  //     $name = explode('.', $fk['name']);
+      // Dividir el nombre del FK
+      $name = explode('.', $fk['name']);
 
-  //     // Obtener el ultimo elemento
-  //     $name = array_shift($name);
+      // Obtener el ultimo elemento
+      $name = array_shift($name);
 
-  //     // Si no existe el elmento en el array se crea
-  //     if(!isset($ret[$name])){
-  //       $ret[$name] = array(
-  //         'scheme' => $schemeName,
-  //         'table' => $fk['fromTable'],
-  //         'cols' => array()
-  //       );
-  //     }
+      // Si no existe el elmento en el array se crea
+      if(!isset($ret[$name])){
+        $ret[$name] = array(
+          'scheme' => $schemeName,
+          'table' => $fk['fromTable'],
+          'cols' => array()
+        );
+      }
 
-  //     // Agregar la columna a la lista de columnas
-  //     $ret[$name]['cols'][$fk['toColumn']] = $fk['columnName'];
+      // Agregar la columna a la lista de columnas
+      $ret[$name]['cols'][$fk['toColumn']] = $fk['columnName'];
 
-  //   }
+    }
 
-  //   return $ret;
+    return $ret;
 
-  // }
+  }
 
-  // /**
-  //  * Obtener un listado de las claves restricciones únicas de una tabla.
-  //  * @param  string/AmTable $table Nombre o instancia de la tabla.
-  //  * @return array                 Array de hash con la descripción de
-  //  *                               claves únicas.
-  //  */
-  // public function getTableUniques($table){
+  /**
+   * Obtener un listado de las claves restricciones únicas de una tabla.
+   * @param  string/AmTable $table Nombre o instancia de la tabla.
+   * @return array                 Array de hash con la descripción de
+   *                               claves únicas.
+   */
+  public function getTableUniques($table){
 
-  //   $uniques = $this->q($this->sqlGetTableUniques($table))
-  //                   ->get();
+    $uniques = $this->q($this->sqlGetTableUniques($table))
+                    ->get();
 
-  //   // Group fields of unique indices for name.
-  //   $realUniques = array();
+    // Group fields of unique indices for name.
+    $realUniques = array();
 
-  //   foreach ($uniques as $value) {
-  //     $realUniques[$value['name']] = itemOr($value['name'],
-  //       $realUniques, array());
-  //     $realUniques[$value['name']][] = $value['columnName'];
-  //   }
+    foreach ($uniques as $value) {
+      $realUniques[$value['name']] = itemOr($value['name'],
+        $realUniques, array());
+      $realUniques[$value['name']][] = $value['columnName'];
+    }
 
-  //   return $realUniques;
+    return $realUniques;
 
-  // }
+  }
 
-  // /**
-  //  * Devuelve la descripción completa de una tabla incluyendo los campos.
-  //  * @param  string  $tableName Nombre de la tabla.
-  //  * @return AmTable            Instancia de la tabla.
-  //  */
-  // public function getTableFromScheme($tableName){
+  /**
+   * Devuelve la descripción completa de una tabla incluyendo los campos.
+   * @param  string  $tableName Nombre de la tabla.
+   * @return AmTable            Instancia de la tabla.
+   */
+  public function getTableFromScheme($tableName){
 
-  //   // Obtener la descripcion basica
-  //   $table = $this->getTableDescription($tableName);
+    // Obtener la descripcion basica
+    $table = $this->getTableDescription($tableName);
 
-  //   // Si no se encontró la tabla retornar falso
-  //   if($table === false)
-  //     return false;
+    // Si no se encontró la tabla retornar falso
+    if($table === false)
+      return false;
 
-  //   // Crear instancia anonima de la tabla
-  //   $table = new AmTable(array_merge($table, array(
+    // Crear instancia anonima de la tabla
+    $table = new AmTable(array_merge($table, array(
 
-  //     // Asignar fuente
-  //     'schemeName'    => $this->getName(),
+      // Asignar fuente
+      'schemeName'    => $this->getName(),
 
-  //     // Detalle de la tabla
-  //     'fields'        => $this->getTableColumns($tableName),
-  //     // 'referencesTo'  => $this->getTableForeignKeys($tableName),
-  //     // 'referencesBy'  => $this->getTableReferences($tableName),
-  //     // 'uniques'       => $this->getTableUniques($tableName),
+      // Detalle de la tabla
+      'fields'        => $this->getTableColumns($tableName),
+      // 'referencesTo'  => $this->getTableForeignKeys($tableName),
+      // 'referencesBy'  => $this->getTableReferences($tableName),
+      // 'uniques'       => $this->getTableUniques($tableName),
 
-  //   )));
+    )));
 
-  //   // Retornar tabla
-  //   return $table;
+    // Retornar tabla
+    return $table;
 
-  // }
+  }
 
   /**
    * Crea una vista.
