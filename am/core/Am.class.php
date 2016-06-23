@@ -1422,7 +1422,7 @@ final class Am{
 
     // Obtener el valor
     $errorReporting = self::getProperty('errorReporting');
-    @error_reporting($errorReporting);
+    error_reporting($errorReporting);
     
     // Incluir extensiones para peticiones archivos requeridos
     self::requireExt(self::getProperty('requires', array()));
