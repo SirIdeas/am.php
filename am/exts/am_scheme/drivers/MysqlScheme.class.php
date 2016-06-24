@@ -90,21 +90,6 @@ final class MysqlScheme extends AmScheme{
     $handler = null;
 
   /**
-   * Devuelve un nombre entre comillas simples entendibles por el gestor
-   * @param  string $name Nombre a parchar.
-   * @return string       Nombre parchado.
-   */
-  public function getSanitize($string){
-
-    // Verificar si ya no está parchado.
-    if(preg_match('/[`\\.]/', $name))
-      return $name;
-
-    return "`{$name}`";
-
-  }
-
-  /**
    * Devuelve el puerto por defecto.
    * @return int Puerto por defecto.
    */
@@ -112,6 +97,18 @@ final class MysqlScheme extends AmScheme{
 
     return self::DEFAULT_PORT;
 
+  }
+
+  /**
+   * Obtiene un hash de los subtipos de un tipo de datos en el DBSM.
+   * @param  $string $type  Nombre del tipo de datos.
+   * @return hash           Hash con la colección de subtipos.
+   */
+  public function getSubTypes($type){
+
+    $seudoType .= 'Bytes';
+    return self::$$seudoType;
+    
   }
 
   /**
@@ -178,7 +175,7 @@ final class MysqlScheme extends AmScheme{
       $value = mysqli_real_escape_string($this->handler, $value);
     
     // Si no tiene valor asignar NULL
-    return isset($value)? $value : 'NULL';
+    return $value;
 
   }
 
@@ -244,1072 +241,162 @@ final class MysqlScheme extends AmScheme{
   }
 
   /**
-   * SQL para setear un valor a una variable de servidor.
-   * @param  string $varName Nombre de la variable.
-   * @param  string $value   Valor a asignar a la variable.
-   * @param  bool   $scope   Si se agrega la cláusula GLOBAL o SESSION.
-   * @return string          SQL correspondiente.
-   */
-  public function sqlSetServerVar($varName, $value, $scope = ''){
-
-    $varName = $this->realScapeString($varName);
-    $value = $this->stringWrapperAndRealScape($value);
-
-    $scope = $scope === true? 'GLOBAL ' : $scope === false? 'SESSION ' : '';
-    
-    return "SET {$scope}{$varName}={$value}";
-
-  }
-
-  /**
-   * SQL para seleccionar la BD.
+   * Query para obtener la informacion de la BD.
    * @return string SQL correspondiente.
    */
-  public function sqlSelectDatabase(){
+  public function queryGetInfo(){
 
-    $database = $this->getDatabaseSanitize();
-    return "USE {$database}";
-    
+    $query = $this
+      ->q('information_schema.SCHEMATA', 's')
+      ->where("s.SCHEMA_NAME='{$this->getDatabase()}'")
+      ->selectAs('s.DEFAULT_CHARACTER_SET_NAME', 'charset')
+      ->selectAS('s.DEFAULT_COLLATION_NAME', 'collation');
+
+    return $query;
+
   }
 
   /**
-   * SQL Para crear la BD.
-   * @param  boolean $ifNotExists Si se agrega la cláusula IF NOT EXISTS.
-   * @return string               SQL correspondiente.
+   * SQL del query para obtener el listado de tablas de la BD.
+   * @return string SQL correspondiente.
    */
-  public function sqlCreate($ifNotExists = true){
+  public function queryGetTables(){
 
-    $database = $this->getDatabaseSanitize();
-    $charset = $this->sqlCharset();
-    $collation = $this->sqlCollation();
-    $ifNotExists = $ifNotExists? 'IF NOT EXISTS ' : '';
-    $sql = "CREATE DATABASE {$ifNotExists}{$database}{$charset}{$collation}";
-    return $sql;
+    $query = $this
+      ->q('information_schema.TABLES', 't')
+      ->innerJoin(
+        'information_schema.COLLATION_CHARACTER_SET_APPLICABILITY',
+        't.TABLE_COLLATION = c.COLLATION_NAME', 'c')
+      ->where(
+        "t.TABLE_SCHEMA='{$this->getDatabase()}'",
+        'and', 't.TABLE_TYPE=\'BASE TABLE\'')
+      ->selectAs('t.TABLE_NAME', 'tableName')
+      ->selectAS('t.ENGINE', 'engine')
+      ->selectAS('t.TABLE_COLLATION', 'collation')
+      ->selectAS('c.CHARACTER_SET_NAME', 'charset');
+
+    return $query;
 
   }
-
+  
   /**
-   * SQL para eliminar la BD.
-   * @param  boolean $ifExists Si se agrega la cláusula IF EXISTS.
+   *  SQL del query para obtener el listado de columnas de una tabla.
+   * @param  string $tableName Nombre de la tabla.
    * @return string            SQL correspondiente.
    */
-  public function sqlDrop($ifExists = true){
-
-    $database = $this->getDatabaseSanitize();
-    $ifExists = $ifExists? 'IF EXISTS ' : '';
-
-    return "DROP DATABASE {$ifExists}{$database}";
-
-  }
-
-  // /**
-  //  * Prepara una columna para ser creada en una tabla de la BD.
-  //  * @param  array  $column Datos de una columna.
-  //  * @return string
-  //  */
-  // public function sanitize(array $column){
-  //   // Si no se encuentra el tipo se retorna el tipo recibido
-
-  //   $nativeType = $column['type'];
-  //   $column['type'] = itemOr($column['type'], self::$types, $column['type']);
-
-  //   // Parse bool values
-  //   $column['pk'] = parseBool($column['pk']);
-  //   $column['allowNull']  = parseBool($column['allowNull']);
-
-  //   // Get len of field
-  //   // if is a bit, char or varchar take len
-  //   if(in_array($nativeType, array('char', 'varchar')))
-  //     $column['len'] = itemOr('len', $column);
-
-  //   elseif($nativeType == 'bit')
-  //     $column['len'] = itemOr('precision', $column);
-
-  //   // else look len into bytes used for native byte
-  //   else
-  //     $column['len']  = itemOr($nativeType, array_merge(
-  //       self::$intBytes,
-  //       self::$floatBytes,
-  //       self::$textBytes
-  //     ));
-
-  //   if(in_array($column['type'], array('int', 'float'))){
-
-  //     $column['unsigned'] = preg_match('/unsigned/',
-  //       $column['columnType']) != 0;
-
-  //     $column['zerofill'] = preg_match('/unsigned zerofill/',
-  //       $column['columnType']) != 0;
-
-  //     $column['autoIncrement'] = preg_match('/auto_increment/',
-  //       $column['extra']) != 0;
-
-  //   }
-
-  //   // Unset scale is not is a float
-  //   if($column['type'] != 'float')
-  //     unset($column['precision'], $column['scale']);
-
-  //   else
-  //     $column['scale'] = itemOr('scale', $column, 0);
-
-  //   // Unset columnType an prescicion
-  //   unset($column['columnType']);
-
-  //   // Drop auto_increment of extra param
-  //   $column['extra'] = trim(str_replace('auto_increment', '', $column['extra']));
-
-  //   // Eliminar campos vacios
-  //   foreach(array(
-  //     'defaultValue',
-  //     'collation',
-  //     'charset',
-  //     'len',
-  //     'extra'
-  //   ) as $attr)
-  //     if(!isset($column[$attr]) || trim($column[$attr])==='')
-  //       unset($column[$attr]);
-
-  //   return $column;
-    
-  // }
-
-  /**
-   * Devuelve el SQL de un query SELECT
-   * @param  AmQuery $q Query.
-   * @return string     SQL del query.
-   */
-  public function sqlSelectQuery(AmQuery $q){
-
-    return !empty($q->sql) ? $q->sql :
-      trim(implode(' ', array(
-      trim($this->sqlSelect($q)),
-      trim($this->sqlFrom($q)),
-      // trim($this->sqlJoins($q)),
-      // trim($this->sqlWhere($q)),
-      // trim($this->sqlGroups($q)),
-      // trim($this->sqlOrders($q)),
-      // trim($this->sqlLimit($q)),
-      // trim($this->sqlOffset($q))
-    )));
-
-  }
-
-  // /**
-  //  * Devuelve el SQL de la sección VALUES para un query INSERT.
-  //  * @param  array/string $values Array de hash con los valores a insertar o SQL
-  //  *                              ya preparado.
-  //  * @return string               SQL correspondiente.
-  //  */
-  // protected function sqlInsertValues($values){
-
-  //   if(empty($values))
-  //     return '';
-
-  //   if(is_array($values) && count($values)>0){
-
-  //     // Preparar registros para crear SQL
-  //     foreach($values as $i => $v)
-  //       // Unir todos los valores con una c
-  //       $values[$i] = '(' . implode(',', $v) . ')';
-
-  //     // Unir todos los registros
-  //     $values = implode(',', $values);
-
-  //     // Obtener Str para los valores
-  //     $values = "VALUES {$values}";
-
-  //   }
-
-
-  //   return $values;
-
-  // }
-
-  // /**
-  //  * Devuelve el SQL de la sección FIELDS para un query INSERT.
-  //  * @param  array  $fields Campos que se desea preparar.
-  //  * @return string         SQL correspondiente.
-  //  */
-  // protected function sqlInsertFields(array $fields){
-
-  //   // Unir campos
-  //   if(!empty($fields))
-  //     return '(' . implode(',', $fields) . ')';
-
-  //   return '';
-
-  // }
-
-  // /**
-  //  * Devuelve el SQL de un query INSERT.
-  //  * @param  array/AmQuery  $values Array hash de valores, array
-  //  *                                de instancias de AmModels, array de
-  //  *                                AmObjects o AmQuery con consulta select
-  //  *                                a insertar.
-  //  * @param  string/AmTable $model  Nombre del modelo o instancia de la
-  //  *                                tabla donde se insertará los valores.
-  //  * @param  array          $fields Campos que recibirán con los valores que
-  //  *                                se insertarán.
-  //  * @return string                 SQL del query.
-  //  */
-  // public function sqlInsert($values, $model, array $fields = array()){
-
-  //   $q = $this->prepareInsert(
-  //     $values, $model, $fields
-  //   );
-
-  //   if(empty($q['values']))
-  //     return '';
-
-  //   // Generar SQL
-  //   return implode(' ', array(
-  //     'INSERT INTO',
-  //     $q['table'].$q['fields'],
-  //     $q['values'],
-  //   ));
-
-  // }
-
-  // /**
-  //  * Obtener el SQL para una consulta UPDATE.
-  //  * @param  AmQuery $q Query.
-  //  * @return string     SQL del query.
-  //  */
-  // public function sqlUpdateQuery(AmQuery $q){
-
-  //   return implode(' ', array(
-  //     'UPDATE',
-  //     trim($this->getParseObjectDatabaseName($q)),
-  //     trim($this->sqlJoins($q)),
-  //     trim($this->sqlSets($q)),
-  //     trim($this->sqlWhere($q))
-  //   ));
-
-  // }
-
-  // /**
-  //  * Obtener el SQL para una consulta DELETE.
-  //  * @param  AmQuery $q Query.
-  //  * @return string     SQL del query.
-  //  */
-  // public function sqlDeleteQuery(AmQuery $q){
-
-  //   return implode(' ', array(
-  //     'DELETE FROM',
-  //     trim($this->getParseObjectDatabaseName($q)),
-  //     trim($this->sqlWhere($q))
-  //   ));
-
-  // }
-
-  /**
-   * SQL Para la cláusula SELECT.
-   * @param  AmQuery $q Query.
-   * @return string     SQL correspondiente.
-   */
-  public function sqlSelect(AmQuery $q){
-
-    $selectsOri = $q->getSelects();  // Obtener argmuentos en la clausula SELECT
-    $distinct = $q->getDistinct();
-    $selects = array();  // Lista de retorno
-
-    // Recorrer argumentos del SELECT
-    foreach($selectsOri as $alias => $field){
-
-      // Obtener un alias alternativo
-      if(empty($alias)){
-        $alias = str_replace('.', '_', (string)$field);
-      }
-
-      // Obtener alias
-      $alias = AmScheme::alias($selects, $alias);
-
-      // Si es una consulta se incierra entre parentesis
-      if($field instanceof AmQuery){
-        $field = "({$field->sql()})";
-      }else{
-        // Obtener el objeto de esquema
-        $field = $this->nameWrapperAndRealScapeComplete($field);
-      }
-
-      $aliasNew = $this->stringWrapper($alias);
-      $field = "{$field} AS {$aliasNew}";
-
-      // Agregar parametro AS
-      $selects[$alias] = $field;
-
-    }
-
-    // Unir campos
-    $selects = trim(implode(', ', $selects));
-
-    // Si no se seleccionó ningun campo entonces se tomaran todos
-    $selects = empty($selects) ? '*' : $selects;
-
-    // Agregar SELECT
-    return 'SELECT '.trim(($distinct ? 'DISTINCT ' : '').$selects);
-
-  }
-
-  /**
-   * Obtener el SQL para la clausula FROM.
-   * @param  AmQuery $q Query.
-   * @return string     SQL correspondiente.
-   */
-  public function sqlFrom(AmQuery $q){
-
-    $fromsOri = $q->getFroms();   // Listado de argumentos de la clausula FROM
-    $froms = array();             // Listado de retorno
-    $requireAlias = false;
-
-    // Recorrer lista del FROM
-    foreach($fromsOri as $alias => $from){
-
-      // Asignacion del from
-      if(empty($alias)){
-
-        if($from instanceof AmQuery){
-          // Si es un query se agrega al final
-          $alias = $from->getModel();
-          if(is_subclass_of($alias, 'AmModel'))
-            $alias = $alias::me()->getTableName();
-
-        }elseif($from instanceof AmTable){
-          // Si es nua tabla se asigna en una posicion especifica
-          $alias = $from->getTableName();
-
-        }else{
-          // Se asigna en una posicion especifica
-          $alias = str_replace('.', '_', (string)$from);
-          
-        }
-
-      }
-
-      // Obtener alias
-      $alias = AmScheme::alias($froms, $alias);
-
-      if($from instanceof AmTable || isNameValid($from)){
-        // Si es una tabla se concatena el nombre de la BD y el de la tabla como strin
-        $from = $this->getDatabaseObjectSanitize($from);
-      }elseif($from instanceof AmQuery){
-        // Si es una consulta se encierra en parentesis
-        $from = "({$from->sql()})";
-        $requireAlias = true;
-      }else{
-        $from = $this->nameWrapperAndRealScapeComplete($from);
-      }
-
-      // Generar error si el se require el alias y no ha sido indicado
-      if($requireAlias && !isNameValid($alias)){
-        throw Am::e('AMSCHEME_INVALID_ALIAS', $alias);
-      }
-
-      // Agregar parametro AS
-      $aliasNew = $this->stringWrapper($alias);
-      $froms[$alias] = "{$from} AS {$aliasNew}";
-
-    }
-
-    // Unir argumentos procesados
-    $froms = trim(implode(', ', $froms));
-
-    // Agregar FROM
-    return (empty($froms) ? '' : "FROM {$froms}");
-
-  }
-
-  /**
-   * Obtener el SQL para la clausula WHERE.
-   * @param  AmQuery $q Query.
-   * @return string     SQL correspondiente.
-   */
-  public function sqlWhere(AmQuery $q){
-
-    $where = trim($this->parseWhere($q->getWheres()));
-
-    return (empty($where) ? '' : "WHERE {$where}");
-
-  }
-
-  /**
-   * Obtener el SQL para la clausula JOIN.
-   * @param  AmQuery $q Query.
-   * @return string     SQL correspondiente.
-   */
-  public function sqlJoins(AmQuery $q){
-
-    // Resultado
-    $joins = $q->getJoins();
-    $joinsResult = array();
-
-    // Recorrer cada join
-    foreach($joins as $join){
-
-        // Declarar posiciones del array como variables
-        // Define $on, $as y $table
-        extract($join);
-
-        // Eliminar espacios iniciales y finales
-        $on = trim($on);
-        $as = trim($as);
-
-        if($table instanceof AmQuery){
-          // Si es una consulta insertar SQL dentro de parenteris
-          $table = "({$table->sql()})";
-          if(!isset($as)){
-            $as = $table->getModel();
-            if(is_subclass_of($as, 'AmModel'))
-              $as = $as::me()->getTableName();
-          }
-        }elseif($table instanceof AmTable){
-          // Si es una tabla obtener el nombre
-          $table = $table->getTableName();
-          if(!isset($as))
-            $as = $table;
-        }
-
-        // Si los parametros quedan vacios
-        if(!empty($on)) $on = " ON {$on}";
-        if(!empty($as)) $as = " AS {$as}";
-
-        // Agrgar parte de join
-        $joinsResult[] = " $type JOIN {$table}{$as}{$on}";
-
-        // Liberar variables
-        unset($table, $as, $on);
-
-    }
-
-    // Unir todas las partes
-    return trim(implode(' ', $joinsResult));
-
-  }
-
-  /**
-   * Obtener el SQL para la clausula ORDER BY.
-   * @param  AmQuery $q Query.
-   * @return string     SQL correspondiente.
-   */
-  public function sqlOrders(AmQuery $q){
-
-    $ordersOri = $q->getOrders(); // Obtener orders agregados
-    $orders = array();  // Orders para retorno
-
-    // Recorrer lista de campos para ordenar
-    foreach($ordersOri as $order => $dir){
-      $orders[] = "{$order} {$dir}";
-    }
-
-    // Unir resultado
-    $orders = trim(implode(', ', $orders));
-
-    // Agregar ORDER BY
-    return (empty($orders) ? '' : "ORDER BY {$orders}");
-
-  }
-
-  /**
-   * Obtener el SQL para la clausula GROUP BY.
-   * @param  AmQuery $q Query.
-   * @return string     SQL correspondiente.
-   */
-  public function sqlGroups(AmQuery $q){
-
-    // Unir grupos
-    $groups = trim(implode(', ', $q->getGroups()));
-
-    // Agregar GROUP BY
-    return (empty($groups) ? '' : "GROUP BY {$groups}");
-
-  }
-
-  /**
-   * Obtener el SQL para la clausula LIMIT.
-   * @param  AmQuery $q Query.
-   * @return string     SQL correspondiente.
-   */
-  public function sqlLimit(AmQuery $q){
-
-    // Obtener limite
-    $limit = trim($q->getLimit());
-
-    // Agregar LIMIT
-    return (empty($limit) ? '' : "LIMIT {$limit}");
-
-  }
-
-  /**
-   * Obtener el SQL para la clausula OFFSET.
-   * @param  AmQuery $q Query.
-   * @return string     SQL correspondiente.
-   */
-  public function sqlOffset(AmQuery $q){
-
-    // Obtener punto de partida
-    $offset = $q->getOffset();
-    $limit = $q->getLimit();
-
-    // Agregar OFFSET
-    return (!isset($offset) || !isset($limit) ? '' : "OFFSET {$offset}");
-
-  }
-
-  // /**
-  //  * Obtener el SQL para la clausula SET de un query UPDATE.
-  //  * @param  AmQuery $q Query.
-  //  * @return string     SQL correspondiente.
-  //  */
-  // public function sqlSets(AmQuery $q){
-
-  //   // Obtener sets
-  //   $setsOri = $q->getSets();
-  //   $sets = array(); // Lista para retorno
-
-  //   // Recorrer los sets
-  //   foreach($setsOri as $set){
-
-  //     $value = $set['value'];
-
-  //     // Acrear asignacion
-  //     if($value === null){
-  //       $sets[] = "{$set['field']} = NULL";
-  //     }elseif($set['const'] === true){
-  //       $sets[] = "{$set['field']} = " . $this->realScapeString($value);
-  //     }elseif($set['const'] === false){
-  //       $sets[] = "{$set['field']} = {$value}";
-  //     }
-
-  //   }
-
-  //   // Unir resultado
-  //   $sets = implode(',', $sets);
-
-  //   // Agregar SET
-  //   return "SET {$sets}";
-
-  // }
-
-  /**
-   * Set de caracteres en un query SQL.
-   * @param  string $charset Set de caracteres.
-   * @return string          SQL correspondiente.
-   */
-  public function sqlCharset($charset = null){
-
-    // Si no recibió argumentos obtener el charset de la BD
-    if(!count(func_get_args())>0)
-      $charset = $this->getCharset();
-
-    // El el argumento esta vacío retornar cadena vacia
-    if(empty($charset))
-      return '';
-
-    $charset = $this->realScapeString($charset);
-
-    $charset = " CHARACTER SET {$charset}";
-
-    return $charset;
-
-  }
-
-  /**
-   * Coleccion de caracteres en un query SQL.
-   * @param  string $collatin Colección de caracteres.
-   * @return string           SQL correspondiente.
-   */
-  public function sqlCollation($collation = null){
-
-    // Si no recibió argumentos obtener el college de la BD
-    if(!count(func_get_args())>0)
-      $collation = $this->getCollation();
-
-    // El el argumento esta vacío retornar cadena vacia
-    if(empty($collation))
-      return '';
-
-    $collation = $this->realScapeString($collation);
-
-    $collation = " COLLATE {$collation}";
-
-    return $collation;
-
-  }
-
-  /**
-   * Obtener el SQL para un campo de una tabla al momento de crear la tabla.
-   * @param  AmField $field Instancia del campo.
-   * @return string         SQL correspondiente.
-   */
-  public function sqlField(AmField $field){
-
-    // Preparar las propiedades
-    $name = $this->nameWrapperAndRealScape($field->getName());
-    $type = $field->getType();
-    $len = $field->getLen();
-    $charset = $this->sqlCharset($field->getCharset());
-    $collation = $this->sqlCollation($field->getCollation());
-    $default = $field->getDefaultValue();
-    $extra = $this->realScapeString($field->getExtra());
-
-    if(isset($default)){
-
-      $default = $this->realScapeString($field->parseValue($default));
-
-      if(in_array($type, array('text', 'char', 'varchar', 'bit')) ||
-        (in_array($type, array('date', 'datetime', 'timestamp', 'time')) &&
-          $default != 'CURRENT_TIMESTAMP'
-        )
-      ){
-        $default = $this->stringWrapper($default);
-      }
-
-    }
-
-    $attrs = array();
-
-    if($field->isUnsigned())      $attrs[] = 'unsigned';
-    if($field->isZerofill())      $attrs[] = 'zerofill';
-    if(!empty($charset))          $attrs[] = $charset;
-    if(!empty($collation))        $attrs[] = $collation;
-    if(!$field->allowNull())      $attrs[] = 'NOT NULL';
-    if($field->isAutoIncrement()) $attrs[] = 'AUTO_INCREMENT';
-    if(isset($default))           $attrs[] = "DEFAULT {$default}";
-    if(!empty($extra))            $attrs[] = $extra;
-
-    $attrs = implode(' ', $attrs);
-
-    // Get type
-    // As int or text
-    if($type === 'int' || $type === 'text'){
-      $type = self::getTypeByLen($type, $len);
-
-    // as float precision
-    }elseif($type == 'float'){
-
-      $type = self::getTypeByLen($type, $len);
-
-      $precision = $this->realScapeString($field->getPrecision());
-      $scale = $this->realScapeString($field->getScale());
-
-      if($precision && $precision)
-        $type = "{$type}({$precision}, {$scale})";
-
-    // with var len
-    }elseif(in_array($type, array('bit', 'char', 'varchar'))){
-      
-      $len = $this->realScapeString($len);
-      $type = "{$type}({$len})";
-
-    }else{
-
-      $type = $this->realScapeString($type);
-
-    }
-
-    return "{$name} {$type} {$attrs}";
-
-  }
-
-  /**
-   * Obtener el SQL para crear una tabla.
-   * @param  AmTable $table       Instancia de la tabla a acrear
-   * @param  bool    $ifNotExists Se se debe agregar la cláusula IF NOT EXISTS.
-   * @return string  SQL del query.
-   */
-  public function sqlCreateTable(AmTable $table, $ifNotExists = true){
-
-    // Obtener nombre de la tabla
-    $tableName = $this->getDatabaseObjectSanitize($table);
-
-    // Lista de campos
-    $fields = array();
-    $realFields = $table->getFields();
-
-    // Obtener el SQL para cada camppo
-    foreach($realFields as $field)
-      $fields[] = $this->sqlField($field);
-
-    // Obtener los nombres de los primary keys
-    $pks = $table->getPks();
-    foreach($pks as $offset => $pk)
-      $pks[$offset] = $this->nameWrapperAndRealScape(
-        $table->getField($pk)->getName()
-      );
-
-    // Preparar otras propiedades
-    $engine = $this->realScapeString($table->getEngine());
-    $engine = empty($engine) ? '' : "ENGINE={$engine} ";
-    $charset = $this->sqlCharset($table->getCharset());
-    $collation = $this->sqlCollation($table->getCollation());
-
-    // Agregar los primaris key al final de los campos
-    $fields[] = empty($pks) ? '' : 'PRIMARY KEY (' . implode(', ', $pks). ')';
-
-    // Unir los campos
-    $fields = "\n".implode(",\n", $fields);
-
-    $ifNotExists = $ifNotExists? 'IF NOT EXISTS ' : '';
-
-    // Preparar el SQL final
-    return "CREATE TABLE {$ifNotExists}{$tableName}($fields){$engine}{$charset}{$collation};";
-
-  }
-
-  /**
-   * Devuelve el SQL para truncar un tabla.
-   * @param  AmTable/string $table    Instancia o nombre de la tabla.
-   * @param  bool           $ignoreFk Si se debe ignorar las claves foráneas.
-   * @return string         SQL de la acción.
-   */
-  public function sqlTruncate($table, $ignoreFk = true){
-
-    // Obtener nombre de la tabla
-    $tableName = $this->getDatabaseObjectSanitize($table);
-
-    $sql = "TRUNCATE {$tableName}";
-
-    if($ignoreFk)
-      $sql = $this->sqlSetServerVar('FOREIGN_KEY_CHECKS', 0).';'.
-              $sql.';'.
-              $this->sqlSetServerVar('FOREIGN_KEY_CHECKS', 1);
-
-    return $sql;
-
-  }
-
-  /**
-   * Obtener el SQL para eliminar una tabla.
-   * @param  AmTable/string $table    Instancia o nombre de la tabla.
-   * @param  bool           $ifExists Si se debe agregar la cláusula IF EXISTS.
-   * @return string                   SQL correspondiente.
-   */
-  public function sqlDropTable($table, $ifExists = true){
-
-    // Obtener nombre de la tabla
-    $tableName = $this->getDatabaseObjectSanitize($table);
-    $ifExists = $ifExists? 'IF EXISTS ' : '';
-
-    return "DROP TABLE {$ifExists}{$tableName}";
-
-  }
-
-  /**
-   * Obtener el SQL para eliminar una tabla.
-   * @param  AmTable/string $table     Instancia o nombre de la tabla.
-   * @param  bool           $orReplace Si se agrega la cláusula OR REPLACE.
-   * @return string                    SQL correspondiente.
-   */
-  public function sqlCreateView(AmQuery $q, $orReplace = true){
-
-    $queryName = $this->getDatabaseObjectSanitize($q->getName());
-    $orReplace = $orReplace? 'OR REPLACE ' : '';
-
-    return "CREATE {$replace}VIEW {$queryName} AS {$q->sql()}";
-
-  }
-
-  /**
-   * Obtener el SQL para eliminar una vista.
-   * @param  AmQuery/string $q        Instancia o SQL del query.
-   * @param  bool           $ifExists Si se debe agregar la cláusula IF EXISTS.
-   * @return string                   SQL correspondiente.
-   */
-  public function sqlDropView($q, $ifExists = true){
-    
-    if($q instanceof AmQuery)
-      $q = $q->getName();
-
-    $queryName = $this->getDatabaseObjectSanitize($q);
-    $ifExists = $ifExists? 'IF EXISTS ' : '';
-
-    return "DROP VIEW {$ifExists}{$queryName}";
-
-  }
-
-  /**
-   * Devuelve un tipo de datos para el DBMS dependiendo de un tipo de datos
-   * de lenguaje y la longuitud del mismo.
-   * @param  string $type Tipo de datos en el lenguaje.
-   * @param  int    $len  Longuitud del tipo de datos.
-   * @return string       Tipo de datos en el DBMS.
-   */
-  private function getTypeByLen($type, $len){
-
-    $seudoType = $type.'Bytes';
-    $types = self::$$seudoType;
-    $defaultType = itemOr($type, self::$defaultsByte);
-    $index = array_search($len, $types);
-
-    return $index? $index: $defaultType;
-
-  }
-
-  /**
-   * SQL del query para obtener la informacion de la BD.
-   * @return string SQL correspondiente.
-   */
-  public function sqlGetInfo(){
+  public function sqlGetTableColumns($tableName){
 
     $sql = $this
-      ->q('information_schema.SCHEMATA', 's')
-      ->where('SCHEMA_NAME', $this->getDatabase())
-      ->where('s.SCHEMA_NAME', $this->getDatabase())
-      ->selectAs('DEFAULT_CHARACTER_SET_NAME', 'charset')
-      ->selectAS('s.DEFAULT_COLLATION_NAME', 'collation')
+      ->q('information_schema.COLUMNS')
+      ->where(
+        "TABLE_SCHEMA='{$this->getDatabase()}'",
+        'and', "TABLE_NAME='{$tableName}'")
+
+      // Basic data
+      ->selectAs('COLUMN_NAME', 'name')
+      ->selectAs('DATA_TYPE', 'type')
+      ->selectAs('COLUMN_TYPE', 'columnType')
+      ->selectAs('COLUMN_DEFAULT', 'defaultValue')
+      ->selectAs('COLUMN_KEY=\'PRI\'', 'pk')
+      ->selectAs('IS_NULLABLE=\'YES\'', 'allowNull')
+
+      // Strings
+      ->selectAs('CHARACTER_MAXIMUM_LENGTH', 'len')
+      ->selectAs('COLLATION_NAME', 'collation')
+      ->selectAs('CHARACTER_SET_NAME', 'charset')
+
+      // Numerics
+      ->selectAs('NUMERIC_PRECISION', 'precision')
+      ->selectAs('NUMERIC_SCALE', 'scale')
+      ->orderBy('ORDINAL_POSITION')
+
+      // Others
+      ->selectAs('EXTRA', 'extra')
+
       ->sql();
 
     return $sql;
 
   }
 
-  // /**
-  //  * SQL del query para obtener el listado de tablas de la BD.
-  //  * @return string SQL correspondiente.
-  //  */
-  // public function sqlGetTables(){
+  /**
+   * SQL del query para obtener el lista campos únicos.
+   * @param  string $tableName Nombre de la tabla.
+   * @return string            SQL correspondiente.
+   */
+  public function sqlGetTableUniques($tableName){
 
-  //   $sql = $this
-  //     ->q('information_schema.TABLES', 't')
-  //     ->innerJoin(
-  //       'information_schema.COLLATION_CHARACTER_SET_APPLICABILITY',
-  //       't.TABLE_COLLATION = c.COLLATION_NAME', 'c')
-  //     ->where(
-  //       "t.TABLE_SCHEMA='{$this->getDatabase()}'",
-  //       'and', 't.TABLE_TYPE=\'BASE TABLE\'')
-  //     ->selectAs('t.TABLE_NAME', 'tableName')
-  //     ->selectAS('t.ENGINE', 'engine')
-  //     ->selectAS('t.TABLE_COLLATION', 'collation')
-  //     ->selectAS('c.CHARACTER_SET_NAME', 'charset')
-  //     ->sql();
+    $sql = $this
+      ->q('information_schema.KEY_COLUMN_USAGE', 'k')
+      ->innerJoin(
+        'information_schema.COLUMNS',
+        'k.TABLE_SCHEMA = c.TABLE_SCHEMA AND '.
+        'k.TABLE_NAME   = c.TABLE_NAME AND '.
+        'k.COLUMN_NAME  = c.COLUMN_NAME',
+        'c')
+      ->where(
+        "k.TABLE_SCHEMA='{$this->getDatabase()}'",
+        'and', "k.TABLE_NAME='{$tableName}'",
+        'and', 'k.CONSTRAINT_NAME<>\'PRIMARY\'',
+        'and', 'k.REFERENCED_TABLE_NAME IS NULL',
+        'and', 'c.COLUMN_KEY <> \'PRI\'')
+      ->selectAs('k.CONSTRAINT_NAME', 'name')
+      ->selectAs('k.COLUMN_NAME', 'columnName')
+      ->orderBy('k.CONSTRAINT_NAME', 'k.ORDINAL_POSITION')
+      ->sql();
 
-  //   return $sql;
+    return $sql;
 
-  // }
-  
-  // /**
-  //  *  SQL del query para obtener el listado de columnas de una tabla.
-  //  * @param  string $tableName Nombre de la tabla.
-  //  * @return string            SQL correspondiente.
-  //  */
-  // public function sqlGetTableColumns($tableName){
+  }
 
-  //   $sql = $this
-  //     ->q('information_schema.COLUMNS')
-  //     ->where(
-  //       "TABLE_SCHEMA='{$this->getDatabase()}'",
-  //       'and', "TABLE_NAME='{$tableName}'")
+  /**
+   * SQL del query para obtener el lista de foreign keys de una tabla.
+   * @param  string $tableName Nombre de la tabla.
+   * @return string            SQL correspondiente.
+   */
+  public function sqlGetTableForeignKeys($tableName){
 
-  //     // Basic data
-  //     ->selectAs('COLUMN_NAME', 'name')
-  //     ->selectAs('DATA_TYPE', 'type')
-  //     ->selectAs('COLUMN_TYPE', 'columnType')
-  //     ->selectAs('COLUMN_DEFAULT', 'defaultValue')
-  //     ->selectAs('COLUMN_KEY=\'PRI\'', 'pk')
-  //     ->selectAs('IS_NULLABLE=\'YES\'', 'allowNull')
+    $sql = $this
+      ->q('information_schema.KEY_COLUMN_USAGE')
+      ->selectAs('CONSTRAINT_NAME', 'name')
+      ->selectAs('COLUMN_NAME', 'columnName')
+      ->selectAs('REFERENCED_TABLE_NAME', 'toTable')
+      ->selectAs('REFERENCED_COLUMN_NAME', 'toColumn')
+      ->where(
+        "TABLE_SCHEMA='{$this->getDatabase()}'",
+        'and', "TABLE_NAME='{$tableName}'",
+        'and', 'NOT REFERENCED_TABLE_NAME IS NULL',
+        'and', 'CONSTRAINT_NAME<>\'PRIMARY\'')
+      ->orderBy('CONSTRAINT_NAME', 'ORDINAL_POSITION')
+      ->sql();
 
-  //     // Strings
-  //     ->selectAs('CHARACTER_MAXIMUM_LENGTH', 'len')
-  //     ->selectAs('COLLATION_NAME', 'collation')
-  //     ->selectAs('CHARACTER_SET_NAME', 'charset')
+    return $sql;
 
-  //     // Numerics
-  //     ->selectAs('NUMERIC_PRECISION', 'precision')
-  //     ->selectAs('NUMERIC_SCALE', 'scale')
-  //     ->orderBy('ORDINAL_POSITION')
+  }
 
-  //     // Others
-  //     ->selectAs('EXTRA', 'extra')
+  /**
+   * SQL del query para obtener el lista de de referencias a una tabla
+   * @param  string $tableName Nombre de la tabla.
+   * @return string            SQL correspondiente.
+   */
+  public function sqlGetTableReferences($tableName){
 
-  //     ->sql();
+    $sql = $this
+      ->q('information_schema.KEY_COLUMN_USAGE')
+      ->selectAs('CONSTRAINT_NAME', 'name')
+      ->selectAs('COLUMN_NAME', 'columnName')
+      ->selectAs('TABLE_NAME', 'fromTable')
+      ->selectAs('REFERENCED_COLUMN_NAME', 'toColumn')
+      ->where(
+        "TABLE_SCHEMA='{$this->getDatabase()}'",
+        'and', "REFERENCED_TABLE_NAME='{$tableName}'",
+        'and', 'NOT REFERENCED_TABLE_NAME IS NULL',
+        'and', 'CONSTRAINT_NAME<>\'PRIMARY\'')
+      ->orderBy('CONSTRAINT_NAME', 'ORDINAL_POSITION')
+      ->sql();
 
-  //   return $sql;
+    return $sql;
 
-  // }
-
-  // /**
-  //  * SQL del query para obtener el lista campos únicos.
-  //  * @param  string $tableName Nombre de la tabla.
-  //  * @return string            SQL correspondiente.
-  //  */
-  // public function sqlGetTableUniques($tableName){
-
-  //   $sql = $this
-  //     ->q('information_schema.KEY_COLUMN_USAGE', 'k')
-  //     ->innerJoin(
-  //       'information_schema.COLUMNS',
-  //       'k.TABLE_SCHEMA = c.TABLE_SCHEMA AND '.
-  //       'k.TABLE_NAME   = c.TABLE_NAME AND '.
-  //       'k.COLUMN_NAME  = c.COLUMN_NAME',
-  //       'c')
-  //     ->where(
-  //       "k.TABLE_SCHEMA='{$this->getDatabase()}'",
-  //       'and', "k.TABLE_NAME='{$tableName}'",
-  //       'and', 'k.CONSTRAINT_NAME<>\'PRIMARY\'',
-  //       'and', 'k.REFERENCED_TABLE_NAME IS NULL',
-  //       'and', 'c.COLUMN_KEY <> \'PRI\'')
-  //     ->selectAs('k.CONSTRAINT_NAME', 'name')
-  //     ->selectAs('k.COLUMN_NAME', 'columnName')
-  //     ->orderBy('k.CONSTRAINT_NAME', 'k.ORDINAL_POSITION')
-  //     ->sql();
-
-  //   return $sql;
-
-  // }
-
-  // /**
-  //  * SQL del query para obtener el lista de foreign keys de una tabla.
-  //  * @param  string $tableName Nombre de la tabla.
-  //  * @return string            SQL correspondiente.
-  //  */
-  // public function sqlGetTableForeignKeys($tableName){
-
-  //   $sql = $this
-  //     ->q('information_schema.KEY_COLUMN_USAGE')
-  //     ->selectAs('CONSTRAINT_NAME', 'name')
-  //     ->selectAs('COLUMN_NAME', 'columnName')
-  //     ->selectAs('REFERENCED_TABLE_NAME', 'toTable')
-  //     ->selectAs('REFERENCED_COLUMN_NAME', 'toColumn')
-  //     ->where(
-  //       "TABLE_SCHEMA='{$this->getDatabase()}'",
-  //       'and', "TABLE_NAME='{$tableName}'",
-  //       'and', 'NOT REFERENCED_TABLE_NAME IS NULL',
-  //       'and', 'CONSTRAINT_NAME<>\'PRIMARY\'')
-  //     ->orderBy('CONSTRAINT_NAME', 'ORDINAL_POSITION')
-  //     ->sql();
-
-  //   return $sql;
-
-  // }
-
-  // /**
-  //  * SQL del query para obtener el lista de de referencias a una tabla
-  //  * @param  string $tableName Nombre de la tabla.
-  //  * @return string            SQL correspondiente.
-  //  */
-  // public function sqlGetTableReferences($tableName){
-
-  //   $sql = $this
-  //     ->q('information_schema.KEY_COLUMN_USAGE')
-  //     ->selectAs('CONSTRAINT_NAME', 'name')
-  //     ->selectAs('COLUMN_NAME', 'columnName')
-  //     ->selectAs('TABLE_NAME', 'fromTable')
-  //     ->selectAs('REFERENCED_COLUMN_NAME', 'toColumn')
-  //     ->where(
-  //       "TABLE_SCHEMA='{$this->getDatabase()}'",
-  //       'and', "REFERENCED_TABLE_NAME='{$tableName}'",
-  //       'and', 'NOT REFERENCED_TABLE_NAME IS NULL',
-  //       'and', 'CONSTRAINT_NAME<>\'PRIMARY\'')
-  //     ->orderBy('CONSTRAINT_NAME', 'ORDINAL_POSITION')
-  //     ->sql();
-
-  //   return $sql;
-
-  // }
-
-  // /**
-  //  * Obtener el SQL para una condicion IN.
-  //  * @param  string               $field     Nombre del campo.
-  //  * @param  string/AmQuery/array $collation Instancia de un query select, SQL
-  //  *                                         array de valores o string a
-  //  *                                         insertar.
-  //  * @return string                          SQL correspondiente.
-  //  */
-  // public function in($field, $collation){
-
-  //   // Si es un array se debe preparar la condició
-  //   if(is_array($collation)){
-
-  //       // Filtrar elementos repetidos
-  //       $collation = array_filter($collation);
-
-  //       // Si no esta vacía la colecion
-  //       if(!empty($collation)){
-
-  //         // Agregar cadenas dentro de los comillas simple
-  //         foreach ($collation as $i => $value){
-  //           $value = $this->realScapeString($value);
-  //           $collation[$i] = is_numeric($value) ? $value : "\'{$value}\'";
-  //         }
-
-  //         // Unir colecion por comas
-  //         $collation = implode($collation, ',');
-
-  //       }else{
-  //         // Si es una colecion vacía
-  //         $collation = null;
-  //       }
-
-  //   }elseif($collation instanceof AmQuery){
-
-  //     // Si es una consulta entonces se obtiene el SQL
-  //     $collation = $this->sqlSelectQuery($collation);
-
-  //   }
-
-  //   // Agregar el comando IN
-  //   return isset($collation) ? "$field IN($collation)" : 'false';
-
-  // }
-
-  // /**
-  //  * Helper para obtener el SQL de la clausula WHERE.
-  //  * @param  string/array $condition Condición o array de condiciones.
-  //  * @param  string       $prefix    Si la condición tiene un prefijo.
-  //  * @param  bool         $isIn      Si la condición es un IN.
-  //  * @return string                  SQL correspondiente.
-  //  */
-  // private function parseWhere($condition, $prefix = null, $isIn = false){
-
-  //   if($isIn){
-
-  //     // Es una condicion IN
-  //     $condition = $this->in($condition[0], $condition[1]);
-
-  //   }elseif(is_array($condition)){
-
-  //     $str = '';
-  //     $lastUnion = '';
-
-  //     // Recorrer condiciones
-  //     foreach($condition as $c){
-
-  //       // Obtener siguiente condicion
-  //       $next = $this->parseWhere($c['condition'], $c['prefix'], $c['isIn']);
-
-  //       // Es la primera condicion
-  //       if(empty($str)){
-  //         $str = $next;
-  //       }else{
-
-  //         // Si el operador de union es igual al anterior o no hay una anterior
-  //         if($c['union'] == $lastUnion || empty($lastUnion)){
-  //           $str = "{$str} {$c['union']} {$next}";
-  //         }else{
-  //           // Cuando cambia el operador de union se debe agregar la condicion anterior
-  //           // entre parentesis
-  //           $str = "({$str}) {$c['union']} {$next}";
-  //         }
-
-  //         // guardar para la siguiente condicion
-  //         $lastUnion = $c['union'];
-
-  //       }
-
-  //     }
-
-  //     // Agregar parentesis a la condicion
-  //     $condition = empty($str) ? '' : "({$str})";
-
-  //   }
-
-  //   // Eliminar espacios al principio y al final
-  //   $condition = trim($condition);
-
-  //   // Agregar el prefix (NOT) si existe
-  //   return empty($condition) ? '' : trim($prefix.' '.$condition);
-
-  // }
+  }
 
 }

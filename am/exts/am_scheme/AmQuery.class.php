@@ -732,7 +732,7 @@ class AmQuery extends AmObject{
    * @param  string         $type  Tipo de join.
    * @return $this
    */
-  public function join($table, $on, $as = null, $type = 'inner'){
+  public function join($table, $on= null, $as = null, $type = ''){
 
     // Agregar los joins
     $this->joins[] = array(
