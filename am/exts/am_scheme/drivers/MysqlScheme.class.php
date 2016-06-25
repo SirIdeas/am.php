@@ -75,7 +75,7 @@ final class MysqlScheme extends AmScheme{
     ),
 
     // Tipos por defectos
-    $defaultsByte = array(
+    $defaultsBytes = array(
       'int'   => 'int',
       'float' => 'float',
       'text'  => 'text'
@@ -115,12 +115,24 @@ final class MysqlScheme extends AmScheme{
   }
 
   /**
+   * Obtiene un hash de los subtipos de un tipo de datos en el DBSM.
+   * @param  $string $type  Nombre del tipo de datos.
+   * @return hash           Hash con la colección de subtipos.
+   */
+  public function getSubTypes($type){
+
+    $seudoType = $type.'Bytes';
+    return self::$$seudoType;
+    
+  }
+
+  /**
    * Crear una conexión
    * @return Resource Recurso (manejdador del recurso) para manejar la conexión.
    */
   protected function start(){
 
-    return $this->handler = @mysqli_connect(
+    return $this->handler = mysqli_connect(
       $this->getServer(),
       $this->getUser(),
       $this->getPass(),
@@ -137,7 +149,7 @@ final class MysqlScheme extends AmScheme{
   public function close() {
 
     if($this->handler)
-      return @mysqli_close($this->handler);
+      return mysqli_close($this->handler);
     return false;
 
   }
@@ -149,7 +161,7 @@ final class MysqlScheme extends AmScheme{
   public function getErrNo(){
     
     if($this->handler)
-      return @mysqli_errno($this->handler);
+      return mysqli_errno($this->handler);
     return null;
 
   }
@@ -161,7 +173,7 @@ final class MysqlScheme extends AmScheme{
   public function getError(){
     
     if($this->handler)
-      return @mysqli_error($this->handler);
+      return mysqli_error($this->handler);
     return null;
 
   }
@@ -175,7 +187,7 @@ final class MysqlScheme extends AmScheme{
   public function realScapeString($value){
 
     if($this->handler)
-      $value = @mysqli_real_escape_string($this->handler, $value);
+      $value = mysqli_real_escape_string($this->handler, $value);
     
     // Si no tiene valor asignar NULL
     return isset($value)? "'{$value}'" : 'NULL';
@@ -190,7 +202,7 @@ final class MysqlScheme extends AmScheme{
   protected function query($sql){
     
     if($this->handler)
-      return @mysqli_query($this->handler, $sql);
+      return mysqli_query($this->handler, $sql);
     return false;
 
   }
@@ -203,7 +215,7 @@ final class MysqlScheme extends AmScheme{
   public function getFetchAssoc($result){
 
     if($this->handler)
-      return @mysqli_fetch_assoc($result);
+      return mysqli_fetch_assoc($result);
     return false;
 
   }
@@ -215,7 +227,7 @@ final class MysqlScheme extends AmScheme{
   public function getLastInsertedId(){
 
     if($this->handler)
-      return @mysqli_insert_id($this->handler);
+      return mysqli_insert_id($this->handler);
     return false;
 
   }
@@ -718,7 +730,7 @@ final class MysqlScheme extends AmScheme{
   private function getTypeByLen($type, $len){
     $seudoType = $type.'Bytes';
     $types = self::$$seudoType;
-    $defaultType = itemOr($type, self::$defaultsByte);
+    $defaultType = itemOr($type, self::$defaultsBytes);
     $index = array_search($len, $types);
     return $index? $index: $defaultType;
   }

@@ -54,7 +54,7 @@ function task_copy($origin, $destiny, array $regexs, $rewrite = false, $vervose 
       // Si el archivo no existe se copia
       if(!is_file($dest) && !is_dir($dest)){
 
-        if(@copy($orig, $dest)){
+        if(copy($orig, $dest)){
           $msgs['copieds'][] = $file;
         }else{
           $msgs['fail_copy'][] = $file;
@@ -67,7 +67,7 @@ function task_copy($origin, $destiny, array $regexs, $rewrite = false, $vervose 
         if(Am::sendToTrash($dest)){
           $msgs['recycleds'][] = $file;
 
-          if(@copy($orig, $dest)){
+          if(copy($orig, $dest)){
             $msgs['rewriteds'][] = $file;
           }else{
             $msgs['fail_copy'][] = $file;

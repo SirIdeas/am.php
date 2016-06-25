@@ -380,7 +380,9 @@ class AmField extends AmObject{
   }
 
   public static function getDefLen($type){
+    
     return itemOr($type, self::$defaultsLen);
+
   }
 
 }

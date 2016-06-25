@@ -30,13 +30,18 @@ return array(
 
     // Directorios de los modelos.
     'models' => array(
-      '' => 'models',
     ),
 
     // Configuraciones de los esquemas
     'schemes' => array(),
 
-    // Confivuraciones de los validadores.
+    // Directorios generales
+    'dirs' => array(
+      'models' => 'models',
+      'schemes' => 'schemes',
+    ),
+
+    // Configuraciones de los validadores.
     'validators' => array(
       'messages' => array(
         'bit' => 'Formato de bit no coincide',
@@ -46,6 +51,9 @@ return array(
 
     // Formatos
     'formats' => array(
+      'AMSCHEME_EMPTY_ALIAS' => 'AmScheme: Alias no puede ser vacío "%s"',
+      'AMSCHEME_INVALID_ALIAS' => 'AmScheme: Alias de objeto inválido "%s"',
+      'AMSCHEME_INVALID_NAME' => 'AmScheme: Nombre de objeto inválido "%s"',
       'AMSCHEME_QUERY_TYPE_UNKNOW' => 'AmScheme: Tipo de consulta indefinida "%s"',
       'AMSCHEME_SCHEMECONF_NOT_FOUND' => 'AmScheme: No se encontró la configuración para la fuente "%s"',
       'AMSCHEMA_TABLE_ALREADY_HAVE_A_FIELD_NAMED' => 'AmScheme: La tabla "%s" ya tiene un campo llamado "%s"',

@@ -344,8 +344,8 @@ class AmQuery extends AmObject{
    */
   public function setSelects(array $value){
 
-    $this->selects = $value;
-    return $this;
+    $this->selects = array();
+    return $this->setArrayAttribute('selectAs', array($value));
 
   }
 
@@ -356,8 +356,8 @@ class AmQuery extends AmObject{
    */
   public function setFrom(array $value){
 
-    $this->froms = $value;
-    return $this;
+    $this->froms = array();
+    return $this->setArrayAttribute('fromAs', array($value));
 
   }
 
@@ -522,7 +522,7 @@ class AmQuery extends AmObject{
       }
 
       // Si tiene un nombre válido retornar el nombre de la tabla
-      if(isNameValid($from))
+      if(!$returnTableInstance && isNameValid($from))
         return $from;
       
     }

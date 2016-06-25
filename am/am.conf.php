@@ -52,6 +52,11 @@ return array(
   'autoload' => array(),
 
   /**
+   * Directorios generales
+   */
+  'dirs' => array(),
+
+  /**
    * Enlaces de eventos.
    */
   'bind' => array(),

@@ -16,17 +16,7 @@ abstract class AmScheme extends AmObject{
     /**
      * Instancias de los esquemas cargados.
      */
-    $schemes = array(),
-
-    /**
-     * Directorio por defecto de los modelos base.
-     */
-    $schemesDir = 'schemes',
-
-    /**
-     * Directorio por defecto de los modelos.
-     */
-    $modelsDir = 'models';
+    $schemes = array();
 
   protected
 
@@ -96,7 +86,7 @@ abstract class AmScheme extends AmObject{
   }
 
   /**
-   * El destructor del objecto cierra la conexión
+   * El destructor del objeto cierra la conexión
    */
   public function __destruct() {
 
@@ -206,6 +196,54 @@ abstract class AmScheme extends AmObject{
   }
 
   /**
+   * Devuelve el nombre de un objeto de la BD pasado por realScapeString y por
+   * nameWrapper.
+   * @param  string $name Nombre que se desea escapar y colocar entre comillas.
+   * @return string       Resultado de la operación.
+   */
+  public function nameWrapperAndRealScape($name){
+
+    return $this->nameWrapper($this->realScapeString($name));
+
+  }
+
+  /**
+   * Prepara el nombre complete de un objeto. Primero los separa por partes en
+   * puntos luego los pasa por la función <code>nameWrapperAndRealScape</code>.
+   * @param  string $name Nombre relativo del objeto.
+   * @return string       Nombre procesado.
+   */
+  public function nameWrapperAndRealScapeComplete($name){
+
+    // Dividir en puntos
+    $nameArr = explode('.', (string)$name);
+
+    // Preparar el nombre de cada parte del campo
+    foreach ($nameArr as $key => $value) {
+      if(!isNameValid($value))
+        throw Am::e('AMSCHEME_INVALID_NAME', $name);
+        
+      $nameArr[$key] = $this->nameWrapperAndRealScape($value);
+    }
+
+    // Pegar campos
+    return implode('.', $nameArr);
+
+  }
+
+  /**
+   * Devuelve una cadena espacada y entre comillas.
+   * @param  string $string Cadena que se desea escapar y colocar entre
+   *                        comillas.
+   * @return string         Resultado de la operación.
+   */
+  public function stringWrapperAndRealScape($string){
+
+    return $this->stringWrapper($this->realScapeString($string));
+    
+  }
+
+  /**
    * Carga la instancia de una tabla.
    * @param  string/AmTable $table Nombre o instancia de la tabla. 
    * @return AmTable               Instancia de la tabla solicitada.
@@ -300,7 +338,7 @@ abstract class AmScheme extends AmObject{
 
     // Obtener el nombre del esquema por defecto su directorio raíz es el mismo
     // directorio de esquemas.
-    return self::getSchemesDir() . (!empty($name)?'/' . $name : '');
+    return Am::getDir('schemes') . (!empty($name)? "/{$name}" : '');
 
   }
 
@@ -334,7 +372,7 @@ abstract class AmScheme extends AmObject{
    */
   public function getBaseModelConfFilename($model){
 
-    return $this->getDir() . '/'. underscore($model) .'.conf.php';
+    return $this->getDir() .'/'. underscore($model) .'.conf.php';
 
   }
 
@@ -345,7 +383,7 @@ abstract class AmScheme extends AmObject{
    */
   public function getBaseModelClassFilename($model){
 
-    return "{$this->getDir()}/{$this->getBaseModelClassName($model)}.class.php";
+    return $this->getDir() .'/'. $this->getBaseModelClassName($model) .'.class.php';
 
   }
 
@@ -379,78 +417,78 @@ abstract class AmScheme extends AmObject{
 
   }
 
-  /**
-   * Crea el archivo con la clase del modelo base basando en una tabla.
-   * @param  AmTable $table Tabla en el que se basará el modelo a generar.
-   * @return bool           Si se generó o no el modelo.
-   */
-  public function generateBaseModelFile(AmTable $table){
+  // /**
+  //  * Crea el archivo con la clase del modelo base basando en una tabla.
+  //  * @param  AmTable $table Tabla en el que se basará el modelo a generar.
+  //  * @return bool           Si se generó o no el modelo.
+  //  */
+  // public function generateBaseModelFile(AmTable $table){
 
-    // Obtener el nombre del archivo destino
-    $path = $this->getBaseModelClassFilename($table->getTableName());
+  //   // Obtener el nombre del archivo destino
+  //   $path = $this->getBaseModelClassFilename($table->getTableName());
     
-    // Crear directorio donde se ubicará el archivo si no existe
-    Am::mkdir(dirname($path));
+  //   // Crear directorio donde se ubicará el archivo si no existe
+  //   Am::mkdir(dirname($path));
 
-    // Generar el archivo
-    return !!@file_put_contents($path, "<?php\n\n" .
-      AmGenerator::classBaseModel($this, $table));
+  //   // Generar el archivo
+  //   return !!file_put_contents($path, "<?php\n\n" .
+  //     AmGenerator::classBaseModel($this, $table));
     
-  }
+  // }
 
-  /**
-   * Genera la clase base del modelo y su archivo de configuración.
-   * @param  AmTable $table Tabla en el que se basará el modelo a generar.
-   * @return Hash           Resultado de la generación del archivo de
-   *                        configuración y el modelo.
-   */
-  public function generateBaseModel(AmTable $table){
+  // /**
+  //  * Genera la clase base del modelo y su archivo de configuración.
+  //  * @param  AmTable $table Tabla en el que se basará el modelo a generar.
+  //  * @return Hash           Resultado de la generación del archivo de
+  //  *                        configuración y el modelo.
+  //  */
+  // public function generateBaseModel(AmTable $table){
     
-    // Obtener la ruta del archivo
-    $file = $this->getBaseModelConfFilename($table->getTableName());
+  //   // Obtener la ruta del archivo
+  //   $file = $this->getBaseModelConfFilename($table->getTableName());
 
-    // Crear directorio donde se ubicará el archivo
-    Am::mkdir(dirname($file));
+  //   // Crear directorio donde se ubicará el archivo
+  //   Am::mkdir(dirname($file));
 
-    // Crear archivo de configuración
-    $writed = file_put_contents($file, AmCoder::encode($table->toArray()));
+  //   // Crear archivo de configuración
+  //   $writed = file_put_contents($file, AmCoder::encode($table->toArray()));
 
-    return array(
+  //   return array(
 
-      // Si el archivo fue creado o no
-      'conf' => $writed,
+  //     // Si el archivo fue creado o no
+  //     'conf' => $writed,
 
-      // Crear clase
-      'model' => $this->generateBaseModelFile($table)
+  //     // Crear clase
+  //     'model' => $this->generateBaseModelFile($table)
 
-    );
+  //   );
     
-  }
+  // }
 
-  /**
-   * Genera todos los modelos bases correspondientes a las tablas de un esquema.
-   * @return hash Resultado de la generación de la configuración y el modelo.
-   */
-  public function generateScheme(){
+  // /**
+  //  * Genera todos los modelos bases correspondientes a las tablas de un esquema.
+  //  * @return hash Resultado de la generación de la configuración y el modelo.
+  //  */
+  // public function generateScheme(){
 
-     // Para retorno
-    $ret = array(
-      'tables' => array(),
-    );
+  //    // Para retorno
+  //   $ret = array(
+  //     'tables' => array(),
+  //   );
 
-    // Obtener listado de nombres de tablas
-    $tables = $this->q($this->sqlGetTables())->col('tableName');
+  //   // Obtener listado de nombres de tablas
+  //   $tables = $this->queryGetTables()->col('tableName');
 
-    foreach ($tables as $tableName)
+  //   foreach ($tables as $tableName)
 
-      // Obtener instancia de la tabla
-      $ret['tables'][$tableName] = $this->generateBaseModel(
-        $this->getTableFromScheme($tableName)
-      );
+  //     // Obtener instancia de la tabla
+  //     $ret['tables'][$tableName] = $this->generateBaseModel(
+  //       $this->getTableFromScheme($tableName)
+  //     );
 
-    return $ret;
+  //   return $ret;
 
-  }
+  // }
 
   /**
    * Devuelve el nombre de la BD para ser reconocida en el DBSM.
@@ -725,18 +763,6 @@ abstract class AmScheme extends AmObject{
   }
 
   /**
-   * Indica si la tabla existe.
-   * @param  string/AmTable $table Nombre o instancia de la tabla.
-   * @return bool                  Si la tabla existe.
-   */
-  public function existsTable($table){
-
-    // Intenta obtener la descripcion de la tabla para saber si existe.
-    return !!$this->getTableDescription($table);
-
-  }
-
-  /**
    * Eliminar todos los registros de una tabla y reinicia los campos
    * autoincrementables.
    * @param  string/AmTable $table    Nombre o instancia de la tabla.
@@ -746,6 +772,18 @@ abstract class AmScheme extends AmObject{
   public function truncate($table, $ignoreFk = true){
 
     return !!$this->execute($this->sqlTruncate($table, $ignoreFk));
+
+  }
+
+  /**
+   * Indica si la tabla existe.
+   * @param  string/AmTable $table Nombre o instancia de la tabla.
+   * @return bool                  Si la tabla existe.
+   */
+  public function existsTable($table){
+
+    // Intenta obtener la descripcion de la tabla para saber si existe.
+    return !!$this->getTableDescription($table);
 
   }
 
@@ -1132,31 +1170,29 @@ abstract class AmScheme extends AmObject{
     return true;
 
   }
-
-  public static function getLenByType(){
-
-  }
-
-  /**
-   * Devuelve la carpeta destino para los modelos base de los esquemas.
-   * @return string Directorio de modelos base.
-   */
-  public static function getSchemesDir(){
-
-    return self::$schemesDir;
-
-  }
-
-  /**
-   * Devuelve la carpeta destino para los modelos definidos.
-   * @return string Directorio de modelos.
-   */
-  public static function getModelsDir(){
-
-    return self::$modelsDir;
-
-  }
   
+  /**
+   * Devuelve un alias no existente en una colección. Si en la colección existe
+   * algún key igual al alias se le irá agregando contador al final hasta
+   * obtener uno que no exista.
+   * @param  array  $collection Colección donde se buscará si el alias existe.
+   * @param  string $alias      Alias base.
+   * @return string             Alias generados
+   */
+  public static function alias(array $collection, $alias){
+
+    if(!isNameValid($alias))
+      throw Am::e('AMSCHEME_INVALID_ALIAS', $alias);
+
+    $i = 0;
+    $finalAlias = $alias;
+    while(isset($collection[$finalAlias]))
+      $finalAlias = $alias . $i++;
+
+    return $finalAlias;
+
+  }
+
   /**
    * Devuelve la configuración de un determinado esquema.
    * @param  string $name Nombre del esquema buscado.
@@ -1294,9 +1330,7 @@ abstract class AmScheme extends AmObject{
       $models = Am::getProperty('models');
 
       // Obtener el directorio del modelo actual.
-      $modelDir = realPath(
-        itemOr($model, $models, itemOr('', $models, self::getModelsDir()))
-      );
+      $modelDir = realPath(itemOr($model, $models, Am::getDir('models')));
 
       // Cargar los paths de clases en dicho directorio.
       Am::loadPathClases($modelDir);
@@ -1332,6 +1366,13 @@ abstract class AmScheme extends AmObject{
    * @return string/int Devuelve el nro del purto por defecto.
    */
   abstract public function getDefaultPort();
+  
+  /**
+   * Obtiene un hash de los subtipos de un tipo de datos en el DBSM.
+   * @param  $string $type  Nombre del tipo de datos.
+   * @return hash           Hash con la colección de subtipos.
+   */
+  abstract public function getSubTypes($type);
 
   /**
    * Metodo para crear una conexion.
@@ -1358,7 +1399,7 @@ abstract class AmScheme extends AmObject{
   abstract public function getError();
 
   /**
-   * Obtiene una cade con un valor seguro para el manejador de DBSM.
+   * Obtiene una cadena con un valor seguro para el manejador de DBSM.
    * @param  mixed  $value Valor que se desea procesar.
    * @return string        Valor procesado.
    */
