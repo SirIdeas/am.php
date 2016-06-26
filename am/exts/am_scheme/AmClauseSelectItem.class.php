@@ -18,21 +18,50 @@ class AmClauseSelectItem extends AmObject{
   public function __construct(array $data = array()){
     parent::__construct($data);
 
-    if(empty($this->alias) && is_string($this->field)){
-      $this->alias = str_replace('.', '_', $this->field);
+    $this->scheme = $this->query->getScheme();
+
+    if(empty($this->alias)){
+      $field = $this->field;
+      
+      if(is_string($field)){
+        $this->alias = str_replace('.', '_', $field);
+      }
+
     }
 
     if(empty($this->alias)){
       throw Am::e('AMSCHEME_EMPTY_ALIAS', var_export($this->field, true));
     }
 
-    $this->scheme = $this->query->getScheme();
-
     $this->alias = $this->scheme->alias($this->alias, $this->query->getSelects());
 
   }
 
-  public function sqlField(){
+  public function getQuery(){
+
+    return $this->query;
+
+  }
+
+  public function getField(){
+
+    return $this->field;
+
+  }
+
+  public function getAlias(){
+
+    return $this->alias;
+
+  }
+
+  public function __toString(){
+
+    return $this->sql();
+
+  }
+
+  public function sql(){
 
     // Si es una consulta se incierra entre parentesis
     if($this->field instanceof AmQuery){
@@ -47,28 +76,10 @@ class AmClauseSelectItem extends AmObject{
 
     }
 
-    return $sql;
-
-  }
-
-  public function getAlias(){
-
-    return $this->alias;
-
-  }
-
-  public function sql(){
-
-    $fieldSql = $this->sqlField();
-    $aliasSql = $this->scheme->nameWrapperAndRealScape($this->alias);
+    $alias = $this->scheme->nameWrapperAndRealScape($this->alias);
+    
     // SQLSQLSQL
-    return "{$fieldSql} AS {$aliasSql}";
-
-  }
-
-  public function __toString(){
-
-    return $this->sql();
+    return "{$sql} AS {$alias}";
 
   }
 

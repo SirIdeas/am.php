@@ -5,8 +5,12 @@ function dinamicTableServer(AmObject $params, AmQuery $query, $toArray = true){
   $fields = $query->getSelects();
   $formatter = $query->getFormatter();
 
-  if(empty($fields))
-    $fields = $query->getTable(true)->getFields();
+  if(empty($fields)){
+    $table = $query->getTable();
+    if($table){
+      $fields = $query->getFields();
+    }
+  }
   
   $fields = array_keys($fields);
   $query = $query->getScheme()->q($query)->setSelects(array_combine($fields, $fields));

@@ -285,25 +285,6 @@ abstract class AmScheme extends AmObject{
   }
 
   /**
-   * Carga la instancia de una tabla.
-   * @param  string/AmTable $table Nombre o instancia de la tabla. 
-   * @return AmTable               Instancia de la tabla solicitada.
-   */
-  public function loadTable($table){
-    
-    // Instanciar la tabla si el parámetro es un string.
-    if(is_string($table))
-      $table = self::table($table, $this->getName());
-
-    // Agregar tabla
-    $this->addTable($table);
-
-    // Retornar tabla
-    return $table;
-
-  }
-
-  /**
    * Agrega una tabla a la conexión.
    * @param  AmTable $table Tabla a agregar.
    * @return $this
@@ -659,6 +640,13 @@ abstract class AmScheme extends AmObject{
 
     // Crear instancia
     $q = new AmQuery(array('scheme' => $this));
+
+    // Asignar el modelo
+    if($from instanceof AmQuery || $from instanceof AmTable){
+      $q->setModel($from->getModel());
+    }elseif(is_string($from) && is_subclass_of($from, 'AmModel')){
+      $q->setModel($from); 
+    }
     
     // Asignar el from de la consulta
     if(!empty($from))
@@ -1655,7 +1643,7 @@ abstract class AmScheme extends AmObject{
    */
   public function sqlSelectQuery(AmQuery $q){
 
-    return !empty($q->sql) ? $q->sql :
+    return
       trim(implode(' ', array(
       trim($this->sqlClauseSelect($q)),
       trim($this->sqlFrom($q)),
@@ -1786,12 +1774,13 @@ abstract class AmScheme extends AmObject{
 
     $selects = $q->getSelects();  // Obtener argmuentos en la clausula SELECT
     $distinct = $q->getDistinct();
-    $alias = array();
 
     // Unir campos
+    // SQLSQLSQL
     $selects = trim(implode(', ', $selects));
 
     // Si no se seleccionó ningun campo entonces se tomaran todos
+    // SQLSQLSQL
     $selects = empty($selects) ? '*' : $selects;
 
     // Agregar SELECT
@@ -1807,35 +1796,15 @@ abstract class AmScheme extends AmObject{
    */
   public function sqlFrom(AmQuery $q){
 
-    $fromsOri = $q->getFroms();   // Listado de argumentos de la clausula FROM
-    $froms = array();             // Listado de retorno
-
-    // Recorrer lista del FROM
-    foreach($fromsOri as $alias => $from){
-
-      if($from instanceof AmTable || isNameValid($from)){
-        // Si es una tabla se concatena el nombre de la BD y el de la tabla como strin
-        $from = $this->getParseObjectDatabaseName($from);
-      }elseif($from instanceof AmQuery){
-        // Si es una consulta se encierra en parentesis
-        $from = "({$from->sql()})";
-      }elseif(false !== (preg_match('/^([a-zA-Z_][a-zA-Z0-9_]*)\.([a-zA-Z_][a-zA-Z0-9_]*)$/', $from, $matches)!= 0)){
-        // Dividir por el punto
-        $from = $this->getParseName($matches[1]).'.'.$this->getParseName($matches[2]);
-      }elseif(is_string($from)){
-        $from = $from = "({$from})";
-      }
-
-      // Agregar parametro AS
-      $froms[] = isNameValid($alias) ? "{$from} AS {$alias}" : $from;
-
-    }
+    $froms = $q->getFroms();   // Listado de argumentos de la clausula FROM
 
     // Unir argumentos procesados
+    // SQLSQLSQL
     $froms = trim(implode(', ', $froms));
 
     // Agregar FROM
-    return (empty($froms) ? '' : "FROM {$froms}");
+    // SQLSQLSQL
+    return empty($froms) ? '' : trim('FROM '.$froms);
 
   }
 
@@ -2069,7 +2038,7 @@ abstract class AmScheme extends AmObject{
    * @param  string $name Nombre del esquema buscado.
    * @return hash         Configuración del esquema.
    */
-  public static function getSchemeConf($name = ''){
+  public static function getConf($name = ''){
 
     // Obtener configuraciones para las fuentes
     $schemes = Am::getProperty('schemes', array());
@@ -2105,7 +2074,7 @@ abstract class AmScheme extends AmObject{
       return self::$schemes[$name];
 
     // Obtener la configuración de la fuente
-    $schemeConf = self::getSchemeConf($name);
+    $schemeConf = self::getConf($name);
 
     // Si no existe una configuración para el nombre de fuente solicitado se
     // retorna NULL
@@ -2138,38 +2107,6 @@ abstract class AmScheme extends AmObject{
   }
 
   /**
-   * Devuelve la instancia de una tabla en una fuente determinada
-   * @param  string  $tableName  Nombre de la tabla que se desea.
-   * @param  string  $schemeName Nombre del esquema al que pertenece la
-   *                             tabla.
-   * @param  string  $model      Nombre del modelo de la tabla.
-   * @return AmTable             Instancia de la tabla.
-   */
-  public static function table($tableName, $schemeName = '', $model = null){
-
-    // Obtener la instancia de la fuente
-    $scheme = self::get($schemeName);
-
-    if(!isset($model))
-      $model = $scheme->getSchemeModelName($tableName);
-
-    // Si ya ha sido instanciada la tabla
-    // entonces se devuelve la instancia
-    if($scheme->hasTableInstance($model))
-      return $scheme->getTableInstance($model);
-
-    // Instancia la clase
-    $table = new AmTable(array(
-      'schemeName' => $schemeName,
-      'tableName' => $tableName,
-      'model' => $model
-    ));
-
-    return $table;
-
-  }
-
-  /**
    * Incluye un modelo.
    * @param  string      $model Nombre del modelo a insertar. Puede ser un
    *                            modelo base :<modelName>@<schemeName> o el
@@ -2187,24 +2124,10 @@ abstract class AmScheme extends AmObject{
       // Si no se indica la fuente tomar la fuente por defecto
       if(empty($m[2]))
         $m[2] = '';
-
-      // Incluir modelo y  obtener la tabla
-      self::table($m[1], $m[2]);
       
       $scheme = self::get($m[2]);
 
       $model = $scheme->getBaseModelClassName($m[1]);
-
-    }else{
-
-      // Obtener el hash de directorios de modelos.
-      $models = Am::getProperty('models');
-
-      // Obtener el directorio del modelo actual.
-      $modelDir = realPath(itemOr($model, $models, Am::getDir('models')));
-
-      // Cargar los paths de clases en dicho directorio.
-      Am::loadPathClases($modelDir);
 
     }
 

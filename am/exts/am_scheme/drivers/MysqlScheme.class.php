@@ -262,10 +262,10 @@ final class MysqlScheme extends AmScheme{
   public function queryGetInfo(){
 
     $query = $this
-      ->q('information_schema.SCHEMATA', 's')
+      ->q('information_schema.SCHEMATA')
       ->where("SCHEMA_NAME='{$this->getDatabase()}'")
-      ->selectAs('s.DEFAULT_CHARACTER_SET_NAME', 'charset')
-      ->selectAS('s.DEFAULT_COLLATION_NAME', 'collation');
+      ->selectAs('DEFAULT_CHARACTER_SET_NAME', 'charset')
+      ->selectAS('DEFAULT_COLLATION_NAME', 'collation');
 
     return $query;
 

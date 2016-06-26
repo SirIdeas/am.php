@@ -60,7 +60,7 @@ class InQueryValidator extends AmValidator{
     $q = $this->getQuery();
 
     // Preparar consulta.
-    $qq = $q->getScheme()->q($q, 'qq')
+    $qq = $q->encapsulate('qq')
         ->select($field)            // Selecionar campo.
         ->where("{$field} = {$value}"); // Agregar consulta.
 

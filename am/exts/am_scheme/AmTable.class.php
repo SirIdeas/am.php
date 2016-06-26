@@ -153,7 +153,7 @@ final class AmTable extends AmObject{
     parent::__construct($params);
 
     // Obtener como retornará los resultados y asignarlo a la consulta
-    if(!$this->getModel())
+    if(!$this->model)
       $this->model = $scheme->getSchemeModelName($params['tableName']);
 
     // Agregar tabla al esquema
@@ -585,38 +585,39 @@ final class AmTable extends AmObject{
 
   }
 
-  /**
-   * Asigna el modelo a una tabla.
-   * Si ya tiene un modleoa asignado y es diferente al actual entonces se clona
-   * la instancia de la tabla y se asigna el nuevo modelo a esta.
-   * @param string   $value Nombre del modelo.
-   * @return AmTabla        Si el model cambia devuelve la tabla nueva, del
-   *                        contrario devuelve la tabla actual.
-   */
-  public function setModel($value){
+  // PENDIENTE Evaluar si es necesario
+  // /**
+  //  * Asigna el modelo a una tabla.
+  //  * Si ya tiene un modleoa asignado y es diferente al actual entonces se clona
+  //  * la instancia de la tabla y se asigna el nuevo modelo a esta.
+  //  * @param string   $value Nombre del modelo.
+  //  * @return AmTabla        Si el model cambia devuelve la tabla nueva, del
+  //  *                        contrario devuelve la tabla actual.
+  //  */
+  // public function setModel($value){
 
-    $table = $this;
+  //   $table = $this;
 
-    if(isset($this->model) && isset($value) && $this->model !== $value){
+  //   if(isset($this->model) && isset($value) && $this->model !== $value){
 
-      // Clonar la tabla actual
-      $model = $this->model;
-      $this->model = $value;
-      $table = clone($this);
-      $this->model = $model;
+  //     // Clonar la tabla actual
+  //     $model = $this->model;
+  //     $this->model = $value;
+  //     $table = clone($this);
+  //     $this->model = $model;
 
-      // Agregar la tabla al esquema.
-      $table->getScheme()->addTable($table);
+  //     // Agregar la tabla al esquema.
+  //     $table->getScheme()->addTable($table);
 
-    }elseif(!isset($this->model) && isset($value)){
+  //   }elseif(!isset($this->model) && isset($value)){
       
-      $this->model = $value;
+  //     $this->model = $value;
 
-    }
+  //   }
     
-    return $table;
+  //   return $table;
 
-  }
+  // }
 
   /**
    * Asigna el nombre del campo de momento de creación del registro.
@@ -1148,9 +1149,6 @@ final class AmTable extends AmObject{
 
     // Crear consultar
     $q = $this->getScheme()->q($this, $alias);
-
-    // Obtener como retornará los resultados y asignarlo a la consulta
-    $q->setModel($this->getModel());
 
     // Asignar clausula SELECT
     if($withFields){

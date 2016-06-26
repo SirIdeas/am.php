@@ -497,34 +497,20 @@ class AmQuery extends AmObject{
    * Devuelve la primera instancia deo nombre una tabla que se encuentre dentro
    * de la cláusula FROM. Tambien se busca dentro de la cláusula FROM del
    * queries anidadas.
-   * @param  bool           $returnTableInstance Indica si al encontrar una
-   *                                             instancia de AmTable debe ser
-   *                                             retornada.
    * @return string/Amtable                      Nombre o instancia de la tabla
    *                                             encontrada.
    */
-  public function getTable($returnTableInstance = false){
+  public function getTable(){
 
     // Obtener los froms del query
-    $froms = $this->getFroms();
+    $model = $this->getModel();
 
-    foreach ($froms as $from) {
-
-      // Si es un query
-      if($from instanceof AmQuery)
-        $from = $from->getTable($returnTableInstance);
-
-      // Si es una tabla obtener el nombre
-      if($from instanceof AmTable){
-        if($returnTableInstance)
-          return $from;
-        $from = $from->getTableName();
-      }
-
-      // Si tiene un nombre válido retornar el nombre de la tabla
-      if(!$returnTableInstance && isNameValid($from))
-        return $from;
-      
+    if(is_subclass_of($model, 'AmModel')){
+      return $model::me();
+    }else{
+      $scheme = $this->getScheme();
+      if($scheme->hasTableInstance($model))
+        return $scheme->getTableInstance($model);
     }
 
     return null;
@@ -546,12 +532,14 @@ class AmQuery extends AmObject{
     $froms = $this->getFroms();
 
     // Recorrer para hasta obtener la primera instancia de AmTable.
-    foreach ($froms as $from)
+    foreach ($froms as $fromClauseItem){
+      $from = $fromClauseItem->getFrom();
       if($from instanceof AmTable){
         // Asignar la fecha de actualización.
         $from->setAutoUpdatedAt($this);
         break;
       }
+    }
 
     // Cambiar el tipo de query.
     $this->type = 'update';
@@ -559,17 +547,6 @@ class AmQuery extends AmObject{
     // Ejecutar el query.
     return $this->execute();
     
-  }
-
-  /**
-   * Agregar campos al SELECT.
-   * @params Lista de campos a selecionar.
-   * @return $this
-   */
-  public function select(/* campos */){
-
-    return $this->setArrayAttribute('selectAs', func_get_args());
-
   }
 
   /**
@@ -596,16 +573,6 @@ class AmQuery extends AmObject{
   }
 
   /**
-   * Agregar tablas al FROM.
-   * @return $this
-   */
-  public function from(){
-
-    return $this->setArrayAttribute('fromAs', func_get_args());
-
-  }
-
-  /**
    * Agregar un campos a la cláusula FROM.
    * @param  string $field Nombre de la tabla.
    * @param  string $alias Alias de la tabla.
@@ -613,44 +580,37 @@ class AmQuery extends AmObject{
    */
   public function fromAs($from, $alias = null){
 
-    // Asignacion del from
-    if(empty($alias)){
+    $item = new AmClauseFromItem(array(
+      'query' => $this,
+      'from' => $from,
+      'alias' => $alias,
+    ));
 
-      // Si no se indicó el parametro $alias
-      if($from instanceof AmQuery){
-        // Si es un query se agrega al final
-        $alias = $from->getModel();
-        if(is_subclass_of($alias, 'AmModel'))
-          $alias = $alias::me()->getTableName();
-      }elseif($from instanceof AmTable){
-        // Si es nua tabla se asigna en una posicion especifica
-        $alias = $from->getTableName();
-      }elseif (isNameValid($from)){
-        // Se asigna en una posicion especifica
-        $alias = $from;
-      }else{
-        // Agregar al final
-        $alias = null;
-      }
-
-    }elseif(!isNameValid($alias)){
-      $alias = null;
-    }
-
-    if(!isset($alias))
-      $this->froms[] = $from;
-    else{
-
-      $i = 0;
-      $finalAlias = $alias;
-      while(isset($this->froms[$finalAlias]))
-        $finalAlias = $alias . $i++;
-
-      $this->froms[$finalAlias] = $from;
-
-    }
+    // Agregar al final
+    $this->froms[$item->getAlias()] = $item;
 
     return $this;
+
+  }
+
+  /**
+   * Agregar campos al SELECT.
+   * @params Lista de campos a selecionar.
+   * @return $this
+   */
+  public function select(/* campos */){
+
+    return $this->setArrayAttribute('selectAs', func_get_args());
+
+  }
+
+  /**
+   * Agregar tablas al FROM.
+   * @return $this
+   */
+  public function from(){
+
+    return $this->setArrayAttribute('fromAs', func_get_args());
 
   }
 
@@ -1001,10 +961,7 @@ class AmQuery extends AmObject{
     // Preparar valores del array mediante los campos de la tabla.
     
     // Obtner la tabla
-    $table = $this->getTable(true);
-
-    if(is_string($table))
-      $table = $scheme->loadTable($table);
+    $table = $this->getTable();
 
     // Preparar valores si se logró obtener la instancia de la tabla.
     if($table instanceof AmTable)

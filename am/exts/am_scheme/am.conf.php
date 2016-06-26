@@ -28,16 +28,11 @@ return array(
       'models' => true,
     ),
 
-    // Directorios de los modelos.
-    'models' => array(
-    ),
-
     // Configuraciones de los esquemas
     'schemes' => array(),
 
     // Directorios generales
     'dirs' => array(
-      'models' => 'models',
       'schemes' => 'schemes',
     ),
 
