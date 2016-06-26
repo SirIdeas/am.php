@@ -199,6 +199,16 @@ class AmQuery extends AmObject{
   }
 
   /**
+   * Retorna los posibles joins
+   * @return [type] [description]
+   */
+  public function getPossibleJoins(){
+
+    return $this->possibleJoins;
+
+  }
+
+  /**
    * Devuelve Array de condiciones.
    * @return array Array de condiciones.
    */
@@ -632,6 +642,9 @@ class AmQuery extends AmObject{
       'alias' => $alias,
     ));
 
+    // Agregar al final
+    $this->froms[$item->getAlias()] = $item;
+
     $table = null;
     if($from instanceof AmTable){
       $table = $from;
@@ -640,14 +653,8 @@ class AmQuery extends AmObject{
     }
 
     if($table instanceof AmTable){
-      $this->possibleJoins[] = array(
-        'alias' => $item->getAlias(),
-        'table' => $table,
-      );
+      $this->possibleJoins[$item->getAlias()] = $table;
     }
-
-    // Agregar al final
-    $this->froms[$item->getAlias()] = $item;
 
     return $this;
 
@@ -674,6 +681,20 @@ class AmQuery extends AmObject{
 
     // Agregar los joins
     $this->joins[$item->getAlias()] = $item;
+
+    $table = null;
+    if($from instanceof AmTable){
+      $table = $from;
+    }else{
+      $model = $item->getModel();
+      if(isset($model)){
+        $table = $model::me();
+      }
+    }
+
+    if($table instanceof AmTable){
+      $this->possibleJoins[$item->getAlias()] = $table;
+    }
 
     return $this;
 
@@ -1170,8 +1191,9 @@ class AmQuery extends AmObject{
       $row = $this->row();
 
       // Si nbo se pudo obtener un elemento retornar falso.
-      if(!$row)
+      if(!$row){
         return false;
+      }
 
       // Guardar en los items obtenidos.
       $this->items[$this->index] = $row;

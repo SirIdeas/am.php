@@ -143,8 +143,9 @@ final class AmTable extends AmObject{
     $conf = $scheme->getBaseModelConf($params['tableName']);
 
     // Si se pudo obtener la configuración se mezcla con la recibida
-    if($conf)
+    if($conf){
       $params = array_merge($conf, $params, array('autoFields' => false));
+    }
 
     // Aaignar modelo
     $params['scheme'] = $scheme;
@@ -153,8 +154,9 @@ final class AmTable extends AmObject{
     parent::__construct($params);
 
     // Obtener como retornará los resultados y asignarlo a la consulta
-    if(!$this->model)
+    if(!$this->model){
       $this->model = $scheme->getSchemeModelName($params['tableName']);
+    }
 
     // Agregar tabla al esquema
     $scheme->addTable($this);
@@ -166,8 +168,7 @@ final class AmTable extends AmObject{
 
     // Si validators === true entonces se esta pidiendo que se generen todos
     // los validadores
-    if(is_bool($this->validators))
-
+    if(is_bool($this->validators)){
       $this->validators = array_fill_keys(merge_unique(
         // De campos
         array_keys($this->fields),
@@ -177,6 +178,7 @@ final class AmTable extends AmObject{
         array_keys($this->uniqes)
 
       ), $this->validators);
+    }
 
     // Luego recetearlos para prepararlos
     $this->pks = array();
@@ -213,9 +215,11 @@ final class AmTable extends AmObject{
     }
 
     // Preparar los primary keys.
-    if(is_array($pks))
-      foreach($pks as $pk)
+    if(is_array($pks)){
+      foreach($pks as $pk){
         $this->addPk($pk);
+      }
+    }
 
     // Agrega validador unique del primary key de la tabla.
     $this->setValidator('_pk_', 'unique', array(
@@ -226,12 +230,14 @@ final class AmTable extends AmObject{
     foreach ($this->uniques as $name => $options) {
 
       // Si es false no se crea el validador
-      if($options === false)
+      if($options === false){
         continue;
+      }
 
       // Si es tru se crea el validador con un único campo
-      if($options === true)
+      if($options === true){
         $options = array('fields' => array($name));
+      }
 
       // Agrega validador unique del primary key de la tabla.
       $this->setValidator($name, 'unique', $options);
@@ -239,8 +245,9 @@ final class AmTable extends AmObject{
     }
       
     // Preparar referencias a
-    if(!is_array($this->belongTo))
+    if(!is_array($this->belongTo)){
       $this->belongTo = array();
+    }
 
     $this->foreigns = array();
 
@@ -290,8 +297,9 @@ final class AmTable extends AmObject{
     }
 
     // Agregar validadores faltantes
-    foreach($missingsValidators as $name)
+    foreach($missingsValidators as $name){
       $this->buildValidatorsTo($name);
+    }
 
   }
   

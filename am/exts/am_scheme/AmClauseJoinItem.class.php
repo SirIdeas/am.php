@@ -14,8 +14,9 @@ class AmClauseJoinItem extends AmObject{
     $query = null,
     $from = null,
     $alias = null,
-    $on = array(),
-    $type = null;
+    $on = null,
+    $type = null,
+    $model = null;
 
   public function __construct(array $data = array()){
     parent::__construct($data);
@@ -47,6 +48,35 @@ class AmClauseJoinItem extends AmObject{
       $this->query->getFroms(),
       $this->query->getJoins()
     ));
+
+    if(is_string($from)){
+      $this->makeFromPossibleJoins();
+    }
+
+  }
+
+  public function makeFromPossibleJoins(){
+
+    $from = $this->from;
+    $alias = $this->alias;
+    $tables = $this->query->getPossibleJoins();
+    foreach ($tables as $aliasTable => $table){
+      $posibleJoins = $table->getPossibleJoins();
+      foreach ($posibleJoins as $aliasJoin => $conf){
+        // var_dump([$from, $aliasJoin, "{$aliasTable}.{$aliasJoin}"]);
+        if(in_array($from, array($aliasJoin, "{$aliasTable}.{$aliasJoin}"))){
+          $this->model = $conf['model'];
+          $on = array();
+          foreach ($conf['cols'] as $colFrom => $colTo) {
+            $on[] = "{$aliasTable}.{$colFrom} = {$aliasJoin}.{$colTo}";
+          }
+          if(!empty($on)){
+            $this->on = '('.implode(') AND (', $on).')';
+          }
+          return;
+        }
+      }
+    }
 
   }
 
@@ -80,6 +110,12 @@ class AmClauseJoinItem extends AmObject{
 
   }
 
+  public function getModel(){
+
+    return $this->model;
+
+  }
+
   public function __toString(){
 
     return $this->sql();
@@ -102,6 +138,11 @@ class AmClauseJoinItem extends AmObject{
     }elseif(is_string($from)){
 
       $tableName = $from;
+
+      if(isset($this->model)){
+        $tableName = $this->model;
+      }
+
       if(is_subclass_of($tableName, 'AmModel')){
         $tableName = $tableName::me()->getTableName();
       }

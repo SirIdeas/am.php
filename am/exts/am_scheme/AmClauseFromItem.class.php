@@ -41,7 +41,10 @@ class AmClauseFromItem extends AmObject{
       throw Am::e('AMSCHEME_EMPTY_ALIAS', var_export($from, true));
     }
 
-    $this->alias = $this->scheme->alias($this->alias, $this->query->getFroms());
+    $this->alias = $this->scheme->alias($this->alias, array_merge(
+      $this->query->getFroms(),
+      $this->query->getJoins()
+    ));
 
   }
 

@@ -220,9 +220,12 @@ class AmForeign extends AmObject{
     if($tbl->getForeign($name))
       throw Am::e('AMSCHEME_FOREIGN_ALREADY_EXISTS', $tbl->getModel(), $name);
 
-    // Se utilizará la configuracoin automática de la relación
-    if(is_string($conf))
-      $conf = array('model' => $conf);
+    // Se utilizará la configuración automática de la relación
+    $confOf = null;
+    if(is_string($conf)){
+      list($model, $confOf) = explode('::', $conf.'::');
+      $conf = array('model' => $model);
+    }
 
     // Obtener el modelo de la relación
     $model = AmScheme::model($conf['model']);
@@ -250,18 +253,32 @@ class AmForeign extends AmObject{
         $pks = $fromTbl->getPks();
 
         // Si la clave primaria no tiene campos generar un error.
-        if(empty($pks))
+        if(empty($pks)){
           throw Am::e('AMSCHEME_MODEL_DONT_HAVE_PK', $fromTbl->getModel());
+        }
 
         $conf['cols'] = array();
+    
+        $foreign = null;
+        if(!empty($confOf)){
+          $foreign = $model::me()->getForeign($confOf);
+        }
 
         // Guardar columnas
-        if($type == 'belongTo')
-          foreach ($pks as $pk)
-            $conf['cols']["{$pk}_{$fromTbl->getTableName()}"] = $pk;
-        else
-          foreach ($pks as $pk)
+        if(isset($foreign)){
+          $cols = $foreign->getCols();
+          foreach ($cols as $colFrom => $colTo){
+            $conf['cols'][$colTo] = $colFrom;
+          }
+        }else if($type == 'belongTo'){
+          foreach ($pks as $pk){
+            $conf['cols']["{$pk}_{$name}"] = $pk;
+          }
+        }else{
+          foreach ($pks as $pk){
             $conf['cols'][$pk] = "{$pk}_{$fromTbl->getTableName()}";
+          }
+        }
 
       }
 
@@ -272,12 +289,13 @@ class AmForeign extends AmObject{
 
       // Generar error si el esquema de la tabla actual no es el mismo de la
       // tabla refrenciada
-      if($tbl->getSchemeName() !== $refTbl->getSchemeName())
+      if($tbl->getSchemeName() !== $refTbl->getSchemeName()){
         throw Am::e(
           'AMSCHEME_HAS_MANY_AND_BELONG_TO_FOREIGN_DIFFERENT_SCHEMES', $name,
           $tbl->getModel(),    $tbl->getSchemeName(),
           $refTbl->getModel(), $refTbl->getSchemeName()
         );
+      }
 
       // Para obtener le nombre de la tabla intermedia
       $tn1 = $tbl->getTableName();
