@@ -585,6 +585,20 @@ final class AmTable extends AmObject{
 
   }
 
+  /**
+   * Retorna los posibles joins y sus configuraciones
+   * @return Hash Hash de los posibles joins que puede tener la tabla.
+   */
+  public function getPossibleJoins(){
+
+    return array_merge(
+      $this->belongTo,
+      $this->hasMany,
+      $this->hasManyAndBelongTo
+    );
+
+  }
+
   // PENDIENTE Evaluar si es necesario
   // /**
   //  * Asigna el modelo a una tabla.

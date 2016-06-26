@@ -7,13 +7,10 @@
  */
 
 // PENDIENTE Documentar
-class AmClauseFromItem extends AmObject{
+class AmClauseJoinItem extends AmClauseFromItem{
 
   protected
-    $scheme = null,
-    $query = null,
-    $from = null,
-    $alias = null;
+    $type = null;
 
   public function __construct(array $data = array()){
     parent::__construct($data);
@@ -45,30 +42,6 @@ class AmClauseFromItem extends AmObject{
 
   }
 
-  public function getQuery(){
-
-    return $this->query;
-
-  }
-
-  public function getFrom(){
-
-    return $this->from;
-
-  }
-
-  public function getAlias(){
-
-    return $this->alias;
-
-  }
-
-  public function __toString(){
-
-    return $this->sql();
-
-  }
-
   public function sql(){
 
     $from = $this->from;
@@ -97,9 +70,11 @@ class AmClauseFromItem extends AmObject{
     }
 
     $alias = $this->scheme->nameWrapperAndRealScape($this->alias);
+    $type = $this->type;
+    $type = !empty($type)? "{$type} " : '';
 
     // SQLSQLSQL
-    return "{$sql} AS {$alias}";
+    return "{$type}JOIN {$sql} AS {$alias}";
 
   }
 

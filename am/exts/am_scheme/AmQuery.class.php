@@ -67,6 +67,11 @@ class AmQuery extends AmObject{
     * Hash de tablas para la cláusula FROM.
     */
     $froms = array(),
+
+    /**
+     * Posibles joins
+     */
+    $possibleJoins = array(),
     
    /**
     * Array de condiciones para la cláusula WHERE.
@@ -573,6 +578,47 @@ class AmQuery extends AmObject{
   }
 
   /**
+   * Agrega posibles joins a la consulta.
+   * @param array  $joins Array de oposibles joins a agregar.
+   * @param string $alias Alias al que pertenece los posibles joins.
+   * @return $this
+   */
+  protected function addPossibleJoins(array $joins, $alias){
+
+    foreach($joins as $aliasJoin => $join){
+      $aliasAliasJoin = "{$alias}.{$aliasJoin}";
+
+      if(isset($this->possibleJoins[$aliasJoin])
+        && isset($this->possibleJoins[$aliasAliasJoin])){
+        continue;
+      }
+      
+      $on = array();
+      foreach($join['cols'] as $from => $to){
+        if($join['type'] == 'hasMany'){
+          list($from, $to) = array($to, $from);
+        }
+        $on[] = array("{$aliasJoin}.{$from}", "{$alias}.{$to}");
+      }
+      
+      $join = array(
+        'as' => $aliasJoin,
+        'on' => $on,
+      );
+
+      if(!isset($this->possibleJoins[$aliasJoin]))
+        $this->possibleJoins[$aliasJoin] = $join;
+
+      if(!isset($this->possibleJoins[$aliasAliasJoin]))
+        $this->possibleJoins[$aliasAliasJoin] = $join;
+
+    }
+
+    return $this;
+    
+  }
+
+  /**
    * Agregar un campos a la cláusula FROM.
    * @param  string $field Nombre de la tabla.
    * @param  string $alias Alias de la tabla.
@@ -586,10 +632,92 @@ class AmQuery extends AmObject{
       'alias' => $alias,
     ));
 
+    $table = null;
+    if($from instanceof AmTable){
+      $table = $from;
+    }elseif(is_string($from) && is_subclass_of($from, 'AmModel')){
+      $table = $from::me();
+    }
+
+    if($table instanceof AmTable){
+      $this->possibleJoins[] = array(
+        'alias' => $item->getAlias(),
+        'table' => $table,
+      );
+    }
+
     // Agregar al final
     $this->froms[$item->getAlias()] = $item;
 
     return $this;
+
+  }
+
+  /**
+   * Agregar un join.
+   * @param  string/Amtable $from Nombre o instancia de la tabla con la que se
+   *                               realiza el join.
+   * @param  string         $on    Condición para el join.
+   * @param  string         alias  Alias para la tabla agregada.
+   * @param  string         $type  Tipo de join.
+   * @return $this
+   */
+  public function join($from, $on = null, $alias = null, $type = ''){
+
+    $item = new AmClauseJoinItem(array(
+      'query' => $this,
+      'from' => $from,
+      'alias' => $alias,
+      'on' => $on, 
+      'type' => strtoupper($type)
+    ));
+
+    // Agregar los joins
+    $this->joins[$item->getAlias()] = $item;
+
+    return $this;
+
+  }
+
+  /**
+   * Agrega un inner join
+   * @param  string/Amtable $table Nombre o instancia de la tabla con la que se
+   *                               realiza el join.
+   * @param  string         $on    Condición para el join.
+   * @param  string         $as    Alias para la tabla agregada.
+   * @return $this
+   */
+  public function innerJoin($table, $on = null, $as = null){
+
+    return $this->join($table, $on, $as, 'inner');
+
+  }
+
+  /**
+   * Agrega un left join
+   * @param  string/Amtable $table Nombre o instancia de la tabla con la que se
+   *                               realiza el join.
+   * @param  string         $on    Condición para el join.
+   * @param  string         $as    Alias para la tabla agregada.
+   * @return $this
+   */
+  public function leftJoin($table, $on = null, $as = null){
+
+    return $this->join($table, $on, $as, 'left');
+
+  }
+
+  /**
+   * Agrega un right join
+   * @param  string/Amtable $table Nombre o instancia de la tabla con la que se
+   *                               realiza el join.
+   * @param  string         $on    Condición para el join.
+   * @param  string         $as    Alias para la tabla agregada.
+   * @return $this
+   */
+  public function rigthJoin($table, $on = null, $as = null){
+
+    return $this->join($table, $on, $as, 'right');
 
   }
 
@@ -713,71 +841,6 @@ class AmQuery extends AmObject{
 
     $this->conditions = array();
     return $this;
-
-  }
-
-  /**
-   * Agregar un join.
-   * @param  string/Amtable $table Nombre o instancia de la tabla con la que se
-   *                               realiza el join.
-   * @param  string         $on    Condición para el join.
-   * @param  string         $as    Alias para la tabla agregada.
-   * @param  string         $type  Tipo de join.
-   * @return $this
-   */
-  public function join($table, $on, $as = null, $type = 'inner'){
-
-    // Agregar los joins
-    $this->joins[] = array(
-      'table' => $table, 
-      'on' => $on, 
-      'as' => $as, 
-      'type' => strtoupper($type)
-    );
-
-    return $this;
-
-  }
-
-  /**
-   * Agrega un inner join
-   * @param  string/Amtable $table Nombre o instancia de la tabla con la que se
-   *                               realiza el join.
-   * @param  string         $on    Condición para el join.
-   * @param  string         $as    Alias para la tabla agregada.
-   * @return $this
-   */
-  public function innerJoin($table, $on = null, $as = null){
-
-    return $this->join($table, $on, $as, 'inner');
-
-  }
-
-  /**
-   * Agrega un left join
-   * @param  string/Amtable $table Nombre o instancia de la tabla con la que se
-   *                               realiza el join.
-   * @param  string         $on    Condición para el join.
-   * @param  string         $as    Alias para la tabla agregada.
-   * @return $this
-   */
-  public function leftJoin($table, $on = null, $as = null){
-
-    return $this->join($table, $on, $as, 'left');
-
-  }
-
-  /**
-   * Agrega un right join
-   * @param  string/Amtable $table Nombre o instancia de la tabla con la que se
-   *                               realiza el join.
-   * @param  string         $on    Condición para el join.
-   * @param  string         $as    Alias para la tabla agregada.
-   * @return $this
-   */
-  public function rigthJoin($table, $on = null, $as = null){
-
-    return $this->join($table, $on, $as, 'right');
 
   }
 
