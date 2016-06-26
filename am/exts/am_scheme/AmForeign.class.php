@@ -171,7 +171,7 @@ class AmForeign extends AmObject{
       foreach ($on as $from => $to) {
         $on[$from] = "{$tableName}.{$from}={$refTableName}.{$to}";
       }
-      $query->innerJoin($refTableName, implode('-', $on));
+      $query->innerJoin($refTableName, null, implode('-', $on));
     }
 
     // Obtener las columnas

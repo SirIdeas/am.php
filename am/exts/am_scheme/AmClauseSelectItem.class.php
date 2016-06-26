@@ -43,15 +43,15 @@ class AmClauseSelectItem extends AmObject{
 
   }
 
-  public function getField(){
-
-    return $this->field;
-
-  }
-
   public function getAlias(){
 
     return $this->alias;
+
+  }
+
+  public function getField(){
+
+    return $this->field;
 
   }
 

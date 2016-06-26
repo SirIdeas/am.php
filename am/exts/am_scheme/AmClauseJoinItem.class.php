@@ -7,9 +7,14 @@
  */
 
 // PENDIENTE Documentar
-class AmClauseJoinItem extends AmClauseFromItem{
+class AmClauseJoinItem extends AmObject{
 
   protected
+    $scheme = null,
+    $query = null,
+    $from = null,
+    $alias = null,
+    $on = array(),
     $type = null;
 
   public function __construct(array $data = array()){
@@ -38,7 +43,46 @@ class AmClauseJoinItem extends AmClauseFromItem{
       throw Am::e('AMSCHEME_EMPTY_ALIAS', var_export($from, true));
     }
 
-    $this->alias = $this->scheme->alias($this->alias, $this->query->getFroms());
+    $this->alias = $this->scheme->alias($this->alias, array_merge(
+      $this->query->getFroms(),
+      $this->query->getJoins()
+    ));
+
+  }
+
+  public function getQuery(){
+
+    return $this->query;
+
+  }
+
+  public function getAlias(){
+
+    return $this->alias;
+
+  }
+
+  public function getFrom(){
+
+    return $this->from;
+
+  }
+
+  public function getOn(){
+
+    return $this->on;
+
+  }
+
+  public function getType(){
+
+    return $this->type;
+
+  }
+
+  public function __toString(){
+
+    return $this->sql();
 
   }
 
@@ -57,12 +101,11 @@ class AmClauseJoinItem extends AmClauseFromItem{
 
     }elseif(is_string($from)){
 
-      if(is_subclass_of($from, 'AmModel')){
-        $tableName = $from::me()->getTableName();
-        $sql = $this->scheme->nameWrapperAndRealScapeComplete($tableName);
-      }else{
-        $sql = $this->scheme->nameWrapperAndRealScapeComplete($from);
+      $tableName = $from;
+      if(is_subclass_of($tableName, 'AmModel')){
+        $tableName = $tableName::me()->getTableName();
       }
+      $sql = $this->scheme->nameWrapperAndRealScapeComplete($tableName);
 
     }else{
       throw Am::e('AMSCHEME_INVALID_FIELD', var_export($from, true));
@@ -73,8 +116,11 @@ class AmClauseJoinItem extends AmClauseFromItem{
     $type = $this->type;
     $type = !empty($type)? "{$type} " : '';
 
+    $on = $this->on;
+    $on = !empty($on)? " ON {$on} " : '';
+
     // SQLSQLSQL
-    return "{$type}JOIN {$sql} AS {$alias}";
+    return "{$type}JOIN {$sql} AS {$alias}{$on}";
 
   }
 

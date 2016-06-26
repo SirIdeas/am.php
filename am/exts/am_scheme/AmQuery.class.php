@@ -655,14 +655,14 @@ class AmQuery extends AmObject{
 
   /**
    * Agregar un join.
-   * @param  string/Amtable $from Nombre o instancia de la tabla con la que se
-   *                               realiza el join.
-   * @param  string         $on    Condición para el join.
-   * @param  string         alias  Alias para la tabla agregada.
-   * @param  string         $type  Tipo de join.
+   * @param  string/Amtable $from   Nombre o instancia de la tabla con la que se
+   *                                realiza el join.
+   * @param  string         $alias  Alias para la tabla agregada.
+   * @param  string         $on     Condición para el join.
+   * @param  string         $type   Tipo de join.
    * @return $this
    */
-  public function join($from, $on = null, $alias = null, $type = ''){
+  public function join($from, $alias = null, $on = null, $type = null){
 
     $item = new AmClauseJoinItem(array(
       'query' => $this,
@@ -681,43 +681,43 @@ class AmQuery extends AmObject{
 
   /**
    * Agrega un inner join
-   * @param  string/Amtable $table Nombre o instancia de la tabla con la que se
+   * @param  string/Amtable $from  Nombre o instancia de la tabla con la que se
    *                               realiza el join.
+   * @param  string         $alias Alias para la tabla agregada.
    * @param  string         $on    Condición para el join.
-   * @param  string         $as    Alias para la tabla agregada.
    * @return $this
    */
-  public function innerJoin($table, $on = null, $as = null){
+  public function innerJoin($from, $alias = null, $on = null){
 
-    return $this->join($table, $on, $as, 'inner');
+    return $this->join($from, $alias, $on, 'inner');
 
   }
 
   /**
    * Agrega un left join
-   * @param  string/Amtable $table Nombre o instancia de la tabla con la que se
+   * @param  string/Amtable $from  Nombre o instancia de la tabla con la que se
    *                               realiza el join.
+   * @param  string         $alias Alias para la tabla agregada.
    * @param  string         $on    Condición para el join.
-   * @param  string         $as    Alias para la tabla agregada.
    * @return $this
    */
-  public function leftJoin($table, $on = null, $as = null){
+  public function leftJoin($from, $alias = null, $on = null){
 
-    return $this->join($table, $on, $as, 'left');
+    return $this->join($from, $alias, $on, 'left');
 
   }
 
   /**
    * Agrega un right join
-   * @param  string/Amtable $table Nombre o instancia de la tabla con la que se
+   * @param  string/Amtable $from  Nombre o instancia de la tabla con la que se
    *                               realiza el join.
+   * @param  string         $alias Alias para la tabla agregada.
    * @param  string         $on    Condición para el join.
-   * @param  string         $as    Alias para la tabla agregada.
    * @return $this
    */
-  public function rigthJoin($table, $on = null, $as = null){
+  public function rigthJoin($from, $alias = null, $on = null){
 
-    return $this->join($table, $on, $as, 'right');
+    return $this->join($from, $alias, $on, 'right');
 
   }
 

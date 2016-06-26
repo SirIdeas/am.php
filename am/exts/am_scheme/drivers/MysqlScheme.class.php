@@ -279,9 +279,9 @@ final class MysqlScheme extends AmScheme{
 
     $query = $this
       ->q('information_schema.TABLES', 't')
-      ->innerJoin(
-        'information_schema.COLLATION_CHARACTER_SET_APPLICABILITY',
-        't.TABLE_COLLATION = c.COLLATION_NAME', 'c')
+      ->join(
+        'information_schema.COLLATION_CHARACTER_SET_APPLICABILITY', 'c',
+        't.TABLE_COLLATION = c.COLLATION_NAME')
       ->where(
         "t.TABLE_SCHEMA='{$this->getDatabase()}'",
         'and', 't.TABLE_TYPE=\'BASE TABLE\'')
@@ -341,12 +341,11 @@ final class MysqlScheme extends AmScheme{
 
     $query = $this
       ->q('information_schema.KEY_COLUMN_USAGE', 'k')
-      ->innerJoin(
-        'information_schema.COLUMNS',
+      ->join(
+        'information_schema.COLUMNS', 'c',
         'k.TABLE_SCHEMA = c.TABLE_SCHEMA AND '.
         'k.TABLE_NAME   = c.TABLE_NAME AND '.
-        'k.COLUMN_NAME  = c.COLUMN_NAME',
-        'c')
+        'k.COLUMN_NAME  = c.COLUMN_NAME')
       ->where(
         "k.TABLE_SCHEMA='{$this->getDatabase()}'",
         'and', "k.TABLE_NAME='{$tableName}'",

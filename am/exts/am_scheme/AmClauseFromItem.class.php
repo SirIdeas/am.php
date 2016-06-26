@@ -51,15 +51,15 @@ class AmClauseFromItem extends AmObject{
 
   }
 
-  public function getFrom(){
-
-    return $this->from;
-
-  }
-
   public function getAlias(){
 
     return $this->alias;
+
+  }
+
+  public function getFrom(){
+
+    return $this->from;
 
   }
 
@@ -84,12 +84,11 @@ class AmClauseFromItem extends AmObject{
 
     }elseif(is_string($from)){
 
-      if(is_subclass_of($from, 'AmModel')){
-        $tableName = $from::me()->getTableName();
-        $sql = $this->scheme->nameWrapperAndRealScapeComplete($tableName);
-      }else{
-        $sql = $this->scheme->nameWrapperAndRealScapeComplete($from);
+      $tableName = $from;
+      if(is_subclass_of($tableName, 'AmModel')){
+        $tableName = $tableName::me()->getTableName();
       }
+      $sql = $this->scheme->nameWrapperAndRealScapeComplete($tableName);
 
     }else{
       throw Am::e('AMSCHEME_INVALID_FIELD', var_export($from, true));
@@ -104,3 +103,7 @@ class AmClauseFromItem extends AmObject{
   }
 
 }
+
+
+
+

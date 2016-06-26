@@ -1826,49 +1826,6 @@ abstract class AmScheme extends AmObject{
     // SQLSQLSQL
     return empty($joins) ? '' : ' '.$joins;
 
-    // $joinsResult = array();
-
-    // // Recorrer cada join
-    // foreach($joins as $join){
-
-    //     // Declarar posiciones del array como variables
-    //     // Define $on, $as y $table
-    //     extract($join);
-
-    //     // Eliminar espacios iniciales y finales
-    //     $on = trim($on);
-    //     $as = trim($as);
-
-    //     if($table instanceof AmQuery){
-    //       // Si es una consulta insertar SQL dentro de parenteris
-    //       $table = "({$table->sql()})";
-    //       if(!isset($as)){
-    //         $as = $table->getModel();
-    //         if(is_subclass_of($as, 'AmModel'))
-    //           $as = $as::me()->getTableName();
-    //       }
-    //     }elseif($table instanceof AmTable){
-    //       // Si es una tabla obtener el nombre
-    //       $table = $table->getTableName();
-    //       if(!isset($as))
-    //         $as = $table;
-    //     }
-
-    //     // Si los parametros quedan vacios
-    //     if(!empty($on)) $on = " ON {$on}";
-    //     if(!empty($as)) $as = " AS {$as}";
-
-    //     // Agrgar parte de join
-    //     $joinsResult[] = " $type JOIN {$table}{$as}{$on}";
-
-    //     // Liberar variables
-    //     unset($table, $as, $on);
-
-    // }
-
-    // // Unir todas las partes
-    // return trim(implode(' ', $joinsResult));
-
   }
 
   /**
