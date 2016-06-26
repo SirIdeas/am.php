@@ -54,7 +54,7 @@ class AmQuery extends AmObject{
     $items = array(),
     
    /**
-    * Hash de campos para la cláusula SELECT.
+    * Array de campos de un query SELECT.
     */
     $selects = array(),
     
@@ -582,22 +582,11 @@ class AmQuery extends AmObject{
 
     $this->type = 'select';
 
-    // Si no se indicó el argumento $alias
-    if(empty($alias)){
-      if (isNameValid($field)){
-        // Agregar en una posición específica
-        $this->selects[$field] = $field;
-      }else{
-        // Agregar al final
-        $this->selects[] = $field;
-      }
-    }elseif(isNameValid($alias)){
-      // Agregar en una posición específica
-      $this->selects[$alias] = $field;
-    }else{
-      // Agregar al final
-      $this->selects[$alias] = $field;
-    }
+    // Agregar al final
+    $this->selects[] = array(
+      'field' => $field,
+      'alias' => $alias,
+    );
 
     return $this;
 

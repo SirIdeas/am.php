@@ -51,7 +51,7 @@ return array(
 
     // Formatos
     'formats' => array(
-      'AMSCHEME_EMPTY_ALIAS' => 'AmScheme: Alias no puede ser vacío "%s"',
+      'AMSCHEME_EMPTY_ALIAS' => 'AmScheme: Alias no puede ser vacío en el campo "%s"',
       'AMSCHEME_INVALID_ALIAS' => 'AmScheme: Alias de objeto inválido "%s"',
       'AMSCHEME_INVALID_NAME' => 'AmScheme: Nombre de objeto inválido "%s"',
       'AMSCHEME_QUERY_TYPE_UNKNOW' => 'AmScheme: Tipo de consulta indefinida "%s"',

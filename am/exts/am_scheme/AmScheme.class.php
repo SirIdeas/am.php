@@ -604,15 +604,11 @@ abstract class AmScheme extends AmObject{
     // Cambiar la condificacion con la que se trabajará
     if($ret){
 
-      // Obtener charset y collation
-      $charset = $this->realScapeString($this->getCharset());
-      $collation = $this->realScapeString($this->getCollation());
-
       // Asignar variables
-      $this->setServerVar('character_set_server', $charset);
-      $this->setServerVar('collation_server', $collation);
+      $this->setServerVar('character_set_server', $this->getCharset());
+      $this->setServerVar('collation_server', $this->getCollation());
       // PENDIENTE: Revisar
-      $this->execute("set names {$charset}");
+      $this->execute("set names {$this->getCharset()}");
 
     }
 
@@ -1074,8 +1070,16 @@ abstract class AmScheme extends AmObject{
 
       // Si los campos recibidos estan vacíos se tomará
       // como campos los de la consulta
-      if(count($fields) == 0)
-        $fields = array_keys($values->getSelects());
+      if(count($fields) == 0){
+        $fields = array();
+        $selects = $values->getSelects();
+
+        // Recorrer argumentos del SELECT
+        foreach($selects as $key => $item){
+          $this->sqlClauseSelectItem($item['field'], $item['alias'], $fields);
+        }
+
+      }
 
     // Si los valores es un array con al menos un registro
     }elseif(is_array($values) && count($values)>0){
@@ -1119,7 +1123,7 @@ abstract class AmScheme extends AmObject{
           if(isset($rawValues[$i][$f]) && $rawValues[$i][$f] === true){
             $resultValues[$i][] = $val;
           }else{
-            $resultValues[$i][] = $this->realScapeString($val);
+            $resultValues[$i][] = $this->stringWrapperAndRealScape($val);
           }
         }
 
@@ -1276,7 +1280,7 @@ abstract class AmScheme extends AmObject{
 
           // Agregar cadenas dentro de los comillas simple
           foreach ($collation as $i => $value){
-            $value = $this->realScapeString($value);
+            $value = $this->stringWrapperAndRealScape($value);
             $collation[$i] = is_numeric($value) ? $value : "\'{$value}\'";
           }
 
@@ -1372,7 +1376,11 @@ abstract class AmScheme extends AmObject{
    */
   public function sqlSetServerVar($varName, $value, $scope = ''){
 
+    $varName = $this->realScapeString($varName);
+    $value = $this->stringWrapperAndRealScape($value);
+
     $scope = $scope === true? 'GLOBAL ' : $scope === false? 'SESSION ' : '';
+
     return "SET {$scope}{$varName}={$value}";
 
   }
@@ -1656,7 +1664,7 @@ abstract class AmScheme extends AmObject{
 
     return !empty($q->sql) ? $q->sql :
       trim(implode(' ', array(
-      trim($this->sqlSelect($q)),
+      trim($this->sqlClauseSelect($q)),
       trim($this->sqlFrom($q)),
       trim($this->sqlJoins($q)),
       trim($this->sqlWhere($q)),
@@ -1777,26 +1785,58 @@ abstract class AmScheme extends AmObject{
   }
 
   /**
+   * Transforma un campo de una consulta SELECT en el correspondiente SQL.
+   * @param  string $field      Campo a transformar
+   * @param  string $alias      Alias para el campo
+   * @param  string $collection Alias ya existentes en la clausula SELECT
+   * @return string             SQL del campo
+   */
+  public function sqlClauseSelectItem($field, $alias, array &$collection = array()){
+
+    $requireAlias = false;
+
+    // Si es una consulta se incierra entre parentesis
+    if($field instanceof AmQuery){
+      $field = '(' . $field->sql() . ')';
+      $requireAlias = true;
+
+    }else{
+
+      if(empty($alias))
+        $alias = str_replace('.', '_', $field);
+
+      $field = $this->nameWrapperAndRealScapeComplete((string)$field);
+
+    }
+
+    $alias = $this->alias($collection, $alias);
+    $collection[$alias] = true;
+
+    if($requireAlias && empty($alias))
+      throw Am::e('AMSCHEME_EMPTY_ALIAS', $field);
+
+    $alias = $this->nameWrapperAndRealScape($alias);
+
+
+    return !empty($alias) ? "{$field} AS {$alias}" : $field;
+
+  }
+
+  /**
    * SQL Para la cláusula SELECT.
    * @param  AmQuery $q Query.
    * @return string     SQL correspondiente.
    */
-  public function sqlSelect(AmQuery $q){
+  public function sqlClauseSelect(AmQuery $q){
 
-    $selectsOri = $q->getSelects();  // Obtener argmuentos en la clausula SELECT
+    $selects = $q->getSelects();  // Obtener argmuentos en la clausula SELECT
     $distinct = $q->getDistinct();
-    $selects = array();  // Lista de retorno
+    $alias = array();
 
     // Recorrer argumentos del SELECT
-    foreach($selectsOri as $alias => $field){
+    foreach($selects as $key => $item){
 
-      // Si es una consulta se incierra entre parentesis
-      if($field instanceof AmQuery)
-        $field = "({$field->sql()})";
-
-      // Agregar parametro AS
-      $selects[] = !empty($alias) ? "{$field} AS '{$alias}'" :
-        (string)$field;
+      $selects[$key] = $this->sqlClauseSelectItem($item['field'], $item['alias'], $alias);
 
     }
 
@@ -2006,7 +2046,7 @@ abstract class AmScheme extends AmObject{
       if($value === null){
         $sets[] = "{$set['field']} = NULL";
       }elseif($set['const'] === true){
-        $sets[] = "{$set['field']} = " . $this->realScapeString($value);
+        $sets[] = "{$set['field']} = " . $this->stringWrapperAndRealScape($value);
       }elseif($set['const'] === false){
         $sets[] = "{$set['field']} = {$value}";
       }
@@ -2061,7 +2101,7 @@ abstract class AmScheme extends AmObject{
    * @param  string $alias      Alias base.
    * @return string             Alias generados
    */
-  public static function alias(array $collection, $alias){
+  public function alias(array $collection, $alias){
 
     if(!isNameValid($alias))
       throw Am::e('AMSCHEME_INVALID_ALIAS', $alias);
@@ -2301,6 +2341,21 @@ abstract class AmScheme extends AmObject{
    * @return null/int Null o valor autonumérico insertado.
    */
   abstract public function getLastInsertedId();
+
+  /**
+   * Ingresa el nombre de un objeto de la BD dentro de las comillas
+   * correspondientes.
+   * @param  string $name Nombre que se desea entre comillas.
+   * @return string       Nombre entre comillas.
+   */
+  abstract public function nameWrapper($name);
+
+  /**
+   * Devuelve una cadena de caracteres entre comillas.
+   * @param  string $string Cadena que se desea entre comillas.
+   * @return string         Cadena entre comillas.
+   */
+  abstract public function stringWrapper($string);
 
   /**
    * Devuelve un nombre de un objeto de BD entendible para el DBSM.

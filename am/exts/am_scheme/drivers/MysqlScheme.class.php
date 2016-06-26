@@ -182,10 +182,8 @@ final class MysqlScheme extends AmScheme{
   public function realScapeString($value){
 
     if($this->handler)
-      $value = mysqli_real_escape_string($this->handler, $value);
-    
-    // Si no tiene valor asignar NULL
-    return isset($value)? "'{$value}'" : 'NULL';
+      return mysqli_real_escape_string($this->handler, $value);
+    return $value;
 
   }
 
@@ -224,6 +222,36 @@ final class MysqlScheme extends AmScheme{
     if($this->handler)
       return mysqli_insert_id($this->handler);
     return false;
+
+  }
+
+  /**
+   * Ingresa el nombre de un objeto de la BD dentro de las comillas
+   * correspondientes a los nombres.
+   * @param  string $name Nombre que se desea entre comillas.
+   * @return string       Nombre entre comillas.
+   */
+  public function nameWrapper($name){
+
+    return "`{$name}`";
+
+  }
+
+  /**
+   * Devuelve una cadena de caracteres entre comillas.
+   * @param  string $string Cadena que se desea entre comillas.
+   * @return string         Cadena entre comillas.
+   */
+  public function stringWrapper($string){
+
+    if($string === null)
+      return 'NULL';
+    if($string === true)
+      return 'TRUE';
+    if($string === false)
+      return 'FALSE';
+
+    return "'{$string}'";
 
   }
 
