@@ -582,11 +582,14 @@ class AmQuery extends AmObject{
 
     $this->type = 'select';
 
-    // Agregar al final
-    $this->selects[] = array(
+    $item = new AmClauseSelectItem(array(
+      'query' => $this,
       'field' => $field,
       'alias' => $alias,
-    );
+    ));
+
+    // Agregar al final
+    $this->selects[$item->getAlias()] = $item;
 
     return $this;
 

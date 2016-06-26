@@ -1071,14 +1071,7 @@ abstract class AmScheme extends AmObject{
       // Si los campos recibidos estan vacíos se tomará
       // como campos los de la consulta
       if(count($fields) == 0){
-        $fields = array();
-        $selects = $values->getSelects();
-
-        // Recorrer argumentos del SELECT
-        foreach($selects as $key => $item){
-          $this->sqlClauseSelectItem($item['field'], $item['alias'], $fields);
-        }
-
+        $fields = array_keys($values->getSelects());
       }
 
     // Si los valores es un array con al menos un registro
@@ -1785,44 +1778,6 @@ abstract class AmScheme extends AmObject{
   }
 
   /**
-   * Transforma un campo de una consulta SELECT en el correspondiente SQL.
-   * @param  string $field      Campo a transformar
-   * @param  string $alias      Alias para el campo
-   * @param  string $collection Alias ya existentes en la clausula SELECT
-   * @return string             SQL del campo
-   */
-  public function sqlClauseSelectItem($field, $alias, array &$collection = array()){
-
-    $requireAlias = false;
-
-    // Si es una consulta se incierra entre parentesis
-    if($field instanceof AmQuery){
-      $field = '(' . $field->sql() . ')';
-      $requireAlias = true;
-
-    }else{
-
-      if(empty($alias))
-        $alias = str_replace('.', '_', $field);
-
-      $field = $this->nameWrapperAndRealScapeComplete((string)$field);
-
-    }
-
-    $alias = $this->alias($collection, $alias);
-    $collection[$alias] = true;
-
-    if($requireAlias && empty($alias))
-      throw Am::e('AMSCHEME_EMPTY_ALIAS', $field);
-
-    $alias = $this->nameWrapperAndRealScape($alias);
-
-
-    return !empty($alias) ? "{$field} AS {$alias}" : $field;
-
-  }
-
-  /**
    * SQL Para la cláusula SELECT.
    * @param  AmQuery $q Query.
    * @return string     SQL correspondiente.
@@ -1833,13 +1788,6 @@ abstract class AmScheme extends AmObject{
     $distinct = $q->getDistinct();
     $alias = array();
 
-    // Recorrer argumentos del SELECT
-    foreach($selects as $key => $item){
-
-      $selects[$key] = $this->sqlClauseSelectItem($item['field'], $item['alias'], $alias);
-
-    }
-
     // Unir campos
     $selects = trim(implode(', ', $selects));
 
@@ -1847,6 +1795,7 @@ abstract class AmScheme extends AmObject{
     $selects = empty($selects) ? '*' : $selects;
 
     // Agregar SELECT
+    // SQLSQLSQL
     return 'SELECT '.trim(($distinct ? 'DISTINCT ' : '').$selects);
 
   }
@@ -2097,11 +2046,11 @@ abstract class AmScheme extends AmObject{
    * Devuelve un alias no existente en una colección. Si en la colección existe
    * algún key igual al alias se le irá agregando contador al final hasta
    * obtener uno que no exista.
-   * @param  array  $collection Colección donde se buscará si el alias existe.
    * @param  string $alias      Alias base.
+   * @param  array  $collection Colección donde se buscará si el alias existe.
    * @return string             Alias generados
    */
-  public function alias(array $collection, $alias){
+  public function alias($alias, array $collection){
 
     if(!isNameValid($alias))
       throw Am::e('AMSCHEME_INVALID_ALIAS', $alias);
