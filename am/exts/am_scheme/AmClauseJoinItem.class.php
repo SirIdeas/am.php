@@ -60,6 +60,7 @@ class AmClauseJoinItem extends AmObject{
     $from = $this->from;
     $alias = $this->alias;
     $tables = $this->query->getPossibleJoins();
+    
     foreach ($tables as $aliasTable => $table){
       $posibleJoins = $table->getPossibleJoins();
       foreach ($posibleJoins as $aliasJoin => $conf){
