@@ -586,9 +586,12 @@ abstract class AmScheme extends AmObject{
     if($ret){
 
       // Asignar variables
+      // SQLSQLSQL
       $this->setServerVar('character_set_server', $this->getCharset());
       $this->setServerVar('collation_server', $this->getCollation());
+
       // PENDIENTE: Revisar
+      // SQLSQLSQL
       $this->execute("set names {$this->getCharset()}");
 
     }
@@ -684,6 +687,7 @@ abstract class AmScheme extends AmObject{
     foreach ($queries as $key => $q)
       $sqls[] = (string)$q;
 
+    // SQLSQLSQL
     return $this->execute(implode(';', $sqls));
 
   }
@@ -695,6 +699,7 @@ abstract class AmScheme extends AmObject{
    * @param  bool   $scope   Si se agrega la cláusula GLOBAL o SESSION.
    * @return bool            Resultado de la operación
    */
+  // SQLSQLSQL
   public function setServerVar($varName, $value, $scope = ''){
 
     return !!$this->execute($this->sqlSetServerVar($varName, $value, $scope));
@@ -1360,8 +1365,10 @@ abstract class AmScheme extends AmObject{
     $varName = $this->realScapeString($varName);
     $value = $this->stringWrapperAndRealScape($value);
 
+    // SQLSQLSQL
     $scope = $scope === true? 'GLOBAL ' : $scope === false? 'SESSION ' : '';
 
+    // SQLSQLSQL
     return "SET {$scope}{$varName}={$value}";
 
   }
@@ -1381,6 +1388,7 @@ abstract class AmScheme extends AmObject{
     if(empty($charset))
       return '';
 
+    // SQLSQLSQL
     $charset = empty($charset) ? '' : " CHARACTER SET {$charset}";
 
     return $charset;
@@ -1402,6 +1410,7 @@ abstract class AmScheme extends AmObject{
     if(empty($collation))
       return '';
 
+    // SQLSQLSQL
     $collation = empty($collation) ? '' : " COLLATE {$collation}";
 
     return $collation;
@@ -1418,7 +1427,11 @@ abstract class AmScheme extends AmObject{
     $database = $this->getParseDatabaseName();
     $charset = $this->sqlCharset();
     $collation = $this->sqlCollation();
+
+    // SQLSQLSQL
     $ifNotExists = $ifNotExists? 'IF NOT EXISTS ' : '';
+
+    // SQLSQLSQL
     $sql = "CREATE DATABASE {$ifNotExists}{$database}{$charset}{$collation}";
     return $sql;
 
@@ -1431,6 +1444,8 @@ abstract class AmScheme extends AmObject{
   public function sqlSelectDatabase(){
 
     $database = $this->getParseDatabaseName();
+
+    // SQLSQLSQL
     return "USE {$database}";
     
   }
@@ -1443,8 +1458,11 @@ abstract class AmScheme extends AmObject{
   public function sqlDrop($ifExists = true){
 
     $database = $this->getParseDatabaseName();
+
+    // SQLSQLSQL
     $ifExists = $ifExists? 'IF EXISTS ' : '';
 
+    // SQLSQLSQL
     return "DROP DATABASE {$ifExists}{$database}";
 
   }
@@ -1458,8 +1476,11 @@ abstract class AmScheme extends AmObject{
   public function sqlCreateView(AmQuery $q, $orReplace = true){
 
     $queryName = $this->getParseObjectDatabaseName($q->getName());
+
+    // SQLSQLSQL
     $orReplace = $orReplace? 'OR REPLACE ' : '';
 
+    // SQLSQLSQL
     return "CREATE {$replace}VIEW {$queryName} AS {$q->sql()}";
 
   }
@@ -1476,8 +1497,11 @@ abstract class AmScheme extends AmObject{
       $q = $q->getName();
 
     $queryName = $this->getParseObjectDatabaseName($q);
+
+    // SQLSQLSQL
     $ifExists = $ifExists? 'IF EXISTS ' : '';
 
+    // SQLSQLSQL
     return "DROP VIEW {$ifExists}{$queryName}";
 
   }
@@ -1506,8 +1530,9 @@ abstract class AmScheme extends AmObject{
         (in_array($type, array('date', 'datetime', 'timestamp', 'time')) &&
           $default != 'CURRENT_TIMESTAMP'
         )
-      )
+      ){
         $default = "'{$default}'";
+      }
 
     }
 
