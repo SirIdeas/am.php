@@ -7,11 +7,9 @@
  */
 
 // PENDIENTE Documentar
-class AmClauseJoinItem extends AmObject{
+class AmClauseJoinItem extends AmClause{
 
   protected
-    $scheme = null,
-    $query = null,
     $table = null,
     $alias = null,
     $on = null,
@@ -22,7 +20,6 @@ class AmClauseJoinItem extends AmObject{
   public function __construct(array $data = array()){
     parent::__construct($data);
 
-    $this->scheme = $this->query->getScheme();
     $table = $this->table;
 
     if(empty($this->alias)){
@@ -53,6 +50,79 @@ class AmClauseJoinItem extends AmObject{
       }
       $this->makeFromPossibleJoins();
     }
+
+  }
+
+  public function getAlias(){
+
+    return $this->alias;
+
+  }
+
+  public function getTable(){
+
+    return $this->table;
+
+  }
+
+  public function getOn(){
+
+    return $this->on;
+
+  }
+
+  public function getType(){
+
+    return $this->type;
+
+  }
+
+  public function getModel(){
+
+    return $this->model;
+
+  }
+
+  public function sql(){
+
+    $table = $this->table;
+
+    // Si es una consulta se incierra entre parentesis
+    if($table instanceof AmQuery){
+      // SQLSQLSQL
+      $sql = '(' . $table->sql() . ')';
+
+    }elseif($table instanceOf AmTable){
+      $tableName = $table->getTableName();
+      $sql = $this->scheme->nameWrapperAndRealScapeComplete($tableName);
+
+    }elseif(is_string($table)){
+
+      $tableName = $table;
+
+      if(isset($this->model)){
+        $tableName = $this->model;
+      }
+
+      if(is_subclass_of($tableName, 'AmModel')){
+        $tableName = $tableName::me()->getTableName();
+      }
+      $sql = $this->scheme->nameWrapperAndRealScapeComplete($tableName);
+
+    }else{
+      throw Am::e('AMSCHEME_INVALID_FIELD', var_export($table, true));
+
+    }
+
+    $alias = $this->scheme->nameWrapperAndRealScape($this->alias);
+    $type = $this->type;
+    $type = !empty($type)? "{$type} " : '';
+
+    $on = $this->on;
+    $on = !empty($on)? " ON {$on} " : '';
+
+    // SQLSQLSQL
+    return "{$type}JOIN {$sql} AS {$alias}{$on}";
 
   }
 
@@ -115,91 +185,6 @@ class AmClauseJoinItem extends AmObject{
         }
       }
     }
-
-  }
-
-  public function getQuery(){
-
-    return $this->query;
-
-  }
-
-  public function getAlias(){
-
-    return $this->alias;
-
-  }
-
-  public function getTable(){
-
-    return $this->table;
-
-  }
-
-  public function getOn(){
-
-    return $this->on;
-
-  }
-
-  public function getType(){
-
-    return $this->type;
-
-  }
-
-  public function getModel(){
-
-    return $this->model;
-
-  }
-
-  public function __toString(){
-
-    return $this->sql();
-
-  }
-
-  public function sql(){
-
-    $table = $this->table;
-
-    // Si es una consulta se incierra entre parentesis
-    if($table instanceof AmQuery){
-      // SQLSQLSQL
-      $sql = '(' . $table->sql() . ')';
-
-    }elseif($table instanceOf AmTable){
-      $tableName = $table->getTableName();
-      $sql = $this->scheme->nameWrapperAndRealScapeComplete($tableName);
-
-    }elseif(is_string($table)){
-
-      $tableName = $table;
-
-      if(isset($this->model)){
-        $tableName = $this->model;
-      }
-
-      if(is_subclass_of($tableName, 'AmModel')){
-        $tableName = $tableName::me()->getTableName();
-      }
-      $sql = $this->scheme->nameWrapperAndRealScapeComplete($tableName);
-
-    }else{
-      throw Am::e('AMSCHEME_INVALID_FIELD', var_export($table, true));
-
-    }
-
-    $alias = $this->scheme->nameWrapperAndRealScape($this->alias);
-    $type = $this->type;
-    $type = !empty($type)? "{$type} " : '';
-
-    $on = $this->on;
-    $on = !empty($on)? " ON {$on} " : '';
-
-    // SQLSQLSQL
-    return "{$type}JOIN {$sql} AS {$alias}{$on}";
 
   }
 

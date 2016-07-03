@@ -7,18 +7,14 @@
  */
 
 // PENDIENTE Documentar
-class AmClauseSelectItem extends AmObject{
+class AmClauseSelectItem extends AmClause{
 
   protected
-    $scheme = null,
-    $query = null,
     $field = null,
     $alias = null;
 
   public function __construct(array $data = array()){
     parent::__construct($data);
-
-    $this->scheme = $this->query->getScheme();
 
     if(empty($this->alias)){
       $field = $this->field;
@@ -37,12 +33,6 @@ class AmClauseSelectItem extends AmObject{
 
   }
 
-  public function getQuery(){
-
-    return $this->query;
-
-  }
-
   public function getAlias(){
 
     return $this->alias;
@@ -52,12 +42,6 @@ class AmClauseSelectItem extends AmObject{
   public function getField(){
 
     return $this->field;
-
-  }
-
-  public function __toString(){
-
-    return $this->sql();
 
   }
 

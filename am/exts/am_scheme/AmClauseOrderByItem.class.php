@@ -7,18 +7,15 @@
  */
 
 // PENDIENTE Documentar
-class AmClauseOrderByItem extends AmObject{
+class AmClauseOrderByItem extends AmClause{
 
   protected
-    $scheme = null,
-    $query = null,
     $field = null,
     $dir = null;
 
   public function __construct(array $data = array()){
     parent::__construct($data);
 
-    $this->scheme = $this->query->getScheme();
     $this->dir = strtoupper($this->dir);
 
     if(!is_string($this->field) || empty($this->field)){
@@ -32,12 +29,6 @@ class AmClauseOrderByItem extends AmObject{
 
   }
 
-  public function getQuery(){
-
-    return $this->query;
-
-  }
-
   public function getDir(){
 
     return $this->dir;
@@ -47,12 +38,6 @@ class AmClauseOrderByItem extends AmObject{
   public function getField(){
 
     return $this->field;
-
-  }
-
-  public function __toString(){
-
-    return $this->sql();
 
   }
 
