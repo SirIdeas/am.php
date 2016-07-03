@@ -216,11 +216,6 @@ class AmForeign extends AmObject{
    */
   public static function foreignConf($tbl, $type, $name, $conf){
 
-    // Si esta definida una relación con el mismo nombre generar un error.
-    if($tbl->getForeign($name)){
-      throw Am::e('AMSCHEME_FOREIGN_ALREADY_EXISTS', $tbl->getModel(), $name);
-    }
-
     // Se utilizará la configuración automática de la relación
     $confOf = null;
     if(is_string($conf)){

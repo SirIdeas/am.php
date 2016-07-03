@@ -57,7 +57,6 @@ return array(
       'AMSCHEME_MODEL_CALL_MARK_AS_UPDATED' => 'AmScheme: Model metodo markAsUpdated solo puede ser llamada por la tabla del modelo',
       'AMSCHEME_MODEL_DONT_HAVE_PK' => 'AmScheme: Model "%s" no tiene primary key',
       'AMSCHEME_MODEL_NOT_EXISTS' => 'AmScheme: Model "%s" no existe',
-      'AMSCHEME_FOREIGN_ALREADY_EXISTS' => 'AmScheme: Relación "%s@%s" ya existe existe',
       'AMSCHEME_HAS_MANY_AND_BELONG_TO_FOREIGN_DIFFERENT_SCHEMES' => 'AmScheme: Relación hasManyAndBelontTo "%s" definida entre diferentes esquemas: "%s" pertenece al esquema "%s" y "%s" pertenece al esquema "%s"',
       'AMSCHEME_RELATION_NOT_EXISTS' => 'AmScheme: Relación %s@%s no existe',
       'AMSCHEME_RELATION_SET_MUST_RECIVED_AMMODEL' => 'AmScheme: Asignación a relación debe recibir una instancia de %s',

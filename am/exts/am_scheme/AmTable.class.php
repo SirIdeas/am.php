@@ -257,16 +257,21 @@ final class AmTable extends AmObject{
       $confs = array();
       foreach ($this->$type as $name => $conf){
 
-        // Preparar la configur  ación
-        $conf = AmForeign::foreignConf($this, $type, $name, $conf);
+        // Si esta definida una relación con el mismo nombre generar un error.
+        if(!$this->getForeign($name)){
 
-        $conf['type'] = $type;
+          // Preparar la configur  ación
+          $conf = AmForeign::foreignConf($this, $type, $name, $conf);
 
-        // Instancia relación
-        $this->foreigns[$name] = new AmForeign($conf);
+          $conf['type'] = $type;
+
+          // Instancia relación
+          $this->foreigns[$name] = new AmForeign($conf);
+          
+          // Guardar relación configurada
+          $confs[$name] = $conf;
         
-        // Guardar relación configurada
-        $confs[$name] = $conf;
+        }
         
       }
 
