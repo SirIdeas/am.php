@@ -12,69 +12,106 @@ class AmClauseJoinItem extends AmObject{
   protected
     $scheme = null,
     $query = null,
-    $from = null,
+    $table = null,
     $alias = null,
     $on = null,
     $type = null,
-    $model = null;
+    $model = null,
+    $postAddedCallback = null;
 
   public function __construct(array $data = array()){
     parent::__construct($data);
 
     $this->scheme = $this->query->getScheme();
-    $from = $this->from;
+    $table = $this->table;
 
     if(empty($this->alias)){
 
-      if($from instanceof AmQuery){
-        $from = $from->getTable();
+      if($table instanceof AmQuery){
+        $table = $table->getTable();
       }
 
-      if($from instanceOf AmTable){
-        $from = $from->getModel();
+      if($table instanceOf AmTable){
+        $table = $table->getModel();
       }
       
-      if(is_string($from)){
-        $this->alias = str_replace('.', '_', $from);
+      if(is_string($table)){
+        $this->alias = str_replace('.', '_', $table);
       }
 
     }
 
     if(empty($this->alias)){
-      throw Am::e('AMSCHEME_EMPTY_ALIAS', var_export($from, true));
+      throw Am::e('AMSCHEME_EMPTY_ALIAS', var_export($table, true));
     }
 
-    $this->alias = $this->scheme->alias($this->alias, array_merge(
-      $this->query->getFroms(),
-      $this->query->getJoins()
-    ));
+    $this->alias = $this->generateAlias($this->alias);
 
-    if(is_string($from)){
+    if(is_string($table)){
+      if(is_subclass_of($table, 'AmModel')){
+        $this->model = $table;
+      }
       $this->makeFromPossibleJoins();
     }
 
   }
 
+  public function postAdded(){
+    if(isValidCallback($this->postAddedCallback)){
+      call_user_func($this->postAddedCallback);
+    }
+  }
+
+  protected function generateAlias($alias){
+    return $this->scheme->alias($alias, array_merge(
+      $this->query->getFroms(),
+      $this->query->getJoins()
+    ));    
+  }
+
   public function makeFromPossibleJoins(){
 
-    $from = $this->from;
+    $table = $this->table;
     $alias = $this->alias;
     $tables = $this->query->getPossibleJoins();
-    
-    foreach ($tables as $aliasTable => $table){
-      $posibleJoins = $table->getPossibleJoins();
+
+    foreach ($tables as $aliasTable => $tbl){
+      $posibleJoins = $tbl->getPossibleJoins();
       foreach ($posibleJoins as $aliasJoin => $conf){
-        // var_dump([$from, $aliasJoin, "{$aliasTable}.{$aliasJoin}"]);
-        if(in_array($from, array($aliasJoin, "{$aliasTable}.{$aliasJoin}"))){
+        if(in_array($table, array($aliasJoin, "{$aliasTable}.{$aliasJoin}"))){
           $this->model = $conf['model'];
+
+          if($conf['type'] == 'hasManyAndBelongTo'){
+            $this->table = $conf['table'];
+            $alias = $this->generateAlias($conf['table']);
+            $this->model = itemOr('model', $conf['through']);
+            $prevAlias = $this->alias;
+
+            $on = array();
+            foreach ($conf['through']['cols'] as $colFrom => $colTo) {
+              $on[] = "{$alias}.{$colFrom} = {$prevAlias}.{$colTo}";
+            }
+            if(!empty($on)){
+              $on = '('.implode(') AND (', $on).')';
+            }
+
+            $this->postAddedCallback = function() use ($conf, $prevAlias, $on) {
+              $this->query->join($conf['model'], $prevAlias, $on);
+            };
+          }
+
           $on = array();
           foreach ($conf['cols'] as $colFrom => $colTo) {
-            $on[] = "{$aliasTable}.{$colFrom} = {$aliasJoin}.{$colTo}";
+            $on[] = "{$aliasTable}.{$colFrom} = {$alias}.{$colTo}";
           }
           if(!empty($on)){
             $this->on = '('.implode(') AND (', $on).')';
           }
+
+          $this->alias = $alias;
+
           return;
+
         }
       }
     }
@@ -93,9 +130,9 @@ class AmClauseJoinItem extends AmObject{
 
   }
 
-  public function getFrom(){
+  public function getTable(){
 
-    return $this->from;
+    return $this->table;
 
   }
 
@@ -125,20 +162,20 @@ class AmClauseJoinItem extends AmObject{
 
   public function sql(){
 
-    $from = $this->from;
+    $table = $this->table;
 
     // Si es una consulta se incierra entre parentesis
-    if($from instanceof AmQuery){
+    if($table instanceof AmQuery){
       // SQLSQLSQL
-      $sql = '(' . $from->sql() . ')';
+      $sql = '(' . $table->sql() . ')';
 
-    }elseif($from instanceOf AmTable){
-      $tableName = $from->getTableName();
+    }elseif($table instanceOf AmTable){
+      $tableName = $table->getTableName();
       $sql = $this->scheme->nameWrapperAndRealScapeComplete($tableName);
 
-    }elseif(is_string($from)){
+    }elseif(is_string($table)){
 
-      $tableName = $from;
+      $tableName = $table;
 
       if(isset($this->model)){
         $tableName = $this->model;
@@ -150,7 +187,7 @@ class AmClauseJoinItem extends AmObject{
       $sql = $this->scheme->nameWrapperAndRealScapeComplete($tableName);
 
     }else{
-      throw Am::e('AMSCHEME_INVALID_FIELD', var_export($from, true));
+      throw Am::e('AMSCHEME_INVALID_FIELD', var_export($table, true));
 
     }
 

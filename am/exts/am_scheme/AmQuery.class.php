@@ -548,7 +548,7 @@ class AmQuery extends AmObject{
 
     // Recorrer para hasta obtener la primera instancia de AmTable.
     foreach ($froms as $fromClauseItem){
-      $from = $fromClauseItem->getFrom();
+      $from = $fromClauseItem->getTable();
       if($from instanceof AmTable){
         // Asignar la fecha de actualización.
         $from->setAutoUpdatedAt($this);
@@ -638,7 +638,7 @@ class AmQuery extends AmObject{
 
     $item = new AmClauseFromItem(array(
       'query' => $this,
-      'from' => $from,
+      'table' => $from,
       'alias' => $alias,
     ));
 
@@ -673,7 +673,7 @@ class AmQuery extends AmObject{
 
     $item = new AmClauseJoinItem(array(
       'query' => $this,
-      'from' => $from,
+      'table' => $from,
       'alias' => $alias,
       'on' => $on, 
       'type' => strtoupper($type)
@@ -695,6 +695,8 @@ class AmQuery extends AmObject{
     if($table instanceof AmTable){
       $this->possibleJoins[$item->getAlias()] = $table;
     }
+
+    $item->postAdded();
 
     return $this;
 

@@ -58,7 +58,6 @@ return array(
       'AMSCHEME_MODEL_NOT_EXISTS' => 'AmScheme: Model "%s" no existe',
       'AMSCHEME_FOREIGN_ALREADY_EXISTS' => 'AmScheme: Relación "%s@%s" ya existe existe',
       'AMSCHEME_HAS_MANY_AND_BELONG_TO_FOREIGN_DIFFERENT_SCHEMES' => 'AmScheme: Relación hasManyAndBelontTo "%s" definida entre diferentes esquemas: "%s" pertenece al esquema "%s" y "%s" pertenece al esquema "%s"',
-      'AMSCHEME_HAS_MANY_AND_BELONG_TO_FOREIGN_SELECT_PARAM_MAY_BE_ARRAY' => 'AmScheme: Parámetro select de la relación hasManyAndBelontTo "%s"@"%s"debe ser un array',
       'AMSCHEME_RELATION_NOT_EXISTS' => 'AmScheme: Relación %s@%s no existe',
       'AMSCHEME_RELATION_SET_MUST_RECIVED_AMMODEL' => 'AmScheme: Asignación a relación debe recibir una instancia de %s'
     )

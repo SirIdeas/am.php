@@ -284,7 +284,7 @@ final class AmTable extends AmObject{
       $table = $foreign->getTable();
 
       foreach ($cols as $from => $to) {
-        if(!$this->hasField($from)){
+        if(!$this->hasField($from) && $table->hasField($to)){
           $field = $table->getField($to)->cp(array(
             'name' => $from,
             'pk' => $this->isPk($from),
@@ -1127,8 +1127,9 @@ final class AmTable extends AmObject{
     $ret = array(); // Para el retorno
     $pks = $this->getPks(); // Obtener PKs
 
-    if(empty($pks))
+    if(empty($pks)){
       throw Am::e('AMSCHEME_MODEL_DONT_HAVE_PK', get_class($model));
+    }
 
     // Agregar los IDs
     foreach($pks as $pk)

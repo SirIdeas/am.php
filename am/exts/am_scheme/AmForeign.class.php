@@ -217,8 +217,9 @@ class AmForeign extends AmObject{
   public static function foreignConf($tbl, $type, $name, $conf){
 
     // Si esta definida una relación con el mismo nombre generar un error.
-    if($tbl->getForeign($name))
+    if($tbl->getForeign($name)){
       throw Am::e('AMSCHEME_FOREIGN_ALREADY_EXISTS', $tbl->getModel(), $name);
+    }
 
     // Se utilizará la configuración automática de la relación
     $confOf = null;
@@ -231,8 +232,9 @@ class AmForeign extends AmObject{
     $model = AmScheme::model($conf['model']);
 
     // Generar error si el modelo no existe 
-    if(!$model)
+    if(!$model){
       throw Am::e('AMSCHEME_MODEL_NOT_EXISTS', $conf['model']);
+    }
 
     // Asignar el modelo real
     $conf['model'] = $model;
@@ -240,43 +242,37 @@ class AmForeign extends AmObject{
     if($type !== 'hasManyAndBelongTo'){
 
       // Definir columnas si no esta definidas
-      if(!isset($conf['cols'])){
-
-        $fromTbl = array(
-          'belongTo' => $model::me(),
-          'hasMany' => $tbl,
-        );
-
-        $fromTbl = $fromTbl[$type];
+      if(!isset($conf['cols']) || empty($conf['cols'])){
+        $toTbl = $model::me();
 
         // Obtener tabla y campos PK
-        $pks = $fromTbl->getPks();
+        $pks = array();
 
-        // Si la clave primaria no tiene campos generar un error.
-        if(empty($pks)){
-          throw Am::e('AMSCHEME_MODEL_DONT_HAVE_PK', $fromTbl->getModel());
+        if($type === 'hasMany'){
+          $pks = $tbl->getPks();
+        }else{
+          $pks = $toTbl->getPks();
         }
 
         $conf['cols'] = array();
-    
+      
         $foreign = null;
         if(!empty($confOf)){
-          $foreign = $model::me()->getForeign($confOf);
+          $foreign = self::foreignConf($toTbl, 'belongTo', $confOf, $tbl->getModel());
         }
 
         // Guardar columnas
         if(isset($foreign)){
-          $cols = $foreign->getCols();
-          foreach ($cols as $colFrom => $colTo){
+          foreach ($foreign['cols'] as $colFrom => $colTo){
             $conf['cols'][$colTo] = $colFrom;
           }
-        }else if($type == 'belongTo'){
+        }elseif($type == 'belongTo'){
           foreach ($pks as $pk){
             $conf['cols']["{$pk}_{$name}"] = $pk;
           }
-        }else{
+        }elseif($type == 'hasMany'){
           foreach ($pks as $pk){
-            $conf['cols'][$pk] = "{$pk}_{$fromTbl->getTableName()}";
+            $conf['cols'][$pk] = "{$pk}_{$name}";
           }
         }
 
@@ -286,16 +282,6 @@ class AmForeign extends AmObject{
 
       // Tabla relacionada
       $refTbl = $model::me();
-
-      // Generar error si el esquema de la tabla actual no es el mismo de la
-      // tabla refrenciada
-      if($tbl->getSchemeName() !== $refTbl->getSchemeName()){
-        throw Am::e(
-          'AMSCHEME_HAS_MANY_AND_BELONG_TO_FOREIGN_DIFFERENT_SCHEMES', $name,
-          $tbl->getModel(),    $tbl->getSchemeName(),
-          $refTbl->getModel(), $refTbl->getSchemeName()
-        );
-      }
 
       // Para obtener le nombre de la tabla intermedia
       $tn1 = $tbl->getTableName();
@@ -312,45 +298,39 @@ class AmForeign extends AmObject{
 
       }
 
-      // Definir los joins si no han sido asignados
-      if(!isset($conf['joins'])){
-
-        // Para crear los joins con la tabla intermedia
-        $joins = array();
-        $pks = $refTbl->getPks();
-        foreach($pks as $pk)
-          $joins[$pk] = "{$pk}_{$tn2}";
-
-        // Guardar joins
-        $conf['joins'] = array($conf['through'] => $joins);
-
+      if(!is_array($conf['through'])){
+        $conf['through'] = array('table' => $conf['through']);
       }
 
-      // Si el select no es un array entonces se debe generar un error
-      if(isset($conf['select']) && !is_array($conf['select']))
-        throw Am::e(
-          'AMSCHEME_HAS_MANY_AND_BELONG_TO_FOREIGN_SELECT_PARAM_MAY_BE_ARRAY',
-          $name, $tbl->getModel()
-        );
+      if(!isset($conf['through']['model']) && is_subclass_of($conf['through']['table'], 'AmModel')){
+        $conf['through']['model'] = $conf['through']['table'];
+      }
 
-      // Definir columnas si no han sido asignadas
-      if(!isset($conf['cols'])){
+      $conf['table'] = $conf['through']['table'];
 
-        // Para crear relaciones con el modleo actual
+      if(!isset($conf['through']['cols']) || empty($conf['through']['cols'])){
+        $conf['through']['cols'] = array();
+        $pks = $refTbl->getPks();
+        foreach ($pks as $pk) {
+          $conf['through']['cols'][$pk] = $pk;
+        }
+      }
+
+      if(!isset($conf['cols']) || empty($conf['cols'])){
+        $conf['cols'] = array();
         $pks = $tbl->getPks();
-        if(empty($pks))
-          throw Am::e('AMSCHEME_MODEL_DONT_HAVE_PK', $tbl->getModel());
-
-        $cols = array();
-        foreach($pks as $pk)
-          $cols[$pk] = "{$pk}_{$tn1}";
-
-        // Guardar columnas
-        $conf['cols'] = $cols;
-
+        foreach ($pks as $pk) {
+          $conf['cols'][$pk] = $pk;
+        }
       }
 
     }
+
+    // if($type === 'hasManyAndBelongTo'){
+    //   echo "<pre>";
+    //   print_r(["{$tbl->getModel()}.{$type}({$model} {$name})" => $conf]);
+    //   echo "</pre>";
+    // }
 
     return $conf;
     

@@ -12,33 +12,33 @@ class AmClauseFromItem extends AmObject{
   protected
     $scheme = null,
     $query = null,
-    $from = null,
+    $table = null,
     $alias = null;
 
   public function __construct(array $data = array()){
     parent::__construct($data);
 
     $this->scheme = $this->query->getScheme();
-    $from = $this->from;
+    $table = $this->table;
 
     if(empty($this->alias)){
 
-      if($from instanceof AmQuery){
-        $from = $from->getTable();
+      if($table instanceof AmQuery){
+        $table = $table->getTable();
       }
 
-      if($from instanceOf AmTable){
-        $from = $from->getModel();
+      if($table instanceOf AmTable){
+        $table = $table->getModel();
       }
       
-      if(is_string($from)){
-        $this->alias = str_replace('.', '_', $from);
+      if(is_string($table)){
+        $this->alias = str_replace('.', '_', $table);
       }
 
     }
 
     if(empty($this->alias)){
-      throw Am::e('AMSCHEME_EMPTY_ALIAS', var_export($from, true));
+      throw Am::e('AMSCHEME_EMPTY_ALIAS', var_export($table, true));
     }
 
     $this->alias = $this->scheme->alias($this->alias, array_merge(
@@ -60,9 +60,9 @@ class AmClauseFromItem extends AmObject{
 
   }
 
-  public function getFrom(){
+  public function getTable(){
 
-    return $this->from;
+    return $this->table;
 
   }
 
@@ -74,27 +74,27 @@ class AmClauseFromItem extends AmObject{
 
   public function sql(){
 
-    $from = $this->from;
+    $table = $this->table;
 
     // Si es una consulta se incierra entre parentesis
-    if($from instanceof AmQuery){
+    if($table instanceof AmQuery){
       // SQLSQLSQL
-      $sql = '(' . $from->sql() . ')';
+      $sql = '(' . $table->sql() . ')';
 
-    }elseif($from instanceOf AmTable){
-      $tableName = $from->getTableName();
+    }elseif($table instanceOf AmTable){
+      $tableName = $table->getTableName();
       $sql = $this->scheme->nameWrapperAndRealScapeComplete($tableName);
 
-    }elseif(is_string($from)){
+    }elseif(is_string($table)){
 
-      $tableName = $from;
+      $tableName = $table;
       if(is_subclass_of($tableName, 'AmModel')){
         $tableName = $tableName::me()->getTableName();
       }
       $sql = $this->scheme->nameWrapperAndRealScapeComplete($tableName);
 
     }else{
-      throw Am::e('AMSCHEME_INVALID_FIELD', var_export($from, true));
+      throw Am::e('AMSCHEME_INVALID_FIELD', var_export($table, true));
 
     }
 
