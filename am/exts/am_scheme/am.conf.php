@@ -15,6 +15,7 @@ return array(
     'validators' => false,
     'drivers' => false,
     'relations' => false,
+    'clauses' => false,
   ),
 
   /**
