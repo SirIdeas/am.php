@@ -244,7 +244,9 @@ class AmQuery extends AmObject{
    */
   public function getLimit(){
 
-    return $this->limit;
+    if($this->limit){
+      return $this->limit->getLimit();
+    }
 
   }
 
@@ -254,7 +256,9 @@ class AmQuery extends AmObject{
    */
   public function getOffset(){
 
-    return $this->offset;
+    if($this->offset){
+      return $this->offset->getOffset();
+    }
 
   }
 
@@ -876,15 +880,22 @@ class AmQuery extends AmObject{
    */
   public function orderBy($orders, $dir = 'ASC'){
 
-    if(!is_array($orders))
+    if(!is_array($orders)){
       $orders = array($orders);
+    }
 
     // Recorrer para agregar
-    foreach($orders as $order){
+    foreach($orders as $field){
+
+      $item = new AmClauseOrderByItem(array(
+        'query' => $this,
+        'field' => $field,
+        'dir' => $dir,
+      ));
 
       // Liberar posicion para que al agregar quede en ultima posicion
-      unset($this->orders[$order]);
-      $this->orders[$order] = $dir;
+      unset($this->orders[$field]);
+      $this->orders[$field] = $item;
 
     }
 
@@ -916,30 +927,34 @@ class AmQuery extends AmObject{
 
   /**
    * Agregar campos para la cláusula GROUP BY.
-   * @param  array  $groups Lista de campos para agrupar.
+   * @param  string/array $groups Nombre del campo para agrupar, o array con
+   *                              los nombres de los campos para agrupar.
    * @return $this
    */
-  public function groups(array $groups){
+  public function groupBy($groups){
+
+    if(!is_array($groups)){
+      $groups = array($groups);
+    }
 
     // Elimintar los campos que se agregaran de los existentes
     $this->groups = array_diff($this->groups, $groups);
 
     // Agregar cada campo
-    foreach($groups as $group)
-      $this->groups[] = $group;
+    foreach($groups as $field){
+
+      $item = new AmClauseGroupByItem(array(
+        'query' => $this,
+        'field' => $field,
+      ));
+
+      unset($this->groups[$field]);
+      $this->groups[$field] = $item;
+
+    }
 
     return $this;
 
-
-  }
-
-  /**
-   * Agregar un campos para agrupar.
-   * @return $this
-   */
-  public function groupBy(){
-
-    return $this->groups(func_get_args());
 
   }
 
@@ -950,7 +965,11 @@ class AmQuery extends AmObject{
    */
   public function limit($limit){
 
-    $this->limit = $limit;
+    $this->limit = new AmClauseLimit(array(
+      'query' => $this,
+      'limit' => $limit,
+    ));
+
     return $this;
 
   }
@@ -962,7 +981,11 @@ class AmQuery extends AmObject{
    */
   public function offSet($offset){
 
-    $this->offset = $offset;
+    $this->offset = new AmClauseOffset(array(
+      'query' => $this,
+      'offset' => $offset,
+    ));
+
     return $this;
 
   }

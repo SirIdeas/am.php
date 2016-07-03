@@ -1647,12 +1647,12 @@ abstract class AmScheme extends AmObject{
       trim(implode(' ', array(
       trim($this->sqlClauseSelect($q)),
       trim($this->sqlClauseFrom($q)),
-      trim($this->sqlJoins($q)),
+      trim($this->sqlClauseJoins($q)),
       trim($this->sqlWhere($q)),
-      trim($this->sqlGroups($q)),
-      trim($this->sqlOrders($q)),
-      trim($this->sqlLimit($q)),
-      trim($this->sqlOffSet($q))
+      trim($this->sqlClauseGroups($q)),
+      trim($this->sqlClauseOrders($q)),
+      trim($this->sqlClauseLimit($q)),
+      trim($this->sqlClauseOffSet($q))
     )));
 
   }
@@ -1743,7 +1743,7 @@ abstract class AmScheme extends AmObject{
     return implode(' ', array(
       'UPDATE',
       trim($this->getParseObjectDatabaseName($q)),
-      trim($this->sqlJoins($q)),
+      trim($this->sqlClauseJoins($q)),
       trim($this->sqlSets($q)),
       trim($this->sqlWhere($q))
     ));
@@ -1813,7 +1813,7 @@ abstract class AmScheme extends AmObject{
    * @param  AmQuery $q Query.
    * @return string     SQL correspondiente.
    */
-  public function sqlJoins(AmQuery $q){
+  public function sqlClauseJoins(AmQuery $q){
 
     // Resultado
     $joins = $q->getJoins();
@@ -1846,20 +1846,15 @@ abstract class AmScheme extends AmObject{
    * @param  AmQuery $q Query.
    * @return string     SQL correspondiente.
    */
-  public function sqlOrders(AmQuery $q){
+  public function sqlClauseOrders(AmQuery $q){
 
-    $ordersOri = $q->getOrders(); // Obtener orders agregados
-    $orders = array();  // Orders para retorno
-
-    // Recorrer lista de campos para ordenar
-    foreach($ordersOri as $order => $dir){
-      $orders[] = "{$order} {$dir}";
-    }
+    $orders = $q->getOrders(); // Obtener orders agregados
 
     // Unir resultado
     $orders = trim(implode(', ', $orders));
 
     // Agregar ORDER BY
+    // SQLSQLSQLSQLSQL
     return (empty($orders) ? '' : "ORDER BY {$orders}");
 
   }
@@ -1869,12 +1864,13 @@ abstract class AmScheme extends AmObject{
    * @param  AmQuery $q Query.
    * @return string     SQL correspondiente.
    */
-  public function sqlGroups(AmQuery $q){
+  public function sqlClauseGroups(AmQuery $q){
 
     // Unir grupos
     $groups = trim(implode(', ', $q->getGroups()));
 
     // Agregar GROUP BY
+    // SQLSQLSQLSQL
     return (empty($groups) ? '' : "GROUP BY {$groups}");
 
   }
@@ -1884,13 +1880,14 @@ abstract class AmScheme extends AmObject{
    * @param  AmQuery $q Query.
    * @return string     SQL correspondiente.
    */
-  public function sqlLimit(AmQuery $q){
+  public function sqlClauseLimit(AmQuery $q){
 
     // Obtener limite
-    $limit = trim($q->getLimit());
+    $limit = $q->getLimit();
 
     // Agregar LIMIT
-    return (empty($limit) ? '' : "LIMIT {$limit}");
+    // SQLSQLSQLSQL
+    return (!isset($limit) ? '' : "LIMIT {$limit}");
 
   }
 
@@ -1899,13 +1896,14 @@ abstract class AmScheme extends AmObject{
    * @param  AmQuery $q Query.
    * @return string     SQL correspondiente.
    */
-  public function sqlOffset(AmQuery $q){
+  public function sqlClauseOffset(AmQuery $q){
 
     // Obtener punto de partida
     $offset = $q->getOffset();
     $limit = $q->getLimit();
 
     // Agregar OFFSET
+    // SQLSQLSQLSQL
     return (!isset($offset) || !isset($limit) ? '' : "OFFSET {$offset}");
 
   }

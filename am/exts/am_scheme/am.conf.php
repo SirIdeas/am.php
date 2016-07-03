@@ -59,7 +59,10 @@ return array(
       'AMSCHEME_FOREIGN_ALREADY_EXISTS' => 'AmScheme: Relación "%s@%s" ya existe existe',
       'AMSCHEME_HAS_MANY_AND_BELONG_TO_FOREIGN_DIFFERENT_SCHEMES' => 'AmScheme: Relación hasManyAndBelontTo "%s" definida entre diferentes esquemas: "%s" pertenece al esquema "%s" y "%s" pertenece al esquema "%s"',
       'AMSCHEME_RELATION_NOT_EXISTS' => 'AmScheme: Relación %s@%s no existe',
-      'AMSCHEME_RELATION_SET_MUST_RECIVED_AMMODEL' => 'AmScheme: Asignación a relación debe recibir una instancia de %s'
+      'AMSCHEME_RELATION_SET_MUST_RECIVED_AMMODEL' => 'AmScheme: Asignación a relación debe recibir una instancia de %s',
+      'AMSCHEME_FIELD_INVALID' => 'AmScheme: Campo "%s" inválido en cláusula %s',
+      'AMSCHEME_DIR_INVALID' => 'AmScheme: Dirección "%s" inválida para campo "%s" en cláusula %s',
+      'AMSCHEME_INT_INVALID' => 'AmScheme: Valor "%s" para cláusula %s debe ser un entero'
     )
   ),
   
