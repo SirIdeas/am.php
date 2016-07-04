@@ -63,12 +63,11 @@ class AmClauseFromItem extends AmClause{
 
     // Si es una consulta se incierra entre parentesis
     if($table instanceof AmQuery){
-      // SQLSQLSQL
-      $sql = '(' . $table->sql() . ')';
+      $table = $this->scheme->_sqlWrapperSql($table->sql());
 
     }elseif($table instanceOf AmTable){
       $tableName = $table->getTableName();
-      $sql = $this->scheme->nameWrapperAndRealScapeComplete($tableName);
+      $table = $this->scheme->nameWrapperAndRealScapeComplete($tableName);
 
     }elseif(is_string($table)){
 
@@ -76,7 +75,7 @@ class AmClauseFromItem extends AmClause{
       if(is_subclass_of($tableName, 'AmModel')){
         $tableName = $tableName::me()->getTableName();
       }
-      $sql = $this->scheme->nameWrapperAndRealScapeComplete($tableName);
+      $table = $this->scheme->nameWrapperAndRealScapeComplete($tableName);
 
     }else{
       throw Am::e('AMSCHEME_INVALID_FIELD', var_export($table, true));
@@ -85,8 +84,7 @@ class AmClauseFromItem extends AmClause{
 
     $alias = $this->scheme->nameWrapperAndRealScape($this->alias);
 
-    // SQLSQLSQL
-    return "{$sql} AS {$alias}";
+    return $this->scheme->_sqlElementWithAlias($table, $alias);
 
   }
 

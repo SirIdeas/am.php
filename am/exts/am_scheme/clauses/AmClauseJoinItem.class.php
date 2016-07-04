@@ -89,12 +89,11 @@ class AmClauseJoinItem extends AmClause{
 
     // Si es una consulta se incierra entre parentesis
     if($table instanceof AmQuery){
-      // SQLSQLSQL
-      $sql = '(' . $table->sql() . ')';
+      $table = $this->scheme->_sqlWrapperSql($table->sql());
 
     }elseif($table instanceOf AmTable){
       $tableName = $table->getTableName();
-      $sql = $this->scheme->nameWrapperAndRealScapeComplete($tableName);
+      $table = $this->scheme->nameWrapperAndRealScapeComplete($tableName);
 
     }elseif(is_string($table)){
 
@@ -107,7 +106,7 @@ class AmClauseJoinItem extends AmClause{
       if(is_subclass_of($tableName, 'AmModel')){
         $tableName = $tableName::me()->getTableName();
       }
-      $sql = $this->scheme->nameWrapperAndRealScapeComplete($tableName);
+      $table = $this->scheme->nameWrapperAndRealScapeComplete($tableName);
 
     }else{
       throw Am::e('AMSCHEME_INVALID_FIELD', var_export($table, true));
@@ -115,14 +114,8 @@ class AmClauseJoinItem extends AmClause{
     }
 
     $alias = $this->scheme->nameWrapperAndRealScape($this->alias);
-    $type = $this->type;
-    $type = !empty($type)? "{$type} " : '';
 
-    $on = $this->on;
-    $on = !empty($on)? " ON {$on} " : '';
-
-    // SQLSQLSQL
-    return "{$type}JOIN {$sql} AS {$alias}{$on}";
+    return $this->scheme->_sqlJoin($this->type, $table, $alias, $this->on);
 
   }
 

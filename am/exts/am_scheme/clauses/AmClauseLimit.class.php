@@ -29,7 +29,6 @@ class AmClauseLimit extends AmClause{
 
   public function sql(){
 
-    // SQLSQLSQL
     return intval($this->limit);
 
   }

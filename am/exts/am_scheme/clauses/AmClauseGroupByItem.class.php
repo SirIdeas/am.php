@@ -29,10 +29,7 @@ class AmClauseGroupByItem extends AmClause{
 
   public function sql(){
 
-    $sql = $this->scheme->nameWrapperAndRealScapeComplete($this->field);
-
-    // SQLSQLSQL
-    return $sql;
+    return $this->scheme->nameWrapperAndRealScapeComplete($this->field);
 
   }
 

@@ -61,7 +61,6 @@ return array(
       'AMSCHEME_RELATION_NOT_EXISTS' => 'AmScheme: Relación %s@%s no existe',
       'AMSCHEME_RELATION_SET_MUST_RECIVED_AMMODEL' => 'AmScheme: Asignación a relación debe recibir una instancia de %s',
       'AMSCHEME_FIELD_INVALID' => 'AmScheme: Campo "%s" inválido en cláusula %s',
-      'AMSCHEME_DIR_INVALID' => 'AmScheme: Dirección "%s" inválida para campo "%s" en cláusula %s',
       'AMSCHEME_INT_INVALID' => 'AmScheme: Valor "%s" para cláusula %s debe ser un entero'
     )
   ),

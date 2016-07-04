@@ -47,23 +47,23 @@ class AmClauseSelectItem extends AmClause{
 
   public function sql(){
 
-    // Si es una consulta se incierra entre parentesis
-    if($this->field instanceof AmQuery){
-      // SQLSQLSQL
-      $sql = '(' . $this->field->sql() . ')';
+    $field = $this->field;
 
-    }elseif(is_string($this->field)){
-      $sql = $this->scheme->nameWrapperAndRealScapeComplete($this->field);
+    // Si es una consulta se incierra entre parentesis
+    if($field instanceof AmQuery){
+      $field = $this->scheme->_sqlWrapperSql($field->sql());
+
+    }elseif(is_string($field)){
+      $field = $this->scheme->nameWrapperAndRealScapeComplete($field);
 
     }else{
-      throw Am::e('AMSCHEME_INVALID_FIELD', var_export($this->field, true));
+      throw Am::e('AMSCHEME_INVALID_FIELD', var_export($field, true));
 
     }
 
     $alias = $this->scheme->nameWrapperAndRealScape($this->alias);
     
-    // SQLSQLSQL
-    return "{$sql} AS {$alias}";
+    return $this->scheme->_sqlElementWithAlias($field, $alias);;
 
   }
 

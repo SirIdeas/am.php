@@ -580,23 +580,7 @@ abstract class AmScheme extends AmObject{
    */
   public function connect(){
 
-    $ret = $this->start();
-
-    // Cambiar la condificacion con la que se trabajará
-    if($ret){
-
-      // Asignar variables
-      // SQLSQLSQL
-      $this->setServerVar('character_set_server', $this->getCharset());
-      $this->setServerVar('collation_server', $this->getCollation());
-
-      // PENDIENTE: Revisar
-      // SQLSQLSQL
-      $this->execute("set names {$this->getCharset()}");
-
-    }
-
-    return $ret;
+    return $this->start();
 
   }
 

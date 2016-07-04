@@ -138,6 +138,32 @@ final class MysqlScheme extends AmScheme{
   }
 
   /**
+   * Realiza la conexión.
+   * @return Resource Handle de conexión establecida o FALSE si falló.
+   */
+  public function connect(){
+
+    $ret = parent::connect();
+
+    // Cambiar la condificacion con la que se trabajará
+    if($ret){
+
+      // Asignar variables
+      // SQLSQLSQL
+      $this->setServerVar('character_set_server', $this->getCharset());
+      $this->setServerVar('collation_server', $this->getCollation());
+
+      // PENDIENTE: Revisar
+      // SQLSQLSQL
+      $this->execute("set names {$this->getCharset()}");
+
+    }
+
+    return $ret;
+
+  }
+
+  /**
    * Cierra la conexión.
    * @return int Resultado de la operación.
    */
@@ -407,5 +433,46 @@ final class MysqlScheme extends AmScheme{
     return $query;
 
   }
+
+  public function _sqlWrapperSql($sql){
+
+    return "({$sql})";
+
+  }
+
+  public function _sqlElementWithAlias($element, $alias){
+
+    return "{$element} AS {$alias}";
+
+  }
+
+  public function _sqlOrderBy($field, $dir){
+
+    return "{$field} {$dir}";
+  
+  }
+
+  public function _sqlJoin($type, $table, $alias, $on){
+
+    $type = $this->_sqlJoinType($type);
+    $on = $this->_sqlOn($on);
+    $table = $this->_sqlElementWithAlias($table, $alias);
+
+    return "{$type} {$table}{$on}";
+
+  }
+
+  public function _sqlJoinType($type){
+
+    return (!empty($type)? "{$type} " : '') . 'JOIN';
+
+  }
+
+  public function _sqlOn($on){
+
+    return !empty($on)? " ON {$on} " : '';
+
+  }
+
 
 }

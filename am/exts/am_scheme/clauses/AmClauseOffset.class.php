@@ -29,7 +29,6 @@ class AmClauseOffset extends AmClause{
 
   public function sql(){
 
-    // SQLSQLSQL
     return intval($this->offset);
 
   }

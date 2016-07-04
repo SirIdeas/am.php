@@ -22,11 +22,6 @@ class AmClauseOrderByItem extends AmClause{
       throw Am::e('AMSCHEME_FIELD_INVALID', var_export($this->field, true), 'ORDER BY');
     }
 
-    // SQLSQLSQL
-    if(!in_array($this->dir, array('ASC', 'DESC'))){
-      throw Am::e('AMSCHEME_DIR_INVALID', $this->dir, $this->field, 'ORDER BY');
-    }
-
   }
 
   public function getDir(){
@@ -43,10 +38,9 @@ class AmClauseOrderByItem extends AmClause{
 
   public function sql(){
 
-    $sql = $this->scheme->nameWrapperAndRealScapeComplete($this->field);
+    $field = $this->scheme->nameWrapperAndRealScapeComplete($this->field);
 
-    // SQLSQLSQL
-    return "{$sql} {$this->dir}";
+    return $this->scheme->_sqlOrderBy($field, $this->dir);
 
   }
 
