@@ -149,12 +149,10 @@ final class MysqlScheme extends AmScheme{
     if($ret){
 
       // Asignar variables
-      // SQLSQLSQL
       $this->setServerVar('character_set_server', $this->getCharset());
       $this->setServerVar('collation_server', $this->getCollation());
 
       // PENDIENTE: Revisar
-      // SQLSQLSQL
       $this->execute("set names {$this->getCharset()}");
 
     }
@@ -474,5 +472,113 @@ final class MysqlScheme extends AmScheme{
 
   }
 
+  public function _sqlQueryGroup(array $queries){
+
+    return implode(';', $queries);
+
+  }
+
+  /**
+   * SQL para setear un valor a una variable de servidor.
+   * @param  string $varName Nombre de la variable.
+   * @param  string $value   Valor a asignar a la variable.
+   * @param  bool   $scope   Si se agrega la cláusula GLOBAL o SESSION.
+   * @return string          SQL correspondiente.
+   */
+  public function _sqlSetServerVar($varName, $value, $scope = ''){
+
+    $scope = $scope === true? 'GLOBAL ' : $scope === false? 'SESSION ' : '';
+
+    return "SET {$scope}{$varName}={$value}";
+
+  }
+
+  /**
+   * Set de caracteres en un query SQL.
+   * @param  string $charset Set de caracteres.
+   * @return string          SQL correspondiente.
+   */
+  public function _sqlCharset($charset = null){
+
+    return empty($charset) ? '' : " CHARACTER SET {$charset}";
+
+  }
+
+  /**
+   * Coleccion de caracteres en un query SQL.
+   * @param  string $collatin Colección de caracteres.
+   * @return string           SQL correspondiente.
+   */
+  public function _sqlCollation($collation = null){
+
+    return empty($collation) ? '' : " COLLATE {$collation}";
+
+  }
+
+  /**
+   * SQL Para crear la BD.
+   * @param  boolean $ifNotExists Si se agrega la cláusula IF NOT EXISTS.
+   * @return string               SQL correspondiente.
+   */
+  public function _sqlCreate($database, $charset, $collation, $ifNotExists = true){
+
+    $ifNotExists = $ifNotExists? 'IF NOT EXISTS ' : '';
+
+    return "CREATE DATABASE {$ifNotExists}{$database}{$charset}{$collation}";
+
+  }
+
+  /**
+   * SQL para seleccionar la BD.
+   * @return string SQL correspondiente.
+   */
+  public function _sqlSelectDatabase($database){
+
+    return "USE {$database}";
+    
+  }
+
+  /**
+   * SQL para eliminar la BD.
+   * @param  boolean $ifExists Si se agrega la cláusula IF EXISTS.
+   * @return string            SQL correspondiente.
+   */
+  public function _sqlDrop($database, $ifExists = true){
+
+    $ifExists = $ifExists? 'IF EXISTS ' : '';
+
+    return "DROP DATABASE {$ifExists}{$database}";
+
+  }
+
+  /**
+   * Obtener el SQL para eliminar una tabla.
+   * @param  AmTable/string $table     Instancia o nombre de la tabla.
+   * @param  bool           $orReplace Si se agrega la cláusula OR REPLACE.
+   * @return string                    SQL correspondiente.
+   */
+  public function _sqlCreateView($queryName, $sql, $orReplace = true){
+
+    $orReplace = $orReplace? 'OR REPLACE ' : '';
+
+    return "CREATE {$replace}VIEW {$queryName} AS {$sql}";
+
+  }
+
+  /**
+   * Obtener el SQL para eliminar una vista.
+   * @param  AmQuery/string $q        Instancia o SQL del query.
+   * @param  bool           $ifExists Si se debe agregar la cláusula IF EXISTS.
+   * @return string                   SQL correspondiente.
+   */
+  public function _sqlDropView($queryName, $ifExists = true){
+
+    // SQLSQLSQL
+    $ifExists = $ifExists? 'IF EXISTS ' : '';
+
+    // SQLSQLSQL
+    return "DROP VIEW {$ifExists}{$queryName}";
+
+  }
 
 }

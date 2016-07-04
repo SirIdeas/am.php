@@ -601,8 +601,10 @@ abstract class AmScheme extends AmObject{
    */
   public function select(){
 
+    $database = $this->getParseDatabaseName();
+
     // Ejecuta el SQL de seleción de de BD.
-    return $this->query($this->sqlSelectDatabase());
+    return $this->query($this->_sqlSelectDatabase($database));
 
   }
 
@@ -667,12 +669,13 @@ abstract class AmScheme extends AmObject{
 
   // Ejecuta un conjunto de consultas
   public function executeGroup(array $queries){
-    $sqls = array();
-    foreach ($queries as $key => $q)
-      $sqls[] = (string)$q;
 
-    // SQLSQLSQL
-    return $this->execute(implode(';', $sqls));
+    $sqls = array();
+    foreach ($queries as $key => $q){
+      $sqls[] = (string)$q;
+    }
+
+    return $this->execute($this->_sqlQueryGroup($sqls));
 
   }
 
@@ -683,10 +686,12 @@ abstract class AmScheme extends AmObject{
    * @param  bool   $scope   Si se agrega la cláusula GLOBAL o SESSION.
    * @return bool            Resultado de la operación
    */
-  // SQLSQLSQL
   public function setServerVar($varName, $value, $scope = ''){
 
-    return !!$this->execute($this->sqlSetServerVar($varName, $value, $scope));
+    $varName = $this->realScapeString($varName);
+    $value = $this->stringWrapperAndRealScape($value);
+
+    return !!$this->execute($this->_sqlSetServerVar($varName, $value, $scope));
 
   }
 
@@ -698,7 +703,11 @@ abstract class AmScheme extends AmObject{
    */
   public function create($ifNotExists = true){
 
-    return !!$this->execute($this->sqlCreate($ifNotExists));
+    $database = $this->getParseDatabaseName();
+    $charset = $this->_sqlCharset($this->getCharset());
+    $collation = $this->_sqlCollation($this->getCollation());
+
+    return !!$this->execute($this->_sqlCreate($database, $charset, $collation, $ifNotExists));
 
   }
 
@@ -711,7 +720,9 @@ abstract class AmScheme extends AmObject{
    */
   public function drop($ifExists = true){
 
-    return !!$this->execute($this->sqlDrop($ifExists));
+    $database = $this->getParseDatabaseName();
+
+    return !!$this->execute($this->_sqlDrop($database, $ifExists));
 
   }
 
@@ -992,7 +1003,9 @@ abstract class AmScheme extends AmObject{
    */
   public function createView(AmQuery $q, $replace = true){
 
-    return !!$this->execute($this->sqlCreateView($q, $replace));
+    $queryName = $this->getParseObjectDatabaseName($q->getName());
+
+    return !!$this->execute($this->_sqlCreateView($queryName, $q->sql(), $replace));
 
   }
 
@@ -1004,8 +1017,13 @@ abstract class AmScheme extends AmObject{
    * @return bool                     Si se eliminó la vista
    */
   public function dropView($q, $ifExists = true){
+    
+    if($q instanceof AmQuery)
+      $q = $q->getName();
 
-    return !!$this->execute($this->sqlDropView($q, $ifExists));
+    $queryName = $this->getParseObjectDatabaseName($q);
+
+    return !!$this->execute($this->_sqlDropView($queryName, $ifExists));
 
   }
 
@@ -1338,159 +1356,6 @@ abstract class AmScheme extends AmObject{
   //////////////////////////////////////////////////////////////////////////////
 
   /**
-   * SQL para setear un valor a una variable de servidor.
-   * @param  string $varName Nombre de la variable.
-   * @param  string $value   Valor a asignar a la variable.
-   * @param  bool   $scope   Si se agrega la cláusula GLOBAL o SESSION.
-   * @return string          SQL correspondiente.
-   */
-  public function sqlSetServerVar($varName, $value, $scope = ''){
-
-    $varName = $this->realScapeString($varName);
-    $value = $this->stringWrapperAndRealScape($value);
-
-    // SQLSQLSQL
-    $scope = $scope === true? 'GLOBAL ' : $scope === false? 'SESSION ' : '';
-
-    // SQLSQLSQL
-    return "SET {$scope}{$varName}={$value}";
-
-  }
-
-  /**
-   * Set de caracteres en un query SQL.
-   * @param  string $charset Set de caracteres.
-   * @return string          SQL correspondiente.
-   */
-  public function sqlCharset($charset = null){
-
-    // Si no recibió argumentos obtener el charset de la BD
-    if(!count(func_get_args())>0)
-      $charset = $this->getCharset();
-
-    // El el argumento esta vacío retornar cadena vacia
-    if(empty($charset))
-      return '';
-
-    // SQLSQLSQL
-    $charset = empty($charset) ? '' : " CHARACTER SET {$charset}";
-
-    return $charset;
-
-  }
-
-  /**
-   * Coleccion de caracteres en un query SQL.
-   * @param  string $collatin Colección de caracteres.
-   * @return string           SQL correspondiente.
-   */
-  public function sqlCollation($collation = null){
-
-    // Si no recibió argumentos obtener el college de la BD
-    if(!count(func_get_args())>0)
-      $collation = $this->getCollation();
-
-    // El el argumento esta vacío retornar cadena vacia
-    if(empty($collation))
-      return '';
-
-    // SQLSQLSQL
-    $collation = empty($collation) ? '' : " COLLATE {$collation}";
-
-    return $collation;
-
-  }
-
-  /**
-   * SQL Para crear la BD.
-   * @param  boolean $ifNotExists Si se agrega la cláusula IF NOT EXISTS.
-   * @return string               SQL correspondiente.
-   */
-  public function sqlCreate($ifNotExists = true){
-
-    $database = $this->getParseDatabaseName();
-    $charset = $this->sqlCharset();
-    $collation = $this->sqlCollation();
-
-    // SQLSQLSQL
-    $ifNotExists = $ifNotExists? 'IF NOT EXISTS ' : '';
-
-    // SQLSQLSQL
-    $sql = "CREATE DATABASE {$ifNotExists}{$database}{$charset}{$collation}";
-    return $sql;
-
-  }
-
-  /**
-   * SQL para seleccionar la BD.
-   * @return string SQL correspondiente.
-   */
-  public function sqlSelectDatabase(){
-
-    $database = $this->getParseDatabaseName();
-
-    // SQLSQLSQL
-    return "USE {$database}";
-    
-  }
-
-  /**
-   * SQL para eliminar la BD.
-   * @param  boolean $ifExists Si se agrega la cláusula IF EXISTS.
-   * @return string            SQL correspondiente.
-   */
-  public function sqlDrop($ifExists = true){
-
-    $database = $this->getParseDatabaseName();
-
-    // SQLSQLSQL
-    $ifExists = $ifExists? 'IF EXISTS ' : '';
-
-    // SQLSQLSQL
-    return "DROP DATABASE {$ifExists}{$database}";
-
-  }
-
-  /**
-   * Obtener el SQL para eliminar una tabla.
-   * @param  AmTable/string $table     Instancia o nombre de la tabla.
-   * @param  bool           $orReplace Si se agrega la cláusula OR REPLACE.
-   * @return string                    SQL correspondiente.
-   */
-  public function sqlCreateView(AmQuery $q, $orReplace = true){
-
-    $queryName = $this->getParseObjectDatabaseName($q->getName());
-
-    // SQLSQLSQL
-    $orReplace = $orReplace? 'OR REPLACE ' : '';
-
-    // SQLSQLSQL
-    return "CREATE {$replace}VIEW {$queryName} AS {$q->sql()}";
-
-  }
-
-  /**
-   * Obtener el SQL para eliminar una vista.
-   * @param  AmQuery/string $q        Instancia o SQL del query.
-   * @param  bool           $ifExists Si se debe agregar la cláusula IF EXISTS.
-   * @return string                   SQL correspondiente.
-   */
-  public function sqlDropView($q, $ifExists = true){
-    
-    if($q instanceof AmQuery)
-      $q = $q->getName();
-
-    $queryName = $this->getParseObjectDatabaseName($q);
-
-    // SQLSQLSQL
-    $ifExists = $ifExists? 'IF EXISTS ' : '';
-
-    // SQLSQLSQL
-    return "DROP VIEW {$ifExists}{$queryName}";
-
-  }
-
-  /**
    * Obtener el SQL para un campo de una tabla al momento de crear la tabla.
    * @param  AmField $field Instancia del campo.
    * @return string         SQL correspondiente.
@@ -1501,8 +1366,8 @@ abstract class AmScheme extends AmObject{
     $name = $this->getParseName($field->getName());
     $type = $field->getType();
     $len = $field->getLen();
-    $charset = $this->sqlCharset($field->getCharset());
-    $collation = $this->sqlCollation($field->getCollation());
+    $charset = $this->_sqlCharset($field->getCharset());
+    $collation = $this->_sqlCollation($field->getCollation());
     $default = $field->getDefaultValue();
     $extra = $field->getExtra();
 
@@ -1591,8 +1456,8 @@ abstract class AmScheme extends AmObject{
     // Preparar otras propiedades
     $engine = $table->getEngine();
     $engine = empty($engine) ? '' : "ENGINE={$table->getEngine()} ";
-    $charset = $this->sqlCharset($table->getCharset());
-    $collation = $this->sqlCollation($table->getCollation());
+    $charset = $this->_sqlCharset($table->getCharset());
+    $collation = $this->_sqlCollation($table->getCollation());
 
     // Agregar los primaris key al final de los campos
     $fields[] = empty($pks) ? '' : 'PRIMARY KEY (' . implode(', ', $pks). ')';
@@ -1621,9 +1486,9 @@ abstract class AmScheme extends AmObject{
     $sql = "TRUNCATE {$tableName}";
 
     if($ignoreFk)
-      $sql = $this->sqlSetServerVar('FOREIGN_KEY_CHECKS', 0).';'.
+      $sql = $this->_sqlSetServerVar('FOREIGN_KEY_CHECKS', 0).';'.
               $sql.';'.
-              $this->sqlSetServerVar('FOREIGN_KEY_CHECKS', 1);
+              $this->_sqlSetServerVar('FOREIGN_KEY_CHECKS', 1);
 
     return $sql;
 
