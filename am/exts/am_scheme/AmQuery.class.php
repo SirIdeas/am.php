@@ -824,17 +824,15 @@ class AmQuery extends AmObject{
 
   }
 
-  /**
-   * Agregar condiciones al query.
-   * @return $this
-   */
-  public function where(){
+  private function _where($union, $field, $operator, $value){
 
-    $args = $this->parseWhere(func_get_args());
-
-    // Parchar las condificones para luego agregarlas
-    foreach($args as $where)
-      $this->wheres[] = $where;
+    $this->wheres[] = new AmClauseWhereItem(array(
+      'query' => $this,
+      'field' => $field,
+      'operator' => $operator,
+      'value' => $value,
+      'union' => $union,
+    ));
 
     return $this;
 
@@ -844,9 +842,9 @@ class AmQuery extends AmObject{
    * Agregar condiciones con AND.
    * @return $this
    */
-  public function andWhere(){
+  public function andWhere($field, $operator = null, $value = null){
 
-    return $this->where('and', func_get_args());
+    return $this->_where('and', $field, $operator, $value);
 
   }
 
@@ -854,9 +852,19 @@ class AmQuery extends AmObject{
    * Agregar condiciones con OR.
    * @return $this
    */
-  public function orWhere(){
+  public function orWhere($field, $operator = null, $value = null){
 
-    return $this->where('or', func_get_args());
+    return $this->_where('or', $field, $operator, $value);
+
+  }
+
+  /**
+   * Agregar condiciones al query.
+   * @return $this
+   */
+  public function where($field, $operator = null, $value = null){
+
+    return $this->andWhere($field, $operator, $value);
 
   }
 
@@ -866,7 +874,7 @@ class AmQuery extends AmObject{
    */
   public function clearWhere(){
 
-    $this->conditions = array();
+    $this->wheres = array();
     return $this;
 
   }

@@ -690,6 +690,7 @@ abstract class AmScheme extends AmObject{
 
     $varName = $this->realScapeString($varName);
     $value = $this->stringWrapperAndRealScape($value);
+    $scope = $this->_sqlScope($scope);
 
     return !!$this->execute($this->_sqlSetServerVar($varName, $value, $scope));
 
@@ -704,8 +705,18 @@ abstract class AmScheme extends AmObject{
   public function create($ifNotExists = true){
 
     $database = $this->getParseDatabaseName();
-    $charset = $this->_sqlCharset($this->getCharset());
-    $collation = $this->_sqlCollation($this->getCollation());
+
+    $charset = $this->getCharset();
+    if(!empty($charset)){
+      $charset = $this->_sqlCharset($charset);
+    }
+
+    $collation = $this->getCollation();
+    if(!empty($collation)){
+      $collation = $this->_sqlCollation($collation);
+    }
+
+    $ifNotExists = $ifNotExists? $this->_sqlIfNotExists() : '';
 
     return !!$this->execute($this->_sqlCreate($database, $charset, $collation, $ifNotExists));
 
@@ -721,6 +732,8 @@ abstract class AmScheme extends AmObject{
   public function drop($ifExists = true){
 
     $database = $this->getParseDatabaseName();
+
+    $ifExists = $ifExists? $this->_sqlIfExists() : '';
 
     return !!$this->execute($this->_sqlDrop($database, $ifExists));
 
@@ -782,6 +795,8 @@ abstract class AmScheme extends AmObject{
    *                                  entonces retorna true.
    */
   public function dropTable($table, $ifExists = true){
+
+    $ifExists = $ifExists? $this->_sqlIfExists() : '';
 
     return !!$this->execute($this->sqlDropTable($table, $ifExists));
 
@@ -1005,6 +1020,8 @@ abstract class AmScheme extends AmObject{
 
     $queryName = $this->getParseObjectDatabaseName($q->getName());
 
+    $replace = $replace? $this->_sqlOrReplace() : '';
+
     return !!$this->execute($this->_sqlCreateView($queryName, $q->sql(), $replace));
 
   }
@@ -1022,6 +1039,8 @@ abstract class AmScheme extends AmObject{
       $q = $q->getName();
 
     $queryName = $this->getParseObjectDatabaseName($q);
+    
+    $ifExists = $ifExists? $this->_sqlIfExists() : '';
 
     return !!$this->execute($this->_sqlDropView($queryName, $ifExists));
 
@@ -1366,10 +1385,19 @@ abstract class AmScheme extends AmObject{
     $name = $this->getParseName($field->getName());
     $type = $field->getType();
     $len = $field->getLen();
-    $charset = $this->_sqlCharset($field->getCharset());
-    $collation = $this->_sqlCollation($field->getCollation());
     $default = $field->getDefaultValue();
     $extra = $field->getExtra();
+
+    $charset = $field->getCharset();
+    if(!empty($charset)){
+      $charset = $this->_sqlCharset($charset);
+    }
+
+    $collation = $field->getCollation();
+    if(!empty($collation)){
+      $collation = $this->_sqlCollation($collation);
+    }
+    
 
     if(isset($default)){
 
@@ -1456,8 +1484,16 @@ abstract class AmScheme extends AmObject{
     // Preparar otras propiedades
     $engine = $table->getEngine();
     $engine = empty($engine) ? '' : "ENGINE={$table->getEngine()} ";
-    $charset = $this->_sqlCharset($table->getCharset());
-    $collation = $this->_sqlCollation($table->getCollation());
+    
+    $charset = $table->getCharset();
+    if(empty($charset)){
+      $charset = $this->_sqlCharset($charset);
+    }
+    
+    $collation = $table->getCollation();
+    if(empty($collation)){
+      $collation = $this->_sqlCollation($collation);
+    }
 
     // Agregar los primaris key al final de los campos
     $fields[] = empty($pks) ? '' : 'PRIMARY KEY (' . implode(', ', $pks). ')';
@@ -1486,9 +1522,9 @@ abstract class AmScheme extends AmObject{
     $sql = "TRUNCATE {$tableName}";
 
     if($ignoreFk)
-      $sql = $this->_sqlSetServerVar('FOREIGN_KEY_CHECKS', 0).';'.
+      $sql = $this->_sqlSetServerVar('FOREIGN_KEY_CHECKS', 0, '').';'.
               $sql.';'.
-              $this->_sqlSetServerVar('FOREIGN_KEY_CHECKS', 1);
+              $this->_sqlSetServerVar('FOREIGN_KEY_CHECKS', 1, '');
 
     return $sql;
 
@@ -1504,7 +1540,6 @@ abstract class AmScheme extends AmObject{
 
     // Obtener nombre de la tabla
     $tableName = $this->getParseObjectDatabaseName($table);
-    $ifExists = $ifExists? 'IF EXISTS ' : '';
 
     return "DROP TABLE {$ifExists}{$tableName}";
 
@@ -1522,7 +1557,7 @@ abstract class AmScheme extends AmObject{
       trim($this->sqlClauseSelect($q)),
       trim($this->sqlClauseFrom($q)),
       trim($this->sqlClauseJoins($q)),
-      trim($this->sqlWhere($q)),
+      trim($this->sqlClauseWhere($q)),
       trim($this->sqlClauseGroups($q)),
       trim($this->sqlClauseOrders($q)),
       trim($this->sqlClauseLimit($q)),
@@ -1570,8 +1605,9 @@ abstract class AmScheme extends AmObject{
   protected function sqlInsertFields(array $fields){
 
     // Unir campos
-    if(!empty($fields))
+    if(!empty($fields)){
       return '(' . implode(',', $fields) . ')';
+    }
 
     return '';
 
@@ -1595,8 +1631,9 @@ abstract class AmScheme extends AmObject{
       $values, $model, $fields
     );
 
-    if(empty($q['values']))
+    if(empty($q['values'])){
       return '';
+    }
 
     // Generar SQL
     return implode(' ', array(
@@ -1619,7 +1656,7 @@ abstract class AmScheme extends AmObject{
       trim($this->getParseObjectDatabaseName($q)),
       trim($this->sqlClauseJoins($q)),
       trim($this->sqlSets($q)),
-      trim($this->sqlWhere($q))
+      trim($this->sqlClauseWhere($q))
     ));
 
   }
@@ -1634,7 +1671,7 @@ abstract class AmScheme extends AmObject{
     return implode(' ', array(
       'DELETE FROM',
       trim($this->getParseObjectDatabaseName($q)),
-      trim($this->sqlWhere($q))
+      trim($this->sqlClauseWhere($q))
     ));
 
   }
@@ -1646,20 +1683,19 @@ abstract class AmScheme extends AmObject{
    */
   public function sqlClauseSelect(AmQuery $q){
 
-    $selects = $q->getSelects();  // Obtener argmuentos en la clausula SELECT
-    $distinct = $q->getDistinct();
+    $selects = trim($this->_sqlSelectGroup($q->getSelects()));
 
-    // Unir campos
-    // SQLSQLSQL
-    $selects = trim(implode(', ', $selects));
+    if(empty($selects)){
+      $selects = $this->_sqlSelectAll();
+    }
 
-    // Si no se seleccionó ningun campo entonces se tomaran todos
-    // SQLSQLSQL
-    $selects = empty($selects) ? '*' : $selects;
+    $distinct = '';
+    if($q->getDistinct()){
+      $distinct = $this->_sqlDistinct();
+    }
 
     // Agregar SELECT
-    // SQLSQLSQL
-    return 'SELECT '.trim(($distinct ? 'DISTINCT ' : '').$selects);
+    return $this->_sqlSelect($selects, $distinct);
 
   }
 
@@ -1670,15 +1706,14 @@ abstract class AmScheme extends AmObject{
    */
   public function sqlClauseFrom(AmQuery $q){
 
-    $froms = $q->getFroms();   // Listado de argumentos de la clausula FROM
-
     // Unir argumentos procesados
-    // SQLSQLSQL
-    $froms = trim(implode(', ', $froms));
+    $froms = trim($this->_sqlFromGroup($q->getFroms()));
 
-    // Agregar FROM
-    // SQLSQLSQL
-    return empty($froms) ? '' : trim('FROM '.$froms);
+    if(!empty($froms)){
+      return $this->_sqlFrom($froms);
+    }
+
+    return  '';
 
   }
 
@@ -1689,15 +1724,9 @@ abstract class AmScheme extends AmObject{
    */
   public function sqlClauseJoins(AmQuery $q){
 
-    // Resultado
-    $joins = $q->getJoins();
-
     // Unir argumentos procesados
-    // SQLSQLSQL
-    $joins = trim(implode(' ', $joins));
+    $joins = $this->_sqlJoinGroup($q->getJoins());
 
-    // Agregar FROM
-    // SQLSQLSQL
     return empty($joins) ? '' : ' '.$joins;
 
   }
@@ -1707,11 +1736,12 @@ abstract class AmScheme extends AmObject{
    * @param  AmQuery $q Query.
    * @return string     SQL correspondiente.
    */
-  public function sqlWhere(AmQuery $q){
+  public function sqlClauseWhere(AmQuery $q){
 
-    $where = trim($this->parseWhere($q->getWheres()));
+    // $where = trim($this->parseWhere($q->getWheres()));
+    $where = implode('', $q->getWheres());
 
-    return (empty($where) ? '' : "WHERE {$where}");
+    return (empty($where) ? '' : "WHERE true{$where}");
 
   }
 
@@ -1722,14 +1752,15 @@ abstract class AmScheme extends AmObject{
    */
   public function sqlClauseOrders(AmQuery $q){
 
-    $orders = $q->getOrders(); // Obtener orders agregados
-
     // Unir resultado
-    $orders = trim(implode(', ', $orders));
+    $orders = trim($this->_sqlOrderByGroup($q->getOrders()));
+
+    if(!empty($orders)){
+      return $this->_sqlOrderBy($orders);
+    }
 
     // Agregar ORDER BY
-    // SQLSQLSQLSQLSQL
-    return (empty($orders) ? '' : "ORDER BY {$orders}");
+    return '';
 
   }
 
@@ -1740,12 +1771,14 @@ abstract class AmScheme extends AmObject{
    */
   public function sqlClauseGroups(AmQuery $q){
 
-    // Unir grupos
-    $groups = trim(implode(', ', $q->getGroups()));
+    // Unir resultado
+    $groups = trim($this->_sqlGroupByGroup($q->getGroups()));
 
-    // Agregar GROUP BY
-    // SQLSQLSQLSQL
-    return (empty($groups) ? '' : "GROUP BY {$groups}");
+    if(!empty($groups)){
+      return $this->_sqlGroupBy($groups);
+    }
+
+    return '';
 
   }
 
@@ -1759,9 +1792,11 @@ abstract class AmScheme extends AmObject{
     // Obtener limite
     $limit = $q->getLimit();
 
-    // Agregar LIMIT
-    // SQLSQLSQLSQL
-    return (!isset($limit) ? '' : "LIMIT {$limit}");
+    if(isset($limit)){
+      return $this->_sqlLimit($limit);
+    }
+
+    return '';
 
   }
 
@@ -1776,9 +1811,11 @@ abstract class AmScheme extends AmObject{
     $offset = $q->getOffset();
     $limit = $q->getLimit();
 
-    // Agregar OFFSET
-    // SQLSQLSQLSQL
-    return (!isset($offset) || !isset($limit) ? '' : "OFFSET {$offset}");
+    if(isset($offset) && isset($limit)){
+      return $this->_sqlOffset($offset);
+    }
+
+    return '';
 
   }
 

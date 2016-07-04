@@ -114,8 +114,14 @@ class AmClauseJoinItem extends AmClause{
     }
 
     $alias = $this->scheme->nameWrapperAndRealScape($this->alias);
+    $table = $this->scheme->_sqlElementWithAlias($table, $alias);
 
-    return $this->scheme->_sqlJoin($this->type, $table, $alias, $this->on);
+    $on = '';
+    if(!empty($this->on)){
+      $on = $this->scheme->_sqlOn($this->on);
+    }
+
+    return $this->scheme->_sqlJoin($this->type, $table, $on);
 
   }
 

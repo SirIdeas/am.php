@@ -205,7 +205,7 @@ final class MysqlScheme extends AmScheme{
    */
   public function realScapeString($value){
 
-    if($this->handler)
+    if($this->handler && !is_int($value) && !is_float($value))
       return mysqli_real_escape_string($this->handler, $value);
     return $value;
 
@@ -268,6 +268,10 @@ final class MysqlScheme extends AmScheme{
    */
   public function stringWrapper($string){
 
+    if(is_int($string))
+      return $string;
+    if(is_float($string))
+      return $string;
     if($string === null)
       return 'NULL';
     if($string === true)
@@ -444,37 +448,117 @@ final class MysqlScheme extends AmScheme{
 
   }
 
-  public function _sqlOrderBy($field, $dir){
+  public function _sqlDistinct(){
+
+    return 'DISTINCT ';
+
+  }
+
+  public function _sqlSelectAll(){
+
+    return '*';
+
+  }
+
+  public function _sqlSelectGroup(array $selects){
+
+    return implode(',', $selects);
+
+  }
+
+  public function _sqlSelect($selects, $distinct){
+
+    return "SELECT {$distinct}{$selects}";
+
+  }
+
+  public function _sqlFromGroup(array $froms){
+    
+    return implode(', ', $froms);
+
+  }
+
+  public function _sqlFrom($froms){
+
+    return "FROM {$froms}";
+
+  }
+
+  public function _sqlOrderByItem($field, $dir){
 
     return "{$field} {$dir}";
   
   }
 
-  public function _sqlJoin($type, $table, $alias, $on){
+  public function _sqlOrderByGroup(array $orders){
 
-    $type = $this->_sqlJoinType($type);
-    $on = $this->_sqlOn($on);
-    $table = $this->_sqlElementWithAlias($table, $alias);
-
-    return "{$type} {$table}{$on}";
+    return implode(', ', $orders);
 
   }
 
-  public function _sqlJoinType($type){
+  public function _sqlOrderBy($orders){
 
-    return (!empty($type)? "{$type} " : '') . 'JOIN';
+    return "ORDER BY {$orders}";
+  
+  }
+
+  public function _sqlGroupByGroup(array $groups){
+
+    return implode(', ', $groups);
+    
+  }
+
+  public function _sqlGroupBy($groups){
+
+    return "GROUP BY {$groups}";
+  
+  }
+
+  public function _sqlJoinGroup($joins){
+
+    return implode(' ', $joins);
+
+  }
+
+  public function _sqlJoin($type, $table, $on){
+
+    return "{$type} JOIN {$table}{$on}";
 
   }
 
   public function _sqlOn($on){
 
-    return !empty($on)? " ON {$on} " : '';
+    return " ON {$on} ";
+
+  }
+
+  public function _sqlWhere($union, $field, $operator, $value){
+
+    return " {$union} {$field}{$operator}{$value}";
+
+  }
+
+  public function _sqlLimit($limit){
+
+    return "LIMIT {$limit}";
+
+  }
+
+  public function _sqlOffset($offset){
+    
+    return "OFFSET {$offset}";
 
   }
 
   public function _sqlQueryGroup(array $queries){
 
     return implode(';', $queries);
+
+  }
+
+  public function _sqlScope($scope){
+
+    return $scope === true? 'GLOBAL ' : $scope === false? 'SESSION ' : '';
 
   }
 
@@ -485,9 +569,7 @@ final class MysqlScheme extends AmScheme{
    * @param  bool   $scope   Si se agrega la cláusula GLOBAL o SESSION.
    * @return string          SQL correspondiente.
    */
-  public function _sqlSetServerVar($varName, $value, $scope = ''){
-
-    $scope = $scope === true? 'GLOBAL ' : $scope === false? 'SESSION ' : '';
+  public function _sqlSetServerVar($varName, $value, $scope){
 
     return "SET {$scope}{$varName}={$value}";
 
@@ -498,9 +580,9 @@ final class MysqlScheme extends AmScheme{
    * @param  string $charset Set de caracteres.
    * @return string          SQL correspondiente.
    */
-  public function _sqlCharset($charset = null){
+  public function _sqlCharset($charset){
 
-    return empty($charset) ? '' : " CHARACTER SET {$charset}";
+    return " CHARACTER SET {$charset}";
 
   }
 
@@ -509,9 +591,15 @@ final class MysqlScheme extends AmScheme{
    * @param  string $collatin Colección de caracteres.
    * @return string           SQL correspondiente.
    */
-  public function _sqlCollation($collation = null){
+  public function _sqlCollation($collation){
 
-    return empty($collation) ? '' : " COLLATE {$collation}";
+    return " COLLATE {$collation}";
+
+  }
+
+  public function _sqlIfNotExists(){
+
+    return 'IF NOT EXISTS ';
 
   }
 
@@ -520,9 +608,7 @@ final class MysqlScheme extends AmScheme{
    * @param  boolean $ifNotExists Si se agrega la cláusula IF NOT EXISTS.
    * @return string               SQL correspondiente.
    */
-  public function _sqlCreate($database, $charset, $collation, $ifNotExists = true){
-
-    $ifNotExists = $ifNotExists? 'IF NOT EXISTS ' : '';
+  public function _sqlCreate($database, $charset, $collation, $ifNotExists){
 
     return "CREATE DATABASE {$ifNotExists}{$database}{$charset}{$collation}";
 
@@ -538,16 +624,26 @@ final class MysqlScheme extends AmScheme{
     
   }
 
+  public function _sqlIfExists(){
+
+    return 'IF EXISTS ';
+
+  }
+
   /**
    * SQL para eliminar la BD.
    * @param  boolean $ifExists Si se agrega la cláusula IF EXISTS.
    * @return string            SQL correspondiente.
    */
-  public function _sqlDrop($database, $ifExists = true){
-
-    $ifExists = $ifExists? 'IF EXISTS ' : '';
+  public function _sqlDrop($database, $ifExists){
 
     return "DROP DATABASE {$ifExists}{$database}";
+
+  }
+
+  public function _sqlOrReplace(){
+
+    return 'OR REPLACE ';
 
   }
 
@@ -557,9 +653,7 @@ final class MysqlScheme extends AmScheme{
    * @param  bool           $orReplace Si se agrega la cláusula OR REPLACE.
    * @return string                    SQL correspondiente.
    */
-  public function _sqlCreateView($queryName, $sql, $orReplace = true){
-
-    $orReplace = $orReplace? 'OR REPLACE ' : '';
+  public function _sqlCreateView($queryName, $sql, $orReplace){
 
     return "CREATE {$replace}VIEW {$queryName} AS {$sql}";
 
@@ -571,12 +665,8 @@ final class MysqlScheme extends AmScheme{
    * @param  bool           $ifExists Si se debe agregar la cláusula IF EXISTS.
    * @return string                   SQL correspondiente.
    */
-  public function _sqlDropView($queryName, $ifExists = true){
+  public function _sqlDropView($queryName, $ifExists){
 
-    // SQLSQLSQL
-    $ifExists = $ifExists? 'IF EXISTS ' : '';
-
-    // SQLSQLSQL
     return "DROP VIEW {$ifExists}{$queryName}";
 
   }

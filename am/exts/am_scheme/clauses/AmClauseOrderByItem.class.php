@@ -40,7 +40,7 @@ class AmClauseOrderByItem extends AmClause{
 
     $field = $this->scheme->nameWrapperAndRealScapeComplete($this->field);
 
-    return $this->scheme->_sqlOrderBy($field, $this->dir);
+    return $this->scheme->_sqlOrderByItem($field, $this->dir);
 
   }
 
