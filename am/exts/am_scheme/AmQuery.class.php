@@ -118,6 +118,13 @@ class AmQuery extends AmObject{
     */
     $sets = array();
 
+  public function __construct($data){
+    parent::__construct($data);
+
+    $this->clearWhere();
+
+  }
+
   /**
    * Devuelve el modelo del query.
    * @return string Nombre del modelo.
@@ -824,17 +831,19 @@ class AmQuery extends AmObject{
 
   }
 
-  private function _where($union, $field, $operator, $value){
+  private function _where(/**/){
 
-    $this->wheres[] = new AmClauseWhereItem(array(
-      'query' => $this,
-      'field' => $field,
-      'operator' => $operator,
-      'value' => $value,
-      'union' => $union,
-    ));
+    $args = func_get_args();
+    $cond = array_pop($args);
 
-    return $this;
+    if(count($cond) == 2){
+      $cond[2] = $cond[1];
+      $cond[1] = '=';
+    }
+
+    $args[] = $cond;
+
+    return call_user_func_array(array($this, 'whereArray'), $args);
 
   }
 
@@ -842,9 +851,9 @@ class AmQuery extends AmObject{
    * Agregar condiciones con AND.
    * @return $this
    */
-  public function andWhere($field, $operator = null, $value = null){
+  public function where(/*$field, $operator = null, $value = null*/){
 
-    return $this->_where('and', $field, $operator, $value);
+    return $this->_where('AND', func_get_args());
 
   }
 
@@ -852,19 +861,117 @@ class AmQuery extends AmObject{
    * Agregar condiciones con OR.
    * @return $this
    */
-  public function orWhere($field, $operator = null, $value = null){
+  public function orWhere(/*$field, $operator = null, $value = null*/){
 
-    return $this->_where('or', $field, $operator, $value);
+    return $this->_where('OR', func_get_args());
 
   }
 
   /**
-   * Agregar condiciones al query.
+   * Agregar condiciones con AND.
    * @return $this
    */
-  public function where($field, $operator = null, $value = null){
+  public function whereIs($field, $value = null){
 
-    return $this->andWhere($field, $operator, $value);
+    return $this->whereArray('AND', array($field, 'IS', $value));
+
+  }
+
+  /**
+   * Agregar condiciones con AND.
+   * @return $this
+   */
+  public function orWhereIs($field, $value = null){
+
+    return $this->whereArray('OR', array($field, 'IS', $value));
+
+  }
+
+  /**
+   * Agregar condiciones con AND.
+   * @return $this
+   */
+  public function whereIn($field, $collection = null){
+
+    return $this->whereArray('AND', 'IN', array($field, $collection));
+
+  }
+
+  /**
+   * Agregar condiciones con AND.
+   * @return $this
+   */
+  public function orWhereIn($field, $collection = null){
+
+    return $this->whereArray('OR', 'IN', array($field, $collection));
+
+  }
+
+  /**
+   * Agregar condiciones con AND.
+   * @return $this
+   */
+  public function notWhere(/*$field, $operator = null, $value = null*/){
+
+    return $this->_where('NOT', 'AND', func_get_args());
+
+  }
+
+  /**
+   * Agregar condiciones con OR.
+   * @return $this
+   */
+  public function orWhereNot(/*$field, $operator = null, $value = null*/){
+
+    return $this->_where('NOT', 'OR', func_get_args());
+
+  }
+
+  /**
+   * Agregar condiciones con AND.
+   * @return $this
+   */
+  public function whereIsNot($field, $value = null){
+
+    return $this->whereArray('NOT', 'AND', array($field, 'IS', $value));
+
+  }
+
+  /**
+   * Agregar condiciones con AND.
+   * @return $this
+   */
+  public function orWhereIsNot($field, $value = null){
+
+    return $this->whereArray('NOT', 'OR', array($field, 'IS', $value));
+
+  }
+
+  /**
+   * Agregar condiciones con AND.
+   * @return $this
+   */
+  public function whereNotIn($field, $collection = null){
+
+    return $this->whereArray('NOT', 'AND', 'IN', array($field, $collection));
+
+  }
+
+  /**
+   * Agregar condiciones con AND.
+   * @return $this
+   */
+  public function orWhereNotIn($field, $collection = null){
+
+    return $this->whereArray('NOT', 'OR', 'IN', array($field, $collection));
+
+  }
+
+  public function whereArray(/**/){
+
+    $this->wheres->add(func_get_args());
+
+    return $this;
 
   }
 
@@ -874,7 +981,10 @@ class AmQuery extends AmObject{
    */
   public function clearWhere(){
 
-    $this->wheres = array();
+    $this->wheres = new AmClauseWhere(array(
+      'query' => $this,
+    ));
+
     return $this;
 
   }

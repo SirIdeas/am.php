@@ -205,8 +205,9 @@ final class MysqlScheme extends AmScheme{
    */
   public function realScapeString($value){
 
-    if($this->handler && !is_int($value) && !is_float($value))
+    if($this->handler && !is_int($value) && !is_float($value) && $value !== null){
       return mysqli_real_escape_string($this->handler, $value);
+    }
     return $value;
 
   }
@@ -532,9 +533,21 @@ final class MysqlScheme extends AmScheme{
 
   }
 
-  public function _sqlWhere($union, $field, $operator, $value){
+  public function _sqlNot(){
 
-    return " {$union} {$field}{$operator}{$value}";
+    return 'NOT ';
+    
+  }
+
+  public function _sqlWhere($wheres){
+
+    return "WHERE {$wheres}";
+    
+  }
+
+  public function _sqlWhereItem($not, $field, $operator, $value){
+
+    return "{$not}{$field} {$operator} {$value}";
 
   }
 
@@ -552,7 +565,7 @@ final class MysqlScheme extends AmScheme{
 
   public function _sqlQueryGroup(array $queries){
 
-    return implode(';', $queries);
+    return implode('; ', $queries);
 
   }
 

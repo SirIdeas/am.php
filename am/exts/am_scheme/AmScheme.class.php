@@ -1738,10 +1738,15 @@ abstract class AmScheme extends AmObject{
    */
   public function sqlClauseWhere(AmQuery $q){
 
-    // $where = trim($this->parseWhere($q->getWheres()));
-    $where = implode('', $q->getWheres());
+    $where = (string)$q->getWheres();
 
-    return (empty($where) ? '' : "WHERE true{$where}");
+    var_dump($where);
+
+    if(!empty($where)){
+      return $this->_sqlWhere($where);
+    }
+
+    return '';
 
   }
 
@@ -1759,7 +1764,6 @@ abstract class AmScheme extends AmObject{
       return $this->_sqlOrderBy($orders);
     }
 
-    // Agregar ORDER BY
     return '';
 
   }

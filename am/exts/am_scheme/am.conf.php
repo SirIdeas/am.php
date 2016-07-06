@@ -61,7 +61,16 @@ return array(
       'AMSCHEME_RELATION_NOT_EXISTS' => 'AmScheme: Relación %s@%s no existe',
       'AMSCHEME_RELATION_SET_MUST_RECIVED_AMMODEL' => 'AmScheme: Asignación a relación debe recibir una instancia de %s',
       'AMSCHEME_FIELD_INVALID' => 'AmScheme: Campo "%s" inválido en cláusula %s',
-      'AMSCHEME_INT_INVALID' => 'AmScheme: Valor "%s" para cláusula %s debe ser un entero'
+      'AMSCHEME_INT_INVALID' => 'AmScheme: Valor "%s" para cláusula %s debe ser un entero',
+      'AMSCHEME_QUERY_REPEATED_NOT' => 'AmScheme: Operador NOT repetido',
+      'AMSCHEME_QUERY_INVALID_IS' => 'AmScheme: Asignación de operador IS inválida',
+      'AMSCHEME_QUERY_INVALID_IN' => 'AmScheme: Asignación de operador IN inválida',
+      'AMSCHEME_QUERY_UNKWON_OPERATOR' => 'AmScheme: Operador "%s" desconocido',
+      'AMSCHEME_QUERY_INVALID_CONDITION' => 'AmScheme: Condición inválida: "%s"',
+      'AMSCHEME_QUERY_INVALID_IN_ARGS_NUMBERS' => 'AmScheme: Número de argumentos de condición IN inválida: "%s"',
+      'AMSCHEME_QUERY_IN_FIRST_PARAM_MUST_BE_STRING' => 'AmScheme: El primer parámetro de la condición IN debe ser una cadena de caracteres',
+      'AMSCHEME_QUERY_IN_SECOND_PARAM_MUST_BE_COLLECION' => 'AmScheme: El segundo parámetro de la condición IN debe ser una coleción',
+      'AMSCHEME_QUERY_BOOLEAN_OPERATOR_CONSECITIVE' => 'AmScheme: Operadores booleanos consecutivos'
     )
   ),
   

@@ -13,32 +13,40 @@ class AmClauseWhereItem extends AmClause{
     $field = null,
     $operator = null,
     $value = null,
-    $union = null,
     $wheres = null;
 
   public function __construct(array $data = array()){
     parent::__construct($data);
 
-    $this->union = strtoupper($this->union);
-
-    if(!isset($this->value) && isset($this->operator)){
-      $this->value = $this->operator;
-      $this->operator = '=';
-    }
-
   }
 
   public function sql(){
 
-    $field = $this->scheme->nameWrapperAndRealScapeComplete($this->field);
-    $operator = $this->scheme->realScapeString($this->operator);
-    $value = $this->scheme->stringWrapperAndRealScape($this->value);
+    list($field, $operator, $value) = array_merge($this->cond, array(null,null,null));
 
-    return $this->scheme->_sqlWhere($this->union, $field, $operator, $value);
+    $field = $this->scheme->nameWrapperAndRealScapeComplete($field);
+    $operator = $this->scheme->realScapeString($operator);
 
-  }
+    if($operator === 'IN'){
+      if($value instanceof AmQuery){
+        $value = $this->scheme->_sqlWrapperSql($value->sql());
+      }else{
+        $value = '('.implode(',', $value).')';
+      }
+    }else{
+      $value = $this->scheme->stringWrapperAndRealScape($value);
+    }
 
-  public function addAnd(){
+    if(!isset($operator)){
+      return $field;
+    }
+
+    $not = '';
+    if($this->not){
+      $not = $this->scheme->_sqlNot();
+    }
+
+    return $this->scheme->_sqlWhereItem($not, $field, $operator, $value);
 
   }
 
