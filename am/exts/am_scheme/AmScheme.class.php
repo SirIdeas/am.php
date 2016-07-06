@@ -231,8 +231,9 @@ abstract class AmScheme extends AmObject{
   protected function getTypeByLen($type, $len){
     $types = $this->getLenSubTypes($type);
     $index = array_search($len, $types);
-    if($index)
+    if($index){
       return $index;
+    }
     return itemOr($type, $this->defaultsBytes);
   }
 
@@ -261,8 +262,9 @@ abstract class AmScheme extends AmObject{
 
     // Preparar el nombre de cada parte del campo
     foreach ($nameArr as $key => $value) {
-      if(!isNameValid($value))
+      if(!isNameValid($value)){
         throw Am::e('AMSCHEME_INVALID_NAME', $name);
+      }
         
       $nameArr[$key] = $this->nameWrapperAndRealScape($value);
     }
@@ -431,8 +433,9 @@ abstract class AmScheme extends AmObject{
   public function getBaseModelConf($model){
   
     // Si el archivo existe retornar la configuración    
-    if(is_file($confFilePath = $this->getBaseModelConfFilename($model)))
+    if(is_file($confFilePath = $this->getBaseModelConfFilename($model))){
       return require $confFilePath;
+    }
 
     // Si no existe retornar falso
     return false;
@@ -513,48 +516,27 @@ abstract class AmScheme extends AmObject{
   // }
 
   /**
-   * Devuelve el nombre de la BD para ser reconocida en el DBSM.
-   * @return string Nombre de la BD para ser utilizada dentro del DBSM.
-   */
-  public function getParseDatabaseName(){
-
-    return $this->getParseName($this->getDatabase());
-
-  }
-
-  /**
    * Devuelve el nombre de una tabla para ser reconocida en el DBSM
    * @param  string/AmTable/AmQuey $table Tabla de la que se desea obtener le
    *                                      nombre. Puede ser un string y una
    *                                      instancia de AmTable.
-   * @param  bool                  $only  Si se devuelve el nombre de la tabla
-   *                                      relativo al nombre de la base de
-   *                                      datos.
    * @return string                       Nombre de tabla obtenido.
    */
-  public function getParseObjectDatabaseName($table, $only = false){
+  public function getDatabaseObjectName($table){
 
     // Si es una instancia de AmTable se debe obtener el nombre
-    if($table instanceof AmQuery)
+    if($table instanceof AmQuery){
       $table = $table->getTable();
+    }
 
     // Si es una instancia de AmTable se debe obtener el nombre
-    if($table instanceof AmTable)
+    if($table instanceof AmTable){
       $table = $table->getTableName();
-
-    // Si es un nombre válido
-    if(isNameValid($table)){
-
-      $table = $this->getParseName($table);
-
-      // Si se desea obtener solo el nombre
-      if($only)
-        return $table;
-
-      // Retornar el nombre de la tabla con la BD
-      return $this->getParseDatabaseName().'.'.$table;
-
     }
+
+    $table = "{$this->getDatabase()}.{$table}";
+
+    return $this->nameWrapperAndRealScapeComplete($table);
 
   }
   
@@ -567,8 +549,9 @@ abstract class AmScheme extends AmObject{
     // Obtener el puerto
     $port = $this->getPort();
 
-    if(empty($port))
+    if(empty($port)){
       $port = $this->getDefaultPort();
+    }
 
     return "{$this->getServer()}:{$port}";
 
@@ -596,30 +579,6 @@ abstract class AmScheme extends AmObject{
   }
 
   /**
-   * Seleciona la BD.
-   * @return bool Si se pudo selecionar la BD.
-   */
-  public function select(){
-
-    $database = $this->getParseDatabaseName();
-
-    // Ejecuta el SQL de seleción de de BD.
-    return $this->query($this->_sqlSelectDatabase($database));
-
-  }
-
-  /**
-   * Indica si la BD existe.
-   * @return bool Si la BD existe.
-   */
-  public function exists(){
-
-    // Intenta selecionar. Si logra selecionar la BD existe.
-    return !!$this->select();
-
-  }
-
-  /**
    * Crea una instancia de un AmQuery para la actual BD.
    * @param  string/AmQuery $from  From principal de la consulta.
    * @param  string         $alias Alias del from recibido.
@@ -638,8 +597,9 @@ abstract class AmScheme extends AmObject{
     }
     
     // Asignar el from de la consulta
-    if(!empty($from))
+    if(!empty($from)){
       $q->fromAs($from, $alias);
+    }
 
     return $q;
 
@@ -656,8 +616,9 @@ abstract class AmScheme extends AmObject{
   public function execute($q){
 
     // Obtener SQL si es una instancia de AmQuery
-    if($q instanceof AmQuery)
+    if($q instanceof AmQuery){
       $q = $q->sql();
+    }
 
     // Selecionar la BD actual
     $this->select();
@@ -697,6 +658,30 @@ abstract class AmScheme extends AmObject{
   }
 
   /**
+   * Seleciona la BD.
+   * @return bool Si se pudo selecionar la BD.
+   */
+  public function select(){
+
+    $database = $this->nameWrapperAndRealScape($this->getDatabase());
+
+    // Ejecuta el SQL de seleción de de BD.
+    return $this->query($this->_sqlSelectDatabase($database));
+
+  }
+
+  /**
+   * Indica si la BD existe.
+   * @return bool Si la BD existe.
+   */
+  public function exists(){
+
+    // Intenta selecionar. Si logra selecionar la BD existe.
+    return !!$this->select();
+
+  }
+
+  /**
    * Crea la BD.
    * @param  bool $ifNotExists Indica si se agrega la clausula IF NOT EXISTS.
    * @return bool              Si se creó la BD. Si la BD ya existe y el
@@ -704,7 +689,7 @@ abstract class AmScheme extends AmObject{
    */
   public function create($ifNotExists = true){
 
-    $database = $this->getParseDatabaseName();
+    $database = $this->nameWrapperAndRealScape($this->getDatabase());
 
     $charset = $this->getCharset();
     if(!empty($charset)){
@@ -731,7 +716,7 @@ abstract class AmScheme extends AmObject{
    */
   public function drop($ifExists = true){
 
-    $database = $this->getParseDatabaseName();
+    $database = $this->nameWrapperAndRealScape($this->getDatabase());
 
     $ifExists = $ifExists? $this->_sqlIfExists() : '';
 
@@ -1018,7 +1003,7 @@ abstract class AmScheme extends AmObject{
    */
   public function createView(AmQuery $q, $replace = true){
 
-    $queryName = $this->getParseObjectDatabaseName($q->getName());
+    $queryName = $this->getDatabaseObjectName($q->getName());
 
     $replace = $replace? $this->_sqlOrReplace() : '';
 
@@ -1038,7 +1023,7 @@ abstract class AmScheme extends AmObject{
     if($q instanceof AmQuery)
       $q = $q->getName();
 
-    $queryName = $this->getParseObjectDatabaseName($q);
+    $queryName = $this->getDatabaseObjectName($q->getName());
     
     $ifExists = $ifExists? $this->_sqlIfExists() : '';
 
@@ -1150,11 +1135,12 @@ abstract class AmScheme extends AmObject{
     }
 
     // Obtener el listado de campos
-    foreach ($fields as $key => $field)
-      $fields[$key] = $this->getParseName($field);
+    foreach ($fields as $key => $field){
+      $fields[$key] = $this->nameWrapperAndRealScape($field);
+    }
 
     return array(
-      'table' => $this->getParseObjectDatabaseName($table),
+      'table' => $this->getDatabaseObjectName($table),
       'values' => $this->sqlInsertValues($values),
       'fields' => $this->sqlInsertFields($fields),
     );
@@ -1323,7 +1309,7 @@ abstract class AmScheme extends AmObject{
   public function sqlField(AmField $field){
 
     // Preparar las propiedades
-    $name = $this->getParseName($field->getName());
+    $name = $this->nameWrapperAndRealScape($field->getName());
     $type = $field->getType();
     $len = $field->getLen();
     $default = $field->getDefaultValue();
@@ -1407,7 +1393,7 @@ abstract class AmScheme extends AmObject{
   public function sqlCreateTable(AmTable $table, $ifNotExists = true){
 
     // Obtener nombre de la tabla
-    $tableName = $this->getParseObjectDatabaseName($table);
+    $tableName = $this->getDatabaseObjectName($table);
 
     // Lista de campos
     $fields = array();
@@ -1420,7 +1406,7 @@ abstract class AmScheme extends AmObject{
     // Obtener los nombres de los primary keys
     $pks = $table->getPks();
     foreach($pks as $offset => $pk)
-      $pks[$offset] = $this->getParseName($table->getField($pk)->getName());
+      $pks[$offset] = $this->nameWrapperAndRealScape($table->getField($pk)->getName());
 
     // Preparar otras propiedades
     $engine = $table->getEngine();
@@ -1458,7 +1444,7 @@ abstract class AmScheme extends AmObject{
   public function sqlTruncate($table, $ignoreFk = true){
 
     // Obtener nombre de la tabla
-    $tableName = $this->getParseObjectDatabaseName($table);
+    $tableName = $this->getDatabaseObjectName($table);
 
     $sql = "TRUNCATE {$tableName}";
 
@@ -1480,7 +1466,7 @@ abstract class AmScheme extends AmObject{
   public function sqlDropTable($table, $ifExists = true){
 
     // Obtener nombre de la tabla
-    $tableName = $this->getParseObjectDatabaseName($table);
+    $tableName = $this->getDatabaseObjectName($table);
 
     return "DROP TABLE {$ifExists}{$tableName}";
 
@@ -1594,7 +1580,7 @@ abstract class AmScheme extends AmObject{
 
     return implode(' ', array(
       'UPDATE',
-      trim($this->getParseObjectDatabaseName($q)),
+      trim($this->getDatabaseObjectName($q)),
       trim($this->sqlClauseJoins($q)),
       trim($this->sqlSets($q)),
       trim($this->sqlClauseWhere($q))
@@ -1611,7 +1597,7 @@ abstract class AmScheme extends AmObject{
 
     return implode(' ', array(
       'DELETE FROM',
-      trim($this->getParseObjectDatabaseName($q)),
+      trim($this->getDatabaseObjectName($q)),
       trim($this->sqlClauseWhere($q))
     ));
 
@@ -2046,13 +2032,6 @@ abstract class AmScheme extends AmObject{
    * @return string         Cadena entre comillas.
    */
   abstract public function stringWrapper($string);
-
-  /**
-   * Devuelve un nombre de un objeto de BD entendible para el DBSM.
-   * @param   string  $name   Nombre que se desea obtener.
-   * @return  string          Identificador válido.
-   */
-  abstract public function getParseName($name);
   
   /**
    * Query para obtener la información de una BD.

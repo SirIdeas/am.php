@@ -97,21 +97,6 @@ final class MysqlScheme extends AmScheme{
     );
 
   /**
-   * Devuelve un nombre entre comillas simples entendibles por el gestor
-   * @param  string $name Nombre a parchar.
-   * @return string       Nombre parchado.
-   */
-  public function getParseName($name){
-
-    // Verificar si ya no está parchado.
-    if(preg_match('/[`\\.]/', $name))
-      return $name;
-
-    return "`{$name}`";
-
-  }
-
-  /**
    * Devuelve el puerto por defecto.
    * @return int Puerto por defecto.
    */
