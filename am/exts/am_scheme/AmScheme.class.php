@@ -280,9 +280,9 @@ abstract class AmScheme extends AmObject{
    *                        comillas.
    * @return string         Resultado de la operación.
    */
-  public function stringWrapperAndRealScape($string){
+  public function valueWrapperAndRealScape($string){
 
-    return $this->stringWrapper($this->realScapeString($string));
+    return $this->valueWrapper($this->realScapeString($string));
     
   }
 
@@ -648,7 +648,7 @@ abstract class AmScheme extends AmObject{
   public function sqlSetServerVar($varName, $value, $scope = ''){
     
     $varName = $this->realScapeString($varName);
-    $value = $this->stringWrapperAndRealScape($value);
+    $value = $this->valueWrapperAndRealScape($value);
     $scope = $this->_sqlScope($scope);
 
     return $this->_sqlSetServerVar($varName, $value, $scope);
@@ -743,13 +743,28 @@ abstract class AmScheme extends AmObject{
    *                        parémetro $ifExists==true entonces retorna
    *                        true.
    */
-  public function drop($ifExists = true){
+  public function sqlDrop($database = null, $ifExists = true){
 
-    $database = $this->nameWrapperAndRealScape($this->getDatabase());
+    if(is_bool($database)){
+      $ifExists = $database;
+      $database = null;
+    }
+
+    if(!isset($database)){
+      $database = $this->getDatabase();
+    }
+
+    $database = $this->nameWrapperAndRealScape($database);
 
     $ifExists = $ifExists? $this->_sqlIfExists() : '';
 
-    return !!$this->execute($this->_sqlDrop($database, $ifExists));
+    return $this->_sqlDrop($database, $ifExists);
+
+  }
+
+  public function drop($database = null, $ifExists = true){
+
+    return !!$this->execute($this->sqlDrop($database, $ifExists));
 
   }
 
@@ -762,6 +777,177 @@ abstract class AmScheme extends AmObject{
     return $this->queryGetInfo()->row();
 
   }
+  
+  /**
+   * Obtener el SQL para un campo de una tabla al momento de crear la tabla.
+   * @param  AmField $field Instancia del campo.
+   * @return string         SQL correspondiente.
+   */
+  public function sqlField(AmField $field){
+
+    // Preparar las propiedades
+    $name = $this->nameWrapperAndRealScape($field->getName());
+    $type = $field->getType();
+    $len = $field->getLen();
+    $extra = $field->getExtra();
+
+    $attrs = array();
+
+    // Get type
+    // As int
+    if(in_array($type, array('int', 'text'))){
+      $type = self::getTypeByLen($type, $len);
+      
+    // as float precision
+    }elseif($type == 'float'){
+
+      $type = self::getTypeByLen($type, $len);
+
+      $precision = $field->getPrecision();
+      $scale = $field->getScale();
+
+      if($precision && $precision)
+        $type = "{$type}({$precision}, {$scale})";
+
+    // with var len
+    }elseif(in_array($type, array('bit', 'char', 'varchar'))){
+      
+      $type = "{$type}({$len})";
+
+    }
+
+    $unsigned = '';
+    if($field->isUnsigned()){
+      $unsigned = $this->_sqlUnsigned();
+    }
+
+    $zerofill = '';
+    if($field->isZerofill()){
+      $zerofill = $this->_sqlZerofill();
+    }
+
+    $charset = $field->getCharset();
+    if(!empty($charset)){
+      $charset = trim($this->_sqlCharset($charset));
+    }else{
+      $charset = '';
+    }
+
+    $collation = $field->getCollation();
+    if(!empty($collation)){
+      $charset = trim($this->_sqlCollation($collation));
+    }else{
+      $charset = '';
+    }
+    
+    $notNull = '';
+    if(!$field->allowNull()){
+      $notNull = $this->_sqlNotNull();
+    }
+
+    $autoIncrement = '';
+    if($field->isAutoIncrement()){
+      $autoIncrement = $this->_sqlAutoIncrement();
+    }
+
+    $default = $field->getDefaultValue();
+    if(isset($default)){
+
+      $default = $field->parseValue($default);
+
+      if(in_array($type, array('text', 'char', 'varchar', 'bit')) ||
+        (in_array($type, array('date', 'datetime', 'timestamp', 'time')) &&
+          $default != $this->_sqlCurrentTimestamp()
+        )
+      ){
+        $default = $this->valueWrapperAndRealScape($default);
+      }
+
+      $default = $this->_sqlDefaultValue($default);
+
+    }else{
+      $default = '';
+    }
+
+    return trim($this->_sqlField(
+      $name.(empty($name)?'':' '),
+      $type.(empty($type)?'':' '),
+      $unsigned.(empty($unsigned)?'':' '),
+      $zerofill.(empty($zerofill)?'':' '),
+      $charset.(empty($charset)?'':' '),
+      $collation.(empty($collation)?'':' '),
+      $notNull.(empty($notNull)?'':' '),
+      $autoIncrement.(empty($autoIncrement)?'':' '),
+      $default.(empty($default)?'':' '),
+      $extra.(empty($extra)?'':' ')
+    ));
+
+  }
+
+  /**
+   * Obtener el SQL para crear una tabla.
+   * @param  AmTable $table       Instancia de la tabla a acrear
+   * @param  bool    $ifNotExists Se se debe agregar la cláusula IF NOT EXISTS.
+   * @return string  SQL del query.
+   */
+  public function sqlCreateTable(AmTable $table, $ifNotExists = true){
+
+    // Obtener nombre de la tabla
+    $tableName = $this->nameWrapperAndRealScapeComplete($table->getTableName());
+
+    // Lista de campos
+    $fields = array();
+    $realFields = $table->getFields();
+
+    // Obtener el SQL para cada camppo
+    foreach($realFields as $field){
+      $fields[] = $this->sqlField($field);
+    }
+
+    // Obtener los nombres de los primary keys
+    $pks = $table->getPks();
+    foreach($pks as $offset => $pk){
+      $pks[$offset] = $this->nameWrapperAndRealScape($table->getField($pk)->getName());
+    }
+
+    // Preparar otras propiedades
+    $engine = $table->getEngine();
+    if(!empty($engine)){
+      $engine = $this->_sqlEngine($engine);
+    }else{
+      $engine = '';
+    }
+    
+    $charset = $table->getCharset();
+    if(!empty($charset)){
+      $charset = $this->_sqlCharset($charset);
+    }else{
+      $charset = '';
+    }
+    
+    $collation = $table->getCollation();
+    if(!empty($collation)){
+      $collation = $this->_sqlCollation($collation);
+    }else{
+      $collation = '';
+    }
+
+    if(!empty($pks)){
+      // Agregar los primary key al final de los campos
+      $fields[] = $this->_sqlPrimaryKey($this->_sqlPrimaryKeyGroup($pks));
+    }else{
+      $pks = '';
+    }
+
+    // Unir los campos
+    $fields = $this->_sqlFieldsGroup($fields);
+
+    $ifNotExists = $ifNotExists? $this->_sqlIfNotExists() : '';
+
+    // Preparar el SQL final
+    return $this->_sqlCreateTable($tableName, $fields, $engine, $charset, $collation, $ifNotExists);
+
+  }
 
   /**
    * Crear tabla en la BD.
@@ -770,33 +956,10 @@ abstract class AmScheme extends AmObject{
    * @return bool                 Si se creó la tabla. Si la tabla existe y el
    *                              parámetro $ifNotExists == true, retornará
    *                              true.
-   *                                  
    */
   public function createTable(AmTable $t, $ifNotExists = true){
 
     return !!$this->execute($this->sqlCreateTable($t, $ifNotExists));
-
-  }
-
-  /**
-   * Crea todas las tablas de la BD basandose en los modelos bases generados.
-   * @param  bool $ifNotExists Si la se creanran las tablas si no existe
-   * @return hash              Hash con un valor por cada tabla que indica si
-   *                           se creó.
-   */
-  public function createTables($ifNotExists = true){
-
-    $ret = array(); // Para el retorno
-
-    // Obtener los nombres de la tabla en el archivo
-    $tablesNames = $this->getGeneratedModels();
-
-    // Recorrer cada tabla generar crear la tabla
-    foreach ($tablesNames as $table)
-      // Crear la tabla
-      $ret[$table] = $this->createTable($table, $ifNotExists);
-
-    return $ret;
 
   }
 
@@ -838,6 +1001,28 @@ abstract class AmScheme extends AmObject{
 
     // Intenta obtener la descripcion de la tabla para saber si existe.
     return !!$this->getTableDescription($table);
+
+  }
+
+  /**
+   * Crea todas las tablas de la BD basandose en los modelos bases generados.
+   * @param  bool $ifNotExists Si la se creanran las tablas si no existe
+   * @return hash              Hash con un valor por cada tabla que indica si
+   *                           se creó.
+   */
+  public function createTables($ifNotExists = true){
+
+    $ret = array(); // Para el retorno
+
+    // Obtener los nombres de la tabla en el archivo
+    $tablesNames = $this->getGeneratedModels();
+
+    // Recorrer cada tabla generar crear la tabla
+    foreach ($tablesNames as $table)
+      // Crear la tabla
+      $ret[$table] = $this->createTable($table, $ifNotExists);
+
+    return $ret;
 
   }
 
@@ -1144,7 +1329,7 @@ abstract class AmScheme extends AmObject{
           if(isset($rawValues[$i][$f]) && $rawValues[$i][$f] === true){
             $resultValues[$i][] = $val;
           }else{
-            $resultValues[$i][] = $this->stringWrapperAndRealScape($val);
+            $resultValues[$i][] = $this->valueWrapperAndRealScape($val);
           }
         }
 
@@ -1302,7 +1487,7 @@ abstract class AmScheme extends AmObject{
 
           // Agregar cadenas dentro de los comillas simple
           foreach ($collation as $i => $value){
-            $value = $this->stringWrapperAndRealScape($value);
+            $value = $this->valueWrapperAndRealScape($value);
             $collation[$i] = is_numeric($value) ? $value : "\'{$value}\'";
           }
 
@@ -1329,140 +1514,6 @@ abstract class AmScheme extends AmObject{
   //////////////////////////////////////////////////////////////////////////////
   // Metodos para obtener los SQL a ejecutar.
   //////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Obtener el SQL para un campo de una tabla al momento de crear la tabla.
-   * @param  AmField $field Instancia del campo.
-   * @return string         SQL correspondiente.
-   */
-  public function sqlField(AmField $field){
-
-    // Preparar las propiedades
-    $name = $this->nameWrapperAndRealScape($field->getName());
-    $type = $field->getType();
-    $len = $field->getLen();
-    $default = $field->getDefaultValue();
-    $extra = $field->getExtra();
-
-    $charset = $field->getCharset();
-    if(!empty($charset)){
-      $charset = $this->_sqlCharset($charset);
-    }
-
-    $collation = $field->getCollation();
-    if(!empty($collation)){
-      $collation = $this->_sqlCollation($collation);
-    }
-    
-
-    if(isset($default)){
-
-      $default = $field->parseValue($default);
-
-      if(in_array($type, array('text', 'char', 'varchar', 'bit')) ||
-        (in_array($type, array('date', 'datetime', 'timestamp', 'time')) &&
-          $default != 'CURRENT_TIMESTAMP'
-        )
-      ){
-        $default = "'{$default}'";
-      }
-
-    }
-
-    $attrs = array();
-
-    if($field->isUnsigned())      $attrs[] = 'unsigned';
-    if($field->isZerofill())      $attrs[] = 'zerofill';
-    if(!empty($charset))          $attrs[] = $charset;
-    if(!empty($collation))        $attrs[] = $collation;
-    if(!$field->allowNull())      $attrs[] = 'NOT NULL';
-    if($field->isAutoIncrement()) $attrs[] = 'AUTO_INCREMENT';
-    if(isset($default))           $attrs[] = "DEFAULT {$default}";
-    if(!empty($extra))            $attrs[] = $extra;
-
-    $attrs = implode(' ', $attrs);
-
-    // Get type
-    // As int
-    if($type === 'int')
-      $type = self::getTypeByLen($type, $len);
-
-    // As text
-    elseif($type === 'text')
-      $type = self::getTypeByLen($type, $len);
-
-    // as float precision
-    elseif($type == 'float'){
-
-      $type = self::getTypeByLen($type, $len);
-
-      $precision = $field->getPrecision();
-      $scale = $field->getScale();
-
-      if($precision && $precision)
-        $type = "{$type}({$precision}, {$scale})";
-
-    // with var len
-    }elseif(in_array($type, array('bit', 'char', 'varchar'))){
-      
-      $type = "{$type}({$len})";
-
-    }
-
-    return "{$name} {$type} {$attrs}";
-
-  }
-
-  /**
-   * Obtener el SQL para crear una tabla.
-   * @param  AmTable $table       Instancia de la tabla a acrear
-   * @param  bool    $ifNotExists Se se debe agregar la cláusula IF NOT EXISTS.
-   * @return string  SQL del query.
-   */
-  public function sqlCreateTable(AmTable $table, $ifNotExists = true){
-
-    // Obtener nombre de la tabla
-    $tableName = $this->getDatabaseObjectName($table);
-
-    // Lista de campos
-    $fields = array();
-    $realFields = $table->getFields();
-
-    // Obtener el SQL para cada camppo
-    foreach($realFields as $field)
-      $fields[] = $this->sqlField($field);
-
-    // Obtener los nombres de los primary keys
-    $pks = $table->getPks();
-    foreach($pks as $offset => $pk)
-      $pks[$offset] = $this->nameWrapperAndRealScape($table->getField($pk)->getName());
-
-    // Preparar otras propiedades
-    $engine = $table->getEngine();
-    $engine = empty($engine) ? '' : "ENGINE={$table->getEngine()} ";
-    
-    $charset = $table->getCharset();
-    if(empty($charset)){
-      $charset = $this->_sqlCharset($charset);
-    }
-    
-    $collation = $table->getCollation();
-    if(empty($collation)){
-      $collation = $this->_sqlCollation($collation);
-    }
-
-    // Agregar los primaris key al final de los campos
-    $fields[] = empty($pks) ? '' : 'PRIMARY KEY (' . implode(', ', $pks). ')';
-
-    // Unir los campos
-    $fields = "\n".implode(",\n", $fields);
-
-    $ifNotExists = $ifNotExists? 'IF NOT EXISTS ' : '';
-
-    // Preparar el SQL final
-    return "CREATE TABLE {$ifNotExists}{$tableName}($fields){$engine}{$charset}{$collation};";
-
-  }
 
   /**
    * Devuelve el SQL para truncar un tabla.
@@ -1797,7 +1848,7 @@ abstract class AmScheme extends AmObject{
       if($value === null){
         $sets[] = "{$set['field']} = NULL";
       }elseif($set['const'] === true){
-        $sets[] = "{$set['field']} = " . $this->stringWrapperAndRealScape($value);
+        $sets[] = "{$set['field']} = " . $this->valueWrapperAndRealScape($value);
       }elseif($set['const'] === false){
         $sets[] = "{$set['field']} = {$value}";
       }
@@ -2060,7 +2111,7 @@ abstract class AmScheme extends AmObject{
    * @param  string $string Cadena que se desea entre comillas.
    * @return string         Cadena entre comillas.
    */
-  abstract public function stringWrapper($string);
+  abstract public function valueWrapper($string);
   
   /**
    * Query para obtener la información de una BD.

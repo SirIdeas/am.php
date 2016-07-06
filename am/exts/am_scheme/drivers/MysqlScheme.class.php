@@ -252,7 +252,7 @@ final class MysqlScheme extends AmScheme{
    * @param  string $string Cadena que se desea entre comillas.
    * @return string         Cadena entre comillas.
    */
-  public function stringWrapper($string){
+  public function valueWrapper($string){
 
     if(is_int($string))
       return $string;
@@ -573,6 +573,17 @@ final class MysqlScheme extends AmScheme{
    * @param  string $charset Set de caracteres.
    * @return string          SQL correspondiente.
    */
+  public function _sqlEngine($engine){
+
+    return " ENGINE={$engine}";
+
+  }
+
+  /**
+   * Set de caracteres en un query SQL.
+   * @param  string $charset Set de caracteres.
+   * @return string          SQL correspondiente.
+   */
   public function _sqlCharset($charset){
 
     return " CHARACTER SET {$charset}";
@@ -631,6 +642,70 @@ final class MysqlScheme extends AmScheme{
   public function _sqlDrop($database, $ifExists){
 
     return "DROP DATABASE {$ifExists}{$database}";
+
+  }
+
+  public function _sqlPrimaryKeyGroup(array $pks){
+    
+    return implode(', ', $pks);
+
+  }
+
+  public function _sqlPrimaryKey($pks){
+
+    return "PRIMARY KEY ({$pks})";
+
+  }
+
+  public function _sqlFieldsGroup(array $fields){
+    
+    return implode(', ', $fields);
+
+  }
+
+  public function _sqlDefaultValue($value){
+
+    return "DEFAULT {$value}";
+
+  }
+
+  public function _sqlUnsigned(){
+
+    return 'unsigned';
+
+  }
+
+  public function _sqlZerofill(){
+
+    return 'zerofill';
+
+  }
+
+  public function _sqlNotNull(){
+
+    return 'NOT NULL';
+
+  }
+
+  public function _sqlCurrentTimestamp(){
+
+    return 'NOT NULL';
+
+  }
+
+  public function _sqlAutoIncrement(){
+
+    return 'AUTO_INCREMENT';
+
+  }
+
+  public function _sqlField($name, $type, $unsigned, $zerofill, $charset, $collation, $notNull, $autoIncrement, $default, $extra){
+    return "{$name}{$type}{$unsigned}{$zerofill}{$charset}{$collation}{$notNull}{$autoIncrement}{$default}{$extra}";
+  }
+
+  public function _sqlCreateTable($tableName, $fields, $engine, $charset, $collation, $ifNotExists){
+
+    return "CREATE TABLE {$ifNotExists}{$tableName}($fields){$engine}{$charset}{$collation}";
 
   }
 

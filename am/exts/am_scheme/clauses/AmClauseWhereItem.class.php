@@ -36,7 +36,7 @@ class AmClauseWhereItem extends AmClause{
         $value = '('.implode(',', $value).')';
       }
     }else{
-      $value = $this->scheme->stringWrapperAndRealScape($value);
+      $value = $this->scheme->valueWrapperAndRealScape($value);
     }
 
     if(!isset($operator)){
