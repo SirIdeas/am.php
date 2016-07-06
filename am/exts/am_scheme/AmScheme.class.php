@@ -534,8 +534,6 @@ abstract class AmScheme extends AmObject{
       $table = $table->getTableName();
     }
 
-    $table = "{$this->getDatabase()}.{$table}";
-
     return $this->nameWrapperAndRealScapeComplete($table);
 
   }
@@ -647,13 +645,19 @@ abstract class AmScheme extends AmObject{
    * @param  bool   $scope   Si se agrega la cláusula GLOBAL o SESSION.
    * @return bool            Resultado de la operación
    */
-  public function setServerVar($varName, $value, $scope = ''){
-
+  public function sqlSetServerVar($varName, $value, $scope = ''){
+    
     $varName = $this->realScapeString($varName);
     $value = $this->stringWrapperAndRealScape($value);
     $scope = $this->_sqlScope($scope);
 
-    return !!$this->execute($this->_sqlSetServerVar($varName, $value, $scope));
+    return $this->_sqlSetServerVar($varName, $value, $scope);
+
+  }
+
+  public function setServerVar($varName, $value, $scope = ''){
+
+    return !!$this->execute($this->sqlSetServerVar($varName, $value, $scope));
 
   }
 
@@ -661,12 +665,22 @@ abstract class AmScheme extends AmObject{
    * Seleciona la BD.
    * @return bool Si se pudo selecionar la BD.
    */
-  public function select(){
+  public function sqlSelectDatabase($database = null){
 
-    $database = $this->nameWrapperAndRealScape($this->getDatabase());
+    if(!isset($database)){
+      $database = $this->getDatabase();
+    }
+
+    $database = $this->nameWrapperAndRealScape($database);
 
     // Ejecuta el SQL de seleción de de BD.
-    return $this->query($this->_sqlSelectDatabase($database));
+    return $this->_sqlSelectDatabase($database);
+
+  }
+
+  public function select($database = null){
+
+    return $this->query($this->sqlSelectDatabase($database));
 
   }
 
@@ -687,9 +701,18 @@ abstract class AmScheme extends AmObject{
    * @return bool              Si se creó la BD. Si la BD ya existe y el
    *                           parámetro $ifNotExists == true, retornará true.
    */
-  public function create($ifNotExists = true){
+  public function sqlCreate($database = null, $ifNotExists = true){
 
-    $database = $this->nameWrapperAndRealScape($this->getDatabase());
+    if(is_bool($database)){
+      $ifNotExists = $database;
+      $database = null;
+    }
+
+    if(!isset($database)){
+      $database = $this->getDatabase();
+    }
+
+    $database = $this->nameWrapperAndRealScape($database);
 
     $charset = $this->getCharset();
     if(!empty($charset)){
@@ -703,7 +726,13 @@ abstract class AmScheme extends AmObject{
 
     $ifNotExists = $ifNotExists? $this->_sqlIfNotExists() : '';
 
-    return !!$this->execute($this->_sqlCreate($database, $charset, $collation, $ifNotExists));
+    return $this->_sqlCreate($database, $charset, $collation, $ifNotExists);
+
+  }
+
+  public function create($database = null, $ifNotExists = true){
+
+    return !!$this->execute($this->sqlCreate($database, $ifNotExists));
 
   }
 
