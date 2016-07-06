@@ -180,7 +180,8 @@ class AmForeign extends AmObject{
     // Agregar condiciones de la relacion
     foreach($cols as $from => $field){
       $sqlField = $through? "{$through}.$field" : $field;
-      $query->where("{$sqlField}='{$model->getRealValue($from)}'");
+      // WHEREWHERE
+      $query->andWhere($sqlField, $model->getRealValue($from));
     }
 
     // Devolver query

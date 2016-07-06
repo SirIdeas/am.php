@@ -1206,7 +1206,8 @@ final class AmTable extends AmObject{
    */
   public function by($field, $value, $alias = null, $withFields = false){
 
-    return $this->all($alias, $withFields)->where("{$field}='{$value}'");
+    // WHEREWHERE
+    return $this->all($alias, $withFields)->andWhere($field, $value);
 
   }
 
@@ -1288,18 +1289,21 @@ final class AmTable extends AmObject{
     foreach($pks as $pk){
 
       // Si no existe el valor para el campo devolver null
-      if(!isset($id[$pk]) && !array_key_exists($pk, $id))
+      if(!isset($id[$pk]) && !array_key_exists($pk, $id)){
         return null;
+      }
 
       $fieldName = $pk;
 
       // Agregar condicion
       $field = $this->getField($pk);
-      if($field)
+      if($field){
         $fieldName = $field->getName();
+      }
 
       // Agegar condición
-      $q->where("{$fieldName}='{$id[$pk]}'");
+      // WHEREWHERE
+      $q->andWhere($fieldName, $id[$pk]);
 
     }
 

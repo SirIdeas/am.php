@@ -292,7 +292,7 @@ final class MysqlScheme extends AmScheme{
 
     $query = $this
       ->q('information_schema.SCHEMATA')
-      ->where("SCHEMA_NAME='{$this->getDatabase()}'")
+      ->where('SCHEMA_NAME', $this->getDatabase())
       ->selectAs('DEFAULT_CHARACTER_SET_NAME', 'charset')
       ->selectAS('DEFAULT_COLLATION_NAME', 'collation');
 
@@ -311,9 +311,8 @@ final class MysqlScheme extends AmScheme{
       ->join(
         'information_schema.COLLATION_CHARACTER_SET_APPLICABILITY', 'c',
         't.TABLE_COLLATION = c.COLLATION_NAME')
-      ->where(
-        "t.TABLE_SCHEMA='{$this->getDatabase()}'",
-        'and', 't.TABLE_TYPE=\'BASE TABLE\'')
+      ->where('t.TABLE_SCHEMA', $this->getDatabase())
+      ->andWhere('t.TABLE_TYPE', 'BASE TABLE')
       ->selectAs('t.TABLE_NAME', 'tableName')
       ->selectAS('t.ENGINE', 'engine')
       ->selectAS('t.TABLE_COLLATION', 'collation')
@@ -332,17 +331,16 @@ final class MysqlScheme extends AmScheme{
 
     $query = $this
       ->q('information_schema.COLUMNS')
-      ->where(
-        "TABLE_SCHEMA='{$this->getDatabase()}'",
-        'and', "TABLE_NAME='{$tableName}'")
+      ->where('TABLE_SCHEMA', $this->getDatabase())
+      ->andWhere('TABLE_NAME', $tableName)
 
       // Basic data
       ->selectAs('COLUMN_NAME', 'name')
       ->selectAs('DATA_TYPE', 'type')
       ->selectAs('COLUMN_TYPE', 'columnType')
       ->selectAs('COLUMN_DEFAULT', 'defaultValue')
-      ->selectAs('COLUMN_KEY=\'PRI\'', 'pk')
-      ->selectAs('IS_NULLABLE=\'YES\'', 'allowNull')
+      ->selectAs(Am::raw("COLUMN_KEY='PRI'"), 'pk')
+      ->selectAs(Am::raw("IS_NULLABLE='YES'"), 'allowNull')
 
       // Strings
       ->selectAs('CHARACTER_MAXIMUM_LENGTH', 'len')
@@ -375,12 +373,11 @@ final class MysqlScheme extends AmScheme{
         'k.TABLE_SCHEMA = c.TABLE_SCHEMA AND '.
         'k.TABLE_NAME   = c.TABLE_NAME AND '.
         'k.COLUMN_NAME  = c.COLUMN_NAME')
-      ->where(
-        "k.TABLE_SCHEMA='{$this->getDatabase()}'",
-        'and', "k.TABLE_NAME='{$tableName}'",
-        'and', 'k.CONSTRAINT_NAME<>\'PRIMARY\'',
-        'and', 'k.REFERENCED_TABLE_NAME IS NULL',
-        'and', 'c.COLUMN_KEY <> \'PRI\'')
+      ->where('k.TABLE_SCHEMA', $this->getDatabase())
+      ->andWhere('k.TABLE_NAME', $tableName)
+      ->andWhere('k.CONSTRAINT_NAME', '<>', 'PRIMARY')
+      ->andWhereIs('k.REFERENCED_TABLE_NAME', null)
+      ->andWhere('c.COLUMN_KEY', '<>', 'PRI')
       ->selectAs('k.CONSTRAINT_NAME', 'name')
       ->selectAs('k.COLUMN_NAME', 'columnName')
       ->orderBy('k.CONSTRAINT_NAME', 'k.ORDINAL_POSITION');
@@ -402,11 +399,10 @@ final class MysqlScheme extends AmScheme{
       ->selectAs('COLUMN_NAME', 'columnName')
       ->selectAs('REFERENCED_TABLE_NAME', 'toTable')
       ->selectAs('REFERENCED_COLUMN_NAME', 'toColumn')
-      ->where(
-        "TABLE_SCHEMA='{$this->getDatabase()}'",
-        'and', "TABLE_NAME='{$tableName}'",
-        'and', 'NOT REFERENCED_TABLE_NAME IS NULL',
-        'and', 'CONSTRAINT_NAME<>\'PRIMARY\'')
+      ->andWhere('TABLE_SCHEMA', $this->getDatabase())
+      ->andWhere('TABLE_NAME', $tableName)
+      ->andWhereIsNot('REFERENCED_TABLE_NAME', null)
+      ->andWhere('CONSTRAINT_NAME', '<>', 'PRIMARY')
       ->orderBy('CONSTRAINT_NAME', 'ORDINAL_POSITION');
 
     return $query;
@@ -426,11 +422,10 @@ final class MysqlScheme extends AmScheme{
       ->selectAs('COLUMN_NAME', 'columnName')
       ->selectAs('TABLE_NAME', 'fromTable')
       ->selectAs('REFERENCED_COLUMN_NAME', 'toColumn')
-      ->where(
-        "TABLE_SCHEMA='{$this->getDatabase()}'",
-        'and', "REFERENCED_TABLE_NAME='{$tableName}'",
-        'and', 'NOT REFERENCED_TABLE_NAME IS NULL',
-        'and', 'CONSTRAINT_NAME<>\'PRIMARY\'')
+      ->andWhere('TABLE_SCHEMA', $this->getDatabase())
+      ->andWhere('REFERENCED_TABLE_NAME', $tableName)
+      ->andWhere('CONSTRAINT_NAME', 'PRIMARY')
+      ->andWhereIsNot('REFERENCED_TABLE_NAME', null)
       ->orderBy('CONSTRAINT_NAME', 'ORDINAL_POSITION');
 
     return $query;

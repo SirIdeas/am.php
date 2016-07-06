@@ -847,8 +847,8 @@ abstract class AmScheme extends AmObject{
     // Obtener nombre de la tabla
     $table = $table instanceof AmTable? $table->getTableName() : $table;
 
-    return $this->q($this->queryGetTables())
-                ->where("tableName = '{$table}'")
+    return $this->q($this->queryGetTables(), 'q')
+                ->where('tableName', $table)
                 ->row();
 
   }
@@ -1308,65 +1308,6 @@ abstract class AmScheme extends AmObject{
 
     // Agregar el comando IN
     return isset($collation) ? "$field IN($collation)" : 'false';
-
-  }
-
-  /**
-   * Helper para obtener el SQL de la clausula WHERE.
-   * @param  string/array $condition Condición o array de condiciones.
-   * @param  string       $prefix    Si la condición tiene un prefijo.
-   * @param  bool         $isIn      Si la condición es un IN.
-   * @return string                  SQL correspondiente.
-   */
-  private function parseWhere($condition, $prefix = null, $isIn = false){
-
-    if($isIn){
-
-      // Es una condicion IN
-      $condition = $this->in($condition[0], $condition[1]);
-
-    }elseif(is_array($condition)){
-
-      $str = '';
-      $lastUnion = '';
-
-      // Recorrer condiciones
-      foreach($condition as $c){
-
-        // Obtener siguiente condicion
-        $next = $this->parseWhere($c['condition'], $c['prefix'], $c['isIn']);
-
-        // Es la primera condicion
-        if(empty($str)){
-          $str = $next;
-        }else{
-
-          // Si el operador de union es igual al anterior o no hay una anterior
-          if($c['union'] == $lastUnion || empty($lastUnion)){
-            $str = "{$str} {$c['union']} {$next}";
-          }else{
-            // Cuando cambia el operador de union se debe agregar la condicion anterior
-            // entre parentesis
-            $str = "({$str}) {$c['union']} {$next}";
-          }
-
-          // guardar para la siguiente condicion
-          $lastUnion = $c['union'];
-
-        }
-
-      }
-
-      // Agregar parentesis a la condicion
-      $condition = empty($str) ? '' : "({$str})";
-
-    }
-
-    // Eliminar espacios al principio y al final
-    $condition = trim($condition);
-
-    // Agregar el prefix (NOT) si existe
-    return empty($condition) ? '' : trim($prefix.' '.$condition);
 
   }
 

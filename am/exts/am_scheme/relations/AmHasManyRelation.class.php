@@ -35,7 +35,8 @@ class AmHasManyRelation extends AmCollectionAbstractRelation{
         $value = itemOr($to, $this->beforeIndex);
         $newValue = $record->get($to);
 
-        $query->where("{$from}='{$value}'");
+        // WHEREWHERE
+        $query->andWhere($from, $value);
 
         if($value != $newValue){
           $update = true;

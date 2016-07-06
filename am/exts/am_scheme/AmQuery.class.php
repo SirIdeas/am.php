@@ -776,61 +776,6 @@ class AmQuery extends AmObject{
 
   }
 
-  /**
-   * Prepara las condiciones para agregarlas al array de condiciones.
-   * @param  string/array $conditions Condiciones o Array de condiciones.
-   * @return string                   Condiciones preparadas.
-   */
-  protected function parseWhere($conditions){
-
-    // Si no es un array de retornar tal cual
-    if(!is_array($conditions))
-      return $conditions;
-
-    $ret = array();
-    $nextPrefijo = '';  // Operador booleano de prefijo
-    $nextUnion = 'AND'; // Operador booleano de enlace
-
-    // Por cada condicione
-    foreach($conditions as $condition){
-
-      // Obtiene la condicion de union y la vuelve mayuscula
-      if(!is_array($condition)){
-        $upperCondition = strtoupper($condition);
-      }elseif(count($condition)==3 && strtoupper($condition[1]) == 'IN'){
-        // Eliminar condicion dle medio
-        $condition = array($condition[0], $condition[2]);
-        $upperCondition = 'IN';
-      }else{
-        $upperCondition = '';
-      }
-
-      if($upperCondition == 'AND' || $upperCondition == 'OR'){
-        // Si la primera condicion es un operador boolean doble
-        $nextUnion = $upperCondition;
-      }elseif($upperCondition == 'NOT'){
-        // Si es el operator booleano de negacion agregar para la siguiente condicion
-        $nextPrefijo = $upperCondition;
-      }elseif(!empty($condition)){
-
-        // Sino es un operador booleano se agrega al listado de condiciones de retorno
-        $ret[] = array(
-          'union' => $nextUnion,
-          'prefix' => $nextPrefijo,
-          'condition' => $upperCondition == 'IN'? $condition : $this->parseWhere($condition),
-          'isIn' => $upperCondition == 'IN'
-        );
-
-        $nextPrefijo = '';
-
-      }
-
-    }
-
-    return $ret;
-
-  }
-
   private function _where(/**/){
 
     $args = func_get_args();

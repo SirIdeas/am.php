@@ -62,7 +62,8 @@ class InQueryValidator extends AmValidator{
     // Preparar consulta.
     $qq = $q->encapsulate('qq')
         ->select($field)            // Selecionar campo.
-        ->where("{$field} = {$value}"); // Agregar consulta.
+        // WHEREWHERE
+        ->andWhere($field, $value); // Agregar consulta.
 
     // Es válido si devuelve al menos un registro.
     return false !== $qq->row();

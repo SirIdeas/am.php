@@ -56,6 +56,9 @@ class AmClauseSelectItem extends AmClause{
     }elseif(is_string($field)){
       $field = $this->scheme->nameWrapperAndRealScapeComplete($field);
 
+    }elseif($field instanceof AmRaw){
+      $field = (string)$field;
+
     }else{
       throw Am::e('AMSCHEME_INVALID_FIELD', var_export($field, true));
 

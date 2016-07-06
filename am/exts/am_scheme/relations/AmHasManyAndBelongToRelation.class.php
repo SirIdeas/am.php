@@ -40,7 +40,8 @@ class AmHasManyAndBelongToRelation extends AmCollectionAbstractRelation{
         $value = itemOr($to, $this->beforeIndex);
         $newValue = $record->get($to);
 
-        $query->where("{$from}='{$value}'");
+        // WHEREWHERE
+        $query->andWhere($from, $value);
 
         if($value != $newValue){
           $update = true;
@@ -80,14 +81,15 @@ class AmHasManyAndBelongToRelation extends AmCollectionAbstractRelation{
 
         // Realizar asignaciones
         foreach ($index as $from => $to)
-          $conds[] = "{$from}='{$data[$from]}'";
+          $conds[] = array($from, $data[$from]);
 
         // Realizar asignaciones
         foreach ($joins as $to => $from)
-          $conds[] = "{$from}='{$data[$from]}'";
+          $conds[] = array($from, $data[$from]);
 
         // Agrear condiciones
-        $query->where('OR', $conds);
+        // WHEREWHERE
+        $query->whereArray('OR', $conds);
 
         $remove = true; // Para que elimine.
 

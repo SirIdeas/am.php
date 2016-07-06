@@ -1603,6 +1603,11 @@ final class Am{
 
   }
 
+  // PENDIENTE DOCUMENTAR
+  public static function raw($value){
+    return new AmRaw($value);
+  }
+
 }
 
 /**
