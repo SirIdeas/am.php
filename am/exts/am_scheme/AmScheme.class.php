@@ -1740,8 +1740,6 @@ abstract class AmScheme extends AmObject{
 
     $where = (string)$q->getWheres();
 
-    var_dump($where);
-
     if(!empty($where)){
       return $this->_sqlWhere($where);
     }

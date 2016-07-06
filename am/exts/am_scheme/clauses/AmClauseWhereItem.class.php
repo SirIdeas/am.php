@@ -13,7 +13,9 @@ class AmClauseWhereItem extends AmClause{
     $field = null,
     $operator = null,
     $value = null,
-    $wheres = null;
+    $wheres = null,
+    $not = null,
+    $cond = null;
 
   public function __construct(array $data = array()){
     parent::__construct($data);
@@ -38,7 +40,8 @@ class AmClauseWhereItem extends AmClause{
     }
 
     if(!isset($operator)){
-      return $field;
+      $operator = '';
+      $value = '';
     }
 
     $not = '';
@@ -46,7 +49,7 @@ class AmClauseWhereItem extends AmClause{
       $not = $this->scheme->_sqlNot();
     }
 
-    return $this->scheme->_sqlWhereItem($not, $field, $operator, $value);
+    return trim($this->scheme->_sqlWhereItem($not, $field, $operator, $value));
 
   }
 

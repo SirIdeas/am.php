@@ -10,24 +10,20 @@
 class AmClauseWhere extends AmClause{
 
   protected
-    $wheres = null;
+    $wheres = array(),
+    $union = false,
+    $not = false,
+    $in = false,
+    $lastUnion = 'AND';
 
   public function __construct(array $data = array()){
     parent::__construct($data);
 
     $this->wheres = array();
-
-  }
-
-  public function getWheres(){
-
-    return $this->wheres;
-
-  }
-
-  public function getNot(){
-
-    return $this->not;
+    $this->union = false;
+    $this->not = false;
+    $this->in = false;
+    $this->lastUnion = 'AND';
 
   }
 
@@ -42,26 +38,21 @@ class AmClauseWhere extends AmClause{
 
   public function add(array $conditions){
 
-    $not = false;
-    $in = false;
-    $union = false;
-    $lastUnion = 'AND';
-
     foreach ($conditions as $cond) {
       if(is_string($cond)){
         $cond = strtoupper($cond);
         if($cond === 'NOT'){
-          if($not){
+          if($this->not){
             throw Am::e('AMSCHEME_QUERY_REPEATED_NOT');
           }
-          $not = true;
+          $this->not = true;
           continue;
 
         }elseif($cond === 'IN'){
-          if($in){
+          if($this->in){
             throw Am::e('AMSCHEME_QUERY_INVALID_IN');
           }
-          $in = true;
+          $this->in = true;
           continue;
 
         }elseif($cond !== 'AND' && $cond !== 'OR'){
@@ -70,17 +61,17 @@ class AmClauseWhere extends AmClause{
         }elseif(!count($this->wheres)){
           continue;
 
-        }elseif($union){
+        }elseif($this->union){
           throw Am::e('AMSCHEME_QUERY_BOOLEAN_OPERATOR_CONSECITIVE', $cond);
 
         }else{
-          $lastUnion = $cond;
-          $union = true;
+          $this->lastUnion = $cond;
+          $this->union = true;
         }
       }elseif(!is_array($cond)){
         throw Am::e('AMSCHEME_QUERY_INVALID_CONDITION', var_export($cond, true));
 
-      }elseif($in){
+      }elseif($this->in){
         if(count($cond) != 2){
           throw Am::e('AMSCHEME_QUERY_INVALID_IN_ARGS_NUMBERS', var_export($cond, true));
 
@@ -92,24 +83,24 @@ class AmClauseWhere extends AmClause{
 
         }
 
-        if(!$union && !empty($this->wheres)){
-          $this->wheres[] = $lastUnion;
+        if(!$this->union && !empty($this->wheres)){
+          $this->wheres[] = $this->lastUnion;
         }
 
         $cond = new AmClauseWhereItem(array(
           'query' => $this->query,
-          'not' => $not,
+          'not' => $this->not,
           'cond' => array($cond[0], 'IN', $cond[1]),
         ));
 
-        $not = false;
-        $in = false;
-        $union = false;
+        $this->not = false;
+        $this->in = false;
+        $this->union = false;
 
       }elseif(!self::hasAnyArray($cond)){
 
-        if(!$union && !empty($this->wheres)){
-          $this->wheres[] = $lastUnion;
+        if(!$this->union && !empty($this->wheres)){
+          $this->wheres[] = $this->lastUnion;
         }
 
         if(count($cond)==2){
@@ -118,29 +109,29 @@ class AmClauseWhere extends AmClause{
 
         $cond = new AmClauseWhereItem(array(
           'query' => $this->query,
-          'not' => $not,
+          'not' => $this->not,
           'cond' => $cond,
         ));
 
-        $not = false;
-        $union = false;
+        $this->not = false;
+        $this->union = false;
 
       }else{
 
-        if(!$union && !empty($this->wheres)){
-          $this->wheres[] = $lastUnion;
+        if(!$this->union && !empty($this->wheres)){
+          $this->wheres[] = $this->lastUnion;
         }
 
         $item = new self(array(
           'query' => $this->query,
-          'not' => $not,
+          'not' => $this->not,
         ));
 
         $item->add($cond);
 
         $cond = $item;
-        $not = false;
-        $union = false;
+        $this->not = false;
+        $this->union = false;
 
       }
 

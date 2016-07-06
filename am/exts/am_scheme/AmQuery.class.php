@@ -853,6 +853,16 @@ class AmQuery extends AmObject{
    */
   public function where(/*$field, $operator = null, $value = null*/){
 
+    return $this->_where(func_get_args());
+
+  }
+
+  /**
+   * Agregar condiciones con OR.
+   * @return $this
+   */
+  public function andWhere(/*$field, $operator = null, $value = null*/){
+
     return $this->_where('AND', func_get_args());
 
   }
@@ -873,7 +883,7 @@ class AmQuery extends AmObject{
    */
   public function whereIs($field, $value = null){
 
-    return $this->whereArray('AND', array($field, 'IS', $value));
+    return $this->whereArray(array($field, 'IS', $value));
 
   }
 
@@ -883,7 +893,17 @@ class AmQuery extends AmObject{
    */
   public function orWhereIs($field, $value = null){
 
-    return $this->whereArray('OR', array($field, 'IS', $value));
+    return $this->whereArray('OR')->whereIs($field, $value);
+
+  }
+
+  /**
+   * Agregar condiciones con AND.
+   * @return $this
+   */
+  public function andWhereIs($field, $value = null){
+
+    return $this->whereArray('AND')->whereIs($field, $value);
 
   }
 
@@ -893,7 +913,7 @@ class AmQuery extends AmObject{
    */
   public function whereIn($field, $collection = null){
 
-    return $this->whereArray('AND', 'IN', array($field, $collection));
+    return $this->whereArray('IN', array($field, $collection));
 
   }
 
@@ -903,7 +923,7 @@ class AmQuery extends AmObject{
    */
   public function orWhereIn($field, $collection = null){
 
-    return $this->whereArray('OR', 'IN', array($field, $collection));
+    return $this->whereArray('OR')->whereIn($field, $collection);
 
   }
 
@@ -911,9 +931,19 @@ class AmQuery extends AmObject{
    * Agregar condiciones con AND.
    * @return $this
    */
-  public function notWhere(/*$field, $operator = null, $value = null*/){
+  public function andWhereIn($field, $collection = null){
 
-    return $this->_where('NOT', 'AND', func_get_args());
+    return $this->whereArray('AND')->whereIn($field, $collection);
+
+  }
+
+  /**
+   * Agregar condiciones con AND.
+   * @return $this
+   */
+  public function whereNot(/*$field, $operator = null, $value = null*/){
+
+    return $this->_where('NOT', func_get_args());
 
   }
 
@@ -923,7 +953,17 @@ class AmQuery extends AmObject{
    */
   public function orWhereNot(/*$field, $operator = null, $value = null*/){
 
-    return $this->_where('NOT', 'OR', func_get_args());
+    return $this->_where('OR', 'NOT', func_get_args());
+
+  }
+
+  /**
+   * Agregar condiciones con OR.
+   * @return $this
+   */
+  public function andWhereNot(/*$field, $operator = null, $value = null*/){
+
+    return $this->_where('AND', 'NOT', func_get_args());
 
   }
 
@@ -933,7 +973,7 @@ class AmQuery extends AmObject{
    */
   public function whereIsNot($field, $value = null){
 
-    return $this->whereArray('NOT', 'AND', array($field, 'IS', $value));
+    return $this->whereArray('NOT')->whereIs($field, $value);
 
   }
 
@@ -943,7 +983,17 @@ class AmQuery extends AmObject{
    */
   public function orWhereIsNot($field, $value = null){
 
-    return $this->whereArray('NOT', 'OR', array($field, 'IS', $value));
+    return $this->whereArray('OR', 'NOT')->whereIs($field, $value);
+
+  }
+
+  /**
+   * Agregar condiciones con AND.
+   * @return $this
+   */
+  public function andWhereIsNot($field, $value = null){
+
+    return $this->whereArray('AND', 'NOT')->whereIs($field, $value);
 
   }
 
@@ -953,7 +1003,7 @@ class AmQuery extends AmObject{
    */
   public function whereNotIn($field, $collection = null){
 
-    return $this->whereArray('NOT', 'AND', 'IN', array($field, $collection));
+    return $this->whereArray('NOT')->whereIn($field, $collection);
 
   }
 
@@ -963,7 +1013,17 @@ class AmQuery extends AmObject{
    */
   public function orWhereNotIn($field, $collection = null){
 
-    return $this->whereArray('NOT', 'OR', 'IN', array($field, $collection));
+    return $this->whereArray('OR', 'NOT')->whereIn($field, $collection);
+
+  }
+
+  /**
+   * Agregar condiciones con AND.
+   * @return $this
+   */
+  public function andWhereNotIn($field, $collection = null){
+
+    return $this->whereArray('AND', 'NOT')->whereIn($field, $collection);
 
   }
 
