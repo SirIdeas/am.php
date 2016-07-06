@@ -33,7 +33,10 @@ class AmClauseWhereItem extends AmClause{
       if($value instanceof AmQuery){
         $value = $this->scheme->_sqlWrapperSql($value->sql());
       }else{
-        $value = '('.implode(',', $value).')';
+        foreach ($value as $key => $item) {
+          $value[$key] = $this->scheme->valueWrapperAndRealScape($item);
+        }
+        $value = $this->scheme->_sqlArray($value);
       }
     }else{
       $value = $this->scheme->valueWrapperAndRealScape($value);

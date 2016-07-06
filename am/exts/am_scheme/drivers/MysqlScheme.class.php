@@ -519,6 +519,12 @@ final class MysqlScheme extends AmScheme{
     
   }
 
+  public function _sqlArray(array $arr){
+
+    return '('.implode(',', $arr).')';
+
+  }
+
   public function _sqlWhere($wheres){
 
     return "WHERE {$wheres}";
