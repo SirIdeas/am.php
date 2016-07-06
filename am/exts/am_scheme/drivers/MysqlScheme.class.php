@@ -709,6 +709,18 @@ final class MysqlScheme extends AmScheme{
 
   }
 
+  public function _sqlDropTable($tableName, $ifExists){
+
+    return "DROP TABLE {$ifExists}{$tableName}";
+
+  }
+
+  public function _sqlTruncate($tableName){
+
+    return "TRUNCATE {$tableName}";
+
+  }
+
   public function _sqlOrReplace(){
 
     return 'OR REPLACE ';
@@ -723,7 +735,7 @@ final class MysqlScheme extends AmScheme{
    */
   public function _sqlCreateView($queryName, $sql, $orReplace){
 
-    return "CREATE {$replace}VIEW {$queryName} AS {$sql}";
+    return "CREATE {$orReplace}VIEW {$queryName} AS {$sql}";
 
   }
 

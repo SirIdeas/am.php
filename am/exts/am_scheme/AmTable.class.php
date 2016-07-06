@@ -114,7 +114,7 @@ final class AmTable extends AmObject{
     /**
      * Array de índices únicos.
      */
-    $uniqes = array(),
+    $uniques = array(),
 
     /**
      * Callback para filtrar las consultas 'all'
@@ -175,7 +175,7 @@ final class AmTable extends AmObject{
         // De referencias a otros modelos
         array_keys($this->belongTo),
         // Claves únicas
-        array_keys($this->uniqes)
+        array_keys($this->uniques)
 
       ), $this->validators);
     }

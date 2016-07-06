@@ -614,8 +614,10 @@ abstract class AmScheme extends AmObject{
   public function execute($q){
 
     // Obtener SQL si es una instancia de AmQuery
-    if($q instanceof AmQuery){
-      $q = $q->sql();
+    if(is_array($q)){
+      $q = $this->_sqlQueryGroup($q);
+    }else{
+      $q = (string)$q;
     }
 
     // Selecionar la BD actual
@@ -623,18 +625,6 @@ abstract class AmScheme extends AmObject{
 
     // Ejecutar la consulta
     return $this->query($q);
-
-  }
-
-  // Ejecuta un conjunto de consultas
-  public function executeGroup(array $queries){
-
-    $sqls = array();
-    foreach ($queries as $key => $q){
-      $sqls[] = (string)$q;
-    }
-
-    return $this->execute($this->_sqlQueryGroup($sqls));
 
   }
 
@@ -964,6 +954,27 @@ abstract class AmScheme extends AmObject{
   }
 
   /**
+   * Obtener el SQL para eliminar una tabla.
+   * @param  AmTable/string $table    Instancia o nombre de la tabla.
+   * @param  bool           $ifExists Si se debe agregar la cláusula IF EXISTS.
+   * @return string                   SQL correspondiente.
+   */
+  public function sqlDropTable($table, $ifExists = true){
+
+    // Obtener nombre de la tabla
+    if($table instanceof AmTable){
+      $table = $table->getTableName();
+    }
+
+    $tableName = $this->nameWrapperAndRealScapeComplete($table);
+
+    $ifExists = $ifExists? $this->_sqlIfExists() : '';
+
+    return $this->_sqlDropTable($tableName, $ifExists);
+
+  }
+
+  /**
    * Elimina una tabla.
    * @param  string/AmTable $table    Nombre o instancia de la tabla a eliminar.
    * @param  bool           $ifExists Si se agrega la clausula IF EXISTS.
@@ -973,9 +984,37 @@ abstract class AmScheme extends AmObject{
    */
   public function dropTable($table, $ifExists = true){
 
-    $ifExists = $ifExists? $this->_sqlIfExists() : '';
-
     return !!$this->execute($this->sqlDropTable($table, $ifExists));
+
+  }
+
+  /**
+   * Devuelve el SQL para truncar un tabla.
+   * @param  AmTable/string $table    Instancia o nombre de la tabla.
+   * @param  bool           $ignoreFk Si se debe ignorar las claves foráneas.
+   * @return string         SQL de la acción.
+   */
+  public function sqlTruncate($table, $ignoreFk = true){
+
+    // Obtener nombre de la tabla
+    if($table instanceof AmTable){
+      $table = $table->getTableName();
+    }
+    
+    // Obtener nombre de la tabla
+    $tableName = $this->nameWrapperAndRealScapeComplete($table);
+
+    $sql = $this->_sqlTruncate($tableName);
+
+    if($ignoreFk){
+      return $this->_sqlQueryGroup(array(
+        $this->_sqlSetServerVar('FOREIGN_KEY_CHECKS', 0, ''),
+        $sql,
+        $this->_sqlSetServerVar('FOREIGN_KEY_CHECKS', 1, '')
+      ));
+    }
+
+    return $sql;
 
   }
 
@@ -1018,9 +1057,12 @@ abstract class AmScheme extends AmObject{
     $tablesNames = $this->getGeneratedModels();
 
     // Recorrer cada tabla generar crear la tabla
-    foreach ($tablesNames as $table)
+    foreach ($tablesNames as $table){
+
       // Crear la tabla
       $ret[$table] = $this->createTable($table, $ifNotExists);
+
+    }
 
     return $ret;
 
@@ -1042,10 +1084,12 @@ abstract class AmScheme extends AmObject{
    * @return hash                  Hash con la descripcion de la tabla.
    */
   public function getTableDescription($table){
-    
-    // Obtener nombre de la tabla
-    $table = $table instanceof AmTable? $table->getTableName() : $table;
 
+    // Obtener nombre de la tabla
+    if($table instanceof AmTable){
+      $table = $table->getTableName();
+    }
+    
     return $this->q($this->queryGetTables(), 'q')
                 ->where('tableName', $table)
                 ->row();
@@ -1060,6 +1104,11 @@ abstract class AmScheme extends AmObject{
    */
   public function getTableColumns($table){
 
+    // Obtener nombre de la tabla
+    if($table instanceof AmTable){
+      $table = $table->getTableName();
+    }
+
     return $this->queryGetTableColumns($table)
                 ->get(null, array($this, 'sanitize'));
                 
@@ -1072,6 +1121,11 @@ abstract class AmScheme extends AmObject{
    *                               claves foráneas.
    */
   public function getTableForeignKeys($table){
+
+    // Obtener nombre de la tabla
+    if($table instanceof AmTable){
+      $table = $table->getTableName();
+    }
 
     $ret = array(); // Para el retorno
 
@@ -1115,6 +1169,11 @@ abstract class AmScheme extends AmObject{
    *                               referencias.
    */
   public function getTableReferences($table){
+
+    // Obtener nombre de la tabla
+    if($table instanceof AmTable){
+      $table = $table->getTableName();
+    }
 
     $ret = array(); // Para el retorno
 
@@ -1160,6 +1219,11 @@ abstract class AmScheme extends AmObject{
    */
   public function getTableUniques($table){
 
+    // Obtener nombre de la tabla
+    if($table instanceof AmTable){
+      $table = $table->getTableName();
+    }
+
     $uniques = $this->queryGetTableUniques($table)
                     ->get();
 
@@ -1167,8 +1231,7 @@ abstract class AmScheme extends AmObject{
     $realUniques = array();
 
     foreach ($uniques as $value) {
-      $realUniques[$value['name']] = itemOr($value['name'],
-        $realUniques, array());
+      $realUniques[$value['name']] = itemOr($value['name'], $realUniques, array());
       $realUniques[$value['name']][] = $value['columnName'];
     }
 
@@ -1198,9 +1261,9 @@ abstract class AmScheme extends AmObject{
 
       // Detalle de la tabla
       'fields'        => $this->getTableColumns($tableName),
-      // 'referencesTo'  => $this->getTableForeignKeys($tableName),
-      // 'referencesBy'  => $this->getTableReferences($tableName),
-      // 'uniques'       => $this->getTableUniques($tableName),
+      'referencesTo'  => $this->getTableForeignKeys($tableName),
+      'referencesBy'  => $this->getTableReferences($tableName),
+      'uniques'       => $this->getTableUniques($tableName),
 
     )));
 
@@ -1215,13 +1278,19 @@ abstract class AmScheme extends AmObject{
    * @param  bool    $replace  Si se debe agregar la clausula OR REPLACE.
    * @return bool              Si se creó la vista.
    */
-  public function createView(AmQuery $q, $replace = true){
+  public function sqlCreateView(AmQuery $q, $replace = true){
 
-    $queryName = $this->getDatabaseObjectName($q->getName());
+    $queryName = $this->nameWrapperAndRealScapeComplete($q->getName());
 
     $replace = $replace? $this->_sqlOrReplace() : '';
 
-    return !!$this->execute($this->_sqlCreateView($queryName, $q->sql(), $replace));
+    return $this->_sqlCreateView($queryName, $q->sql(), $replace);
+
+  }
+  
+  public function createView(AmQuery $q, $replace = true){
+
+    return !!$this->execute($this->sqlCreateView($q, $replace));
 
   }
 
@@ -1232,16 +1301,23 @@ abstract class AmScheme extends AmObject{
    * @param  bool           $ifExists Si se debe agregar la clausula IF EXISTS.
    * @return bool                     Si se eliminó la vista
    */
-  public function dropView($q, $ifExists = true){
+  public function sqlDropView($q, $ifExists = true){
     
-    if($q instanceof AmQuery)
+    if($q instanceof AmQuery){
       $q = $q->getName();
+    }
 
-    $queryName = $this->getDatabaseObjectName($q->getName());
+    $queryName = $this->nameWrapperAndRealScapeComplete($q);
     
     $ifExists = $ifExists? $this->_sqlIfExists() : '';
 
-    return !!$this->execute($this->_sqlDropView($queryName, $ifExists));
+    return $this->_sqlDropView($queryName, $ifExists);
+
+  }
+  
+  public function dropView($q, $ifExists = true){
+
+    return !!$this->execute($this->sqlDropView($q, $ifExists));
 
   }
 
@@ -1514,43 +1590,6 @@ abstract class AmScheme extends AmObject{
   //////////////////////////////////////////////////////////////////////////////
   // Metodos para obtener los SQL a ejecutar.
   //////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Devuelve el SQL para truncar un tabla.
-   * @param  AmTable/string $table    Instancia o nombre de la tabla.
-   * @param  bool           $ignoreFk Si se debe ignorar las claves foráneas.
-   * @return string         SQL de la acción.
-   */
-  public function sqlTruncate($table, $ignoreFk = true){
-
-    // Obtener nombre de la tabla
-    $tableName = $this->getDatabaseObjectName($table);
-
-    $sql = "TRUNCATE {$tableName}";
-
-    if($ignoreFk)
-      $sql = $this->_sqlSetServerVar('FOREIGN_KEY_CHECKS', 0, '').';'.
-              $sql.';'.
-              $this->_sqlSetServerVar('FOREIGN_KEY_CHECKS', 1, '');
-
-    return $sql;
-
-  }
-
-  /**
-   * Obtener el SQL para eliminar una tabla.
-   * @param  AmTable/string $table    Instancia o nombre de la tabla.
-   * @param  bool           $ifExists Si se debe agregar la cláusula IF EXISTS.
-   * @return string                   SQL correspondiente.
-   */
-  public function sqlDropTable($table, $ifExists = true){
-
-    // Obtener nombre de la tabla
-    $tableName = $this->getDatabaseObjectName($table);
-
-    return "DROP TABLE {$ifExists}{$tableName}";
-
-  }
 
   /**
    * Devuelve el SQL de un query SELECT

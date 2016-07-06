@@ -336,6 +336,14 @@ class AmQuery extends AmObject{
 
   }
 
+  public function setName($name){
+
+    $this->name = $name;
+
+    return $this;
+
+  }
+
   /**
    * Asigna el callback para formatear el resultado del query.
    * @param callback $value Callback a asignar.
