@@ -32,13 +32,15 @@ class AmClauseWhereItem extends AmClause{
     if($operator === 'IN'){
       if($value instanceof AmQuery){
         $value = $this->scheme->_sqlSqlWrapper($value->sql());
-      }else{
+      }elseif(is_array($value)){
         foreach ($value as $key => $item) {
           $value[$key] = $this->scheme->valueWrapperAndRealScape($item);
         }
         $value = $this->scheme->_sqlArray($value);
+      }else{
+        throw Am::e('AMSCHEME_QUERY_INVALID_IN_COLLECTION', var_export($value, true));
       }
-    }else{
+    }elseif(!$value instanceof AmRaw){
       $value = $this->scheme->valueWrapperAndRealScape($value);
     }
 

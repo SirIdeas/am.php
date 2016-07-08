@@ -589,7 +589,7 @@ class AmQuery extends AmObject{
    * @param  string $alias Alias del campo.
    * @return $this
    */
-  public function selectAs($field, $alias = null){
+  public function selectAs($field, $alias = null, &$item = null){
 
     $this->type = 'select';
 
@@ -612,35 +612,12 @@ class AmQuery extends AmObject{
    * @param string $alias Alias al que pertenece los posibles joins.
    * @return $this
    */
-  protected function addPossibleJoins(array $joins, $alias){
+  public function addPossibleJoins($table, $alias){
 
-    foreach($joins as $aliasJoin => $join){
-      $aliasAliasJoin = "{$alias}.{$aliasJoin}";
+    if($table instanceof AmTable){
 
-      if(isset($this->possibleJoins[$aliasJoin])
-        && isset($this->possibleJoins[$aliasAliasJoin])){
-        continue;
-      }
+      $this->possibleJoins[$alias] = $table;
       
-      $on = array();
-      foreach($join['cols'] as $from => $to){
-        if($join['type'] == 'hasMany'){
-          list($from, $to) = array($to, $from);
-        }
-        $on[] = array("{$aliasJoin}.{$from}", "{$alias}.{$to}");
-      }
-      
-      $join = array(
-        'as' => $aliasJoin,
-        'on' => $on,
-      );
-
-      if(!isset($this->possibleJoins[$aliasJoin]))
-        $this->possibleJoins[$aliasJoin] = $join;
-
-      if(!isset($this->possibleJoins[$aliasAliasJoin]))
-        $this->possibleJoins[$aliasAliasJoin] = $join;
-
     }
 
     return $this;
@@ -653,7 +630,7 @@ class AmQuery extends AmObject{
    * @param  string $alias Alias de la tabla.
    * @return $this
    */
-  public function fromAs($from, $alias = null){
+  public function fromAs($from, $alias = null, &$item = null){
 
     $item = new AmClauseFromItem(array(
       'query' => $this,
@@ -664,16 +641,7 @@ class AmQuery extends AmObject{
     // Agregar al final
     $this->froms[$item->getAlias()] = $item;
 
-    $table = null;
-    if($from instanceof AmTable){
-      $table = $from;
-    }elseif(is_string($from) && is_subclass_of($from, 'AmModel')){
-      $table = $from::me();
-    }
-
-    if($table instanceof AmTable){
-      $this->possibleJoins[$item->getAlias()] = $table;
-    }
+    $item->addPossibleJoins();
 
     return $this;
 
@@ -688,7 +656,7 @@ class AmQuery extends AmObject{
    * @param  string         $type   Tipo de join.
    * @return $this
    */
-  public function join($from, $alias = null, $on = null, $type = null){
+  public function join($from, $alias = null, $on = null, $type = null, &$item = null){
 
     $item = new AmClauseJoinItem(array(
       'query' => $this,
@@ -701,21 +669,7 @@ class AmQuery extends AmObject{
     // Agregar los joins
     $this->joins[$item->getAlias()] = $item;
 
-    $table = null;
-    if($from instanceof AmTable){
-      $table = $from;
-    }else{
-      $model = $item->getModel();
-      if(isset($model)){
-        $table = $model::me();
-      }
-    }
-
-    if($table instanceof AmTable){
-      $this->possibleJoins[$item->getAlias()] = $table;
-    }
-
-    $item->postAdded();
+    $item->addPossibleJoins();
 
     return $this;
 
@@ -992,9 +946,9 @@ class AmQuery extends AmObject{
    * Eliminar todas las condiciones
    * @return $this
    */
-  public function clearWhere(){
+  public function clearWhere(&$item = null){
 
-    $this->wheres = new AmClauseWhere(array(
+    $this->wheres = $item = new AmClauseWhere(array(
       'query' => $this,
     ));
 
@@ -1009,11 +963,13 @@ class AmQuery extends AmObject{
    * @param  string       $dir    Dirección del orden.
    * @return $this
    */
-  public function orderBy($orders, $dir = 'ASC'){
+  public function orderBy($orders, $dir = 'ASC', &$items = null){
 
     if(!is_array($orders)){
       $orders = array($orders);
     }
+
+    $items = array();
 
     // Recorrer para agregar
     foreach($orders as $field){
@@ -1027,6 +983,7 @@ class AmQuery extends AmObject{
       // Liberar posicion para que al agregar quede en ultima posicion
       unset($this->orders[$field]);
       $this->orders[$field] = $item;
+      $items[$field] = $item;
 
     }
 
@@ -1062,11 +1019,13 @@ class AmQuery extends AmObject{
    *                              los nombres de los campos para agrupar.
    * @return $this
    */
-  public function groupBy($groups){
+  public function groupBy($groups, &$items = null){
 
     if(!is_array($groups)){
       $groups = array($groups);
     }
+
+    $items = array();
 
     // Elimintar los campos que se agregaran de los existentes
     $this->groups = array_diff($this->groups, $groups);
@@ -1081,6 +1040,7 @@ class AmQuery extends AmObject{
 
       unset($this->groups[$field]);
       $this->groups[$field] = $item;
+      $items[$field] = $item;
 
     }
 
@@ -1094,9 +1054,9 @@ class AmQuery extends AmObject{
    * @param  int   $limit cantidad máxima de registros a tomar.
    * @return $this
    */
-  public function limit($limit){
+  public function limit($limit, &$item = null){
 
-    $this->limit = new AmClauseLimit(array(
+    $this->limit = $item = new AmClauseLimit(array(
       'query' => $this,
       'limit' => $limit,
     ));
@@ -1110,9 +1070,9 @@ class AmQuery extends AmObject{
    * @param  int   $offset Indica que página se tomará.
    * @return $this
    */
-  public function offSet($offset){
+  public function offSet($offset, &$item = null){
 
-    $this->offset = new AmClauseOffset(array(
+    $this->offset = $item = new AmClauseOffset(array(
       'query' => $this,
       'offset' => $offset,
     ));

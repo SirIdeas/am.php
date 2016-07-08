@@ -228,7 +228,7 @@ class AmController extends AmResponse{
       $filterRealName = $this->getPrefix('filters') . $filterName;
 
       // Llamar el filtro
-      $ret = call_user_func_array(array(&$this, $filterRealName), $params);
+      $ret = call_user_func_array(array($this, $filterRealName), $params);
 
       // El retorna una respuesta entonces devolver dicha respuesta.
       if($ret instanceof parent)

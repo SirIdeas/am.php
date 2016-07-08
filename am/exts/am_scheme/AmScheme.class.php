@@ -247,8 +247,9 @@ abstract class AmScheme extends AmObject{
    */
   public function alias($alias, array $collection){
 
-    if(!isNameValid($alias))
+    if(!isNameValid($alias)){
       throw Am::e('AMSCHEME_INVALID_ALIAS', $alias);
+    }
 
     $i = 0;
     $finalAlias = $alias;
@@ -1508,7 +1509,7 @@ abstract class AmScheme extends AmObject{
         $sets[$key] = $this->_sqlSetItem($set['field'],
           $this->valueWrapperAndRealScape($set['value'])
         );
-        
+
       }elseif($set['const'] === false){
         $sets[$key] = $this->_sqlSetItem($set['field'],
           $this->realScapeString($set['value'])

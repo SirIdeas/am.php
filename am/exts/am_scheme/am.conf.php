@@ -65,6 +65,7 @@ return array(
       'AMSCHEME_QUERY_REPEATED_NOT' => 'AmScheme: Operador NOT repetido',
       'AMSCHEME_QUERY_INVALID_IS' => 'AmScheme: Asignación de operador IS inválida',
       'AMSCHEME_QUERY_INVALID_IN' => 'AmScheme: Asignación de operador IN inválida',
+      'AMSCHEME_QUERY_INVALID_IN_COLLECTION' => 'AmScheme: Colección para operador IN inválida: "%s"',
       'AMSCHEME_QUERY_UNKWON_OPERATOR' => 'AmScheme: Operador "%s" desconocido',
       'AMSCHEME_QUERY_INVALID_CONDITION' => 'AmScheme: Condición inválida: "%s"',
       'AMSCHEME_QUERY_INVALID_IN_ARGS_NUMBERS' => 'AmScheme: Número de argumentos de condición IN inválida: "%s"',

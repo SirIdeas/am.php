@@ -57,6 +57,20 @@ class AmClauseFromItem extends AmClause{
 
   }
 
+  public function addPossibleJoins(){
+
+    $table = null;
+    if($this->table instanceof AmTable){
+      $table = $this->table;
+    }elseif(is_string($this->table) && is_subclass_of($this->table, 'AmModel')){
+      $model = $this->table;
+      $table = $model::me();
+    }
+
+    $this->query->addPossibleJoins($table, $this->alias);
+
+  }
+
   public function sql(){
 
     $table = $this->table;

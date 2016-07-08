@@ -83,17 +83,33 @@ class AmClauseJoinItem extends AmClause{
 
   }
 
-  public function postAdded(){
-    if(isValidCallback($this->postAddedCallback)){
-      call_user_func($this->postAddedCallback);
-    }
-  }
-
   protected function generateAlias($alias){
+
     return $this->scheme->alias($alias, array_merge(
       $this->query->getFroms(),
       $this->query->getJoins()
-    ));    
+    ));
+    
+  }
+
+  public function addPossibleJoins(){
+
+    $table = null;
+    if($this->table instanceof AmTable){
+      $table = $this->table;
+    }else{
+      $model = $this->model;
+      if(isset($model)){
+        $table = $model::me();
+      }
+    }
+
+    $this->query->addPossibleJoins($table, $this->alias);
+
+    if(isValidCallback($this->postAddedCallback)){
+      call_user_func($this->postAddedCallback);
+    }
+
   }
 
   public function makeFromPossibleJoins(){
@@ -112,28 +128,30 @@ class AmClauseJoinItem extends AmClause{
             $this->table = $conf['table'];
             $alias = $this->generateAlias($conf['table']);
             $this->model = itemOr('model', $conf['through']);
-            $prevAlias = $this->alias;
+            $prevAlias = $alias;
+            $prevModel = $conf['model'];
 
-            $on = array();
-            foreach ($conf['through']['cols'] as $colFrom => $colTo) {
-              $on[] = "{$alias}.{$colFrom} = {$prevAlias}.{$colTo}";
-            }
-            if(!empty($on)){
-              $on = '('.implode(') AND (', $on).')';
-            }
+            $prevOn = new AmClauseOn(array(
+              'query' => $this->query,
+              'cols' => $conf['through']['cols'],
+              'from' => $alias,
+              'to' => $prevAlias,
+            ));
 
-            $this->postAddedCallback = function() use ($conf, $prevAlias, $on) {
-              $this->query->join($conf['model'], $prevAlias, $on);
+            $this->postAddedCallback = function() use ($prevModel, $prevAlias, $prevOn) {
+              $this->query->join($prevModel, $prevAlias, $prevOn, null, $item);
+              $prevOn->setAliasTo($item->getAlias());
             };
+            
           }
 
-          $on = array();
-          foreach ($conf['cols'] as $colFrom => $colTo) {
-            $on[] = "{$aliasTable}.{$colFrom} = {$alias}.{$colTo}";
-          }
-          if(!empty($on)){
-            $this->on = '('.implode(') AND (', $on).')';
-          }
+          $on = new AmClauseOn(array(
+            'query' => $this->query,
+            'cols' => $conf['cols'],
+            'from' => $aliasTable,
+            'to' => $alias,
+          ));
+          $this->on = $on;
 
           $this->alias = $alias;
 
