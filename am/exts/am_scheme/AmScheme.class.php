@@ -1501,13 +1501,18 @@ abstract class AmScheme extends AmObject{
     // Recorrer los sets
     foreach($sets as $key => $set){
 
-      $value = $set['value'];
+      $set['field'] = $this->nameWrapperAndRealScape($set['field']);
 
       // Acrear asignacion
       if($set['const'] === true){
-        $sets[$key] = "{$this->nameWrapperAndRealScape($set['field'])} = {$this->valueWrapperAndRealScape($value)}";
+        $sets[$key] = $this->_sqlSetItem($set['field'],
+          $this->valueWrapperAndRealScape($set['value'])
+        );
+        
       }elseif($set['const'] === false){
-        $sets[$key] = "{$this->nameWrapperAndRealScape($set['field'])} = {$this->realScapeString($value)}";
+        $sets[$key] = $this->_sqlSetItem($set['field'],
+          $this->realScapeString($set['value'])
+        );
       }
 
     }
@@ -1528,28 +1533,28 @@ abstract class AmScheme extends AmObject{
   public function sqlQuerySelect(AmQuery $q){
 
     $select = $this->sqlClauseSelect($q);
-    $select = empty($select)? '' : $select.'-';
+    $select = empty($select)? '' : $select.' ';
 
     $from = $this->sqlClauseFrom($q);
-    $from = empty($from)? '' : $from.'-';
+    $from = empty($from)? '' : $from.' ';
 
     $joins = $this->sqlClauseJoins($q);
-    $joins = empty($joins)? '' : $joins.'-';
+    $joins = empty($joins)? '' : $joins.' ';
 
     $where = $this->sqlClauseWhere($q);
-    $where = empty($where)? '' : $where.'-';
+    $where = empty($where)? '' : $where.' ';
 
     $groups = $this->sqlClauseGroups($q);
-    $groups = empty($groups)? '' : $groups.'-';
+    $groups = empty($groups)? '' : $groups.' ';
 
     $orders = $this->sqlClauseOrders($q);
-    $orders = empty($orders)? '' : $orders.'-';
+    $orders = empty($orders)? '' : $orders.' ';
 
     $limit = $this->sqlClauseLimit($q);
-    $limit = empty($limit)? '' : $limit.'-';
+    $limit = empty($limit)? '' : $limit.' ';
 
     $offSet = $this->sqlClauseOffSet($q);
-    $offSet = empty($offSet)? '' : $offSet.'-';
+    $offSet = empty($offSet)? '' : $offSet.' ';
 
     return $this->_sqlQuerySelect($select, $from, $joins, $where, $groups, $orders, $limit, $offSet);
 

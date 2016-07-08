@@ -51,7 +51,7 @@ class AmClauseSelectItem extends AmClause{
 
     // Si es una consulta se incierra entre parentesis
     if($field instanceof AmQuery){
-      $field = $this->scheme->_sqlWrapperSql($field->sql());
+      $field = $this->scheme->_sqlSqlWrapper($field->sql());
 
     }elseif(is_string($field)){
       $field = $this->scheme->nameWrapperAndRealScapeComplete($field);

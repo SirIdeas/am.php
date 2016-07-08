@@ -190,9 +190,8 @@ final class MysqlScheme extends AmScheme{
    */
   public function realScapeString($value){
 
-    if($this->handler && !is_int($value) && !is_float($value) && $value !== null){
+    if($this->handler && is_string($value))
       return mysqli_real_escape_string($this->handler, $value);
-    }
     return $value;
 
   }
@@ -417,7 +416,7 @@ final class MysqlScheme extends AmScheme{
 
   }
 
-  public function _sqlWrapperSql($sql){
+  public function _sqlSqlWrapper($sql){
 
     return "({$sql})";
 
@@ -525,16 +524,28 @@ final class MysqlScheme extends AmScheme{
 
   }
 
-  public function _sqlWhere($wheres){
-
-    return "WHERE {$wheres}";
-    
-  }
-
   public function _sqlWhereItem($not, $field, $operator, $value){
 
     return "{$not}{$field} {$operator} {$value}";
 
+  }
+
+  public function _sqlWhereGroup(array $wheres){
+
+    return implode(' ', $wheres);
+    
+  }
+
+  public function _sqlWhereWrapper($wheres){
+
+    return "({$wheres})";
+    
+  }
+
+  public function _sqlWhere($wheres){
+
+    return "WHERE {$wheres}";
+    
   }
 
   public function _sqlLimit($limit){
@@ -766,6 +777,12 @@ final class MysqlScheme extends AmScheme{
   public function _sqlSetGroup(array $sets){
 
     return implode(', ', $sets);
+
+  }
+
+  public function _sqlSetItem($field, $value){
+
+    return "{$field} = {$value}";
 
   }
 

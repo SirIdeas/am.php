@@ -63,7 +63,7 @@ class AmClauseFromItem extends AmClause{
 
     // Si es una consulta se incierra entre parentesis
     if($table instanceof AmQuery){
-      $table = $this->scheme->_sqlWrapperSql($table->sql());
+      $table = $this->scheme->_sqlSqlWrapper($table->sql());
 
     }elseif($table instanceOf AmTable){
       $tableName = $table->getTableName();

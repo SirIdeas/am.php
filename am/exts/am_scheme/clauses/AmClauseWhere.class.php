@@ -32,7 +32,9 @@ class AmClauseWhere extends AmClause{
     if(empty($this->wheres)){
       return '';
     }
-    return '('.implode(' ', $this->wheres).')';
+    return $this->scheme->_sqlWhereWrapper(
+      $this->scheme->_sqlWhereGroup($this->wheres)
+    );
 
   }
 

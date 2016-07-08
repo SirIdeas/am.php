@@ -31,7 +31,7 @@ class AmClauseWhereItem extends AmClause{
 
     if($operator === 'IN'){
       if($value instanceof AmQuery){
-        $value = $this->scheme->_sqlWrapperSql($value->sql());
+        $value = $this->scheme->_sqlSqlWrapper($value->sql());
       }else{
         foreach ($value as $key => $item) {
           $value[$key] = $this->scheme->valueWrapperAndRealScape($item);

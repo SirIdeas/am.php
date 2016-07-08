@@ -83,48 +83,6 @@ class AmClauseJoinItem extends AmClause{
 
   }
 
-  public function sql(){
-
-    $table = $this->table;
-
-    // Si es una consulta se incierra entre parentesis
-    if($table instanceof AmQuery){
-      $table = $this->scheme->_sqlWrapperSql($table->sql());
-
-    }elseif($table instanceOf AmTable){
-      $tableName = $table->getTableName();
-      $table = $this->scheme->nameWrapperAndRealScapeComplete($tableName);
-
-    }elseif(is_string($table)){
-
-      $tableName = $table;
-
-      if(isset($this->model)){
-        $tableName = $this->model;
-      }
-
-      if(is_subclass_of($tableName, 'AmModel')){
-        $tableName = $tableName::me()->getTableName();
-      }
-      $table = $this->scheme->nameWrapperAndRealScapeComplete($tableName);
-
-    }else{
-      throw Am::e('AMSCHEME_INVALID_FIELD', var_export($table, true));
-
-    }
-
-    $alias = $this->scheme->nameWrapperAndRealScape($this->alias);
-    $table = $this->scheme->_sqlElementWithAlias($table, $alias);
-
-    $on = '';
-    if(!empty($this->on)){
-      $on = $this->scheme->_sqlOn($this->on);
-    }
-
-    return $this->scheme->_sqlJoin($this->type, $table, $on);
-
-  }
-
   public function postAdded(){
     if(isValidCallback($this->postAddedCallback)){
       call_user_func($this->postAddedCallback);
@@ -184,6 +142,48 @@ class AmClauseJoinItem extends AmClause{
         }
       }
     }
+
+  }
+
+  public function sql(){
+
+    $table = $this->table;
+
+    // Si es una consulta se incierra entre parentesis
+    if($table instanceof AmQuery){
+      $table = $this->scheme->_sqlSqlWrapper($table->sql());
+
+    }elseif($table instanceOf AmTable){
+      $tableName = $table->getTableName();
+      $table = $this->scheme->nameWrapperAndRealScapeComplete($tableName);
+
+    }elseif(is_string($table)){
+
+      $tableName = $table;
+
+      if(isset($this->model)){
+        $tableName = $this->model;
+      }
+
+      if(is_subclass_of($tableName, 'AmModel')){
+        $tableName = $tableName::me()->getTableName();
+      }
+      $table = $this->scheme->nameWrapperAndRealScapeComplete($tableName);
+
+    }else{
+      throw Am::e('AMSCHEME_INVALID_FIELD', var_export($table, true));
+
+    }
+
+    $alias = $this->scheme->nameWrapperAndRealScape($this->alias);
+    $table = $this->scheme->_sqlElementWithAlias($table, $alias);
+
+    $on = '';
+    if(!empty($this->on)){
+      $on = $this->scheme->_sqlOn($this->on);
+    }
+
+    return $this->scheme->_sqlJoin($this->type, $table, $on);
 
   }
 
