@@ -1489,6 +1489,142 @@ abstract class AmScheme extends AmObject{
   }
 
   /**
+   * Obtener el SQL para la clausula SET de un query UPDATE.
+   * @param  AmQuery $q Query.
+   * @return string     SQL correspondiente.
+   */
+  public function sqlSets(AmQuery $q){
+
+    // Obtener sets
+    $sets = $q->getSets();
+
+    // Recorrer los sets
+    foreach($sets as $key => $set){
+
+      $value = $set['value'];
+
+      // Acrear asignacion
+      if($set['const'] === true){
+        $sets[$key] = "{$this->nameWrapperAndRealScape($set['field'])} = {$this->valueWrapperAndRealScape($value)}";
+      }elseif($set['const'] === false){
+        $sets[$key] = "{$this->nameWrapperAndRealScape($set['field'])} = {$this->realScapeString($value)}";
+      }
+
+    }
+
+    // Unir resultado
+    $sets = $this->_sqlSetGroup($sets);
+
+    // Agregar SET
+    return $this->_sqlSet($sets);
+
+  }
+
+  /**
+   * Devuelve el SQL de un query SELECT
+   * @param  AmQuery $q Query.
+   * @return string     SQL del query.
+   */
+  public function sqlQuerySelect(AmQuery $q){
+
+    $select = $this->sqlClauseSelect($q);
+    $select = empty($select)? '' : $select.'-';
+
+    $from = $this->sqlClauseFrom($q);
+    $from = empty($from)? '' : $from.'-';
+
+    $joins = $this->sqlClauseJoins($q);
+    $joins = empty($joins)? '' : $joins.'-';
+
+    $where = $this->sqlClauseWhere($q);
+    $where = empty($where)? '' : $where.'-';
+
+    $groups = $this->sqlClauseGroups($q);
+    $groups = empty($groups)? '' : $groups.'-';
+
+    $orders = $this->sqlClauseOrders($q);
+    $orders = empty($orders)? '' : $orders.'-';
+
+    $limit = $this->sqlClauseLimit($q);
+    $limit = empty($limit)? '' : $limit.'-';
+
+    $offSet = $this->sqlClauseOffSet($q);
+    $offSet = empty($offSet)? '' : $offSet.'-';
+
+    return $this->_sqlQuerySelect($select, $from, $joins, $where, $groups, $orders, $limit, $offSet);
+
+  }
+
+  /**
+   * Obtener el SQL para una consulta UPDATE.
+   * @param  AmQuery $q Query.
+   * @return string     SQL del query.
+   */
+  public function sqlQueryUpdate(AmQuery $q){
+
+    $tableName = $this->nameWrapperAndRealScape($q->getTable()->getTableName());
+
+    $joins = $this->sqlClauseJoins($q);
+    $joins = empty($joins)? '' : $joins.' ';
+
+    $sets = $this->sqlSets($q);
+    $sets = empty($sets)? '' : $sets.' ';
+
+    $where = $this->sqlClauseWhere($q);
+
+    return $this->_sqlQueryUpdate($tableName, $joins, $sets, $where);
+
+  }
+
+  /**
+   * Obtener el SQL para una consulta DELETE.
+   * @param  AmQuery $q Query.
+   * @return string     SQL del query.
+   */
+  public function sqlQueryDelete(AmQuery $q){
+
+    $tableName = $this->nameWrapperAndRealScape($q->getTable()->getTableName());
+
+    $where = $this->sqlClauseWhere($q);
+    $where = empty($where)? '' : $where.' ';
+
+    return $this->_sqlQueryDelete($tableName, $where);
+
+  }
+
+  /**
+   * Obtiene el SQL de una Query dependiendo de su tipo.
+   * @param  AmQuery $q Instancia de query.
+   * @return string     SQL obtenido.
+   */
+  public function sqlOf(AmQuery $q){
+    $type = $q->getType();
+
+    // Consulta de seleción
+    if($type == 'select')
+      return $this->sqlQuerySelect($q);
+
+    // Consulta de inserción
+    if($type == 'insert')
+      return $this->sqlInsert($q, $q->getInsertTable(), $q->getInsertFields());
+
+    // Consulta de actualización
+    if($type == 'update')
+      return $this->sqlQueryUpdate($q);
+
+    // Consulta de eliminación
+    if($type == 'delete')
+      return $this->sqlQueryDelete($q);
+
+    throw Am::e('AMSCHEME_QUERY_TYPE_UNKNOW', var_export($q, true));
+
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Metodos para obtener los SQL a ejecutar.
+  //////////////////////////////////////////////////////////////////////////////
+
+  /**
    * Funcion para preparar la ejeción de un insert.
    * @param  array/AmQuery  $values Array hash de valores, array
    *                                de instancias de AmModels, array de
@@ -1709,31 +1845,6 @@ abstract class AmScheme extends AmObject{
     
   }
 
-  //////////////////////////////////////////////////////////////////////////////
-  // Metodos para obtener los SQL a ejecutar.
-  //////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Devuelve el SQL de un query SELECT
-   * @param  AmQuery $q Query.
-   * @return string     SQL del query.
-   */
-  public function sqlSelectQuery(AmQuery $q){
-
-    return
-      trim(implode(' ', array(
-      trim($this->sqlClauseSelect($q)),
-      trim($this->sqlClauseFrom($q)),
-      trim($this->sqlClauseJoins($q)),
-      trim($this->sqlClauseWhere($q)),
-      trim($this->sqlClauseGroups($q)),
-      trim($this->sqlClauseOrders($q)),
-      trim($this->sqlClauseLimit($q)),
-      trim($this->sqlClauseOffSet($q))
-    )));
-
-  }
-
   /**
    * Devuelve el SQL de la sección VALUES para un query INSERT.
    * @param  array/string $values Array de hash con los valores a insertar o SQL
@@ -1809,101 +1920,6 @@ abstract class AmScheme extends AmObject{
       $q['table'].$q['fields'],
       $q['values'],
     ));
-
-  }
-
-  /**
-   * Obtener el SQL para una consulta UPDATE.
-   * @param  AmQuery $q Query.
-   * @return string     SQL del query.
-   */
-  public function sqlUpdateQuery(AmQuery $q){
-
-    return implode(' ', array(
-      'UPDATE',
-      trim($this->getDatabaseObjectName($q)),
-      trim($this->sqlClauseJoins($q)),
-      trim($this->sqlSets($q)),
-      trim($this->sqlClauseWhere($q))
-    ));
-
-  }
-
-  /**
-   * Obtener el SQL para una consulta DELETE.
-   * @param  AmQuery $q Query.
-   * @return string     SQL del query.
-   */
-  public function sqlDeleteQuery(AmQuery $q){
-
-    return implode(' ', array(
-      'DELETE FROM',
-      trim($this->getDatabaseObjectName($q)),
-      trim($this->sqlClauseWhere($q))
-    ));
-
-  }
-
-  /**
-   * Obtener el SQL para la clausula SET de un query UPDATE.
-   * @param  AmQuery $q Query.
-   * @return string     SQL correspondiente.
-   */
-  public function sqlSets(AmQuery $q){
-
-    // Obtener sets
-    $setsOri = $q->getSets();
-    $sets = array(); // Lista para retorno
-
-    // Recorrer los sets
-    foreach($setsOri as $set){
-
-      $value = $set['value'];
-
-      // Acrear asignacion
-      if($value === null){
-        $sets[] = "{$set['field']} = NULL";
-      }elseif($set['const'] === true){
-        $sets[] = "{$set['field']} = " . $this->valueWrapperAndRealScape($value);
-      }elseif($set['const'] === false){
-        $sets[] = "{$set['field']} = {$value}";
-      }
-
-    }
-
-    // Unir resultado
-    $sets = implode(',', $sets);
-
-    // Agregar SET
-    return "SET {$sets}";
-
-  }
-
-  /**
-   * Obtiene el SQL de una Query dependiendo de su tipo.
-   * @param  AmQuery $q Instancia de query.
-   * @return string     SQL obtenido.
-   */
-  public function sqlOf(AmQuery $q){
-    $type = $q->getType();
-
-    // Consulta de seleción
-    if($type == 'select')
-      return $this->sqlSelectQuery($q);
-
-    // Consulta de inserción
-    if($type == 'insert')
-      return $this->sqlInsert($q, $q->getInsertTable(), $q->getInsertFields());
-
-    // Consulta de actualización
-    if($type == 'update')
-      return $this->sqlUpdateQuery($q);
-
-    // Consulta de eliminación
-    if($type == 'delete')
-      return $this->sqlDeleteQuery($q);
-
-    throw Am::e('AMSCHEME_QUERY_TYPE_UNKNOW', var_export($q, true));
 
   }
 

@@ -757,4 +757,34 @@ final class MysqlScheme extends AmScheme{
 
   }
 
+  public function _sqlQuerySelect($select, $from, $joins, $where, $groups, $orders, $limit, $offSet){
+
+    return "{$select}{$from}{$joins}{$where}{$groups}{$orders}{$limit}{$offSet}";
+
+  }
+
+  public function _sqlSetGroup(array $sets){
+
+    return implode(', ', $sets);
+
+  }
+
+  public function _sqlSet($sets){
+
+    return "SET {$sets}";
+
+  }
+
+  public function _sqlQueryUpdate($tableName, $joins, $sets, $where){
+
+    return "UPDATE {$tableName} {$joins}{$sets}{$where}";
+
+  }
+
+  public function _sqlQueryDelete($tableName, $where){
+
+    return "DELETE FROM {$tableName} {$where}";
+
+  }
+
 }
