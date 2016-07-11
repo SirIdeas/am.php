@@ -442,7 +442,7 @@ final class MysqlScheme extends AmScheme{
 
   public function _sqlSelectGroup(array $selects){
 
-    return implode(',', $selects);
+    return implode(', ', $selects);
 
   }
 
@@ -520,7 +520,7 @@ final class MysqlScheme extends AmScheme{
 
   public function _sqlArray(array $arr){
 
-    return '('.implode(',', $arr).')';
+    return '('.implode(', ', $arr).')';
 
   }
 
@@ -802,6 +802,47 @@ final class MysqlScheme extends AmScheme{
 
     return "DELETE FROM {$tableName} {$where}";
 
+  }
+
+  public function _sqlInsertValuesItemGroup(array $values){
+
+    return implode(', ', $values);
+
+  }
+
+  public function _sqlInsertValuesItem($values){
+
+    return "({$values})";
+
+  }
+
+  public function _sqlInsertValuesGroup(array $values){
+
+    return implode(', ', $values);
+
+  }
+
+  public function _sqlInsertValues($values){
+
+    return "VALUES {$values}";
+
+  }
+
+  public function _sqlInsertFieldsGroup(array $fields){
+
+    return implode(', ', $fields);
+
+  }
+
+  public function _sqlInsertFields($fields){
+    
+    return "({$fields}) ";
+
+  }
+
+  public function _sqlInsert($table, $fields, $values){
+    
+    return "INSERT INTO {$table}{$fields}{$values}";
   }
 
 }

@@ -144,7 +144,7 @@ final class AmTable extends AmObject{
 
     // Si se pudo obtener la configuración se mezcla con la recibida
     if($conf){
-      $params = array_merge($conf, $params, array('autoFields' => false));
+      $params = array_merge(array('autoFields' => false), $conf, $params);
     }
 
     // Aaignar modelo
@@ -754,9 +754,11 @@ final class AmTable extends AmObject{
 
     // Si la tabla tiene un campo llamado 'created_at' se asigna a todos los
     // valores la fecha now
-    if($this->hasCreatedAtField())
+    if($this->hasCreatedAtField()){
       self::setNowDateValueToAllRecordsInField($values,
         $this->getCreatedAtField());
+      
+    }
 
     return $this;
 
@@ -771,9 +773,11 @@ final class AmTable extends AmObject{
 
     // Si la tabla tiene un campo llamado 'updated_at'
     // Se asigna a todos los valores la fecha now
-    if($this->hasUpdatedAtField())
+    if($this->hasUpdatedAtField()){
       self::setNowDateValueToAllRecordsInField($values,
         $this->getUpdatedAtField());
+      
+    }
 
     return $this;
 
@@ -810,18 +814,21 @@ final class AmTable extends AmObject{
     if($values instanceof AmQuery){
 
       // Si es una consulta de actualización.
-      if($values->getType() == 'update')
+      if($values->getType() == 'update'){
         $values->set($field, $now);
-
-      else
+        
+      }else{
         // Agregar campo a la consulta
-        $values->selectAs("'{$now}'", $field);
+        $values->selectAs(Am::raw("'$now'"), $field);
+        
+      }
 
     }elseif(is_array($values)){
 
       // Agregar created_ad a cada registro
-      foreach (array_keys($values) as $i)
+      foreach (array_keys($values) as $i){
         $values[$i][$field] = $now;
+      }
 
     }
 
@@ -1384,10 +1391,11 @@ final class AmTable extends AmObject{
   public function update(AmModel $model){
 
     // Obtener los campos
-    if($this->autoFields)
+    if($this->autoFields){
       $fields = array_keys($model->toArray());
-    else
+    }else{
       $fields = array_keys($this->getFields());
+    }
 
     // Obtener una consulta para selecionar el registro
     $q = $this->querySelectModel($model);
@@ -1521,18 +1529,24 @@ final class AmTable extends AmObject{
     $ret = array(); // Para el retorno
 
     // Obtener los campos
-    if($this->autoFields)
+    if($this->autoFields){
       return $model->toArray();
+    }
     
     $fields = array_keys($this->getFields());
 
     foreach($fields as $fieldName){
-      $field = $this->getField($fieldName);  // Obtener el campos
+
+      // Obtener el campos
+      $field = $this->getField($fieldName);
+
       // Si se pidió incorporar los valores autoincrementados
       // o si el campo no es autoincrementado
-      if($withAI || !$field || !$field->isAutoIncrement())
+      if($withAI || !$field || !$field->isAutoIncrement()){
         // Se agrega el campo al array de retorno
         $ret[$fieldName] = $model->get($fieldName);
+      }
+
     }
 
     return $ret;

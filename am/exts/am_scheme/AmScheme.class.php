@@ -1607,20 +1607,24 @@ abstract class AmScheme extends AmObject{
     $type = $q->getType();
 
     // Consulta de seleción
-    if($type == 'select')
+    if($type == 'select'){
       return $this->sqlQuerySelect($q);
+    }
 
     // Consulta de inserción
-    if($type == 'insert')
+    if($type == 'insert'){
       return $this->sqlInsert($q, $q->getInsertTable(), $q->getInsertFields());
+    }
 
     // Consulta de actualización
-    if($type == 'update')
+    if($type == 'update'){
       return $this->sqlQueryUpdate($q);
+    }
 
     // Consulta de eliminación
-    if($type == 'delete')
+    if($type == 'delete'){
       return $this->sqlQueryDelete($q);
+    }
 
     throw Am::e('AMSCHEME_QUERY_TYPE_UNKNOW', var_export($q, true));
 
@@ -1629,9 +1633,8 @@ abstract class AmScheme extends AmObject{
   //////////////////////////////////////////////////////////////////////////////
   // Metodos para obtener los SQL a ejecutar.
   //////////////////////////////////////////////////////////////////////////////
-
   /**
-   * Funcion para preparar la ejeción de un insert.
+   * Devuelve el SQL de un query INSERT.
    * @param  array/AmQuery  $values Array hash de valores, array
    *                                de instancias de AmModels, array de
    *                                AmObjects o AmQuery con consulta select
@@ -1640,27 +1643,34 @@ abstract class AmScheme extends AmObject{
    *                                tabla donde se insertará los valores.
    * @param  array          $fields Campos que recibirán con los valores que
    *                                se insertarán.
-   * @return hash                   Devuelve un hash que contiene el string
-   *                                con el nombre de la tabla, string de
-   *                                valores y el string de campos.
+   * @return string                 SQL del query.
    */
-  protected function prepareInsert($values, $model, array $fields = array()){
+  public function sqlInsert($values, $model, array $fields = array()){
 
     $table = $model;
 
     // Obtener la instancia de la tabla
-    if(!$table instanceof AmTable)
+    if(!$table instanceof AmTable){
       $table = $this->getTableInstance($table);
+    }
 
     if($table){
 
       // Agregar fechas de creacion y modificacion si existen en la tabla
       $table->setAutoCreatedAt($values);
       $table->setAutoUpdatedAt($values);
+      $table = $table->getTableName();
 
     }else{
 
       $table = $model;
+
+    }
+
+    // Si los valores es una instancia de AmModel entonces convierte en un array
+    // que contenga solo dicha instancia.
+    if($values instanceof AmModel){
+      $values = array($values);
 
     }
 
@@ -1672,31 +1682,35 @@ abstract class AmScheme extends AmObject{
         $fields = array_keys($values->getSelects());
       }
 
+      // Los valores a insertar son el SQL de la consulta
+      $values = $values->sql();
+
     // Si los valores es un array con al menos un registro
     }elseif(is_array($values) && count($values)>0){
 
       // Indica si
-      $mergeWithFields = count($fields) == 0;
+      $mergeWithFields = empty($fields);
 
       $rawValues = array();
 
       // Recorrer cada registro en $values par obtener los valores a insertar
       foreach($values as $i => $v){
 
+        // Si el registro es AmModel obtener sus valores como array asociativo o simple
         if($v instanceof AmModel){
-          // Si el registro es AmModel obtener sus valores como array
-          // asociativo o simple
           $values[$i] = $v->getTable()->dataToArray($v, !$mergeWithFields);
           $rawValues[$i] = $v->getRawValues();
 
-        }elseif($v instanceof AmObject)
-          // Si es una instancia de AmObjet se obtiene como array asociativo
+        // Si es una instancia de AmObjet se obtiene como array asociativo
+        }elseif($v instanceof AmObject){
           $values[$i] = $v->toArray();
+          
+        }
 
-        // Si no se recibieron campos, entonces se mezclaran con los
-        // indices obtenidos
-        if($mergeWithFields)
+        // Si no se recibieron campos, entonces se mezclaran con los indices obtenidos
+        if($mergeWithFields){
           $fields = merge_unique($fields, array_keys($values[$i]));
+        }
 
       }
 
@@ -1709,13 +1723,15 @@ abstract class AmScheme extends AmObject{
 
         // Agregar un valor por cada campo de la consulta
         foreach($fields as $f){
-          $val = isset($v[$f])? $v[$f] : null;
+          $val = $this->realScapeString(isset($v[$f])? $v[$f] : null);
+          
           // Obtener el valor del registro actual en el campo actual
           if(isset($rawValues[$i][$f]) && $rawValues[$i][$f] === true){
             $resultValues[$i][] = $val;
           }else{
-            $resultValues[$i][] = $this->valueWrapperAndRealScape($val);
+            $resultValues[$i][] = $this->valueWrapper($val);
           }
+
         }
 
       }
@@ -1725,24 +1741,47 @@ abstract class AmScheme extends AmObject{
 
     }
 
-    // Si es una consulta
-    if($values instanceof AmQuery){
-
-      // Los valores a insertar son el SQL de la consulta
-      $values = $values->sql();
-
-    }
-
     // Obtener el listado de campos
     foreach ($fields as $key => $field){
       $fields[$key] = $this->nameWrapperAndRealScape($field);
     }
 
-    return array(
-      'table' => $this->getDatabaseObjectName($table),
-      'values' => $this->sqlInsertValues($values),
-      'fields' => $this->sqlInsertFields($fields),
-    );
+    // Unir campos
+    $fields = $this->_sqlInsertFields($this->_sqlInsertFieldsGroup($fields));
+
+    if(is_array($values)){
+
+      if(!empty($values)){
+
+        // Preparar registros para crear SQL
+        foreach($values as $i => $v){
+          // Unir todos los valores con una c
+          $values[$i] = $this->_sqlInsertValuesItem(
+            $this->_sqlInsertValuesItemGroup($v)
+          );
+        }
+
+        // Unir todos los registros
+        $values = $this->_sqlInsertValuesGroup($values);
+
+        // Obtener Str para los valores
+        $values = $this->_sqlInsertValues($values);
+
+      }else{
+        $values = '';
+        
+      }
+
+    }
+
+    if(empty($values)){
+      return '';
+    }
+
+    $table = $this->nameWrapperAndRealScapeComplete($table);
+
+    // Generar SQL
+    return $this->_sqlInsert($table, $fields, $values);
 
   }
 
@@ -1761,18 +1800,14 @@ abstract class AmScheme extends AmObject{
    */
   public function insertInto($values, $model, array $fields = array()){
 
-    // Si los valores es una instancia de AmModel entonces convierte en un array
-    // que contenga solo dicha instancia.
-    if($values instanceof AmModel)
-      $values = array($values);
-
     // Obtener el SQL para saber si es valido
     $sql = $this->sqlInsert($values, $model, $fields);
 
     // Si el SQL está vacío o si se genera un error en la inserción devuelve
     // falso
-    if(trim($sql) == '' || $this->execute($sql) === false)
+    if(trim($sql) == '' || $this->execute($sql) === false){
       return false;
+    }
     
     // De lo contrario retornar verdadero.
     return true;
@@ -1849,84 +1884,6 @@ abstract class AmScheme extends AmObject{
 
     return $column;
     
-  }
-
-  /**
-   * Devuelve el SQL de la sección VALUES para un query INSERT.
-   * @param  array/string $values Array de hash con los valores a insertar o SQL
-   *                              ya preparado.
-   * @return string               SQL correspondiente.
-   */
-  protected function sqlInsertValues($values){
-
-    if(empty($values))
-      return '';
-
-    if(is_array($values) && count($values)>0){
-
-      // Preparar registros para crear SQL
-      foreach($values as $i => $v)
-        // Unir todos los valores con una c
-        $values[$i] = '(' . implode(',', $v) . ')';
-
-      // Unir todos los registros
-      $values = implode(',', $values);
-
-      // Obtener Str para los valores
-      $values = "VALUES {$values}";
-
-    }
-
-
-    return $values;
-
-  }
-
-  /**
-   * Devuelve el SQL de la sección FIELDS para un query INSERT.
-   * @param  array  $fields Campos que se desea preparar.
-   * @return string         SQL correspondiente.
-   */
-  protected function sqlInsertFields(array $fields){
-
-    // Unir campos
-    if(!empty($fields)){
-      return '(' . implode(',', $fields) . ')';
-    }
-
-    return '';
-
-  }
-
-  /**
-   * Devuelve el SQL de un query INSERT.
-   * @param  array/AmQuery  $values Array hash de valores, array
-   *                                de instancias de AmModels, array de
-   *                                AmObjects o AmQuery con consulta select
-   *                                a insertar.
-   * @param  string/AmTable $model  Nombre del modelo o instancia de la
-   *                                tabla donde se insertará los valores.
-   * @param  array          $fields Campos que recibirán con los valores que
-   *                                se insertarán.
-   * @return string                 SQL del query.
-   */
-  public function sqlInsert($values, $model, array $fields = array()){
-
-    $q = $this->prepareInsert(
-      $values, $model, $fields
-    );
-
-    if(empty($q['values'])){
-      return '';
-    }
-
-    // Generar SQL
-    return implode(' ', array(
-      'INSERT INTO',
-      $q['table'].$q['fields'],
-      $q['values'],
-    ));
-
   }
 
   //////////////////////////////////////////////////////////////////////////////
