@@ -24,6 +24,11 @@ class AmForeign extends AmObject{
     $model = '',
 
     /**
+     * Campos extras a selecionar
+     */
+    $selects = array(),
+    
+    /**
      * Hash de columnas relacionadas.
      */
     $cols = array(),
@@ -31,7 +36,7 @@ class AmForeign extends AmObject{
     /**
      * Hash de columnas relacionadas.
      */
-    $table = array(),
+    $table = null,
 
     /**
      * Indica si la relación puede tener valores nulos
@@ -131,7 +136,7 @@ class AmForeign extends AmObject{
     
     $ret = array();
     // Agregar campos extras a selecionar
-    foreach($this->select as $as => $field){
+    foreach($this->selects as $as => $field){
       $field = $through? "{$through}.$as" : $field;
       $ret[$as] = $record[$field];
       unset($record[$field]);
@@ -159,30 +164,21 @@ class AmForeign extends AmObject{
     $through = $this->through;
 
     // Obtener una consulta con todos los elmentos.
-    $query = $table->all($tableName)
-      ->select("{$tableName}.*");
+    $query = $table->all($tableName)->select(Am::raw("{$tableName}.*"));
 
     // Agregar campos extras a selecionar
-    foreach($this->select as $as => $field){
-      $field = $through? "{$through}.$field" : $field;
-      $as = $through? "{$through}.$as" : $as;
-      $query->selectAs($field, $as);
-    }
+    if(!empty($through)){
 
-    // Si tiene una tabla a traves y tiene campos selecionados entonces se
-    // agrega el formateador
-    if(!empty($through) && !empty($this->select)){
-      $query->setFormatter(array($this, 'queryFormatter'));
-    }
-
-    // Obtener las joins
-    $joins = $this->getJoins();
-
-    foreach($joins as $refTableName => $on) {
-      foreach ($on as $from => $to) {
-        $on[$from] = "{$tableName}.{$from}={$refTableName}.{$to}";
+      foreach($this->selects as $as => $field){
+        $query->selectAs("{$through}.$field", $as);
       }
-      $query->innerJoin($refTableName, null, implode('-', $on));
+
+      // Si tiene una tabla a traves y tiene campos selecionados entonces se
+      // agrega el formateador
+      if(!empty($this->select)){
+        $query->setFormatter(array($this, 'queryFormatter'));
+      }
+
     }
 
     // Obtener las columnas
@@ -190,9 +186,7 @@ class AmForeign extends AmObject{
 
     // Agregar condiciones de la relacion
     foreach($cols as $from => $field){
-      $sqlField = $through? "{$through}.$field" : $field;
-      // WHEREWHERE
-      $query->andWhere($sqlField, $model->getRealValue($from));
+      $query->andWhere("{$tableName}.{$field}", $model->getRealValue($from));
     }
 
     // Devolver query
@@ -211,6 +205,7 @@ class AmForeign extends AmObject{
       'cols' => $this->cols,
       'model' => $this->model,
       'table' => $this->table,
+      'selects' => $this->selects,
       'through' => $this->through,
     );
 
