@@ -245,16 +245,20 @@ abstract class AmScheme extends AmObject{
    * @param  array  $collection Colección donde se buscará si el alias existe.
    * @return string             Alias generados
    */
-  public function alias($alias, array $collection){
+  public function alias($alias, array $collection, $ignoreError = false){
 
     if(!isNameValid($alias)){
-      throw Am::e('AMSCHEME_INVALID_ALIAS', $alias);
+      if(!$ignoreError){
+        throw Am::e('AMSCHEME_INVALID_ALIAS', $alias);
+      }
+      return null;
     }
 
     $i = 0;
     $finalAlias = $alias;
-    while(isset($collection[$finalAlias]))
+    while(isset($collection[$finalAlias])){
       $finalAlias = $alias . $i++;
+    }
 
     return $finalAlias;
 
@@ -1649,6 +1653,13 @@ abstract class AmScheme extends AmObject{
 
     $table = $model;
 
+    // Si los valores es una instancia de AmModel entonces convierte en un array
+    // que contenga solo dicha instancia.
+    if($values instanceof AmModel){
+      $values = array($values);
+
+    }
+
     // Obtener la instancia de la tabla
     if(!$table instanceof AmTable){
       $table = $this->getTableInstance($table);
@@ -1664,13 +1675,6 @@ abstract class AmScheme extends AmObject{
     }else{
 
       $table = $model;
-
-    }
-
-    // Si los valores es una instancia de AmModel entonces convierte en un array
-    // que contenga solo dicha instancia.
-    if($values instanceof AmModel){
-      $values = array($values);
 
     }
 

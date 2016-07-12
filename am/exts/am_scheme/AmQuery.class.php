@@ -1111,10 +1111,10 @@ class AmQuery extends AmObject{
 
     // Crear el query para contar
     $ret = $this->copy()
-                ->setSelects(array('count' => 'count(*)'))
+                ->setSelects(array('count' => Am::raw('count(*)')))
                 ->row('array');
 
-    // Si se generó un error devolver cero, de lo contrari
+      // Si se generó un error devolver cero, de lo contrari
     // devolver el valor obtenido
     return $ret === false ? 0 : intval($ret['count']);
 

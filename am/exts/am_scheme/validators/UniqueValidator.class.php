@@ -37,15 +37,15 @@ class UniqueValidator extends AmValidator{
 
     // Crear una consulta de todos los registro en la tabla del model
     // Con el mismo valor de actual del modelo en el campo evaluado
-    // WHEREWHERE
     $query = $table->all()->whereArray($this->conditions);
 
     // Obtener los campos del indice unico
     $fields = $this->fields;
 
     // Agregamos el campo que se evalua a la lista de campos
-    if($table->getField($this->getFieldName()))
+    if($table->getField($this->getFieldName())){
       array_unshift($fields, $this->getFieldName());
+    }
 
     // Eliminar campos repetidos
     $fields = array_unique($fields);
@@ -53,18 +53,19 @@ class UniqueValidator extends AmValidator{
     // Se agrega una condicion and por cada campo extra configurado
     foreach($fields as $field){
       // Agregar la condicion
-      // WHEREWHERE
-      $query->andWhere($field, $model->get($field));
+      $query->andWhere("$field", $model->get($field));
     }
+
     
     // Agregar condiciones para excluir el registro evaluado
     $index = $table->indexOf($model);
-    foreach ($index as $key => $value)
+    foreach ($index as $key => $value){
       $index[$key] = array($key, $value);
+    }
 
     // Agregar condiciones para excluir el registro evaluado
     // WHEREWHERE
-    $query->andWhere('not', array_values($index));
+    $query->whereArray('AND', 'NOT', $index);
 
     // Si la consulta devuelve 0 registro entonces el modelo
     // tiene un valor unico

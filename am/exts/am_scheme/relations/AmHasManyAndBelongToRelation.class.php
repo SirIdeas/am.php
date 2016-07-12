@@ -24,7 +24,7 @@ class AmHasManyAndBelongToRelation extends AmCollectionAbstractRelation{
     $index = $foreign->getCols();
     $through = $foreign->getThrough();
     $joins = itemOr($through, $foreign->getJoins(), array());
-    $table = $foreign->getTable();
+    $table = $foreign->getTableInstance();
     $scheme = $table->getScheme();
 
     // Si no es un regsitro nuevo se deben acutalizar todas las referencias

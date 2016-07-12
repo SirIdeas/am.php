@@ -69,7 +69,7 @@ class AmModel extends AmObject{
       // Cantidad de errores
       'errorsCount' => 0,
       // Hash con las relaciones del modelo.
-      'foreigns' => array(),
+      'relations' => array(),
     ), is_array($this->sketch)? $this->sketch : array()));
 
     // Inicializar la tabla si no ha sido inicializada
@@ -430,7 +430,7 @@ class AmModel extends AmObject{
 
   public function getRelation($foreignName){
 
-    $foreign = itemOr($foreignName, $this->__p->foreigns);
+    $foreign = itemOr($foreignName, $this->__p->relations);
 
     // Si no se ha generado una consulta para la relación
     if(!isset($foreign)){
@@ -439,15 +439,15 @@ class AmModel extends AmObject{
       $foreign = $this->__p->table->getForeign($foreignName);
 
       // Si no existe la relación
-      if(!isset($foreign))
-        throw Am::e('AMSCHEME_RELATION_NOT_EXISTS', get_class($this),
-          $foreignName);
+      if(!isset($foreign)){
+        throw Am::e('AMSCHEME_RELATION_NOT_EXISTS', get_class($this), $foreignName);
+      }
 
-      $this->__p->foreigns[$foreignName] = AmRelation::create($this, $foreign);
+      $this->__p->relations[$foreignName] = AmRelation::create($this, $foreign);
 
     }
 
-    return $this->__p->foreigns[$foreignName];
+    return $this->__p->relations[$foreignName];
 
   }
 

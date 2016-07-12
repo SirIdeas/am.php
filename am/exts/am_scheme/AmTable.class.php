@@ -286,7 +286,7 @@ final class AmTable extends AmObject{
       // Agregar los campos si no existen
       $foreign = $this->getForeign($name);
       $cols = $foreign->getCols();
-      $table = $foreign->getTable();
+      $table = $foreign->getTableInstance();
 
       foreach ($cols as $from => $to) {
         if(!$this->hasField($from) && $table->hasField($to)){
@@ -294,6 +294,7 @@ final class AmTable extends AmObject{
             'name' => $from,
             'pk' => $this->isPk($from),
             'autoIncrement' => false,
+            'allowNull' => $foreign->getAllowNull(),
           ));
           $this->addField($field);
         }

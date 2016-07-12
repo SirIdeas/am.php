@@ -100,6 +100,9 @@ class AmClauseWhere extends AmClause{
         $this->union = false;
 
       }elseif(!self::hasAnyArray($cond)){
+        if(empty($cond)){
+          continue;
+        }
 
         if(!$this->union && !empty($this->wheres)){
           $this->wheres[] = $this->lastUnion;

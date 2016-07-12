@@ -24,19 +24,19 @@ class AmForeign extends AmObject{
     $model = '',
 
     /**
-     * Joins de la relación
+     * Hash de columnas relacionadas.
      */
-    $joins = array(),
-
-    /**
-     * Campos extras a selecionar
-     */
-    $select = array(),
+    $cols = array(),
     
     /**
      * Hash de columnas relacionadas.
      */
-    $cols = array(),
+    $table = array(),
+
+    /**
+     * Indica si la relación puede tener valores nulos
+     */
+    $allowNull = true,
     
     /**
      * Nombre de la tabla através de la cual se realiza la realción.
@@ -74,12 +74,22 @@ class AmForeign extends AmObject{
   }
 
   /**
+   * Devuelve si el foreing key puede o no ser null.
+   * @return bool.
+   */
+  public function getAllowNull(){
+    
+    return $this->allowNull;
+
+  }
+
+  /**
    * Devuelve el hash con las relaciones extras.
    * @return hash Hash con las relaciones extras.
    */
-  public function getJoins(){
+  public function getTable(){
     
-    return $this->joins;
+    return $this->table;
 
   }
 
@@ -97,7 +107,7 @@ class AmForeign extends AmObject{
    * Devuelve el intancia de la tabla a la que apunta la realación.
    * @return AmTable Instancia de la tabla.
    */
-  public function getTable(){
+  public function getTableInstance(){
 
     // Obtener el modelo
     $classModel = $this->model;
@@ -140,7 +150,7 @@ class AmForeign extends AmObject{
   public function getQuery(AmModel $model){
 
     // Obtener la tabla
-    $table = $this->getTable();
+    $table = $this->getTableInstance();
 
     // Obtener el nombre de la tabla.
     $tableName = $table->getTableName();
@@ -161,8 +171,9 @@ class AmForeign extends AmObject{
 
     // Si tiene una tabla a traves y tiene campos selecionados entonces se
     // agrega el formateador
-    if(!empty($through) && !empty($this->select))
+    if(!empty($through) && !empty($this->select)){
       $query->setFormatter(array($this, 'queryFormatter'));
+    }
 
     // Obtener las joins
     $joins = $this->getJoins();
@@ -196,9 +207,10 @@ class AmForeign extends AmObject{
   public function toArray(){
 
     return array(
-      'model' => $this->model,
+      'type' => $this->type,
       'cols' => $this->cols,
-      'joins' => $this->joins,
+      'model' => $this->model,
+      'table' => $this->table,
       'through' => $this->through,
     );
 
@@ -288,9 +300,13 @@ class AmForeign extends AmObject{
       if(!isset($conf['through'])){
 
         // Obtener el nombre de la tabla intermedia en la BD
-        if($tn1 < $tn2)     $conf['through'] = "{$tn1}_{$tn2}";
-        elseif($tn1 > $tn2) $conf['through'] = "{$tn2}_{$tn1}";
-        else                $conf['through'] = "{$tn1}_{$tn2}";
+        if($tn1 < $tn2){
+          $conf['through'] = "{$tn1}_{$tn2}";
+        }elseif($tn1 > $tn2){
+          $conf['through'] = "{$tn2}_{$tn1}";
+        }else{
+          $conf['through'] = "{$tn1}_{$tn2}";
+        }
 
       }
 
@@ -321,12 +337,6 @@ class AmForeign extends AmObject{
       }
 
     }
-
-    // if($type === 'hasManyAndBelongTo'){
-    //   echo "<pre>";
-    //   print_r(["{$tbl->getModel()}.{$type}({$model} {$name})" => $conf]);
-    //   echo "</pre>";
-    // }
 
     return $conf;
     

@@ -18,6 +18,10 @@ class AmBelongToRelation extends AmRelation{
      */
     $value = null,
 
+    /**
+     * Indica si la relación ha sido seteada
+     * @var boolean
+     */
     $seted = false,
 
     /**
@@ -56,8 +60,9 @@ class AmBelongToRelation extends AmRelation{
   public function _set($record){
 
     // Cargar registro si no ha sido cargado
-    if(!$this->current)
+    if(!$this->current){
       $this->current = $this->_get();
+    }
 
     // chequear que el registro pertenezca al modelo.
     $this->checkModel($record);
@@ -87,8 +92,9 @@ class AmBelongToRelation extends AmRelation{
       $value = $this->value;
 
       // Guardar registro relacionado
-      if(isset($value) && !$value->save())
+      if(isset($value) && !$value->save()){
         return false;
+      }
 
       // Obtener los campos relacionados.
       $index = $this->getForeign()->getCols();

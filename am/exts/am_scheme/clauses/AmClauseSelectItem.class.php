@@ -16,20 +16,13 @@ class AmClauseSelectItem extends AmClause{
   public function __construct(array $data = array()){
     parent::__construct($data);
 
-    if(empty($this->alias)){
-      $field = $this->field;
-      
-      if(is_string($field)){
-        $this->alias = str_replace('.', '_', $field);
-      }
+    $field = $this->field;
 
+    if(empty($this->alias) && is_string($field)){
+      $this->alias = str_replace('.', '_', $field);
     }
 
-    if(empty($this->alias)){
-      throw Am::e('AMSCHEME_EMPTY_ALIAS', var_export($this->field, true));
-    }
-
-    $this->alias = $this->scheme->alias($this->alias, $this->query->getSelects());
+    $this->alias = $this->scheme->alias($this->alias, $this->query->getSelects(), $field instanceof AmRaw);
 
   }
 
@@ -64,9 +57,12 @@ class AmClauseSelectItem extends AmClause{
 
     }
 
+    if(empty($this->alias)){
+      return $field;
+    }
+
     $alias = $this->scheme->nameWrapperAndRealScape($this->alias);
-    
-    return $this->scheme->_sqlElementWithAlias($field, $alias);;
+    return $this->scheme->_sqlElementWithAlias($field, $alias);
 
   }
 

@@ -25,7 +25,7 @@ class AmHasManyRelation extends AmCollectionAbstractRelation{
 
       $foreign = $this->getForeign();
       $index = $foreign->getCols();
-      $table = $foreign->getTable();
+      $table = $foreign->getTableInstance();
       $query = $table->all();
       $update = false;
 
