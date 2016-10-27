@@ -1,5 +1,5 @@
-(:: set:siteTitle='Amathista Framework' :)
-(:: set:pageTitle='Home' :)
+(: $siteTitle='Amathista Framework'
+(: $pageTitle='Home'
 <html>
   <head>
     <meta charset="utf-8"/>
@@ -7,8 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="(:/:)/favicon.ico"/>
     <title>
-      (:= $siteTitle :) |
-      (:= $pageTitle :)
+      (:= $siteTitle :) | (:= $pageTitle :)
     </title>
     
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
@@ -24,7 +23,7 @@
     <![endif]-->
   </head>
   <body>
-    (:: child :)
+    (: child :)
     <!-- 
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

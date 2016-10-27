@@ -72,7 +72,6 @@ return array(
       'AMSCHEME_QUERY_IN_FIRST_PARAM_MUST_BE_STRING' => 'AmScheme: El primer parámetro de la condición IN debe ser una cadena de caracteres',
       'AMSCHEME_QUERY_IN_SECOND_PARAM_MUST_BE_COLLECION' => 'AmScheme: El segundo parámetro de la condición IN debe ser una coleción',
       'AMSCHEME_QUERY_BOOLEAN_OPERATOR_CONSECITIVE' => 'AmScheme: Operadores booleanos consecutivos'
-      'AMSCHEME_RELATION_SET_MUST_RECIVED_AMMODEL' => 'AmScheme: Asignación a relación debe recibir una instancia de %s'
     )
   ),
   

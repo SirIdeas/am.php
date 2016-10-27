@@ -1,4 +1,4 @@
-(:: parent:tpls/tpl.php :)
+(: parent:'tpls/tpl.php'
 
 <h1>Amathista</h1>
 

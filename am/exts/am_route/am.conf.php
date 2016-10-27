@@ -9,13 +9,6 @@
 return array(
 
   /**
-   * Métodos de mezcla de configuación
-   */
-  'mergeFunctions' => array(
-    'routing' => 'array_merge_recursive',
-  ),
-
-  /**
    * Extensiones requeridas
    */
   'requires' => array(
@@ -26,7 +19,6 @@ return array(
    * Configuración a extender
    */
   'extend' => array(
-    'routing' => array(),
 
     // Formatos
     'formats' => array(
