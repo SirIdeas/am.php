@@ -228,7 +228,7 @@ class AmController extends AmResponse{
       $filterRealName = $this->getPrefix('filters') . $filterName;
 
       // Llamar el filtro
-      $ret = call_user_func_array(array($this, $filterRealName), $params);
+      $ret = call_user_func_array(array(&$this, $filterRealName), $params);
 
       // El retorna una respuesta entonces devolver dicha respuesta.
       if($ret instanceof parent)
@@ -693,7 +693,11 @@ class AmController extends AmResponse{
   final protected static function includeController($controller){
 
     // Obtener la carpeta donde esta ubicada el controlador
-    $root = realPath(dirname(Am::whereIs($controller)));
+    $root = Am::whereIs($controller);
+    if (!isset($root))
+      throw Am::e('AMCONTROLLER_CLASS_NOT_FOUND', $controller);
+
+    $root = realPath(dirname($root));
 
     // Obtener el controlador parent
     $parentController = get_parent_class($controller);

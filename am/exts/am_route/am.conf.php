@@ -23,18 +23,6 @@ return array(
   ),
 
   /**
-   * Eventos a enlazar
-   */
-  'bind' => array(
-    // Despachar rutas.
-    'route.evaluate'        => 'AmRoute::evaluate',
-    // Agregar precallbakcs.
-    'route.addPreProcessor' => 'AmRoute::addPreProcessor',
-    // Agregar métodos de atención a tipos de rutas.
-    'route.addDispatcher'   => 'AmRoute::addDispatcher',
-  ),
-
-  /**
    * Configuración a extender
    */
   'extend' => array(
@@ -42,6 +30,8 @@ return array(
 
     // Formatos
     'formats' => array(
+      'AMROUTE_ACTION_NOT_FOUND' => 'AmRoute: no se encontró la acción %s',
+      'AMROUTE_BAD_ROUTE' => 'AmRoute: Mal definición de rutas %s (%s)',
       'AMROUTE_NOT_MATCH' => 'AmRoute: No se encontró la ruta',
       'AMROUTE_NOT_FOUND_DISPATCHER' => 'AmRoute: No se encontró despachador %s : %s',
     )

@@ -25,6 +25,16 @@ final class AmRoute{
     ),
 
     /**
+     * Alias.
+     */
+    $aliases = null,
+
+    /**
+     * Lista de acciones
+     */
+    $routes = array(),
+
+    /**
      * Callbacks de preprocesamiento
      */
     $preProcessors = array(),
@@ -32,14 +42,34 @@ final class AmRoute{
     /**
      * Callbacks de atención
      */
-    $dispatchers = array();
+    $dispatchers = array(),
+
+    /**
+     * Instancia de la ruta que atendío la petición
+     */
+    $dispatched = null;
 
   protected
+
+    /**
+     * Tipo de ruta
+     */
+    $dispatcherName = null,
+
+    /**
+     * Target de la ruta
+     */
+    $destiny = null,
 
     /**
      * Ruta solicitada.
      */
     $route = null,
+
+    /**
+     * Alias.
+     */
+    $alias = null,
     
     /**
      * Regex de evaluación correspondiente a la ruta.
@@ -55,9 +85,12 @@ final class AmRoute{
    * Instanciación de una ruta.
    * @param string $route Ruta a evaluar
    */
-  public function __construct($route){
+  public function __construct($dispatcherName, $destiny, $route){
 
+    $this->dispatcherName = $dispatcherName;
+    $this->destiny = $destiny;
     $this->route = $route;
+    $this->alias = $destiny;
 
     // cmpila la ruta
     $this->regex = self::compileRoute($route, $this->params);
@@ -88,6 +121,94 @@ final class AmRoute{
     }
 
     return false;
+
+  }
+
+  /**
+   * Deveulve la ruta.
+   * @return string
+   */ 
+  public function getRoute(){
+
+    return $this->route;
+
+  }
+
+  /**
+   * Deveulve el dstino de la ruta.
+   * @return string
+   */ 
+  public function getDestiny(){
+
+    return $this->destiny;
+
+  }
+
+  /**
+   * Deveulve el alias a la ruta.
+   * @return string
+   */ 
+  public function getAlias(){
+
+    return $this->alias;
+
+  }
+
+  /**
+   * Asigna el alias a un ruta.
+   * @param  string   $alias  alias de la ruta.
+   * @return $this
+   */ 
+  public function setAlias($alias){
+
+    $this->alias = $alias;
+
+    return $this;
+
+  }
+
+  /**
+   * Sustituye los parámetros en una cadena
+   * @param  string $str    Cadena que se quiere remplazar
+   * @param  array  $params Array de argumentos a sustituir.
+   * @return string         URL de la petición actual.
+   */
+  protected static function subParams($str, array $params){
+    foreach($params as $key => $val){
+      $str = str_replace("{{$key}}", $val, $str);
+    }
+    return $str;
+  }
+
+  /**
+   * Intenta despachar una petición
+   * @return string 
+   */
+  public function dispatch(array $params, $env) {
+    if(!isset(self::$dispatchers[$this->dispatcherName])) return false;
+      
+    $dispatcher = self::$dispatchers[$this->dispatcherName];
+
+    // Reemplazar cada parámetro en el destino de la peticion
+    $destiny = self::subParams($this->destiny, $params);
+
+    $response = null;
+    
+    // Buscar el callback de atención para determinado metodo si existe
+    if(isValidCallback($dispatcher)){
+      $response = call_user_func_array($dispatcher, array($destiny, $env, $params));
+    }
+
+    return $response;
+
+  }
+
+
+  public function getUrl ($url, $params = null) {
+
+    if (!isset($params)) $params = itemOr('params', self::$dispatched, array());
+
+    return self::subParams($url, $params);
 
   }
 
@@ -190,21 +311,49 @@ final class AmRoute{
 
   }
 
-  /**
-   * Realiza el llamado de todos los pre calls de rutas.
-   * @param array $routes Array con las rutas a evaluar.
-   */
-  public static function callPreProcessors($routes){
+  // /**
+  //  * Realiza el llamado de todos los pre calls de rutas.
+  //  * @param array $routes Array con las rutas a evaluar.
+  //  */
+  // public static function callPreProcessors($routes){
 
-    foreach ($routes as $type => $value) {
-      $callbacks = itemOr($type, self::$preProcessors, array());
-      if(!empty($callbacks)){
-        foreach (self::$preProcessors[$type] as $callback)
-          $routes = call_user_func_array($callback, array($routes));
-        unset($routes[$type]);
+  //   foreach ($routes as $type => $value) {
+  //   }
+  //   return $routes;
+
+  // }
+
+  /**
+   * Método que atiende cada uno de lo métodos llamados desde la clase. 
+   * Se asume que el nombre del método es el nombre de un despachador o de un
+   * procesador.
+   * @param string  $dispatcherName   Nombre del dispatcher o de proprocesadsor.
+   * @param array   $arguments        Argumentos.
+   */
+  public final static function __callStatic($name, $arguments = null){
+
+    $destiny = $arguments[0];
+    $route = $arguments[1];
+
+    $callbacks = itemOr($name, self::$preProcessors, array());
+
+    if(!empty($callbacks)){
+      $arr = array();
+      foreach ($callbacks as $callback){
+        $arr = array_merge(
+          $arr, call_user_func_array($callback, $arguments)
+        );
       }
+      return $arr;
     }
-    return $routes;
+
+    if (isset(self::$dispatchers[$name])) {
+      $route = new AmRoute($name, $destiny, $route);
+      self::$routes[] = $route;
+      return $route;
+    }
+
+    throw Am::e('AMROUTE_BAD_ROUTE', $name, $arguments);
 
   }
 
@@ -217,15 +366,14 @@ final class AmRoute{
   public static function evaluate(array $request){
 
     // Obtener string para la consulta.
-    $request = $request['method'].' '.$request['request'];
-
-    $response = self::evalMatch($request,
-      array('routes' => Am::getProperty('routing', array())),
+    $response = self::evalMatch(
+      $request['method'].' '.$request['request'],
       Am::getProperty('env', array())
     );
 
-    if(!$response instanceof AmResponse)
+    if(!$response instanceof AmResponse){
       $response = Am::e404(Am::t('AMROUTE_NOT_MATCH'));
+    }
 
     AmResponse::response($response);
 
@@ -235,118 +383,188 @@ final class AmRoute{
    * Método busca la ruta con la que conincide con una petición realiza el 
    * llamado correspondiente.
    * @param  string      $request Petición a resolver.
-   * @param  array       $routes  Rutas configuradas.
    * @param  array       $env     Variables de entorno configuradas.
-   * @param  array       $parent  Ruta padre.
    * @return bool/string          Retorna verdadero si logra despachar la ruta,
    *                              falso o un string con un mensaje de error de
    *                              lo contario.
    */
-  private static function evalMatch($request, array $routes, array $env = array(), array $parent = array()){
+  public static function evalMatch($request, array $env = array()){
+    $response = null;
+    $lastResponse = null;
 
-    $routes = self::callPreProcessors($routes);
-    $lastResponse = false;
+    require_once 'routing.init.php';
 
-    $dispatchers = array_keys(self::$dispatchers);
+    foreach(self::$routes as $route){
+      self::$aliases[$route->getAlias()] = $route;
+    }
 
-    // Si tiene rutas internas
-    if(isset($routes['routes'])){
-      foreach($routes['routes'] as $key => $route){
+    foreach (self::$routes as $route) {
+      
+      // Si hace match con la peticion
+      if(false !== ($params = $route->match($request))){
+        $response = $route->dispatch($params, $env);
 
-        // Si la ruta es una cadena de caracteres
-        // Se parte la cadena con el caracter # el primer paremtro es un key y
-        // el segundo el valor
-        if(is_string($route)){
-          $route = explode(' => ', $route);
-          if(count($route) == 1)
-            $route = array('' => $route[0]);
-          else
-            $route = array($route[0] => $route[1]);
+        // Si la respuesta es el valor true
+        // Entonces asignar una respuesta vacía
+        if($response === true){
+          $response = new AmResponse;
         }
-
-        // Asignar key como ruta si no tiene ruta asignada
-        $route['route'] = itemOr('route', $route, $key);
-
-        // Concatenar los parametros de la ruta parametro con los de la ruta
-        // hija
-        foreach($routes as $key => $value)
-          if(in_array($key, $dispatchers))
-            $route[$key] = $value . itemOr($key, $route, '');
-
-        // Llamar para la ruta interna
-        $response = self::evalMatch($request, $route, $env, $routes);
 
         if($response instanceof AmResponse){
+          self::$dispatched = array(
+            'route' => $route,
+            'params' => $params,
+            'env' => $env,
+          );
+
           // Se atendió la llamada
-          if($response->isResolved())
+          if($response->isResolved()){
             return $response;
+          }
+
           // Error
-          else
-            $lastResponse = $response;
+          $lastResponse = $response;
+
+        } else {
+          // De lo contrario se toma un error y se toma el valor por defecto
+          $lastResponse = Am::e404(Am::t('AMROUTE_NOT_FOUND_DISPATCHER',
+            $type, $request));
         }
 
       }
     }
 
-    // No tiene rutas hijas o ninguna de las rutas hijas atendió la petición
-    // Se debe verificar si la ruta actual tiene una ruta asignada para 
-    // evaluarla, de lo contrario salir 
-    if(!isset($parent['route']) && !isset($routes['route']))
-      return $lastResponse;
-
-    // Si no esta indicada la ruta se toma el indice de la ruta como indice
-    $routes['route'] = itemOr('route', $parent, '') .
-                       itemOr('route', $routes, '');
-
-    // Crear instancia de la ruta.
-    $r = new self($routes['route']);
-
-    // Si hace match con la peticion
-    if(false !== ($params = $r->match($request))){
-
-      foreach ($routes as $type => $destiny) {
-        if(isset(self::$dispatchers[$type])){
-          
-          $dispatcher = self::$dispatchers[$type];
-
-          // Reemplazar cada parámetro en el destino de la peticion
-          foreach($params as $key => $val)
-            $destiny = str_replace("{{$key}}", $val, $destiny);
-
-          $response = null;
-          
-          // Buscar el callback de atención para determinado metodo si existe
-          if(isValidCallback($dispatcher))
-            $response = call_user_func_array($dispatcher,
-                                             array($destiny, $env, $params));
-
-          // Si la respuesta es el valor true
-          // Entonces asignar una respuesta vacía
-          if($response === true)
-            $response = new AmResponse;
-
-          if($response instanceof AmResponse){
-            // Se atendió la llamada
-            if($response->isResolved())
-              return $response;
-            // Error
-            else
-              $lastResponse = $response;
-
-          }else
-            // De lo contrario se toma un error y se toma el valor por defecto
-            $lastResponse = Am::e404(Am::t('AMROUTE_NOT_FOUND_DISPATCHER',
-              $type, $request));
-
-        }
-
-      }
-
-    }
-
-    // Si ninguna ruta coincide con la petición entonces se devuelve un error.
     return $lastResponse;
 
   }
+
+  /**
+   * Devuelve una URL para un ruta
+   * @param  string $action Acction solcitada
+   * @param  array  $parmas Array de argumentos para construir la ruta.
+   * @return string         URL de la petición actual.
+   */
+  public static function url($action, array $params = array()) {
+
+    $route = itemOr($action, self::$aliases);
+    if (!$route)
+      throw Am::e('AMROUTE_ACTION_NOT_FOUND', $action);
+
+    return self::subParams($route->getRoute(), $params);
+
+  }
+
+  public static function getCurrentRoute () {
+
+    return itemOr('route', self::$dispatched);
+
+  }
+
+  // private static function evalMatch2($request, array $routes, array $env = array(), array $parent = array()){
+
+  //   $routes = self::callPreProcessors($routes);
+  //   $lastResponse = false;
+
+  //   $dispatchers = array_keys(self::$dispatchers);
+
+  //   // Si tiene rutas internas
+  //   if(isset($routes['routes'])){
+  //     foreach($routes['routes'] as $key => $route){
+
+  //       // Si la ruta es una cadena de caracteres
+  //       // Se parte la cadena con el caracter # el primer paremtro es un key y
+  //       // el segundo el valor
+  //       if(is_string($route)){
+  //         $route = explode(' => ', $route);
+  //         if(count($route) == 1)
+  //           $route = array('' => $route[0]);
+  //         else
+  //           $route = array($route[0] => $route[1]);
+  //       }
+
+  //       // Asignar key como ruta si no tiene ruta asignada
+  //       $route['route'] = itemOr('route', $route, $key);
+
+  //       // Concatenar los parametros de la ruta parametro con los de la ruta
+  //       // hija
+  //       foreach($routes as $key => $value)
+  //         if(in_array($key, $dispatchers))
+  //           $route[$key] = $value . itemOr($key, $route, '');
+
+  //       // Llamar para la ruta interna
+  //       $response = self::evalMatch($request, $route, $env, $routes);
+
+  //       if($response instanceof AmResponse){
+  //         // Se atendió la llamada
+  //         if($response->isResolved())
+  //           return $response;
+  //         // Error
+  //         else
+  //           $lastResponse = $response;
+  //       }
+
+  //     }
+  //   }
+
+  //   // No tiene rutas hijas o ninguna de las rutas hijas atendió la petición
+  //   // Se debe verificar si la ruta actual tiene una ruta asignada para 
+  //   // evaluarla, de lo contrario salir 
+  //   if(!isset($parent['route']) && !isset($routes['route']))
+  //     return $lastResponse;
+
+  //   // Si no esta indicada la ruta se toma el indice de la ruta como indice
+  //   $routes['route'] = itemOr('route', $parent, '') .
+  //                      itemOr('route', $routes, '');
+
+  //   // Crear instancia de la ruta.
+  //   $r = new self($routes['route']);
+
+  //   // Si hace match con la peticion
+  //   if(false !== ($params = $r->match($request))){
+
+  //     foreach ($routes as $type => $destiny) {
+  //       if(isset(self::$dispatchers[$type])){
+          
+  //         $dispatcher = self::$dispatchers[$type];
+
+  //         // Reemplazar cada parámetro en el destino de la peticion
+  //         foreach($params as $key => $val)
+  //           $destiny = str_replace("{{$key}}", $val, $destiny);
+
+  //         $response = null;
+          
+  //         // Buscar el callback de atención para determinado metodo si existe
+  //         if(isValidCallback($dispatcher))
+  //           $response = call_user_func_array($dispatcher,
+  //                                            array($destiny, $env, $params));
+
+  //         // Si la respuesta es el valor true
+  //         // Entonces asignar una respuesta vacía
+  //         if($response === true)
+  //           $response = new AmResponse;
+
+  //         if($response instanceof AmResponse){
+  //           // Se atendió la llamada
+  //           if($response->isResolved())
+  //             return $response;
+  //           // Error
+  //           else
+  //             $lastResponse = $response;
+
+  //         }else
+  //           // De lo contrario se toma un error y se toma el valor por defecto
+  //           $lastResponse = Am::e404(Am::t('AMROUTE_NOT_FOUND_DISPATCHER',
+  //             $type, $request));
+
+  //       }
+
+  //     }
+
+  //   }
+
+  //   // Si ninguna ruta coincide con la petición entonces se devuelve un error.
+  //   return $lastResponse;
+
+  // }
 
 }

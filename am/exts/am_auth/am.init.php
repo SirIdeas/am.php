@@ -6,17 +6,11 @@
  * 
  */
 
-Am::addRoutePreProcessor('auth', function($route){
+AmRoute::addPreProcessor('auth', function($controller, $route){
 
-  $route['controller'] = $route['auth'];
-  $route['routes'] = array_merge(
-    itemOr('routes', $route, array()),
-    array(
-      '/login'  => 'controller => @login',
-      '/logout' => 'controller => @logout',
-    )
+  return array(
+    AmRoute::action($controller.'@login', $route.'/login'),
+    AmRoute::action($controller.'@logout', $route.'/logout'),
   );
-
-  return $route;
 
 });

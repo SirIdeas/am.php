@@ -6,21 +6,17 @@
  * 
  */
 
-Am::addRoutePreProcessor('resource', function($route){
+AmRoute::addPreProcessor('resource', function($controller, $route){
 
-  $route['controller'] = $route['resource'];
-  $route['routes'] = array_merge(
-    itemOr('routes', $route, array()),
-    array(
-      ''              => 'controller => @index',
-      '/new'          => 'controller => @new',
-      '/{id}/edit'    => 'controller => @edit',
-      '/cou'          => 'controller => @cou',
-      '/{id}/delete'  => 'controller => @delete',
-      '/{id}/detail'  => 'controller => @detail',
-      '/data'         => 'controller => @data',
-      // '/search'       => 'controller => @search',
-    )
+  return array(
+    AmRoute::action($controller.'@index',   $route.''),
+    AmRoute::action($controller.'@new',     $route.'/new'),
+    AmRoute::action($controller.'@edit',    $route.'/{id}/edit'),
+    AmRoute::action($controller.'@cou',     $route.'/cou'),
+    AmRoute::action($controller.'@delete',  $route.'/{id}/delete'),
+    AmRoute::action($controller.'@detail',  $route.'/{id}/detail'),
+    AmRoute::action($controller.'@data',    $route.'/data'),
+    AmRoute::action($controller.'@search',  $route.'/search'),
   );
 
   return $route;

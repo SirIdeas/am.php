@@ -9,17 +9,17 @@
 /**
  * Agregar algunos de los métodos que atenderán cierto tipo de rutas.
  */
-Am::addRouteDispatcher('file', function($destiny, $env, $params){
+AmRoute::addDispatcher('file', function($destiny, $env, $params){
   return Am::file($destiny);
 });
 
-Am::addRouteDispatcher('download', function($destiny, $env, $params){
+AmRoute::addDispatcher('download', function($destiny, $env, $params){
   return Am::download($destiny);
 });
 
-Am::addRouteDispatcher('redirect', 'Am::redirect');
-Am::addRouteDispatcher('go', 'Am::go');
-Am::addRouteDispatcher('call', 'Am::call');
-Am::addRouteDispatcher('template', 'Am::template');
-Am::addRouteDispatcher('controller', 'Am::controller');
-Am::addRouteDispatcher('assets', 'Am::assets');
+AmRoute::addDispatcher('redirect', 'Am::redirect');
+AmRoute::addDispatcher('go', 'Am::go');
+AmRoute::addDispatcher('call', 'Am::call');
+AmRoute::addDispatcher('template', 'Am::template');
+AmRoute::addDispatcher('action', 'Am::action');
+AmRoute::addDispatcher('assets', 'Am::assets');

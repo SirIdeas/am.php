@@ -10,5 +10,8 @@
  * Configuración de eventos globales que atenderá la extensión.
  */
 
-// Agregar el preprocesador de rutas a las que no tienen tipo
-Am::addRoutePreProcessor('', 'AmController::routePreProcessor');
+// Agregar el dispatcher de rutas de un controlador
+AmRoute::addDispatcher('controller', function($destiny, $env, $params){
+
+
+});

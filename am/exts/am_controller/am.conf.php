@@ -29,7 +29,7 @@ return array(
    */
   'bind' => array(
     // Atender las respuestas por controlador
-    'response.controller' => 'AmController::response',
+    'response.action' => 'AmController::response',
   ),
 
   /**
@@ -44,6 +44,7 @@ return array(
     
     // Formatos
     'formats' => array(
+      'AMCONTROLLER_CLASS_NOT_FOUND' => 'AmController: Class "%s" Not Found',
       'AMCONTROLLER_CLASS_IS_NOT_A_CONTROLLER' => 'AmController: "%s" no es un controlador',
       'AMCONTROLLER_ACTION_NOT_FOUND' => 'AmController: No se encontró la acción "%s@%s"',
       'AMCONTROLLER_ACTION_FORBIDDEN' => 'AmController: Acción prohibida "%s@%s por el método %s"'

@@ -24,15 +24,6 @@ final class Am{
       // Cuando se incluye un archivo para una clase
       'core.loadedClass' => null, // $class
 
-      // Evalucación de ruta
-      'route.evaluate' => null, // $request
-
-      // Agregar un pre procesador de rutas
-      'route.addPreProcessor' => null, // $type, $callback
-
-      // Agregar un despachador de ruta en base su key
-      'route.addDispatcher' => null, // $type, $callback
-      
       // Responder con archivo
       'response.file' => null, // $filename, $attachment, $name, $mimeType
 
@@ -55,7 +46,7 @@ final class Am{
       'response.e403' => null, // $msg
 
       // Responder con controlador
-      'response.controller' => null, // $action, $params, $env
+      'response.action' => null, // $action, $params, $env
 
       // Renderiza de una vista
       'render.template' => null, // $__tpl, $__vars, $__options
@@ -643,27 +634,6 @@ final class Am{
   }
 
   /**
-   * Asigna o sustituye un dispatcher a un tipo de ruta
-   * @param  string   $type       Nombre del tipo al que se agrega el callback.
-   * @param  callback $dispatcher Despachador a agregar
-   * @return mixed                Valor devuelvo por el manejador del evento.
-   */
-  public static function addRouteDispatcher($type, $dispatcher){
-    return self::emit('route.addDispatcher', $type, $dispatcher);
-  }
-
-  /**
-   * Asigna un pre-procesador de rutas a un tipo
-   * @param  string   $type         Nombre del tipo al que se agrega el
-   *                                callback.
-   * @param  callback $preProcessor Preprocesador.
-   * @return mixed                  Valor devuelvo por el manejador del evento.
-   */
-  public static function addRoutePreProcessor($type, $preProcessor)  {
-    return self::emit('route.addPreProcessor', $type, $preProcessor);
-  }
-
-  /**
    * Responde con un archivo indicado por parámetro.
    * @param  string   $file       Ruta del archivo con el que se responderá.
    * @param  bool     $attachment Si la ruta se descarga o no.
@@ -786,10 +756,10 @@ final class Am{
    * @param  array  $params Argumentos obtenidos de la ruta.
    * @return mixed          Respuesta de manejador configurado.
    */
-  public static function controller($action, array $env = array(),
+  public static function action($action, array $env = array(),
                                     array $params = array()){
 
-    return self::emit('response.controller', $action, $env, $params);
+    return self::emit('response.action', $action, $env, $params);
 
   }
 
@@ -860,6 +830,29 @@ final class Am{
     }
 
     return self::$requestStr;
+
+  }
+
+  /**
+   * Devuelve la URL de la petición actual
+   * @return string URL de la petición actual.
+   */
+  public static function getUrl() {
+
+    $request = self::getRequest();
+    return $request['request'];
+
+  }
+
+  /**
+   * Devuelve una URL para un ruta
+   * @param  string $action Acction solcitada
+   * @param  array  $args   Array de argumentos para construir la ruta.
+   * @return string         URL de la petición actual.
+   */
+  public static function route($action, array $args = array()) {
+
+    return Am::serverUrl(AmRoute::url($action, $args));
 
   }
   
@@ -1521,7 +1514,7 @@ final class Am{
     }else{
 
       // Llamado de accion para evaluar ruta
-      self::emit('route.evaluate', self::getRequest());
+      AmRoute::evaluate(self::getRequest());
       
     }
 

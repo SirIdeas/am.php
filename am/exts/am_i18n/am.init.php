@@ -6,6 +6,4 @@
  * 
  */
 
-// Se debe iniciar la sesion
-session_id(Am::getProperty('id'));
-session_start();
+AmI18n::setLang(substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2));
